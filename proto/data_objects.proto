@@ -1,0 +1,132 @@
+
+syntax = "proto3";
+
+package dos;
+
+// Import HTTP RESTful annotations
+// from github.com/googleapis/googleapis
+import "google/api/annotations.proto";
+
+message DataObject {
+  //REQUIRED
+  string id = 1;
+
+  //OPTIONAL
+  string description = 2;
+
+  //REQUIRED
+  string checksum = 3;
+
+  //REQUIRED
+  int64 size = 4;
+
+  //OPTIONAL
+  repeated string aliases = 5;
+
+  //OPTIONAL
+  string mimeType = 6;
+
+  //REQUIRED
+  repeated string urls = 7;
+
+  //REQUIRED
+  string created = 8; // timestamp
+
+  //OPTIONAL
+  string dataset_id = 9;
+
+  //OPTIONAL
+  map<string, string> info = 10;
+
+  //OPTIONAL
+  Provenance provenance = 12;
+}
+
+
+message DataSet {
+  //REQUIRED
+  string id = 1;
+
+  //OPTIONAL
+  string description = 2;
+
+  //OPTIONAL
+  repeated string aliases = 3;
+
+  //OPTIONAL
+  map<string, string> info = 4;
+}
+
+
+message Provenance {
+  //REQUIRED
+  repeated string sources = 1;
+
+  //REQUIRED
+  string operation = 2;
+}
+
+
+message ListRequest {
+  //OPTIONAL
+  string name_prefix = 1;
+
+  //OPTIONAL
+  repeated string has_keys = 2;
+
+  //OPTIONAL
+  string dataset_id = 3;
+
+}
+
+message DataObjectID {
+  string dataobject = 1;
+}
+
+message DataSetID {
+  string dataset = 1;
+}
+
+service DataService {
+
+  rpc AddDataObject(DataObject) returns (DataObjectID) {
+    option (google.api.http) = {
+      post: "/v1/data/object"
+      body: "*"
+    };
+  }
+
+  rpc GetDataObject(DataObjectID) returns (DataObject) {
+    option (google.api.http) = {
+      get: "/v1/data/object/{dataobject}"
+    };
+  }
+
+  rpc AddDataSet(DataSet) returns (DataSetID) {
+    option (google.api.http) = {
+      post: "/v1/data/set"
+      body: "*"
+    };
+  }
+
+  rpc GetDataSet(DataSetID) returns (DataSet) {
+    option (google.api.http) = {
+      get: "/v1/data/set/{dataset}"
+    };
+  }
+
+  rpc ListDataObjects(ListRequest) returns (stream DataObject) {
+    option (google.api.http) = {
+      post: "/v1/data/object/search"
+      body: "*"
+    };
+  }
+
+  rpc ListDataSets(ListRequest) returns (stream DataSet) {
+    option (google.api.http) = {
+      post: "/v1/data/set/search"
+      body: "*"
+    };
+  }
+
+}
