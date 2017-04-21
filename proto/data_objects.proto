@@ -1,0 +1,190 @@
+
+syntax = "proto3";
+
+package dos;
+
+// Import HTTP RESTful annotations
+// from github.com/googleapis/googleapis
+import "google/api/annotations.proto";
+
+
+///-------------------------------------------------------------------
+// Link: for HATEOS links
+///-------------------------------------------------------------------
+message Link {
+  string rel = 1;   // Relationship between the document containing the hyperlink and the destination resource
+  string href = 2;  // Address of the hyperlink
+  string type = 3;  // Hint for the type of the referenced resource mimetype
+}
+
+
+///-------------------------------------------------------------------
+// Resource: a file, API or other resource
+///-------------------------------------------------------------------
+message DataObject {
+  //REQUIRED
+  string id = 1;
+
+  //REQUIRED
+  string file_name = 2;
+
+  //REQUIRED
+  int64 file_size = 3;
+
+  //REQUIRED
+  string created = 4; // timestamp
+
+  //REQUIRED
+  string last_modified = 5; // timestamp
+
+  //REQUIRED  TODO DOES THIS NEED TO BE `REQUIRED`
+  string md5sum = 6;
+
+  //REQUIRED  TODO WHY/HOW IS THIS `repeated`
+  repeated string urls = 7;
+
+  //OPTIONAL
+  string description = 8;
+
+  //OPTIONAL TODO ARE THESE NAMES, IDS, URLS?
+  repeated string aliases = 9;
+
+  //OPTIONAL  TODO MIXING snake_case and camelCase WHICH ONE DO WE STANDARDIZE ON.
+  string mimeType = 10;
+
+  //OPTIONAL
+  string dataset_id = 11;
+
+  //OPTIONAL
+  Provenance provenance = 12;
+
+  //OPTIONAL  TODO should be google.protobuf.Struct  ?
+  map<string, string> info = 13;
+
+  //OPTIONAL
+  // A Resource can optionally be associated with the following linked entities :
+  // relationship     example description
+  // aliquots https://github.com/NCI-GDC/gdcdictionary/blob/develop/gdcdictionary/schemas/aliquot.yaml
+  // analytes  https://github.com/NCI-GDC/gdcdictionary/blob/develop/gdcdictionary/schemas/analyte.yaml
+  // archives https://github.com/NCI-GDC/gdcdictionary/blob/develop/gdcdictionary/schemas/archive.yaml
+  // individual,case   https://github.com/ga4gh/ga4gh-schemas/blob/master/src/main/proto/ga4gh/bio_metadata.proto#L11
+  // centers https://github.com/NCI-GDC/gdcdictionary/blob/develop/gdcdictionary/schemas/center.yaml
+  // data_formats https://github.com/NCI-GDC/gdcdictionary/blob/develop/gdcdictionary/schemas/data_format.yaml
+  // dataset https://github.com/ga4gh/ga4gh-schemas/blob/master/src/main/proto/ga4gh/metadata.proto#L10
+  // derived_files https://github.com/NCI-GDC/gdcdictionary/blob/develop/gdcdictionary/schemas/file.yaml#L50
+  // described_individuals, described_cases https://github.com/ga4gh/ga4gh-schemas/blob/master/src/main/proto/ga4gh/bio_metadata.proto#L11
+  // platforms https://github.com/NCI-GDC/gdcdictionary/blob/master/gdcdictionary/schemas/platform.yaml
+  // portions https://github.com/NCI-GDC/gdcdictionary/blob/master/gdcdictionary/schemas/portion.yaml
+  // project https://github.com/NCI-GDC/gdcdictionary/blob/master/gdcdictionary/schemas/project.yaml
+  // related_files https://github.com/NCI-GDC/gdcdictionary/blob/develop/gdcdictionary/schemas/file.yaml#L50
+  // biosample  https://github.com/ga4gh/ga4gh-schemas/blob/master/src/main/proto/ga4gh/bio_metadata.proto#L65
+  // slides https://github.com/NCI-GDC/gdcdictionary/blob/master/gdcdictionary/schemas/slide.yaml
+  // tags https://github.com/NCI-GDC/gdcdictionary/blob/master/gdcdictionary/schemas/tag.yaml
+  // repository http://docs.icgc.org/portal/api-endpoints/#!/repositories/list
+  repeated Link links = 14;
+
+  //TODO DISCUSS OTHER GDC fields
+  # state
+  # file_state
+  # error_type
+  # submitter_id
+  
+}
+
+///-------------------------------------------------------------------
+/// TODO ADD DESCRIPTION
+///-------------------------------------------------------------------
+
+message Provenance {
+  //REQUIRED
+  repeated string sources = 1;
+
+  //REQUIRED
+  string operation = 2;
+}
+
+
+///-------------------------------------------------------------------
+/// TODO ADD DESCRIPTION
+///-------------------------------------------------------------------
+
+message ListRequest {
+  //OPTIONAL
+  string name_prefix = 1;
+
+  //OPTIONAL
+  repeated string has_keys = 2;
+
+  //OPTIONAL
+  string dataset_id = 3;
+
+  //TODO Add page
+
+}
+///-------------------------------------------------------------------
+/// TODO ADD DESCRIPTION
+///-------------------------------------------------------------------
+
+message DataObjectID {
+  string dataobject = 1;
+}
+///-------------------------------------------------------------------
+/// TODO ADD DESCRIPTION
+///-------------------------------------------------------------------
+
+message DataSetID {
+  string dataset = 1;
+}
+
+///-------------------------------------------------------------------
+/// TODO ADD DESCRIPTION
+///-------------------------------------------------------------------
+
+service DataService {
+
+  rpc AddDataObject(DataObject) returns (DataObjectID) {
+    option (google.api.http) = {
+      post: "/v1/data/object"
+      body: "*"
+    };
+  }
+
+  rpc GetDataObject(DataObjectID) returns (DataObject) {
+    option (google.api.http) = {
+      get: "/v1/data/object/{dataobject}"
+    };
+  }
+
+  rpc ListDataObjects(ListRequest) returns (stream DataObject) {
+    option (google.api.http) = {
+      post: "/v1/data/object/search"
+      body: "*"
+    };
+  }
+
+
+# we should be extending core ga4gh schema
+# TODO create a PR for ga4gh/metadata_service.proto
+#   https://github.com/ga4gh/ga4gh-schemas/blob/396784ab2f77b359b27c6ffb87604c146c668068/src/main/proto/ga4gh/metadata_service.proto#L14
+#     rpc AddDataSet(DataSet) returns (DataSetID) {
+#       option (google.api.http) = {
+#         post: "/v1/data/set"
+#         body: "*"
+#       };
+#     }
+
+#     rpc GetDataSet(DataSetID) returns (DataSet) {
+#       option (google.api.http) = {
+#         get: "/v1/data/set/{dataset}"
+#       };
+#     }
+
+# rpc ListDataSets(ListRequest) returns (stream DataSet) {
+#   option (google.api.http) = {
+#     post: "/v1/data/set/search"
+#     body: "*"
+#   };
+# }
+
+
+}

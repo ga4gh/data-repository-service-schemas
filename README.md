@@ -27,7 +27,12 @@ Currently, this is the home of the Data Object API proposal. This is just the in
 
 Key features of the current API proposal:
 
-* TBD
+* Adds functionality to the ga4gh-schemas by supporting following use currently unsupported cases:
+
+- As a researcher, in order to perform an analysis, I need to locate OMICS files that apply to a particular set of metadata on [ Group, Individual, Sample ]
+- As a researcher, in order to perform an analysis, I need to locate Images that apply to a particular set of metadata on [ Group, Individual, Sample ]
+- As a researcher, in order to perform an analysis, I need to locate arbitrary data (e.g. drug response ) that apply to a particular set of metadata on [ Group, Individual, Sample ]
+
 
 Outstanding questions:
 
