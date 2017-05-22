@@ -1,7 +1,7 @@
 ![ga4gh logo](http://genomicsandhealth.org/files/logo_ga.png)
 
-Schemas for the Data Object API
-======================================
+Schemas for the Data Object Service API
+=======================================
 
 This is used by the Data Working Group - Containers and Workflows Task Team
 
