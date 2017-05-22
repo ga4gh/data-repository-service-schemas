@@ -79,11 +79,10 @@ To update:
 License
 -------
 
-See the [LICENSE](LICENSE)
+See the [LICENSE]
 
-  []: http://genomicsandhealth.org/files/logo_ga.png
-  [Global Alliance for Genomics and Health]: http://genomicsandhealth.org/
-  [INSTALL.md]: INSTALL.md
-  [CONTRIBUTING.md]: CONTRIBUTING.md
-  [LICENSE]: LICENSE
-  [Google Forum]: https://groups.google.com/forum/#!forum/ga4gh-dwg-containers-workflows
+More Information
+----------------
+
+* [Global Alliance for Genomics and Health](http://genomicsandhealth.org)
+* [Google Forum](https://groups.google.com/forum/#!forum/ga4gh-dwg-containers-workflows)
