@@ -23,7 +23,7 @@ The Containers & Workflows working group is an informal, multi-vendor working gr
 What is this?
 ------------
 
-Currently, this is the home of the Data Object API proposal. This is just the initial checkin based on the WES repo so we have a build process ready to go.  We need to work on the schema next.
+Currently, this is the home of the Data Object Service (DOS) API proposal. This repo has a CWL-based build process ready to go and a place for us to collectively work on [USECASES.md]
 
 Key features of the current API proposal:
 
@@ -66,6 +66,27 @@ How to contribute changes
 -------------------------
 
 Take cues for now from the [ga4gh/schemas](https://github.com/ga4gh/schemas/blob/master/CONTRIBUTING.rst) document.
+
+Submodule Magic
+---------------
+
+This is how I added a submodule for Brian Walsh's changes to the core schema:
+
+    git submodule add https://github.com/ga4gh/ga4gh-schemas.git
+    cd ga4gh-schemas
+    git checkout data-objects
+    cd ..
+    git add ga4gh-schemas
+    git commit -a -m 'adding in submodule dep for data-objects branch'
+    git push
+
+See this [article](https://stackoverflow.com/questions/1777854/git-submodules-specify-a-branch-tag) for info on this.
+
+To update:
+
+    cd ga4gh-schemas
+    git pull
+    git submodule update
 
 License
 -------
