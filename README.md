@@ -1,26 +1,21 @@
 ![ga4gh logo](http://genomicsandhealth.org/files/logo_ga.png)
 
-Schemas for the Data Object Service API
-=======================================
+Schemas for the Data Object Service (DOS) API
+=============================================
 
 This is used by the Data Working Group - Containers and Workflows Task Team
 
-<img src="swagger_editor.png" width="48">[View in Swagger](http://editor.swagger.io/#/?import=https://raw.githubusercontent.com/ga4gh/data-object-schemas/develop/swagger/proto/workflow_execution.swagger.json)
+<img src="swagger_editor.png" width="48">[View in Swagger](http://editor.swagger.io/#/?import=https://raw.githubusercontent.com/ga4gh/data-object-schemas/feature/protobuf-bdo-2/swagger/proto/data_object.swagger.json)
 
 The [Global Alliance for Genomics and Health](http://genomicsandhealth.org/) is an international
 coalition, formed to enable the sharing of genomic and clinical data.
 
-The [Data Working Group](http://ga4gh.org/#/) concentrates on data representation, storage,
-and analysis, including working with platform development partners and
-industry leaders to develop standards that will facilitate
-interoperability.
-
 Containers and Workflows Task Team
 ----------------------------------
 
-The Containers & Workflows working group is an informal, multi-vendor working group born out of the BOSC 2014 codefest, consisting of various organizations and individuals that have an interest in portability of data analysis workflows. Our goal is to create specifications that enable data scientists to describe analysis tools and workflows that are powerful, easy to use, portable, and support reproducibility for a variety of problem areas including data-intensive science like bioinformatics, physics, and astronomy; and business analytics such as log analysis, data mining, and ETL.
+The [Data Working Group](http://ga4gh.org/#/) concentrates on data representation, storage, and analysis, including working with platform development partners and industry leaders to develop standards that will facilitate interoperability. The Containers & Workflows working group is an informal, multi-vendor working group focused on standards for exchanging Docker-based tools and CWL/WDL workflows, execution of Docker-based tools and workflows on clouds, and abstract access to cloud object stores.
 
-What is this?
+What is DOS?
 ------------
 
 Currently, this is the home of the Data Object Service (DOS) API proposal. This repo has a CWL-based build process ready to go and a place for us to collectively work on [USECASES.md](USECASES.md)
@@ -32,13 +27,6 @@ Key features of the current API proposal:
 Outstanding questions:
 
 * TBD
-
-How to view
-------------
-
-See the swagger editor to view our [schema in progress](http://editor.swagger.io/#/?import=https://raw.githubusercontent.com/ga4gh/data-object-schemas/develop/src/main/resources/swagger/ga4gh-tool-discovery.yaml).
-
-If the current schema fails to validate, visit [debugging](http://online.swagger.io/validator/debug?url=https://raw.githubusercontent.com/ga4gh/data-object-schemas/develop/src/main/resources/swagger/ga4gh-tool-discovery.yaml)
 
 Building Documents
 ------------------
@@ -91,7 +79,7 @@ To update:
 License
 -------
 
-See the [LICENSE]
+See the [LICENSE](LICENSE)
 
   []: http://genomicsandhealth.org/files/logo_ga.png
   [Global Alliance for Genomics and Health]: http://genomicsandhealth.org/
