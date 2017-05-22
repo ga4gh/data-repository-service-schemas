@@ -23,7 +23,7 @@ The Containers & Workflows working group is an informal, multi-vendor working gr
 What is this?
 ------------
 
-Currently, this is the home of the Data Object Service (DOS) API proposal. This repo has a CWL-based build process ready to go and a place for us to collectively work on [USECASES.md]
+Currently, this is the home of the Data Object Service (DOS) API proposal. This repo has a CWL-based build process ready to go and a place for us to collectively work on [USECASES.md](USECASES.md)
 
 Key features of the current API proposal:
 
