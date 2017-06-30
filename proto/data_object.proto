@@ -1,12 +1,14 @@
 
 syntax = "proto3";
 
-package ga4gh_workflow_exec;
+package ga4gh_data_object;
 
 // Import HTTP RESTful annotations
 import "google/api/annotations.proto";
 import "google/protobuf/struct.proto";
-import "task_execution.proto";
+import "data_objects.proto";
+import "data_objects_service.proto";
+import "metadata_service.proto";
 
 //available workflow types supported by this WES
 enum WorkflowType {
