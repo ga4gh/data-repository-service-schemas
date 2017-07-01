@@ -22,11 +22,25 @@ Currently, this is the home of the Data Object Service (DOS) API proposal. This 
 
 Key features of the current API proposal:
 
-* TBD
+#### Data object management
 
-Outstanding questions:
+This section of the API focuses on how to read and write data objects to cloud environments
+and how to join them together as data bundles.  Data bundles are simply a flat collection
+of one or more files.  This section of the API enables:
 
-* TBD
+* create/update/delete a file
+* create/update/delete a data bundle
+* register UUIDs with these entities (an optionally track versions of each)
+* generate signed URLs and/or cloud specific object storage paths and temporary credentials
+
+#### Data object queries
+
+A key feature of this API beyond creating/modifying/deletion files is the ability to
+find data objects across cloud environments and implementations of DOS.  This
+section of the API allows users to query by data bundle or file UUIDs which returns
+information about where these data objects are available.  This response will
+typically be used to find the same file or data bundle located across multiple
+cloud environments.
 
 Building Documents
 ------------------

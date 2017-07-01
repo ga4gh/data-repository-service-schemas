@@ -89,39 +89,77 @@ message WorkflowLog {
 //Web service to get, create, list and delete Workflows
 service WorkflowService {
 
-  //Run a workflow
-  rpc RunWorkflow(WorkflowRequest) returns (WorkflowRunID) {
+  //Make a new file
+  rpc CreateFile(FileRequest) returns (FileID) {
     option (google.api.http) = {
-      post: "/v1/workflows"
+      post: "/ga4gh/dos/v1/file/{file_id}"
       body: "*"
     };
   }
 
-  //Get quick status info about a running workflow
-  rpc GetWorkflowStatus(WorkflowRunID) returns (WorkflowStatus) {
-      option (google.api.http) = {
-        get: "/v1/workflows/{workflow_id}/status"
-      };
-  }
-
-  //Get detailed info about a running workflow
-  rpc GetWorkflowLog(WorkflowRunID) returns (WorkflowLog) {
-      option (google.api.http) = {
-        get: "/v1/workflows/{workflow_id}"
-      };
-  }
-
-  //Cancel a running workflow
-  rpc CancelJob(WorkflowRunID) returns (WorkflowRunID) {
+  //Create a new version of a file
+  rpc UpdateFile(FileRequest) returns (FileID) {
     option (google.api.http) = {
-      delete: "/v1/workflows/{workflow_id}"
+      put: "/ga4gh/dos/v1/file/{file_id}"
+      body: "*"
     };
   }
 
-  //List the workflows
-  rpc ListWorkflows(ga4gh_task_exec.JobListRequest) returns (WorkflowListResponse) {
+  //Get info about a file
+  rpc GetFileStatus(FileID) returns (FileStatus) {
+      option (google.api.http) = {
+        get: "/ga4gh/dos/v1/file/{file_id}/status"
+      };
+  }
+
+  //Delete a file
+  rpc DeleteFile() returns (FileStatus) {
+      option (google.api.http) = {
+        delete: "/ga4gh/dos/v1/file/{file_id}"
+      };
+  }
+
+  //List the files
+  rpc ListFiles(FileListRequest) returns (FileListResponse) {
     option (google.api.http) = {
-      get: "/v1/workflows"
+      get: "/ga4gh/dos/v1/file/list"
+    };
+  }
+
+  //Make a new data bundle
+  rpc CreateFile(DataBundleRequest) returns (DataBundleID) {
+    option (google.api.http) = {
+      post: "/ga4gh/dos/v1/databundle/{databundle_id}"
+      body: "*"
+    };
+  }
+
+  //Create a new version of a data bundle
+  rpc UpdateDataBundle(DataBundleRequest) returns (DataBundleID) {
+    option (google.api.http) = {
+      put: "/ga4gh/dos/v1/databundle/{databundle_id}"
+      body: "*"
+    };
+  }
+
+  //Get info about a data bundle
+  rpc GetDataBundleStatus(DataBundleID) returns (DataBundleStatus) {
+      option (google.api.http) = {
+        get: "/ga4gh/dos/v1/databundle/{databundle_id}/status"
+      };
+  }
+
+  //Delete a data bundle
+  rpc DeleteDataBundle() returns (DataBundleStatus) {
+      option (google.api.http) = {
+        delete: "/ga4gh/dos/v1/databundle/{databundle_id}"
+      };
+  }
+
+  //List the data bundles
+  rpc ListDataBundles(DataBundleListRequest) returns (DataBundleListResponse) {
+    option (google.api.http) = {
+      get: "/ga4gh/dos/v1/databundle/list"
     };
   }
 
