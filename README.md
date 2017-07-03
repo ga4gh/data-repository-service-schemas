@@ -100,3 +100,21 @@ More Information
 
 * [Global Alliance for Genomics and Health](http://genomicsandhealth.org)
 * [Google Forum](https://groups.google.com/forum/#!forum/ga4gh-dwg-containers-workflows)
+
+
+TODO/Questions
+--------------
+* can we move the schemas into this repo? Easier to release.
+* how does Brian W. link datasets and files?  I don't see a `dataset_id` in the `DataObject` message.
+* how does Brian W. search on keys?  What field is `has_keys` searching on for DataObjects?  How should we expose search for other entities in the DataObjects or DataBundleObjects?
+* do we want to use the data bundles concept? To model files separately?
+* do we want to support versioning?
+* do we want to support provenance?
+* do all the timestamps need to be generated server-side?  This might be key for supporting versioning.
+* do we want to include bio-specific data in the API?
+* do we want to offer search on the bio-specific data?
+* other fields from GDC to consider:
+    * state
+    * file_state
+    * error_type
+    * submitter_id

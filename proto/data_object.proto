@@ -10,95 +10,146 @@ import "data_objects.proto";
 import "data_objects_service.proto";
 import "metadata_service.proto";
 
-//available workflow types supported by this WES
-enum WorkflowType {
-    UNKNOWN = 0;
-    CWL = 1;
-    WDL = 2;
-}
-
-//Return envelope for workflow listing
-message WorkflowListResponse {
-   repeated JobDesc workflows = 1;
-   string nextPageToken = 2;
-}
-
-//Small description of workflows, returned by server during listing
-message JobDesc {
+///-------------------------------------------------------------------
+message DataBundleObject {
   //REQUIRED
-  string workflow_id  = 1;
-  //REQUIRED
-  ga4gh_task_exec.State state = 2;
-}
+  string id = 1;
 
-//workflow request object
-message WorkflowRequest {
+  //REQUIRED
+  repeated DataObject files = 2;
+
+  //REQUIRED
+  // The time at which this object was created in milliseconds from the
+  // epoch.
+  int64 created = 3; // timestamp
+
+  //REQUIRED
+  // The time at which this object was last updated in milliseconds from the
+  // epoch.
+  int64 updated = 4;
+
+  //OPTIONAL, the md5sum of file md5sums
+  string md5sum =  5;
+
   //OPTIONAL
-  //user name of the workflow
-  string name = 1;
+  string dataset_id = 6;
+
+  //REQUIRED
+  repeated string urls = 7;
+
   //OPTIONAL
-  //parameter for execution engine to define/store group information
-  string project_id = 2;
+  string description = 8;
+
+  //OPTIONAL TODO ARE THESE NAMES, IDS, URLS?
+  repeated string aliases = 9;
+
   //OPTIONAL
-  //free text description of task
-  string description = 3;
+  Provenance provenance = 10;
+
   //OPTIONAL
-  //a key-value map of arbitrary metadata outside the scope of the workflow_params but useful to track with this workflow request
-  map<string,string> metadata = 4;
-  //REQUIRED
-  //the workflow CWL or WDL document
-  string workflow_descriptor = 5;
-  //REQUIRED
-  //the workflow parameterization (typically a JSON file)
-  string workflow_params = 6;
-  //REQUIRED
-  //the workflow descriptor type
-  WorkflowType workflow_type = 7;
-  //REQUIRED
-  //the workflow descriptor type version
-  string workflow_type_version = 8;
+  google.protobuf.Struct info = 11;
+
+  //OPTIONAL
+  // A Resource can optionally be associated with the following linked entities :
+  // relationship  example description
+  // aliquots         https://github.com/NCI-GDC/gdcdictionary/blob/develop/gdcdictionary/schemas/aliquot.yaml
+  // analytes         https://github.com/NCI-GDC/gdcdictionary/blob/develop/gdcdictionary/schemas/analyte.yaml
+  // archives         https://github.com/NCI-GDC/gdcdictionary/blob/develop/gdcdictionary/schemas/archive.yaml
+  // individual (case,donor)   https://github.com/ga4gh/ga4gh-schemas/blob/master/src/main/proto/ga4gh/bio_metadata.proto#L11
+  // centers          https://github.com/NCI-GDC/gdcdictionary/blob/develop/gdcdictionary/schemas/center.yaml
+  // data_formats     https://github.com/NCI-GDC/gdcdictionary/blob/develop/gdcdictionary/schemas/data_format.yaml
+  // dataset          https://github.com/ga4gh/ga4gh-schemas/blob/master/src/main/proto/ga4gh/metadata.proto#L10
+  // derived_files    https://github.com/NCI-GDC/gdcdictionary/blob/develop/gdcdictionary/schemas/file.yaml#L50
+  // platforms        https://github.com/NCI-GDC/gdcdictionary/blob/master/gdcdictionary/schemas/platform.yaml
+  // portions         https://github.com/NCI-GDC/gdcdictionary/blob/master/gdcdictionary/schemas/portion.yaml
+  // project          https://github.com/NCI-GDC/gdcdictionary/blob/master/gdcdictionary/schemas/project.yaml
+  // related_files    https://github.com/NCI-GDC/gdcdictionary/blob/develop/gdcdictionary/schemas/file.yaml#L50
+  // biosample        https://github.com/ga4gh/ga4gh-schemas/blob/master/src/main/proto/ga4gh/bio_metadata.proto#L65
+  // slides           https://github.com/NCI-GDC/gdcdictionary/blob/master/gdcdictionary/schemas/slide.yaml
+  // tags             https://github.com/NCI-GDC/gdcdictionary/blob/master/gdcdictionary/schemas/tag.yaml
+  // repository       http://docs.icgc.org/portal/api-endpoints/#!/repositories/list
+  repeated Link links = 12;
+
+  // OPTIONAL the id of the file as submitted
+  string submitted_id = 13;
+
 }
 
-message WorkflowRunID {
-  //workflow ID
-  string workflow_id = 1;
+message AddDataBundleObjectResponse {
+  string id = 1;
 }
 
-message WorkflowStatus {
-  //workflow ID
-  string workflow_id = 1;
-  //state
-  ga4gh_task_exec.State state = 2;
+message GetDataBundleObjectRequest {
+  string id = 1;
 }
 
-message WorkflowLog {
-  //workflow ID
-  string workflow_id = 1;
-  //the original request object
-  WorkflowRequest request = 2;
-  //a key-value map of arbitrary metadata outside the scope of the workflow_params but useful to track with this workflow request
-  map<string,string> metadata = 3;
-  //state
-  ga4gh_task_exec.State state = 4;
-  //the log, and other key info like timing and exit code, for the overall run of this workflow
-  ga4gh_task_exec.JobLog logs = 5;
-  //the outputs
-  repeated ga4gh_task_exec.TaskParameter outputs = 6;
+message DataBundleStatusResponse {
+  //REQUIRED
+  string id = 1;
+
+  //REQUIRED
+  repeated DataBundleObject data_bundle_versions = 2;
 }
 
-//Web service to get, create, list and delete Workflows
-service WorkflowService {
+message ListDataBundleObjectsRequest {
+  //OPTIONAL
+  string id = 1;
+
+  //OPTIONAL, searching description, aliases, and urls
+  repeated string has_keys = 2;
+
+  //OPTIONAL
+  string dataset_id = 3;
+
+  //OPTIONAL
+  string submitted_id = 4;
+
+  //OPTIONAL
+  // Specifies the maximum number of results to return in a single page.
+  // If unspecified, a system default will be used.
+  int32 page_size = 5;
+
+  //OPTIONAL
+  // The continuation token, which is used to page through large result sets.
+  // To get the next page of results, set this parameter to the value of
+  // `next_page_token` from the previous response.
+  string page_token = 6;
+
+}
+
+message ListDataBundleObjectsResponse {
+  // The list of datasets.
+  repeated DataBundleObject data_bundle_objects = 1;
+
+  // The continuation token, which is used to page through large result sets.
+  // Provide this value in a subsequent request to return the next page of
+  // results. This field will be empty if there aren't any additional results.
+  string next_page_token = 2;
+}
+
+message FileStatusResponse {
+  //REQUIRED
+  string id = 1;
+
+  //REQUIRED
+  repeated DataObject file_versions = 2;
+
+}
+
+
+//Web service to get, create, list and delete Data Objects
+service DataObjectService {
 
   //Make a new file
-  rpc CreateFile(FileRequest) returns (FileID) {
+  rpc CreateFile(DataObject) returns (AddDataObjectResponse) {
     option (google.api.http) = {
       post: "/ga4gh/dos/v1/file/{file_id}"
       body: "*"
     };
   }
 
-  //Create a new version of a file
-  rpc UpdateFile(FileRequest) returns (FileID) {
+  //Update or create a new version of a file (depending on the capabilities of this implementation)
+  rpc UpdateFile(DataObject) returns (AddDataObjectResponse) {
     option (google.api.http) = {
       put: "/ga4gh/dos/v1/file/{file_id}"
       body: "*"
@@ -106,28 +157,28 @@ service WorkflowService {
   }
 
   //Get info about a file
-  rpc GetFileStatus(FileID) returns (FileStatus) {
+  rpc GetFileStatus(GetDataObjectRequest) returns (FileStatusResponse) {
       option (google.api.http) = {
         get: "/ga4gh/dos/v1/file/{file_id}/status"
       };
   }
 
   //Delete a file
-  rpc DeleteFile() returns (FileStatus) {
+  rpc DeleteFile() returns (GetDataObjectRequest) {
       option (google.api.http) = {
         delete: "/ga4gh/dos/v1/file/{file_id}"
       };
   }
 
   //List the files
-  rpc ListFiles(FileListRequest) returns (FileListResponse) {
+  rpc ListFiles(ListDataObjectsRequest) returns (ListDataObjectsResponse) {
     option (google.api.http) = {
       get: "/ga4gh/dos/v1/file/list"
     };
   }
 
   //Make a new data bundle
-  rpc CreateFile(DataBundleRequest) returns (DataBundleID) {
+  rpc CreateFile(DataBundleObject) returns (AddDataBundleObjectResponse) {
     option (google.api.http) = {
       post: "/ga4gh/dos/v1/databundle/{databundle_id}"
       body: "*"
@@ -135,7 +186,7 @@ service WorkflowService {
   }
 
   //Create a new version of a data bundle
-  rpc UpdateDataBundle(DataBundleRequest) returns (DataBundleID) {
+  rpc UpdateDataBundle(DataBundleObject) returns (AddDataBundleObjectResponse) {
     option (google.api.http) = {
       put: "/ga4gh/dos/v1/databundle/{databundle_id}"
       body: "*"
@@ -143,21 +194,21 @@ service WorkflowService {
   }
 
   //Get info about a data bundle
-  rpc GetDataBundleStatus(DataBundleID) returns (DataBundleStatus) {
+  rpc GetDataBundleStatus(GetDataBundleObjectRequest) returns (DataBundleStatusResponse) {
       option (google.api.http) = {
         get: "/ga4gh/dos/v1/databundle/{databundle_id}/status"
       };
   }
 
   //Delete a data bundle
-  rpc DeleteDataBundle() returns (DataBundleStatus) {
+  rpc DeleteDataBundle() returns (GetDataBundleObjectRequest) {
       option (google.api.http) = {
         delete: "/ga4gh/dos/v1/databundle/{databundle_id}"
       };
   }
 
   //List the data bundles
-  rpc ListDataBundles(DataBundleListRequest) returns (DataBundleListResponse) {
+  rpc ListDataBundles(ListDataBundleObjectsRequest) returns (DataBundleListResponse) {
     option (google.api.http) = {
       get: "/ga4gh/dos/v1/databundle/list"
     };
