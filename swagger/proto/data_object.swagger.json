@@ -337,6 +337,93 @@
         ]
       }
     },
+    "/ga4gh/dos/v1/file/{id}/clouds": {
+      "get": {
+        "summary": "Get info about the clouds a file is on",
+        "operationId": "GetFileClouds",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/ga4gh_data_objectDataObjectCloudsResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "DataObjectService"
+        ]
+      }
+    },
+    "/ga4gh/dos/v1/file/{id}/nativeurl": {
+      "get": {
+        "summary": "For a given cloud, return the native path and optionally credentials for accessing this file",
+        "operationId": "GetFileCloudsNativeURL",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/ga4gh_data_objectDataObjectNativeURLResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "cloud",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "DataObjectService"
+        ]
+      }
+    },
+    "/ga4gh/dos/v1/file/{id}/signedurl": {
+      "get": {
+        "summary": "For a given cloud, create a signed URL for accessing this file",
+        "operationId": "GetFileCloudsSignedURL",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/ga4gh_data_objectDataObjectSignedURLResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "cloud",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "DataObjectService"
+        ]
+      }
+    },
     "/ga4gh/dos/v1/file/{id}/status": {
       "get": {
         "summary": "Get info about a file",
@@ -630,6 +717,39 @@
         }
       }
     },
+    "ga4gh_data_objectDataObjectCloudsResponse": {
+      "type": "object",
+      "properties": {
+        "clouds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "ga4gh_data_objectDataObjectNativeURLResponse": {
+      "type": "object",
+      "properties": {
+        "url": {
+          "type": "string"
+        },
+        "key": {
+          "type": "string"
+        },
+        "secret_key": {
+          "type": "string"
+        }
+      }
+    },
+    "ga4gh_data_objectDataObjectSignedURLResponse": {
+      "type": "object",
+      "properties": {
+        "url": {
+          "type": "string"
+        }
+      }
+    },
     "ga4gh_data_objectDeleteDataBundleObjectRequest": {
       "type": "object",
       "properties": {
@@ -666,6 +786,17 @@
       "type": "object",
       "properties": {
         "id": {
+          "type": "string"
+        }
+      }
+    },
+    "ga4gh_data_objectGetDataObjectCloudRequest": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "cloud": {
           "type": "string"
         }
       }

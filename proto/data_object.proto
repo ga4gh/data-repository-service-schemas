@@ -75,6 +75,25 @@ message DataBundleObject {
 
 }
 
+message DataObjectCloudsResponse {
+  repeated string clouds = 1;
+}
+
+message DataObjectSignedURLResponse {
+  string url = 1;
+}
+
+message GetDataObjectCloudRequest {
+  string id = 1;
+  string cloud = 2;
+}
+
+message DataObjectNativeURLResponse {
+  string url = 1;
+  string key = 2;
+  string secret_key = 3;
+}
+
 message AddDataBundleObjectResponse {
   string id = 1;
 }
@@ -168,6 +187,27 @@ service DataObjectService {
   rpc GetFileStatus(ga4gh.GetDataObjectRequest) returns (FileStatusResponse) {
       option (google.api.http) = {
         get: "/ga4gh/dos/v1/file/{id}/status"
+      };
+  }
+
+  //Get info about the clouds a file is on
+  rpc GetFileClouds(ga4gh.GetDataObjectRequest) returns (DataObjectCloudsResponse) {
+      option (google.api.http) = {
+        get: "/ga4gh/dos/v1/file/{id}/clouds"
+      };
+  }
+
+  //For a given cloud, create a signed URL for accessing this file
+  rpc GetFileCloudsSignedURL(GetDataObjectCloudRequest) returns (DataObjectSignedURLResponse) {
+      option (google.api.http) = {
+        get: "/ga4gh/dos/v1/file/{id}/signedurl"
+      };
+  }
+
+  //For a given cloud, return the native path and optionally credentials for accessing this file
+  rpc GetFileCloudsNativeURL(GetDataObjectCloudRequest) returns (DataObjectNativeURLResponse) {
+      option (google.api.http) = {
+        get: "/ga4gh/dos/v1/file/{id}/nativeurl"
       };
   }
 
