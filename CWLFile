@@ -2,7 +2,7 @@ includes:
   - class: Directory
     location: proto
   - class: Directory
-    location: ga4gh-schemas/src/main/proto/ga4gh
+    location: ga4gh-schemas/src/main/proto
 proto:
   class: File
   location: proto/data_object.proto
