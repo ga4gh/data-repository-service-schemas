@@ -104,15 +104,16 @@ More Information
 
 TODO/Questions
 --------------
-* can we move the schemas into this repo? Easier to release.
-* how does Brian W. link datasets and files?  I don't see a `dataset_id` in the `DataObject` message.
-* how does Brian W. search on keys?  What field is `has_keys` searching on for DataObjects?  How should we expose search for other entities in the DataObjects or DataBundleObjects?
-* do we want to use the data bundles concept? To model files separately?
-* do we want to support versioning?
-* do we want to support provenance?
+* can we move the schemas into this repo? Easier to release since won't be tied to GA4GH schemas release.
+* do we want to use the [data bundles concept](https://docs.google.com/document/d/1d-9eu5X6ioOlqOJ9kkY8lHvXDF-KoynlmqJbuKVPMF0/edit#heading=h.b3jd47oqdd2e)? Often times we want to be able to model related files (like a workflow output) together in some way.  The data bundle concept supports this.
+* do we want to support versioning (of files and data bundles)?  Implicit support right now in the sense that you can get an array of files or data bundles and use timestamp to understand their version.
+* do we want to support provenance?  Brian W's schema has a provenance object.
+* do we want to include bio-specific data in the API?  This is a bigger question of how generic do we want DOS to be.  I lean towards really generic and, therefore, all biospecimen metadata should just be in JSON files that are part of the data bundle.  The alternative is to include links to other GDC/GA4GH metadata structures as Brian W. has done here.  
+    * related, do we want to offer search on the bio-specific data?
 * do all the timestamps need to be generated server-side?  This might be key for supporting versioning.
-* do we want to include bio-specific data in the API?
-* do we want to offer search on the bio-specific data?
+* questions about Brian W's schema:
+    * how does Brian W. link datasets and files?  I don't see a `dataset_id` in the `DataObject` message.
+    * how does Brian W. search on keys?  What field is `has_keys` searching on for DataObjects?  How should we expose search for other entities in the DataObjects or DataBundleObjects?
 * other fields from GDC to consider:
     * state
     * file_state
