@@ -19,6 +19,7 @@ message DataBundleObject {
   repeated ga4gh.DataObject files = 2;
 
   //REQUIRED
+  // Timestamp of file creation in RFC3339, should we use this?
   // The time at which this object was created in milliseconds from the
   // epoch.
   int64 created = 3; // timestamp
