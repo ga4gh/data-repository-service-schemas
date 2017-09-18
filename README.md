@@ -5,7 +5,7 @@ Schemas for the Data Object Service (DOS) API
 
 This is used by the Data Working Group - Containers and Workflows Task Team
 
-<img src="swagger_editor.png" width="48">[View in Swagger](http://editor2.swagger.io/#/?import=https://raw.githubusercontent.com/ga4gh/data-object-schemas/feature/protobuf-bdo-2/swagger/proto/data_object.swagger.json)
+<img src="swagger_editor.png" width="48">[View in Swagger](http://editor2.swagger.io/#/?import=https://raw.githubusercontent.com/ga4gh/data-object-schemas/feature/protobuf-bdo-2/swagger/proto/data_objects.swagger.json)
 
 The [Global Alliance for Genomics and Health](http://genomicsandhealth.org/) is an international
 coalition, formed to enable the sharing of genomic and clinical data.
@@ -60,7 +60,7 @@ Find the output in `data_object.swagger.json` and this can be loaded in the [Swa
 
 When you're happy with the changes, checkin this file:
 
-    mv data_object.swagger.json swagger/proto/
+    mv data_objects.swagger.json swagger/proto/
 
 And commit your changes.
 
