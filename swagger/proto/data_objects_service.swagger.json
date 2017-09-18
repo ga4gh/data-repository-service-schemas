@@ -492,7 +492,7 @@
         },
         "checksum": {
           "type": "string",
-          "title": "OPTIONAL, the bundle SHA256 checksum"
+          "title": "OPTIONAL, the bundle SHA256 checksum which is a SHA256 checksum of all the SHA256 checksums of the files that make up this bundle"
         },
         "dataset_id": {
           "type": "string",

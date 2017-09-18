@@ -24,7 +24,7 @@ message DataBundleObject {
   // A string representing a version, some systems may use checksum, a RFC3339 timestamp, or incrementing version number
   string version = 4;
 
-  //OPTIONAL, the bundle SHA256 checksum
+  //OPTIONAL, the bundle SHA256 checksum which is a SHA256 checksum of all the SHA256 checksums of the files that make up this bundle  
   string checksum =  5;
 
   //OPTIONAL
