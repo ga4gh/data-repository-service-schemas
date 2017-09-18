@@ -15,6 +15,31 @@
     "application/json"
   ],
   "paths": {
+    "/ga4gh/dos/v1/databundles-by-checksum/{checksum}/status": {
+      "get": {
+        "summary": "Get info about data bundles sharing a SHA256 checksum",
+        "operationId": "GetDataBundleChecksumStatus",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/ga4gh_data_objectDataBundleChecksumStatusResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "checksum",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "DataObjectService"
+        ]
+      }
+    },
     "/ga4gh/dos/v1/databundles/list": {
       "get": {
         "summary": "List the data bundles",
@@ -72,31 +97,6 @@
             "description": "OPTIONAL\nThe continuation token, which is used to page through large result sets.\nTo get the next page of results, set this parameter to the value of\n`next_page_token` from the previous response.",
             "in": "query",
             "required": false,
-            "type": "string"
-          }
-        ],
-        "tags": [
-          "DataObjectService"
-        ]
-      }
-    },
-    "/ga4gh/dos/v1/databundles/{checksum}/status": {
-      "get": {
-        "summary": "Get info about data bundles sharing a SHA256 checksum",
-        "operationId": "GetDataBundleChecksumStatus",
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/ga4gh_data_objectDataBundleChecksumStatusResponse"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "checksum",
-            "in": "path",
-            "required": true,
             "type": "string"
           }
         ],
@@ -217,6 +217,31 @@
         ]
       }
     },
+    "/ga4gh/dos/v1/files-by-checksum/{checksum}/status": {
+      "get": {
+        "summary": "Get info about files sharing a SHA256 checksum",
+        "operationId": "GetFileChecksumStatus",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/ga4gh_data_objectFileChecksumStatusResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "checksum",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "DataObjectService"
+        ]
+      }
+    },
     "/ga4gh/dos/v1/files/list": {
       "get": {
         "summary": "List the files",
@@ -267,31 +292,6 @@
             "description": "OPTIONAL\nThe continuation token, which is used to page through large result sets.\nTo get the next page of results, set this parameter to the value of\n`next_page_token` from the previous response.",
             "in": "query",
             "required": false,
-            "type": "string"
-          }
-        ],
-        "tags": [
-          "DataObjectService"
-        ]
-      }
-    },
-    "/ga4gh/dos/v1/files/{checksum}/status": {
-      "get": {
-        "summary": "Get info about files sharing a SHA256 checksum",
-        "operationId": "GetFileChecksumStatus",
-        "responses": {
-          "200": {
-            "description": "",
-            "schema": {
-              "$ref": "#/definitions/ga4gh_data_objectFileChecksumStatusResponse"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "checksum",
-            "in": "path",
-            "required": true,
             "type": "string"
           }
         ],

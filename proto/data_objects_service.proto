@@ -39,7 +39,7 @@ service DataObjectService {
   //Get info about files sharing a SHA256 checksum
   rpc GetFileChecksumStatus(GetDataObjectChecksumRequest) returns (FileChecksumStatusResponse) {
       option (google.api.http) = {
-        get: "/ga4gh/dos/v1/files/{checksum}/status"
+        get: "/ga4gh/dos/v1/files-by-checksum/{checksum}/status"
       };
   }
 
@@ -104,7 +104,7 @@ service DataObjectService {
   //Get info about data bundles sharing a SHA256 checksum
   rpc GetDataBundleChecksumStatus(GetDataBundleObjectChecksumRequest) returns (DataBundleChecksumStatusResponse) {
       option (google.api.http) = {
-        get: "/ga4gh/dos/v1/databundles/{checksum}/status"
+        get: "/ga4gh/dos/v1/databundles-by-checksum/{checksum}/status"
       };
   }
 
