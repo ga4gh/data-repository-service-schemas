@@ -1,0 +1,319 @@
+
+syntax = "proto3";
+
+package ga4gh_data_object;
+
+// Import HTTP RESTful annotations
+import "google/api/annotations.proto";
+import "google/protobuf/struct.proto";
+import "google/protobuf/timestamp.proto";
+
+///-------------------------------------------------------------------
+message DataBundleObject {
+  //REQUIRED
+  string id = 1;
+
+  //REQUIRED
+  repeated DataObject files = 2;
+
+  //REQUIRED
+  // Timestamp of object creation in RFC3339.
+  google.protobuf.Timestamp created = 3;
+
+  //REQUIRED
+  // Timestamp object was last updated in RFC3339.
+  google.protobuf.Timestamp updated = 4;
+
+  //OPTIONAL, the md5sum of file md5sums
+  string md5sum =  5;
+
+  //OPTIONAL
+  string dataset_id = 6;
+
+  //REQUIRED
+  repeated string urls = 7;
+
+  //OPTIONAL
+  string description = 8;
+
+  //OPTIONAL TODO ARE THESE NAMES, IDS, URLS?
+  repeated string aliases = 9;
+
+  //OPTIONAL
+  Provenance provenance = 10;
+
+  //OPTIONAL
+  google.protobuf.Struct info = 11;
+
+  //OPTIONAL
+  // A Resource can optionally be associated with the following linked entities :
+  // relationship  example description
+  // aliquots         https://github.com/NCI-GDC/gdcdictionary/blob/develop/gdcdictionary/schemas/aliquot.yaml
+  // analytes         https://github.com/NCI-GDC/gdcdictionary/blob/develop/gdcdictionary/schemas/analyte.yaml
+  // archives         https://github.com/NCI-GDC/gdcdictionary/blob/develop/gdcdictionary/schemas/archive.yaml
+  // individual (case,donor)   https://github.com/ga4gh/ga4gh-schemas/blob/master/src/main/proto/ga4gh/bio_metadata.proto#L11
+  // centers          https://github.com/NCI-GDC/gdcdictionary/blob/develop/gdcdictionary/schemas/center.yaml
+  // data_formats     https://github.com/NCI-GDC/gdcdictionary/blob/develop/gdcdictionary/schemas/data_format.yaml
+  // dataset          https://github.com/ga4gh/ga4gh-schemas/blob/master/src/main/proto/ga4gh/metadata.proto#L10
+  // derived_files    https://github.com/NCI-GDC/gdcdictionary/blob/develop/gdcdictionary/schemas/file.yaml#L50
+  // platforms        https://github.com/NCI-GDC/gdcdictionary/blob/master/gdcdictionary/schemas/platform.yaml
+  // portions         https://github.com/NCI-GDC/gdcdictionary/blob/master/gdcdictionary/schemas/portion.yaml
+  // project          https://github.com/NCI-GDC/gdcdictionary/blob/master/gdcdictionary/schemas/project.yaml
+  // related_files    https://github.com/NCI-GDC/gdcdictionary/blob/develop/gdcdictionary/schemas/file.yaml#L50
+  // biosample        https://github.com/ga4gh/ga4gh-schemas/blob/master/src/main/proto/ga4gh/bio_metadata.proto#L65
+  // slides           https://github.com/NCI-GDC/gdcdictionary/blob/master/gdcdictionary/schemas/slide.yaml
+  // tags             https://github.com/NCI-GDC/gdcdictionary/blob/master/gdcdictionary/schemas/tag.yaml
+  // repository       http://docs.icgc.org/portal/api-endpoints/#!/repositories/list
+  repeated Link links = 12;
+
+  // OPTIONAL the id of the file as submitted
+  string submitted_id = 13;
+
+}
+
+message DataObjectCloudsResponse {
+  repeated string clouds = 1;
+}
+
+message DataObjectSignedURLResponse {
+  string url = 1;
+}
+
+message GetDataObjectCloudRequest {
+  string id = 1;
+  string cloud = 2;
+}
+
+message DataObjectNativeURLResponse {
+  string url = 1;
+  string key = 2;
+  string secret_key = 3;
+}
+
+message AddDataBundleObjectResponse {
+  string id = 1;
+}
+
+message GetDataBundleObjectRequest {
+  string id = 1;
+}
+
+message DeleteDataBundleObjectRequest {
+  string id = 1;
+}
+
+message DeleteDataObjectRequest {
+  string id = 1;
+}
+
+message DataBundleStatusResponse {
+  //REQUIRED
+  string id = 1;
+
+  //REQUIRED
+  repeated DataBundleObject data_bundle_versions = 2;
+}
+
+message ListDataBundleObjectsRequest {
+  //OPTIONAL
+  string id = 1;
+
+  //OPTIONAL, searching description, aliases, and urls
+  repeated string has_keys = 2;
+
+  //OPTIONAL
+  string dataset_id = 3;
+
+  //OPTIONAL
+  string submitted_id = 4;
+
+  //OPTIONAL
+  // Specifies the maximum number of results to return in a single page.
+  // If unspecified, a system default will be used.
+  int32 page_size = 5;
+
+  //OPTIONAL
+  // The continuation token, which is used to page through large result sets.
+  // To get the next page of results, set this parameter to the value of
+  // `next_page_token` from the previous response.
+  string page_token = 6;
+
+}
+
+message ListDataBundleObjectsResponse {
+  // The list of datasets.
+  repeated DataBundleObject data_bundle_objects = 1;
+
+  // The continuation token, which is used to page through large result sets.
+  // Provide this value in a subsequent request to return the next page of
+  // results. This field will be empty if there aren't any additional results.
+  string next_page_token = 2;
+}
+
+message FileStatusResponse {
+  //REQUIRED
+  string id = 1;
+
+  //REQUIRED
+  repeated DataObject file_versions = 2;
+
+}
+
+///-------------------------------------------------------------------
+// Link: for HATEOAS links (Hypermedia As The Engine Of Application State)
+///-------------------------------------------------------------------
+message Link {
+  string rel = 1;   // Relationship between the document containing the link and the destination resource
+  oneof payload {
+    string url = 2;  // Address of the entity
+    string id = 3;   // Id of the entity
+  }
+  string mime_type = 4;  // Hint for the type of the referenced resource mimetype
+}
+
+///-------------------------------------------------------------------
+// Resource: a file, API or other resource
+///-------------------------------------------------------------------
+message DataObject {
+  //REQUIRED
+  string id = 1;
+
+  //REQUIRED
+  string file_name = 2;
+
+  //REQUIRED
+  int64 file_size = 3;
+
+  //REQUIRED
+  // The time at which this object was created in milliseconds from the
+  // epoch.
+  int64 created = 4; // timestamp
+
+  //REQUIRED
+  // The time at which this object was last updated in milliseconds from the
+  // epoch.
+  int64 updated = 5;
+
+  //OPTIONAL
+  string mime_type = 6;
+
+  //OPTIONAL
+  string md5sum =  7;
+
+  //REQUIRED
+  repeated string urls = 8;
+
+  //OPTIONAL
+  string description = 9;
+
+  //OPTIONAL TODO ARE THESE NAMES, IDS, URLS?
+  repeated string aliases = 10;
+
+  //OPTIONAL
+  Provenance provenance = 11;
+
+  //OPTIONAL
+  google.protobuf.Struct info = 12;
+
+  //OPTIONAL
+  // A Resource can optionally be associated with the following linked entities :
+  // relationship  example description
+  // aliquots         https://github.com/NCI-GDC/gdcdictionary/blob/develop/gdcdictionary/schemas/aliquot.yaml
+  // analytes         https://github.com/NCI-GDC/gdcdictionary/blob/develop/gdcdictionary/schemas/analyte.yaml
+  // archives         https://github.com/NCI-GDC/gdcdictionary/blob/develop/gdcdictionary/schemas/archive.yaml
+  // individual (case,donor)   https://github.com/ga4gh/ga4gh-schemas/blob/master/src/main/proto/ga4gh/bio_metadata.proto#L11
+  // centers          https://github.com/NCI-GDC/gdcdictionary/blob/develop/gdcdictionary/schemas/center.yaml
+  // data_formats     https://github.com/NCI-GDC/gdcdictionary/blob/develop/gdcdictionary/schemas/data_format.yaml
+  // dataset          https://github.com/ga4gh/ga4gh-schemas/blob/master/src/main/proto/ga4gh/metadata.proto#L10
+  // derived_files    https://github.com/NCI-GDC/gdcdictionary/blob/develop/gdcdictionary/schemas/file.yaml#L50
+  // platforms        https://github.com/NCI-GDC/gdcdictionary/blob/master/gdcdictionary/schemas/platform.yaml
+  // portions         https://github.com/NCI-GDC/gdcdictionary/blob/master/gdcdictionary/schemas/portion.yaml
+  // project          https://github.com/NCI-GDC/gdcdictionary/blob/master/gdcdictionary/schemas/project.yaml
+  // related_files    https://github.com/NCI-GDC/gdcdictionary/blob/develop/gdcdictionary/schemas/file.yaml#L50
+  // biosample        https://github.com/ga4gh/ga4gh-schemas/blob/master/src/main/proto/ga4gh/bio_metadata.proto#L65
+  // slides           https://github.com/NCI-GDC/gdcdictionary/blob/master/gdcdictionary/schemas/slide.yaml
+  // tags             https://github.com/NCI-GDC/gdcdictionary/blob/master/gdcdictionary/schemas/tag.yaml
+  // repository       http://docs.icgc.org/portal/api-endpoints/#!/repositories/list
+  repeated Link links = 13;
+
+  // OPTIONAL the id of the file as submitted
+  string submitted_id = 14;
+
+  //TODO DISCUSS OTHER GDC fields
+  // # state
+  // # file_state
+  // # error_type
+  // # submitter_id
+
+}
+
+///-------------------------------------------------------------------
+// A description of how the dataobject was created
+///-------------------------------------------------------------------
+
+message Provenance {
+  //REQUIRED
+  // A string defining an operation
+  string operation = 1;
+
+  //OPTIONAL
+  // An array of data_object_id inputs to a operation
+  // TODO append other ideas here e.g. data descriptor
+  repeated string sources = 2;
+}
+
+///-------------------------------------------------------------------
+// A request to list all objects in a dataset
+///-------------------------------------------------------------------
+
+message ListDataObjectsRequest {
+  //OPTIONAL
+  string name_prefix = 1;
+
+  //OPTIONAL
+  repeated string has_keys = 2;
+
+  //OPTIONAL
+  string dataset_id = 3;
+
+  //OPTIONAL
+  // Specifies the maximum number of results to return in a single page.
+  // If unspecified, a system default will be used.
+  int32 page_size = 4;
+
+  //OPTIONAL
+  // The continuation token, which is used to page through large result sets.
+  // To get the next page of results, set this parameter to the value of
+  // `next_page_token` from the previous response.
+  string page_token = 5;
+
+}
+
+///-------------------------------------------------------------------
+// A list of data objects
+///-------------------------------------------------------------------
+
+message ListDataObjectsResponse {
+  // The list of datasets.
+  repeated DataObject dataobjects = 1;
+
+  // The continuation token, which is used to page through large result sets.
+  // Provide this value in a subsequent request to return the next page of
+  // results. This field will be empty if there aren't any additional results.
+  string next_page_token = 2;
+}
+
+///-------------------------------------------------------------------
+// The id of the data_object created
+///-------------------------------------------------------------------
+
+message AddDataObjectResponse {
+  string id = 1;
+}
+
+///-------------------------------------------------------------------
+// The id of the data_object requested
+///-------------------------------------------------------------------
+message GetDataObjectRequest {
+  string id = 1;
+}
