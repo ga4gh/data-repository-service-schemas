@@ -21,29 +21,33 @@ message DataBundleObject {
   google.protobuf.Timestamp created = 3;
 
   //REQUIRED
-  // A string representing a version, some systems may use checksum, a RFC3339 timestamp, or incrementing version number
-  string version = 4;
-
-  //OPTIONAL, the bundle SHA256 checksum which is a SHA256 checksum of all the SHA256 checksums of the files that make up this bundle  
-  string checksum =  5;
+  // Timestamp of update in RFC3339, identical to create timestamp in systems that do not support updates.
+  google.protobuf.Timestamp updated = 4;
 
   //OPTIONAL
-  string dataset_id = 6;
+  // A string representing a version, some systems may use checksum, a RFC3339 timestamp, or incrementing version number
+  string version = 5;
+
+  //OPTIONAL, the bundle SHA256 checksum which is a SHA256 checksum of all the SHA256 checksums of the files that make up this bundle
+  string checksum =  6;
+
+  //OPTIONAL
+  string dataset_id = 7;
 
   //REQUIRED
-  repeated string urls = 7;
+  repeated string urls = 8;
 
   //OPTIONAL
-  string description = 8;
+  string description = 9;
 
   //OPTIONAL TODO ARE THESE NAMES, IDS, URLS?
-  repeated string aliases = 9;
+  repeated string aliases = 10;
 
   //OPTIONAL
-  Provenance provenance = 10;
+  Provenance provenance = 11;
 
   //OPTIONAL
-  google.protobuf.Struct info = 11;
+  google.protobuf.Struct info = 12;
 
   //OPTIONAL
   // A Resource can optionally be associated with the following linked entities :
@@ -64,10 +68,10 @@ message DataBundleObject {
   // slides           https://github.com/NCI-GDC/gdcdictionary/blob/master/gdcdictionary/schemas/slide.yaml
   // tags             https://github.com/NCI-GDC/gdcdictionary/blob/master/gdcdictionary/schemas/tag.yaml
   // repository       http://docs.icgc.org/portal/api-endpoints/#!/repositories/list
-  repeated Link links = 12;
+  repeated Link links = 13;
 
   // OPTIONAL the id of the file as submitted
-  string submitted_id = 13;
+  string submitted_id = 14;
 
 }
 
@@ -186,32 +190,36 @@ message DataObject {
 
   //REQUIRED
   // Timestamp of object creation in RFC3339.
-  google.protobuf.Timestamp timestamp = 4;
+  google.protobuf.Timestamp created = 4;
 
   //REQUIRED
-  // A string representing a version, some systems may use checksum, a RFC3339 timestamp, or incrementing version number
-  string version = 5;
+  // Timestamp of update in RFC3339, identical to create timestamp in systems that do not support updates.
+  google.protobuf.Timestamp updated = 5;
 
   //OPTIONAL
-  string mime_type = 6;
+  // A string representing a version, some systems may use checksum, a RFC3339 timestamp, or incrementing version number
+  string version = 6;
+
+  //OPTIONAL
+  string mime_type = 7;
 
   //OPTIONAL, the file SHA256 checksum
-  string checksum =  7;
+  string checksum =  8;
 
   //REQUIRED
-  repeated string urls = 8;
+  repeated string urls = 9;
 
   //OPTIONAL
-  string description = 9;
+  string description = 10;
 
   //OPTIONAL TODO ARE THESE NAMES, IDS, URLS?
-  repeated string aliases = 10;
+  repeated string aliases = 11;
 
   //OPTIONAL
-  Provenance provenance = 11;
+  Provenance provenance = 12;
 
   //OPTIONAL
-  google.protobuf.Struct info = 12;
+  google.protobuf.Struct info = 13;
 
   //OPTIONAL
   // A Resource can optionally be associated with the following linked entities :
@@ -232,10 +240,10 @@ message DataObject {
   // slides           https://github.com/NCI-GDC/gdcdictionary/blob/master/gdcdictionary/schemas/slide.yaml
   // tags             https://github.com/NCI-GDC/gdcdictionary/blob/master/gdcdictionary/schemas/tag.yaml
   // repository       http://docs.icgc.org/portal/api-endpoints/#!/repositories/list
-  repeated Link links = 13;
+  repeated Link links = 14;
 
   // OPTIONAL the id of the file as submitted
-  string submitted_id = 14;
+  string submitted_id = 15;
 
   //TODO DISCUSS OTHER GDC fields
   // # state

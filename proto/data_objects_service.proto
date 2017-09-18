@@ -21,7 +21,7 @@ service DataObjectService {
     };
   }
 
-  //Update or create a new version of a file (depending on the capabilities of this implementation)
+  //Update or create a new version of a file (depending on the capabilities of this implementation). For systems that support versioning, the combination of ID and version must be unique e.g. systems cannot support versioning and also allow changes to previous versions.
   rpc UpdateFile(DataObject) returns (AddDataObjectResponse) {
     option (google.api.http) = {
       put: "/ga4gh/dos/v1/file/{id}"
@@ -79,7 +79,7 @@ service DataObjectService {
     };
   }
 
-  //Create a new version of a data bundle
+  //Update or create a new version of a data bundle (depending on the capabilities of this implementation). For systems that support versioning, the combination of ID and version must be unique e.g. systems cannot support versioning and also allow changes to previous versions.
   rpc UpdateDataBundle(DataBundleObject) returns (AddDataBundleObjectResponse) {
     option (google.api.http) = {
       put: "/ga4gh/dos/v1/databundle/{id}"
