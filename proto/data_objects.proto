@@ -102,6 +102,10 @@ message GetDataBundleObjectRequest {
   string id = 1;
 }
 
+message GetDataBundleObjectChecksumRequest {
+  string checksum = 1;
+}
+
 message DeleteDataBundleObjectRequest {
   string id = 1;
 }
@@ -113,6 +117,14 @@ message DeleteDataObjectRequest {
 message DataBundleStatusResponse {
   //REQUIRED
   string id = 1;
+
+  //REQUIRED
+  repeated DataBundleObject data_bundle_versions = 2;
+}
+
+message DataBundleChecksumStatusResponse {
+  //REQUIRED
+  string checksum = 1;
 
   //REQUIRED
   repeated DataBundleObject data_bundle_versions = 2;
@@ -157,6 +169,15 @@ message ListDataBundleObjectsResponse {
 message FileStatusResponse {
   //REQUIRED
   string id = 1;
+
+  //REQUIRED
+  repeated DataObject file_versions = 2;
+
+}
+
+message FileChecksumStatusResponse {
+  //REQUIRED
+  string checksum = 1;
 
   //REQUIRED
   repeated DataObject file_versions = 2;
@@ -322,4 +343,8 @@ message AddDataObjectResponse {
 ///-------------------------------------------------------------------
 message GetDataObjectRequest {
   string id = 1;
+}
+
+message GetDataObjectChecksumRequest {
+  string checksum = 1;
 }

@@ -15,7 +15,7 @@
     "application/json"
   ],
   "paths": {
-    "/ga4gh/dos/v1/databundle/list": {
+    "/ga4gh/dos/v1/databundles/list": {
       "get": {
         "summary": "List the data bundles",
         "operationId": "ListDataBundles",
@@ -80,7 +80,32 @@
         ]
       }
     },
-    "/ga4gh/dos/v1/databundle/{id}": {
+    "/ga4gh/dos/v1/databundles/{checksum}/status": {
+      "get": {
+        "summary": "Get info about data bundles sharing a SHA256 checksum",
+        "operationId": "GetDataBundleChecksumStatus",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/ga4gh_data_objectDataBundleChecksumStatusResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "checksum",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "DataObjectService"
+        ]
+      }
+    },
+    "/ga4gh/dos/v1/databundles/{id}": {
       "delete": {
         "summary": "Delete a data bundle",
         "operationId": "DeleteDataBundle",
@@ -167,7 +192,7 @@
         ]
       }
     },
-    "/ga4gh/dos/v1/databundle/{id}/status": {
+    "/ga4gh/dos/v1/databundles/{id}/status": {
       "get": {
         "summary": "Get info about a data bundle",
         "operationId": "GetDataBundleStatus",
@@ -192,7 +217,7 @@
         ]
       }
     },
-    "/ga4gh/dos/v1/file/list": {
+    "/ga4gh/dos/v1/files/list": {
       "get": {
         "summary": "List the files",
         "operationId": "ListFiles",
@@ -250,7 +275,32 @@
         ]
       }
     },
-    "/ga4gh/dos/v1/file/{id}": {
+    "/ga4gh/dos/v1/files/{checksum}/status": {
+      "get": {
+        "summary": "Get info about files sharing a SHA256 checksum",
+        "operationId": "GetFileChecksumStatus",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/ga4gh_data_objectFileChecksumStatusResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "checksum",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "DataObjectService"
+        ]
+      }
+    },
+    "/ga4gh/dos/v1/files/{id}": {
       "delete": {
         "summary": "Delete a file",
         "operationId": "DeleteFile",
@@ -337,7 +387,7 @@
         ]
       }
     },
-    "/ga4gh/dos/v1/file/{id}/clouds": {
+    "/ga4gh/dos/v1/files/{id}/clouds": {
       "get": {
         "summary": "Get info about the clouds a file is on",
         "operationId": "GetFileClouds",
@@ -362,7 +412,7 @@
         ]
       }
     },
-    "/ga4gh/dos/v1/file/{id}/nativeurl": {
+    "/ga4gh/dos/v1/files/{id}/nativeurl": {
       "get": {
         "summary": "For a given cloud, return the native path and optionally credentials for accessing this file",
         "operationId": "GetFileCloudsNativeURL",
@@ -393,7 +443,7 @@
         ]
       }
     },
-    "/ga4gh/dos/v1/file/{id}/signedurl": {
+    "/ga4gh/dos/v1/files/{id}/signedurl": {
       "get": {
         "summary": "For a given cloud, create a signed URL for accessing this file",
         "operationId": "GetFileCloudsSignedURL",
@@ -424,7 +474,7 @@
         ]
       }
     },
-    "/ga4gh/dos/v1/file/{id}/status": {
+    "/ga4gh/dos/v1/files/{id}/status": {
       "get": {
         "summary": "Get info about a file",
         "operationId": "GetFileStatus",
@@ -464,6 +514,22 @@
       "properties": {
         "id": {
           "type": "string"
+        }
+      }
+    },
+    "ga4gh_data_objectDataBundleChecksumStatusResponse": {
+      "type": "object",
+      "properties": {
+        "checksum": {
+          "type": "string",
+          "title": "REQUIRED"
+        },
+        "data_bundle_versions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ga4gh_data_objectDataBundleObject"
+          },
+          "title": "REQUIRED"
         }
       }
     },
@@ -686,6 +752,22 @@
         }
       }
     },
+    "ga4gh_data_objectFileChecksumStatusResponse": {
+      "type": "object",
+      "properties": {
+        "checksum": {
+          "type": "string",
+          "title": "REQUIRED"
+        },
+        "file_versions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ga4gh_data_objectDataObject"
+          },
+          "title": "REQUIRED"
+        }
+      }
+    },
     "ga4gh_data_objectFileStatusResponse": {
       "type": "object",
       "properties": {
@@ -702,10 +784,26 @@
         }
       }
     },
+    "ga4gh_data_objectGetDataBundleObjectChecksumRequest": {
+      "type": "object",
+      "properties": {
+        "checksum": {
+          "type": "string"
+        }
+      }
+    },
     "ga4gh_data_objectGetDataBundleObjectRequest": {
       "type": "object",
       "properties": {
         "id": {
+          "type": "string"
+        }
+      }
+    },
+    "ga4gh_data_objectGetDataObjectChecksumRequest": {
+      "type": "object",
+      "properties": {
+        "checksum": {
           "type": "string"
         }
       }
