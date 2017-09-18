@@ -72,7 +72,7 @@ When you're happy with the changes, checkin this file:
 
     mv data_objects_service.swagger.json swagger/proto/
 
-And commit your changes.
+And commit your changes, pushing to the appropriate branch.
 
 How to contribute changes
 -------------------------
