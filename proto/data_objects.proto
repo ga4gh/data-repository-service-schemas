@@ -185,14 +185,12 @@ message DataObject {
   int64 file_size = 3;
 
   //REQUIRED
-  // The time at which this object was created in milliseconds from the
-  // epoch.
-  int64 created = 4; // timestamp
+  // Timestamp of object creation in RFC3339.
+  google.protobuf.Timestamp created = 4;
 
   //REQUIRED
-  // The time at which this object was last updated in milliseconds from the
-  // epoch.
-  int64 updated = 5;
+  // Timestamp of object creation in RFC3339.
+  google.protobuf.Timestamp updated = 5;
 
   //OPTIONAL
   string mime_type = 6;
