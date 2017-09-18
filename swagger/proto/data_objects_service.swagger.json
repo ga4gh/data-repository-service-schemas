@@ -15,7 +15,7 @@
     "application/json"
   ],
   "paths": {
-    "/ga4gh/dos/v1/databundles-by-checksum/{checksum}/status": {
+    "/ga4gh/dos/v1/databundles-by-checksum/{checksum}": {
       "get": {
         "summary": "Get info about data bundles sharing a SHA256 checksum",
         "operationId": "GetDataBundleChecksumStatus",
@@ -192,7 +192,7 @@
         ]
       }
     },
-    "/ga4gh/dos/v1/databundles/{id}/status": {
+    "/ga4gh/dos/v1/databundles/{id}/versions": {
       "get": {
         "summary": "Get info about a data bundle",
         "operationId": "GetDataBundleStatus",
@@ -217,7 +217,7 @@
         ]
       }
     },
-    "/ga4gh/dos/v1/files-by-checksum/{checksum}/status": {
+    "/ga4gh/dos/v1/files-by-checksum/{checksum}": {
       "get": {
         "summary": "Get info about files sharing a SHA256 checksum",
         "operationId": "GetFileChecksumStatus",
@@ -474,7 +474,7 @@
         ]
       }
     },
-    "/ga4gh/dos/v1/files/{id}/status": {
+    "/ga4gh/dos/v1/files/{id}/versions": {
       "get": {
         "summary": "Get info about a file",
         "operationId": "GetFileStatus",
