@@ -493,11 +493,11 @@
         },
         "version": {
           "type": "string",
-          "title": "OPTIONAL\nA string representing a version, some systems may use checksum, a RFC3339 timestamp, or incrementing version number"
+          "description": "REQUIRED\nA string representing a version, some systems may use checksum, a RFC3339 timestamp, or incrementing version number. For systems that do not support versioning please use your update timestamp as your version."
         },
         "checksum": {
           "type": "string",
-          "title": "OPTIONAL, the bundle SHA256 checksum which is a SHA256 checksum of all the SHA256 checksums of the files that make up this bundle"
+          "title": "REQUIRED, the bundle SHA256 checksum which is a SHA256 checksum of all the SHA256 checksums of the files that make up this bundle"
         },
         "dataset_id": {
           "type": "string",
@@ -508,7 +508,7 @@
           "items": {
             "type": "string"
           },
-          "title": "REQUIRED"
+          "title": "OPTIONAL"
         },
         "description": {
           "type": "string",
@@ -519,7 +519,7 @@
           "items": {
             "type": "string"
           },
-          "title": "OPTIONAL TODO ARE THESE NAMES, IDS, URLS?"
+          "title": "OPTIONAL"
         },
         "provenance": {
           "$ref": "#/definitions/ga4gh_data_objectProvenance",
@@ -587,7 +587,7 @@
         },
         "version": {
           "type": "string",
-          "title": "OPTIONAL\nA string representing a version, some systems may use checksum, a RFC3339 timestamp, or incrementing version number"
+          "description": "REQUIRED\nA string representing a version, some systems may use checksum, a RFC3339 timestamp, or incrementing version number. For systems that do not support versioning please use your update timestamp as your version."
         },
         "mime_type": {
           "type": "string",
@@ -595,14 +595,14 @@
         },
         "checksum": {
           "type": "string",
-          "title": "OPTIONAL, the file SHA256 checksum"
+          "title": "REQUIRED, the file SHA256 checksum"
         },
         "urls": {
           "type": "array",
           "items": {
             "type": "string"
           },
-          "title": "REQUIRED"
+          "title": "OPTIONAL"
         },
         "description": {
           "type": "string",
@@ -613,7 +613,7 @@
           "items": {
             "type": "string"
           },
-          "title": "OPTIONAL TODO ARE THESE NAMES, IDS, URLS?"
+          "title": "OPTIONAL"
         },
         "provenance": {
           "$ref": "#/definitions/ga4gh_data_objectProvenance",
