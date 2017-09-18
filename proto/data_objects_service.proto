@@ -7,7 +7,7 @@ package ga4gh_data_object;
 // from github.com/googleapis/googleapis
 import "google/api/annotations.proto";
 
-import "ga4gh_data_object/data_objects.proto";
+import "data_objects.proto";
 
 
 //Web service to get, create, list and delete Data Objects

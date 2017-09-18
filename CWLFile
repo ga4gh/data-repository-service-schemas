@@ -5,5 +5,5 @@ includes:
     location: ga4gh-schemas/src/main/proto
 proto:
   class: File
-  location: proto/data_objects.proto
+  location: proto/data_objects_service.proto
 cwl:tool: protoc.cwl
