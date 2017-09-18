@@ -21,11 +21,11 @@ message DataBundleObject {
   google.protobuf.Timestamp created = 3;
 
   //REQUIRED
-  // Timestamp object was last updated in RFC3339.
-  google.protobuf.Timestamp updated = 4;
+  // A string representing a version, some systems may use checksum, a RFC3339 timestamp, or incrementing version number
+  string version = 4;
 
-  //OPTIONAL, the md5sum of file md5sums
-  string md5sum =  5;
+  //OPTIONAL, the bundle SHA256 checksum
+  string checksum =  5;
 
   //OPTIONAL
   string dataset_id = 6;
@@ -186,17 +186,17 @@ message DataObject {
 
   //REQUIRED
   // Timestamp of object creation in RFC3339.
-  google.protobuf.Timestamp created = 4;
+  google.protobuf.Timestamp timestamp = 4;
 
   //REQUIRED
-  // Timestamp of object creation in RFC3339.
-  google.protobuf.Timestamp updated = 5;
+  // A string representing a version, some systems may use checksum, a RFC3339 timestamp, or incrementing version number
+  string version = 5;
 
   //OPTIONAL
   string mime_type = 6;
 
-  //OPTIONAL
-  string md5sum =  7;
+  //OPTIONAL, the file SHA256 checksum
+  string checksum =  7;
 
   //REQUIRED
   repeated string urls = 8;
