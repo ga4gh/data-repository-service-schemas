@@ -18,7 +18,17 @@ The [Data Working Group](http://ga4gh.org/#/) concentrates on data representatio
 What is DOS?
 ------------
 
-Currently, this is the home of the Data Object Service (DOS) API proposal. This repo has a CWL-based build process ready to go and a place for us to collectively work on [USECASES.md](USECASES.md)
+Currently, this is the home of the Data Object Service (DOS) API proposal. This repo has a CWL-based build process ready to go and a place for us to collectively work on [USECASES.md](USECASES.md).
+
+This proposal for a DOS release is based on the schema work of Brian W. and others from OHSU along with work by UCSC.  It also is informed by existing object storage systems such as:
+
+* GNOS: http://annaisystems.com/ (as used by PCAWG, see https://pcawg.icgc.org)
+* ICGC Storage: as used to store data on S3, see https://github.com/icgc-dcc/dcc-storage and https://dcc.icgc.org/icgc-in-the-cloud/aws
+* HCA Storage: see https://dss.staging.data.humancellatlas.org/ and https://github.com/HumanCellAtlas/data-store
+* the GDC Storage: see https://gdc.cancer.gov
+* Keep by Curoverse: see https://arvados.org/ and https://github.com/curoverse/arvados
+
+The goal of DOS is to create a generic API on top of these and other projects, so workflow systems can access data in the same way regardless of project.  One section of the API focuses on how to read and write data objects to cloud environments and how to join them together as data bundles (Data object management).  Another focuses on the ability to find data objects across cloud environments and implementations of DOS (Data object queries).  The latter is likely to be worked on in conjunction with the GA4GH Discovery Workstream.
 
 Key features of the current API proposal:
 
