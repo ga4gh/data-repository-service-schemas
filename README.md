@@ -115,7 +115,7 @@ More Information
 TODO/Questions
 --------------
 * Are data object ids supposed to be globally unique?  Could they be URIs instead of opaque UUIDs?
-* can we move the schemas into this repo? Easier to release since won't be tied to GA4GH schemas release.
+* can we move the schemas into this repo? Easier to release since won't be tied to GA4GH schemas release. -- DONE
 * do we want to use the [data bundles concept](https://docs.google.com/document/d/1d-9eu5X6ioOlqOJ9kkY8lHvXDF-KoynlmqJbuKVPMF0/edit#heading=h.b3jd47oqdd2e)? Often times we want to be able to model related files (like a workflow output) together in some way.  The data bundle concept supports this.
 * do we want to support versioning (of files and data bundles)?  Implicit support right now in the sense that you can get an array of files or data bundles and use timestamp to understand their version.
 * do we want to support provenance?  Brian W's schema has a provenance object.
