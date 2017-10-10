@@ -1,10 +1,13 @@
 FROM debian:8
 ENV DEBIAN_FRONTEND noninteractive
 
-RUN apt-get clean && \
+# Added to circumvent apt locking bug
+# https://www.linuxquestions.org/questions/linux-software-2/var-cache-apt-archives-lock-error-457486/
+RUN mkdir -p /var/cache/apt/archives/partial
+    apt-get clean && \
     apt-get update && \
-    apt-get -yq --no-install-recommends -o Acquire::Retries=6 install \
-    curl unzip ca-certificates git && \
+    apt-get -yq --no-install-recommends install \
+      curl unzip ca-certificates git && \
     apt-get clean
 
 ENV PROTOC_VER=3.2.0rc2
