@@ -175,7 +175,7 @@ message FileStatusResponse {
 
 }
 
-message FileChecksumStatusResponse {
+message GetDataObjectChecksumResponse {
   //REQUIRED
   string checksum = 1;
 
@@ -214,11 +214,14 @@ message DataObject {
   google.protobuf.Timestamp created = 4;
 
   //REQUIRED
-  // Timestamp of update in RFC3339, identical to create timestamp in systems that do not support updates.
+  // Timestamp of update in RFC3339, identical to create timestamp in systems
+  // that do not support updates.
   google.protobuf.Timestamp updated = 5;
 
   //REQUIRED
-  // A string representing a version, some systems may use checksum, a RFC3339 timestamp, or incrementing version number. For systems that do not support versioning please use your update timestamp as your version.
+  // A string representing a version, some systems may use checksum, a RFC3339
+  // timestamp, or incrementing version number. For systems that do not support
+  // versioning please use your update timestamp as your version.
   string version = 6;
 
   //OPTIONAL

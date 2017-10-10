@@ -21,7 +21,10 @@ service DataObjectService {
     };
   }
 
-  //Update or create a new version of a file (depending on the capabilities of this implementation). For systems that support versioning, the combination of ID and version must be unique e.g. systems cannot support versioning and also allow changes to previous versions.
+  // Update or create a new version of a file (depending on the capabilities of
+  // this implementation). For systems that support versioning, the combination
+  //of ID and version must be unique e.g. systems cannot support versioning
+  // and also allow changes to previous versions.
   rpc UpdateFile(DataObject) returns (AddDataObjectResponse) {
     option (google.api.http) = {
       put: "/ga4gh/dos/v1/files/{id}"
@@ -37,7 +40,7 @@ service DataObjectService {
   }
 
   //Get info about files sharing a SHA256 checksum
-  rpc GetFileChecksumStatus(GetDataObjectChecksumRequest) returns (FileChecksumStatusResponse) {
+  rpc GetFileChecksumStatus(GetDataObjectChecksumRequest) returns (GetDataObjectChecksumResponse) {
       option (google.api.http) = {
         get: "/ga4gh/dos/v1/files-by-checksum/{checksum}"
       };
@@ -64,21 +67,22 @@ service DataObjectService {
       };
   }
 
-  //Delete a file
+  // Delete a file.
+  // TODO should this return DeleteDataObjectResponse?
   rpc DeleteFile(DeleteDataObjectRequest) returns (GetDataObjectRequest) {
       option (google.api.http) = {
         delete: "/ga4gh/dos/v1/files/{id}"
       };
   }
 
-  //List the files
+  // List the files.
   rpc ListFiles(ListDataObjectsRequest) returns (ListDataObjectsResponse) {
     option (google.api.http) = {
       get: "/ga4gh/dos/v1/files/list"
     };
   }
 
-  //Make a new data bundle
+  // Make a new data bundle.
   rpc CreateDataBundle(DataBundleObject) returns (AddDataBundleObjectResponse) {
     option (google.api.http) = {
       post: "/ga4gh/dos/v1/databundles/{id}"
@@ -86,7 +90,10 @@ service DataObjectService {
     };
   }
 
-  //Update or create a new version of a data bundle (depending on the capabilities of this implementation). For systems that support versioning, the combination of ID and version must be unique e.g. systems cannot support versioning and also allow changes to previous versions.
+  // Update or create a new version of a data bundle (depending on the
+  // capabilities of this implementation). For systems that support versioning,
+  // the combination of ID and version must be unique e.g. systems cannot
+  // support versioning and also allow changes to previous versions.
   rpc UpdateDataBundle(DataBundleObject) returns (AddDataBundleObjectResponse) {
     option (google.api.http) = {
       put: "/ga4gh/dos/v1/databundles/{id}"
@@ -94,28 +101,28 @@ service DataObjectService {
     };
   }
 
-  //Get info about a data bundle
+  // Get info about a data bundle
   rpc GetDataBundleStatus(GetDataBundleObjectRequest) returns (DataBundleStatusResponse) {
       option (google.api.http) = {
         get: "/ga4gh/dos/v1/databundles/{id}/versions"
       };
   }
 
-  //Get info about data bundles sharing a SHA256 checksum
+  // Get info about data bundles sharing a SHA256 checksum
   rpc GetDataBundleChecksumStatus(GetDataBundleObjectChecksumRequest) returns (DataBundleChecksumStatusResponse) {
       option (google.api.http) = {
         get: "/ga4gh/dos/v1/databundles-by-checksum/{checksum}"
       };
   }
 
-  //Delete a data bundle
+  // Delete a data bundle
   rpc DeleteDataBundle(DeleteDataBundleObjectRequest) returns (GetDataBundleObjectRequest) {
       option (google.api.http) = {
         delete: "/ga4gh/dos/v1/databundles/{id}"
       };
   }
 
-  //List the data bundles
+  // List the data bundles
   rpc ListDataBundles(ListDataBundleObjectsRequest) returns (ListDataBundleObjectsResponse) {
     option (google.api.http) = {
       get: "/ga4gh/dos/v1/databundles/list"
