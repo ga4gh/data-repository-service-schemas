@@ -3,7 +3,7 @@ ENV DEBIAN_FRONTEND noninteractive
 
 # Added to circumvent apt locking bug
 # https://www.linuxquestions.org/questions/linux-software-2/var-cache-apt-archives-lock-error-457486/
-RUN mkdir -p /var/cache/apt/archives/partial
+RUN mkdir -p /var/cache/apt/archives/partial \
     apt-get clean && \
     apt-get update && \
     apt-get -yq --no-install-recommends install \
