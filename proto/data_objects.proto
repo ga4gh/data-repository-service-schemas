@@ -240,28 +240,10 @@ message DataObject {
   repeated string aliases = 11;
 
   //OPTIONAL
-  Provenance provenance = 12;
-
-  //OPTIONAL
   google.protobuf.Struct info = 13;
 
   // OPTIONAL the id of the file as submitted
   string submitted_id = 15;
-}
-
-///-------------------------------------------------------------------
-// A description of how the dataobject was created
-///-------------------------------------------------------------------
-
-message Provenance {
-  //REQUIRED
-  // A string defining an operation
-  string operation = 1;
-
-  //OPTIONAL
-  // An array of data_object_id inputs to a operation
-  // TODO append other ideas here e.g. data descriptor
-  repeated string sources = 2;
 }
 
 ///-------------------------------------------------------------------
