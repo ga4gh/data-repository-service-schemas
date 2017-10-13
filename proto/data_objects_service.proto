@@ -10,7 +10,7 @@ import "google/api/annotations.proto";
 import "data_objects.proto";
 
 
-//Web service to get, create, list and delete Data Objects
+// Web service to get, create, list and delete Data Objects
 service DataObjectService {
 
   //Make a new file
@@ -23,7 +23,7 @@ service DataObjectService {
 
   // Update or create a new version of a file (depending on the capabilities of
   // this implementation). For systems that support versioning, the combination
-  //of ID and version must be unique e.g. systems cannot support versioning
+  // of ID and version must be unique e.g. systems cannot support versioning
   // and also allow changes to previous versions.
   rpc UpdateFile(DataObject) returns (AddDataObjectResponse) {
     option (google.api.http) = {
@@ -32,35 +32,35 @@ service DataObjectService {
     };
   }
 
-  //Get info about a file
+  // Get info about a file
   rpc GetFileStatus(GetDataObjectRequest) returns (FileStatusResponse) {
       option (google.api.http) = {
         get: "/ga4gh/dos/v1/files/{id}/versions"
       };
   }
 
-  //Get info about files sharing a SHA256 checksum
+  // Get info about files sharing a SHA256 checksum
   rpc GetFileChecksumStatus(GetDataObjectChecksumRequest) returns (GetDataObjectChecksumResponse) {
       option (google.api.http) = {
         get: "/ga4gh/dos/v1/files-by-checksum/{checksum}"
       };
   }
 
-  //Get info about the clouds a file is on
+  // Get info about the clouds a file is on
   rpc GetFileClouds(GetDataObjectRequest) returns (DataObjectCloudsResponse) {
       option (google.api.http) = {
         get: "/ga4gh/dos/v1/files/{id}/clouds"
       };
   }
 
-  //For a given cloud, create a signed URL for accessing this file
+  // For a given cloud, create a signed URL for accessing this file
   rpc GetFileCloudsSignedURL(GetDataObjectCloudRequest) returns (DataObjectSignedURLResponse) {
       option (google.api.http) = {
         get: "/ga4gh/dos/v1/files/{id}/signedurl"
       };
   }
 
-  //For a given cloud, return the native path and optionally credentials for accessing this file
+  // For a given cloud, return the native path and optionally credentials for accessing this file
   rpc GetFileCloudsNativeURL(GetDataObjectCloudRequest) returns (DataObjectNativeURLResponse) {
       option (google.api.http) = {
         get: "/ga4gh/dos/v1/files/{id}/nativeurl"
