@@ -13,7 +13,7 @@ import "data_objects.proto";
 // Web service to get, create, list and delete Data Objects
 service DataObjectService {
 
-  //Make a new file
+  // Make a new file
   rpc CreateFile(DataObject) returns (AddDataObjectResponse) {
     option (google.api.http) = {
       post: "/ga4gh/dos/v1/files/{id}"
@@ -60,7 +60,8 @@ service DataObjectService {
       };
   }
 
-  // For a given cloud, return the native path and optionally credentials for accessing this file
+  // For a given cloud, return the native path and optionally credentials for
+  // accessing this file
   rpc GetFileCloudsNativeURL(GetDataObjectCloudRequest) returns (DataObjectNativeURLResponse) {
       option (google.api.http) = {
         get: "/ga4gh/dos/v1/files/{id}/nativeurl"
