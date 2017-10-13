@@ -245,36 +245,8 @@ message DataObject {
   //OPTIONAL
   google.protobuf.Struct info = 13;
 
-  //OPTIONAL
-  // A Resource can optionally be associated with the following linked entities :
-  // relationship  example description
-  // aliquots         https://github.com/NCI-GDC/gdcdictionary/blob/develop/gdcdictionary/schemas/aliquot.yaml
-  // analytes         https://github.com/NCI-GDC/gdcdictionary/blob/develop/gdcdictionary/schemas/analyte.yaml
-  // archives         https://github.com/NCI-GDC/gdcdictionary/blob/develop/gdcdictionary/schemas/archive.yaml
-  // individual (case,donor)   https://github.com/ga4gh/ga4gh-schemas/blob/master/src/main/proto/ga4gh/bio_metadata.proto#L11
-  // centers          https://github.com/NCI-GDC/gdcdictionary/blob/develop/gdcdictionary/schemas/center.yaml
-  // data_formats     https://github.com/NCI-GDC/gdcdictionary/blob/develop/gdcdictionary/schemas/data_format.yaml
-  // dataset          https://github.com/ga4gh/ga4gh-schemas/blob/master/src/main/proto/ga4gh/metadata.proto#L10
-  // derived_files    https://github.com/NCI-GDC/gdcdictionary/blob/develop/gdcdictionary/schemas/file.yaml#L50
-  // platforms        https://github.com/NCI-GDC/gdcdictionary/blob/master/gdcdictionary/schemas/platform.yaml
-  // portions         https://github.com/NCI-GDC/gdcdictionary/blob/master/gdcdictionary/schemas/portion.yaml
-  // project          https://github.com/NCI-GDC/gdcdictionary/blob/master/gdcdictionary/schemas/project.yaml
-  // related_files    https://github.com/NCI-GDC/gdcdictionary/blob/develop/gdcdictionary/schemas/file.yaml#L50
-  // biosample        https://github.com/ga4gh/ga4gh-schemas/blob/master/src/main/proto/ga4gh/bio_metadata.proto#L65
-  // slides           https://github.com/NCI-GDC/gdcdictionary/blob/master/gdcdictionary/schemas/slide.yaml
-  // tags             https://github.com/NCI-GDC/gdcdictionary/blob/master/gdcdictionary/schemas/tag.yaml
-  // repository       http://docs.icgc.org/portal/api-endpoints/#!/repositories/list
-  repeated Link links = 14;
-
   // OPTIONAL the id of the file as submitted
   string submitted_id = 15;
-
-  //TODO DISCUSS OTHER GDC fields
-  // # state
-  // # file_state
-  // # error_type
-  // # submitter_id
-
 }
 
 ///-------------------------------------------------------------------
