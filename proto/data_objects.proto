@@ -14,7 +14,7 @@ message DataBundleObject {
   string id = 1;
 
   //REQUIRED
-  repeated DataObject files = 2;
+  repeated DataObject objects = 2;
 
   //REQUIRED
   // Timestamp of object creation in RFC3339.
@@ -28,7 +28,7 @@ message DataBundleObject {
   // A string representing a version, some systems may use checksum, a RFC3339 timestamp, or incrementing version number. For systems that do not support versioning please use your update timestamp as your version.
   string version = 5;
 
-  //REQUIRED, the bundle SHA256 checksum which is a SHA256 checksum of all the SHA256 checksums of the files that make up this bundle
+  //REQUIRED, the bundle SHA256 checksum which is a SHA256 checksum of all the SHA256 checksums of the objects that make up this bundle
   string checksum =  6;
 
   //OPTIONAL
@@ -59,18 +59,18 @@ message DataBundleObject {
   // centers          https://github.com/NCI-GDC/gdcdictionary/blob/develop/gdcdictionary/schemas/center.yaml
   // data_formats     https://github.com/NCI-GDC/gdcdictionary/blob/develop/gdcdictionary/schemas/data_format.yaml
   // dataset          https://github.com/ga4gh/ga4gh-schemas/blob/master/src/main/proto/ga4gh/metadata.proto#L10
-  // derived_files    https://github.com/NCI-GDC/gdcdictionary/blob/develop/gdcdictionary/schemas/file.yaml#L50
+  // derived_objects    https://github.com/NCI-GDC/gdcdictionary/blob/develop/gdcdictionary/schemas/object.yaml#L50
   // platforms        https://github.com/NCI-GDC/gdcdictionary/blob/master/gdcdictionary/schemas/platform.yaml
   // portions         https://github.com/NCI-GDC/gdcdictionary/blob/master/gdcdictionary/schemas/portion.yaml
   // project          https://github.com/NCI-GDC/gdcdictionary/blob/master/gdcdictionary/schemas/project.yaml
-  // related_files    https://github.com/NCI-GDC/gdcdictionary/blob/develop/gdcdictionary/schemas/file.yaml#L50
+  // related_objects    https://github.com/NCI-GDC/gdcdictionary/blob/develop/gdcdictionary/schemas/object.yaml#L50
   // biosample        https://github.com/ga4gh/ga4gh-schemas/blob/master/src/main/proto/ga4gh/bio_metadata.proto#L65
   // slides           https://github.com/NCI-GDC/gdcdictionary/blob/master/gdcdictionary/schemas/slide.yaml
   // tags             https://github.com/NCI-GDC/gdcdictionary/blob/master/gdcdictionary/schemas/tag.yaml
   // repository       http://docs.icgc.org/portal/api-endpoints/#!/repositories/list
   repeated Link links = 13;
 
-  // OPTIONAL the id of the file as submitted
+  // OPTIONAL the id of the object as submitted
   string submitted_id = 14;
 
 }
@@ -166,21 +166,21 @@ message ListDataBundleObjectsResponse {
   string next_page_token = 2;
 }
 
-message FileStatusResponse {
+message ObjectStatusResponse {
   //REQUIRED
   string id = 1;
 
   //REQUIRED
-  repeated DataObject file_versions = 2;
+  repeated DataObject object_versions = 2;
 
 }
 
-message FileChecksumStatusResponse {
+message ObjectChecksumStatusResponse {
   //REQUIRED
   string checksum = 1;
 
   //REQUIRED
-  repeated DataObject file_versions = 2;
+  repeated DataObject object_versions = 2;
 
 }
 
@@ -197,17 +197,17 @@ message Link {
 }
 
 ///-------------------------------------------------------------------
-// Resource: a file, API or other resource
+// Resource: a object, API or other resource
 ///-------------------------------------------------------------------
 message DataObject {
   //REQUIRED
   string id = 1;
 
   //REQUIRED
-  string file_name = 2;
+  string object_name = 2;
 
   //REQUIRED
-  int64 file_size = 3;
+  int64 object_size = 3;
 
   //REQUIRED
   // Timestamp of object creation in RFC3339.
@@ -224,7 +224,7 @@ message DataObject {
   //OPTIONAL
   string mime_type = 7;
 
-  //REQUIRED, the file SHA256 checksum
+  //REQUIRED, the object SHA256 checksum
   string checksum =  8;
 
   //OPTIONAL
@@ -252,23 +252,23 @@ message DataObject {
   // centers          https://github.com/NCI-GDC/gdcdictionary/blob/develop/gdcdictionary/schemas/center.yaml
   // data_formats     https://github.com/NCI-GDC/gdcdictionary/blob/develop/gdcdictionary/schemas/data_format.yaml
   // dataset          https://github.com/ga4gh/ga4gh-schemas/blob/master/src/main/proto/ga4gh/metadata.proto#L10
-  // derived_files    https://github.com/NCI-GDC/gdcdictionary/blob/develop/gdcdictionary/schemas/file.yaml#L50
+  // derived_objects    https://github.com/NCI-GDC/gdcdictionary/blob/develop/gdcdictionary/schemas/object.yaml#L50
   // platforms        https://github.com/NCI-GDC/gdcdictionary/blob/master/gdcdictionary/schemas/platform.yaml
   // portions         https://github.com/NCI-GDC/gdcdictionary/blob/master/gdcdictionary/schemas/portion.yaml
   // project          https://github.com/NCI-GDC/gdcdictionary/blob/master/gdcdictionary/schemas/project.yaml
-  // related_files    https://github.com/NCI-GDC/gdcdictionary/blob/develop/gdcdictionary/schemas/file.yaml#L50
+  // related_objects    https://github.com/NCI-GDC/gdcdictionary/blob/develop/gdcdictionary/schemas/object.yaml#L50
   // biosample        https://github.com/ga4gh/ga4gh-schemas/blob/master/src/main/proto/ga4gh/bio_metadata.proto#L65
   // slides           https://github.com/NCI-GDC/gdcdictionary/blob/master/gdcdictionary/schemas/slide.yaml
   // tags             https://github.com/NCI-GDC/gdcdictionary/blob/master/gdcdictionary/schemas/tag.yaml
   // repository       http://docs.icgc.org/portal/api-endpoints/#!/repositories/list
   repeated Link links = 14;
 
-  // OPTIONAL the id of the file as submitted
+  // OPTIONAL the id of the object as submitted
   string submitted_id = 15;
 
   //TODO DISCUSS OTHER GDC fields
   // # state
-  // # file_state
+  // # object_state
   // # error_type
   // # submitter_id
 
