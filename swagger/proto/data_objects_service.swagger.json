@@ -217,15 +217,15 @@
         ]
       }
     },
-    "/ga4gh/dos/v1/files-by-checksum/{checksum}": {
+    "/ga4gh/dos/v1/objects-by-checksum/{checksum}": {
       "get": {
-        "summary": "Get info about files sharing a SHA256 checksum",
-        "operationId": "GetFileChecksumStatus",
+        "summary": "Get info about objects sharing a SHA256 checksum",
+        "operationId": "GetObjectChecksumStatus",
         "responses": {
           "200": {
             "description": "",
             "schema": {
-              "$ref": "#/definitions/ga4gh_data_objectFileChecksumStatusResponse"
+              "$ref": "#/definitions/ga4gh_data_objectObjectChecksumStatusResponse"
             }
           }
         },
@@ -242,10 +242,10 @@
         ]
       }
     },
-    "/ga4gh/dos/v1/files/list": {
+    "/ga4gh/dos/v1/objects/list": {
       "get": {
-        "summary": "List the files",
-        "operationId": "ListFiles",
+        "summary": "List the objects",
+        "operationId": "ListObjects",
         "responses": {
           "200": {
             "description": "",
@@ -300,10 +300,10 @@
         ]
       }
     },
-    "/ga4gh/dos/v1/files/{id}": {
+    "/ga4gh/dos/v1/objects/{id}": {
       "delete": {
-        "summary": "Delete a file",
-        "operationId": "DeleteFile",
+        "summary": "Delete a object",
+        "operationId": "DeleteObject",
         "responses": {
           "200": {
             "description": "",
@@ -325,8 +325,8 @@
         ]
       },
       "post": {
-        "summary": "Make a new file",
-        "operationId": "CreateFile",
+        "summary": "Make a new object",
+        "operationId": "CreateObject",
         "responses": {
           "200": {
             "description": "",
@@ -356,8 +356,8 @@
         ]
       },
       "put": {
-        "summary": "Update or create a new version of a file (depending on the capabilities of this implementation). For systems that support versioning, the combination of ID and version must be unique e.g. systems cannot support versioning and also allow changes to previous versions.",
-        "operationId": "UpdateFile",
+        "summary": "Update or create a new version of a object (depending on the capabilities of this implementation). For systems that support versioning, the combination of ID and version must be unique e.g. systems cannot support versioning and also allow changes to previous versions.",
+        "operationId": "UpdateObject",
         "responses": {
           "200": {
             "description": "",
@@ -387,10 +387,10 @@
         ]
       }
     },
-    "/ga4gh/dos/v1/files/{id}/clouds": {
+    "/ga4gh/dos/v1/objects/{id}/clouds": {
       "get": {
-        "summary": "Get info about the clouds a file is on",
-        "operationId": "GetFileClouds",
+        "summary": "Get info about the clouds a object is on",
+        "operationId": "GetObjectClouds",
         "responses": {
           "200": {
             "description": "",
@@ -412,10 +412,10 @@
         ]
       }
     },
-    "/ga4gh/dos/v1/files/{id}/nativeurl": {
+    "/ga4gh/dos/v1/objects/{id}/nativeurl": {
       "get": {
-        "summary": "For a given cloud, return the native path and optionally credentials for accessing this file",
-        "operationId": "GetFileCloudsNativeURL",
+        "summary": "For a given cloud, return the native path and optionally credentials for accessing this object",
+        "operationId": "GetObjectCloudsNativeURL",
         "responses": {
           "200": {
             "description": "",
@@ -443,10 +443,10 @@
         ]
       }
     },
-    "/ga4gh/dos/v1/files/{id}/signedurl": {
+    "/ga4gh/dos/v1/objects/{id}/signedurl": {
       "get": {
-        "summary": "For a given cloud, create a signed URL for accessing this file",
-        "operationId": "GetFileCloudsSignedURL",
+        "summary": "For a given cloud, create a signed URL for accessing this object",
+        "operationId": "GetObjectCloudsSignedURL",
         "responses": {
           "200": {
             "description": "",
@@ -474,15 +474,15 @@
         ]
       }
     },
-    "/ga4gh/dos/v1/files/{id}/versions": {
+    "/ga4gh/dos/v1/objects/{id}/versions": {
       "get": {
-        "summary": "Get info about a file",
-        "operationId": "GetFileStatus",
+        "summary": "Get info about a object",
+        "operationId": "GetObjectStatus",
         "responses": {
           "200": {
             "description": "",
             "schema": {
-              "$ref": "#/definitions/ga4gh_data_objectFileStatusResponse"
+              "$ref": "#/definitions/ga4gh_data_objectObjectStatusResponse"
             }
           }
         },
@@ -540,7 +540,7 @@
           "type": "string",
           "title": "REQUIRED"
         },
-        "files": {
+        "objects": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/ga4gh_data_objectDataObject"
@@ -563,7 +563,7 @@
         },
         "checksum": {
           "type": "string",
-          "title": "REQUIRED, the bundle SHA256 checksum which is a SHA256 checksum of all the SHA256 checksums of the files that make up this bundle"
+          "title": "REQUIRED, the bundle SHA256 checksum which is a SHA256 checksum of all the SHA256 checksums of the objects that make up this bundle"
         },
         "dataset_id": {
           "type": "string",
@@ -600,11 +600,11 @@
           "items": {
             "$ref": "#/definitions/ga4gh_data_objectLink"
           },
-          "title": "OPTIONAL\nA Resource can optionally be associated with the following linked entities :\nrelationship  example description\naliquots         https://github.com/NCI-GDC/gdcdictionary/blob/develop/gdcdictionary/schemas/aliquot.yaml\nanalytes         https://github.com/NCI-GDC/gdcdictionary/blob/develop/gdcdictionary/schemas/analyte.yaml\narchives         https://github.com/NCI-GDC/gdcdictionary/blob/develop/gdcdictionary/schemas/archive.yaml\nindividual (case,donor)   https://github.com/ga4gh/ga4gh-schemas/blob/master/src/main/proto/ga4gh/bio_metadata.proto#L11\ncenters          https://github.com/NCI-GDC/gdcdictionary/blob/develop/gdcdictionary/schemas/center.yaml\ndata_formats     https://github.com/NCI-GDC/gdcdictionary/blob/develop/gdcdictionary/schemas/data_format.yaml\ndataset          https://github.com/ga4gh/ga4gh-schemas/blob/master/src/main/proto/ga4gh/metadata.proto#L10\nderived_files    https://github.com/NCI-GDC/gdcdictionary/blob/develop/gdcdictionary/schemas/file.yaml#L50\nplatforms        https://github.com/NCI-GDC/gdcdictionary/blob/master/gdcdictionary/schemas/platform.yaml\nportions         https://github.com/NCI-GDC/gdcdictionary/blob/master/gdcdictionary/schemas/portion.yaml\nproject          https://github.com/NCI-GDC/gdcdictionary/blob/master/gdcdictionary/schemas/project.yaml\nrelated_files    https://github.com/NCI-GDC/gdcdictionary/blob/develop/gdcdictionary/schemas/file.yaml#L50\nbiosample        https://github.com/ga4gh/ga4gh-schemas/blob/master/src/main/proto/ga4gh/bio_metadata.proto#L65\nslides           https://github.com/NCI-GDC/gdcdictionary/blob/master/gdcdictionary/schemas/slide.yaml\ntags             https://github.com/NCI-GDC/gdcdictionary/blob/master/gdcdictionary/schemas/tag.yaml\nrepository       http://docs.icgc.org/portal/api-endpoints/#!/repositories/list"
+          "title": "OPTIONAL\nA Resource can optionally be associated with the following linked entities :\nrelationship  example description\naliquots         https://github.com/NCI-GDC/gdcdictionary/blob/develop/gdcdictionary/schemas/aliquot.yaml\nanalytes         https://github.com/NCI-GDC/gdcdictionary/blob/develop/gdcdictionary/schemas/analyte.yaml\narchives         https://github.com/NCI-GDC/gdcdictionary/blob/develop/gdcdictionary/schemas/archive.yaml\nindividual (case,donor)   https://github.com/ga4gh/ga4gh-schemas/blob/master/src/main/proto/ga4gh/bio_metadata.proto#L11\ncenters          https://github.com/NCI-GDC/gdcdictionary/blob/develop/gdcdictionary/schemas/center.yaml\ndata_formats     https://github.com/NCI-GDC/gdcdictionary/blob/develop/gdcdictionary/schemas/data_format.yaml\ndataset          https://github.com/ga4gh/ga4gh-schemas/blob/master/src/main/proto/ga4gh/metadata.proto#L10\nderived_objects    https://github.com/NCI-GDC/gdcdictionary/blob/develop/gdcdictionary/schemas/object.yaml#L50\nplatforms        https://github.com/NCI-GDC/gdcdictionary/blob/master/gdcdictionary/schemas/platform.yaml\nportions         https://github.com/NCI-GDC/gdcdictionary/blob/master/gdcdictionary/schemas/portion.yaml\nproject          https://github.com/NCI-GDC/gdcdictionary/blob/master/gdcdictionary/schemas/project.yaml\nrelated_objects    https://github.com/NCI-GDC/gdcdictionary/blob/develop/gdcdictionary/schemas/object.yaml#L50\nbiosample        https://github.com/ga4gh/ga4gh-schemas/blob/master/src/main/proto/ga4gh/bio_metadata.proto#L65\nslides           https://github.com/NCI-GDC/gdcdictionary/blob/master/gdcdictionary/schemas/slide.yaml\ntags             https://github.com/NCI-GDC/gdcdictionary/blob/master/gdcdictionary/schemas/tag.yaml\nrepository       http://docs.icgc.org/portal/api-endpoints/#!/repositories/list"
         },
         "submitted_id": {
           "type": "string",
-          "title": "OPTIONAL the id of the file as submitted"
+          "title": "OPTIONAL the id of the object as submitted"
         }
       },
       "title": "/-------------------------------------------------------------------"
@@ -632,11 +632,11 @@
           "type": "string",
           "title": "REQUIRED"
         },
-        "file_name": {
+        "object_name": {
           "type": "string",
           "title": "REQUIRED"
         },
-        "file_size": {
+        "object_size": {
           "type": "string",
           "format": "int64",
           "title": "REQUIRED"
@@ -661,7 +661,7 @@
         },
         "checksum": {
           "type": "string",
-          "title": "REQUIRED, the file SHA256 checksum"
+          "title": "REQUIRED, the object SHA256 checksum"
         },
         "urls": {
           "type": "array",
@@ -694,14 +694,14 @@
           "items": {
             "$ref": "#/definitions/ga4gh_data_objectLink"
           },
-          "title": "OPTIONAL\nA Resource can optionally be associated with the following linked entities :\nrelationship  example description\naliquots         https://github.com/NCI-GDC/gdcdictionary/blob/develop/gdcdictionary/schemas/aliquot.yaml\nanalytes         https://github.com/NCI-GDC/gdcdictionary/blob/develop/gdcdictionary/schemas/analyte.yaml\narchives         https://github.com/NCI-GDC/gdcdictionary/blob/develop/gdcdictionary/schemas/archive.yaml\nindividual (case,donor)   https://github.com/ga4gh/ga4gh-schemas/blob/master/src/main/proto/ga4gh/bio_metadata.proto#L11\ncenters          https://github.com/NCI-GDC/gdcdictionary/blob/develop/gdcdictionary/schemas/center.yaml\ndata_formats     https://github.com/NCI-GDC/gdcdictionary/blob/develop/gdcdictionary/schemas/data_format.yaml\ndataset          https://github.com/ga4gh/ga4gh-schemas/blob/master/src/main/proto/ga4gh/metadata.proto#L10\nderived_files    https://github.com/NCI-GDC/gdcdictionary/blob/develop/gdcdictionary/schemas/file.yaml#L50\nplatforms        https://github.com/NCI-GDC/gdcdictionary/blob/master/gdcdictionary/schemas/platform.yaml\nportions         https://github.com/NCI-GDC/gdcdictionary/blob/master/gdcdictionary/schemas/portion.yaml\nproject          https://github.com/NCI-GDC/gdcdictionary/blob/master/gdcdictionary/schemas/project.yaml\nrelated_files    https://github.com/NCI-GDC/gdcdictionary/blob/develop/gdcdictionary/schemas/file.yaml#L50\nbiosample        https://github.com/ga4gh/ga4gh-schemas/blob/master/src/main/proto/ga4gh/bio_metadata.proto#L65\nslides           https://github.com/NCI-GDC/gdcdictionary/blob/master/gdcdictionary/schemas/slide.yaml\ntags             https://github.com/NCI-GDC/gdcdictionary/blob/master/gdcdictionary/schemas/tag.yaml\nrepository       http://docs.icgc.org/portal/api-endpoints/#!/repositories/list"
+          "title": "OPTIONAL\nA Resource can optionally be associated with the following linked entities :\nrelationship  example description\naliquots         https://github.com/NCI-GDC/gdcdictionary/blob/develop/gdcdictionary/schemas/aliquot.yaml\nanalytes         https://github.com/NCI-GDC/gdcdictionary/blob/develop/gdcdictionary/schemas/analyte.yaml\narchives         https://github.com/NCI-GDC/gdcdictionary/blob/develop/gdcdictionary/schemas/archive.yaml\nindividual (case,donor)   https://github.com/ga4gh/ga4gh-schemas/blob/master/src/main/proto/ga4gh/bio_metadata.proto#L11\ncenters          https://github.com/NCI-GDC/gdcdictionary/blob/develop/gdcdictionary/schemas/center.yaml\ndata_formats     https://github.com/NCI-GDC/gdcdictionary/blob/develop/gdcdictionary/schemas/data_format.yaml\ndataset          https://github.com/ga4gh/ga4gh-schemas/blob/master/src/main/proto/ga4gh/metadata.proto#L10\nderived_objects    https://github.com/NCI-GDC/gdcdictionary/blob/develop/gdcdictionary/schemas/object.yaml#L50\nplatforms        https://github.com/NCI-GDC/gdcdictionary/blob/master/gdcdictionary/schemas/platform.yaml\nportions         https://github.com/NCI-GDC/gdcdictionary/blob/master/gdcdictionary/schemas/portion.yaml\nproject          https://github.com/NCI-GDC/gdcdictionary/blob/master/gdcdictionary/schemas/project.yaml\nrelated_objects    https://github.com/NCI-GDC/gdcdictionary/blob/develop/gdcdictionary/schemas/object.yaml#L50\nbiosample        https://github.com/ga4gh/ga4gh-schemas/blob/master/src/main/proto/ga4gh/bio_metadata.proto#L65\nslides           https://github.com/NCI-GDC/gdcdictionary/blob/master/gdcdictionary/schemas/slide.yaml\ntags             https://github.com/NCI-GDC/gdcdictionary/blob/master/gdcdictionary/schemas/tag.yaml\nrepository       http://docs.icgc.org/portal/api-endpoints/#!/repositories/list"
         },
         "submitted_id": {
           "type": "string",
-          "title": "OPTIONAL the id of the file as submitted"
+          "title": "OPTIONAL the id of the object as submitted"
         }
       },
-      "title": "/-------------------------------------------------------------------\nResource: a file, API or other resource\n/-------------------------------------------------------------------"
+      "title": "/-------------------------------------------------------------------\nResource: a object, API or other resource\n/-------------------------------------------------------------------"
     },
     "ga4gh_data_objectDataObjectCloudsResponse": {
       "type": "object",
@@ -752,14 +752,14 @@
         }
       }
     },
-    "ga4gh_data_objectFileChecksumStatusResponse": {
+    "ga4gh_data_objectObjectChecksumStatusResponse": {
       "type": "object",
       "properties": {
         "checksum": {
           "type": "string",
           "title": "REQUIRED"
         },
-        "file_versions": {
+        "object_versions": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/ga4gh_data_objectDataObject"
@@ -768,14 +768,14 @@
         }
       }
     },
-    "ga4gh_data_objectFileStatusResponse": {
+    "ga4gh_data_objectObjectStatusResponse": {
       "type": "object",
       "properties": {
         "id": {
           "type": "string",
           "title": "REQUIRED"
         },
-        "file_versions": {
+        "object_versions": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/ga4gh_data_objectDataObject"

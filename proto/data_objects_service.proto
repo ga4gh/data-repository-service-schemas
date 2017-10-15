@@ -13,68 +13,68 @@ import "data_objects.proto";
 //Web service to get, create, list and delete Data Objects
 service DataObjectService {
 
-  //Make a new file
-  rpc CreateFile(DataObject) returns (AddDataObjectResponse) {
+  //Make a new object
+  rpc CreateObject(DataObject) returns (AddDataObjectResponse) {
     option (google.api.http) = {
-      post: "/ga4gh/dos/v1/files/{id}"
+      post: "/ga4gh/dos/v1/objects/{id}"
       body: "*"
     };
   }
 
-  //Update or create a new version of a file (depending on the capabilities of this implementation). For systems that support versioning, the combination of ID and version must be unique e.g. systems cannot support versioning and also allow changes to previous versions.
-  rpc UpdateFile(DataObject) returns (AddDataObjectResponse) {
+  //Update or create a new version of a object (depending on the capabilities of this implementation). For systems that support versioning, the combination of ID and version must be unique e.g. systems cannot support versioning and also allow changes to previous versions.
+  rpc UpdateObject(DataObject) returns (AddDataObjectResponse) {
     option (google.api.http) = {
-      put: "/ga4gh/dos/v1/files/{id}"
+      put: "/ga4gh/dos/v1/objects/{id}"
       body: "*"
     };
   }
 
-  //Get info about a file
-  rpc GetFileStatus(GetDataObjectRequest) returns (FileStatusResponse) {
+  //Get info about a object
+  rpc GetObjectStatus(GetDataObjectRequest) returns (ObjectStatusResponse) {
       option (google.api.http) = {
-        get: "/ga4gh/dos/v1/files/{id}/versions"
+        get: "/ga4gh/dos/v1/objects/{id}/versions"
       };
   }
 
-  //Get info about files sharing a SHA256 checksum
-  rpc GetFileChecksumStatus(GetDataObjectChecksumRequest) returns (FileChecksumStatusResponse) {
+  //Get info about objects sharing a SHA256 checksum
+  rpc GetObjectChecksumStatus(GetDataObjectChecksumRequest) returns (ObjectChecksumStatusResponse) {
       option (google.api.http) = {
-        get: "/ga4gh/dos/v1/files-by-checksum/{checksum}"
+        get: "/ga4gh/dos/v1/objects-by-checksum/{checksum}"
       };
   }
 
-  //Get info about the clouds a file is on
-  rpc GetFileClouds(GetDataObjectRequest) returns (DataObjectCloudsResponse) {
+  //Get info about the clouds a object is on
+  rpc GetObjectClouds(GetDataObjectRequest) returns (DataObjectCloudsResponse) {
       option (google.api.http) = {
-        get: "/ga4gh/dos/v1/files/{id}/clouds"
+        get: "/ga4gh/dos/v1/objects/{id}/clouds"
       };
   }
 
-  //For a given cloud, create a signed URL for accessing this file
-  rpc GetFileCloudsSignedURL(GetDataObjectCloudRequest) returns (DataObjectSignedURLResponse) {
+  //For a given cloud, create a signed URL for accessing this object
+  rpc GetObjectCloudsSignedURL(GetDataObjectCloudRequest) returns (DataObjectSignedURLResponse) {
       option (google.api.http) = {
-        get: "/ga4gh/dos/v1/files/{id}/signedurl"
+        get: "/ga4gh/dos/v1/objects/{id}/signedurl"
       };
   }
 
-  //For a given cloud, return the native path and optionally credentials for accessing this file
-  rpc GetFileCloudsNativeURL(GetDataObjectCloudRequest) returns (DataObjectNativeURLResponse) {
+  //For a given cloud, return the native path and optionally credentials for accessing this object
+  rpc GetObjectCloudsNativeURL(GetDataObjectCloudRequest) returns (DataObjectNativeURLResponse) {
       option (google.api.http) = {
-        get: "/ga4gh/dos/v1/files/{id}/nativeurl"
+        get: "/ga4gh/dos/v1/objects/{id}/nativeurl"
       };
   }
 
-  //Delete a file
-  rpc DeleteFile(DeleteDataObjectRequest) returns (GetDataObjectRequest) {
+  //Delete a object
+  rpc DeleteObject(DeleteDataObjectRequest) returns (GetDataObjectRequest) {
       option (google.api.http) = {
-        delete: "/ga4gh/dos/v1/files/{id}"
+        delete: "/ga4gh/dos/v1/objects/{id}"
       };
   }
 
-  //List the files
-  rpc ListFiles(ListDataObjectsRequest) returns (ListDataObjectsResponse) {
+  //List the objects
+  rpc ListObjects(ListDataObjectsRequest) returns (ListDataObjectsResponse) {
     option (google.api.http) = {
-      get: "/ga4gh/dos/v1/files/list"
+      get: "/ga4gh/dos/v1/objects/list"
     };
   }
 
