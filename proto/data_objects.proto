@@ -36,9 +36,6 @@ message DataBundleObject {
   string checksum =  6;
 
   // OPTIONAL
-  string dataset_id = 7;
-
-  // OPTIONAL
   repeated string urls = 8;
 
   // OPTIONAL
@@ -49,9 +46,6 @@ message DataBundleObject {
 
   // OPTIONAL
   google.protobuf.Struct info = 12;
-
-  // OPTIONAL the id of the file as submitted
-  string submitted_id = 14;
 
 }
 
@@ -98,11 +92,9 @@ message DataObject {
   // OPTIONAL
   repeated string aliases = 11;
 
-  // OPTIONAL
-  google.protobuf.Struct info = 13;
+  map<string, string> system_metadata = 12;
 
-  // OPTIONAL the id of the file as submitted
-  string submitted_id = 15;
+  map<string, string> user_metadata = 13;
 }
 
 ///-------------------------------------------------------------------
@@ -111,9 +103,6 @@ message DataObject {
 message ListDataObjectsRequest {
   // OPTIONAL
   string name_prefix = 1;
-
-  // OPTIONAL
-  string dataset_id = 3;
 
   // OPTIONAL
   // Specifies the maximum number of results to return in a single page.
@@ -133,7 +122,7 @@ message ListDataObjectsRequest {
 ///-------------------------------------------------------------------
 
 message ListDataObjectsResponse {
-  // The list of datasets.
+  // The list of Data Objects.
   repeated DataObject dataobjects = 1;
 
   // The continuation token, which is used to page through large result sets.
