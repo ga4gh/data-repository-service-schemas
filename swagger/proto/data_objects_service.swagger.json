@@ -61,30 +61,6 @@
             "type": "string"
           },
           {
-            "name": "has_keys",
-            "description": "OPTIONAL, searching description, aliases, and urls.",
-            "in": "query",
-            "required": false,
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "dataset_id",
-            "description": "OPTIONAL.",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "submitted_id",
-            "description": "OPTIONAL.",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
             "name": "page_size",
             "description": "OPTIONAL\nSpecifies the maximum number of results to return in a single page.\nIf unspecified, a system default will be used.",
             "in": "query",
@@ -130,7 +106,7 @@
         ]
       },
       "post": {
-        "summary": "Make a new data bundle",
+        "summary": "Make a new data bundle.",
         "operationId": "CreateDataBundle",
         "responses": {
           "200": {
@@ -161,7 +137,7 @@
         ]
       },
       "put": {
-        "summary": "Update or create a new version of a data bundle (depending on the capabilities of this implementation). For systems that support versioning, the combination of ID and version must be unique e.g. systems cannot support versioning and also allow changes to previous versions.",
+        "summary": "Update or create a new version of a data bundle (depending on the\ncapabilities of this implementation). For systems that support versioning,\nthe combination of ID and version must be unique e.g. systems cannot\nsupport versioning and also allow changes to previous versions.",
         "operationId": "UpdateDataBundle",
         "responses": {
           "200": {
@@ -217,15 +193,15 @@
         ]
       }
     },
-    "/ga4gh/dos/v1/files-by-checksum/{checksum}": {
+    "/ga4gh/dos/v1/dataobjects-by-checksum/{checksum}": {
       "get": {
-        "summary": "Get info about files sharing a SHA256 checksum",
-        "operationId": "GetFileChecksumStatus",
+        "summary": "Get info about Data Objects sharing a SHA256 checksum",
+        "operationId": "GetDataObjectChecksumStatus",
         "responses": {
           "200": {
             "description": "",
             "schema": {
-              "$ref": "#/definitions/ga4gh_data_objectFileChecksumStatusResponse"
+              "$ref": "#/definitions/ga4gh_data_objectGetDataObjectChecksumResponse"
             }
           }
         },
@@ -242,10 +218,10 @@
         ]
       }
     },
-    "/ga4gh/dos/v1/files/list": {
+    "/ga4gh/dos/v1/dataobjects/list": {
       "get": {
-        "summary": "List the files",
-        "operationId": "ListFiles",
+        "summary": "List the Data Objects.",
+        "operationId": "ListDataObjects",
         "responses": {
           "200": {
             "description": "",
@@ -257,23 +233,6 @@
         "parameters": [
           {
             "name": "name_prefix",
-            "description": "OPTIONAL.",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "has_keys",
-            "description": "OPTIONAL.",
-            "in": "query",
-            "required": false,
-            "type": "array",
-            "items": {
-              "type": "string"
-            }
-          },
-          {
-            "name": "dataset_id",
             "description": "OPTIONAL.",
             "in": "query",
             "required": false,
@@ -300,10 +259,10 @@
         ]
       }
     },
-    "/ga4gh/dos/v1/files/{id}": {
+    "/ga4gh/dos/v1/dataobjects/{id}": {
       "delete": {
-        "summary": "Delete a file",
-        "operationId": "DeleteFile",
+        "summary": "Delete a Data Object index entry.\nTODO should this return DeleteDataObjectResponse?",
+        "operationId": "DeleteDataObject",
         "responses": {
           "200": {
             "description": "",
@@ -325,8 +284,8 @@
         ]
       },
       "post": {
-        "summary": "Make a new file",
-        "operationId": "CreateFile",
+        "summary": "Make a new Data Object",
+        "operationId": "CreateDataObject",
         "responses": {
           "200": {
             "description": "",
@@ -356,8 +315,8 @@
         ]
       },
       "put": {
-        "summary": "Update or create a new version of a file (depending on the capabilities of this implementation). For systems that support versioning, the combination of ID and version must be unique e.g. systems cannot support versioning and also allow changes to previous versions.",
-        "operationId": "UpdateFile",
+        "summary": "Update or create a new version of a DataObject (depending on the\ncapabilities of this implementation). For systems that support versioning,\nthe combination of ID and version must be unique e.g. systems cannot\nsupport versioning and also allow changes to previous versions.",
+        "operationId": "UpdateDataObject",
         "responses": {
           "200": {
             "description": "",
@@ -387,10 +346,10 @@
         ]
       }
     },
-    "/ga4gh/dos/v1/files/{id}/clouds": {
+    "/ga4gh/dos/v1/dataobjects/{id}/clouds": {
       "get": {
-        "summary": "Get info about the clouds a file is on",
-        "operationId": "GetFileClouds",
+        "summary": "Get info about the clouds a Data Object is on",
+        "operationId": "GetDataObjectClouds",
         "responses": {
           "200": {
             "description": "",
@@ -412,10 +371,10 @@
         ]
       }
     },
-    "/ga4gh/dos/v1/files/{id}/nativeurl": {
+    "/ga4gh/dos/v1/dataobjects/{id}/nativeurl": {
       "get": {
-        "summary": "For a given cloud, return the native path and optionally credentials for accessing this file",
-        "operationId": "GetFileCloudsNativeURL",
+        "summary": "For a given cloud, return the native path and optionally credentials for\naccessing this Data Object",
+        "operationId": "GetDataObjectCloudsNativeURL",
         "responses": {
           "200": {
             "description": "",
@@ -443,10 +402,10 @@
         ]
       }
     },
-    "/ga4gh/dos/v1/files/{id}/signedurl": {
+    "/ga4gh/dos/v1/dataobjects/{id}/signedurl": {
       "get": {
-        "summary": "For a given cloud, create a signed URL for accessing this file",
-        "operationId": "GetFileCloudsSignedURL",
+        "summary": "For a given cloud, create a signed URL for accessing this Data Object",
+        "operationId": "GetDataObjectCloudsSignedURL",
         "responses": {
           "200": {
             "description": "",
@@ -474,15 +433,15 @@
         ]
       }
     },
-    "/ga4gh/dos/v1/files/{id}/versions": {
+    "/ga4gh/dos/v1/dataobjects/{id}/versions": {
       "get": {
-        "summary": "Get info about a file",
-        "operationId": "GetFileStatus",
+        "summary": "Get info about a Data Object",
+        "operationId": "GetDataObjectStatus",
         "responses": {
           "200": {
             "description": "",
             "schema": {
-              "$ref": "#/definitions/ga4gh_data_objectFileStatusResponse"
+              "$ref": "#/definitions/ga4gh_data_objectDataObjectStatusResponse"
             }
           }
         },
@@ -540,7 +499,7 @@
           "type": "string",
           "title": "REQUIRED"
         },
-        "files": {
+        "dataobjects": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/ga4gh_data_objectDataObject"
@@ -555,26 +514,15 @@
         "updated": {
           "type": "string",
           "format": "date-time",
-          "description": "REQUIRED\nTimestamp of update in RFC3339, identical to create timestamp in systems that do not support updates."
+          "description": "REQUIRED\nTimestamp of update in RFC3339, identical to create timestamp in systems\nthat do not support updates."
         },
         "version": {
           "type": "string",
-          "description": "REQUIRED\nA string representing a version, some systems may use checksum, a RFC3339 timestamp, or incrementing version number. For systems that do not support versioning please use your update timestamp as your version."
+          "description": "REQUIRED\nA string representing a version, some systems may use checksum, a RFC3339\ntimestamp, or incrementing version number. For systems that do not support\nversioning please use your update timestamp as your version."
         },
         "checksum": {
           "type": "string",
-          "title": "REQUIRED, the bundle SHA256 checksum which is a SHA256 checksum of all the SHA256 checksums of the files that make up this bundle"
-        },
-        "dataset_id": {
-          "type": "string",
-          "title": "OPTIONAL"
-        },
-        "urls": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "title": "OPTIONAL"
+          "title": "REQUIRED, the bundle SHA256 checksum which is a SHA256 checksum of all the\nSHA256 checksums of the dataobjects that make up this bundle"
         },
         "description": {
           "type": "string",
@@ -586,25 +534,6 @@
             "type": "string"
           },
           "title": "OPTIONAL"
-        },
-        "provenance": {
-          "$ref": "#/definitions/ga4gh_data_objectProvenance",
-          "title": "OPTIONAL"
-        },
-        "info": {
-          "$ref": "#/definitions/protobufStruct",
-          "title": "OPTIONAL"
-        },
-        "links": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/ga4gh_data_objectLink"
-          },
-          "title": "OPTIONAL\nA Resource can optionally be associated with the following linked entities :\nrelationship  example description\naliquots         https://github.com/NCI-GDC/gdcdictionary/blob/develop/gdcdictionary/schemas/aliquot.yaml\nanalytes         https://github.com/NCI-GDC/gdcdictionary/blob/develop/gdcdictionary/schemas/analyte.yaml\narchives         https://github.com/NCI-GDC/gdcdictionary/blob/develop/gdcdictionary/schemas/archive.yaml\nindividual (case,donor)   https://github.com/ga4gh/ga4gh-schemas/blob/master/src/main/proto/ga4gh/bio_metadata.proto#L11\ncenters          https://github.com/NCI-GDC/gdcdictionary/blob/develop/gdcdictionary/schemas/center.yaml\ndata_formats     https://github.com/NCI-GDC/gdcdictionary/blob/develop/gdcdictionary/schemas/data_format.yaml\ndataset          https://github.com/ga4gh/ga4gh-schemas/blob/master/src/main/proto/ga4gh/metadata.proto#L10\nderived_files    https://github.com/NCI-GDC/gdcdictionary/blob/develop/gdcdictionary/schemas/file.yaml#L50\nplatforms        https://github.com/NCI-GDC/gdcdictionary/blob/master/gdcdictionary/schemas/platform.yaml\nportions         https://github.com/NCI-GDC/gdcdictionary/blob/master/gdcdictionary/schemas/portion.yaml\nproject          https://github.com/NCI-GDC/gdcdictionary/blob/master/gdcdictionary/schemas/project.yaml\nrelated_files    https://github.com/NCI-GDC/gdcdictionary/blob/develop/gdcdictionary/schemas/file.yaml#L50\nbiosample        https://github.com/ga4gh/ga4gh-schemas/blob/master/src/main/proto/ga4gh/bio_metadata.proto#L65\nslides           https://github.com/NCI-GDC/gdcdictionary/blob/master/gdcdictionary/schemas/slide.yaml\ntags             https://github.com/NCI-GDC/gdcdictionary/blob/master/gdcdictionary/schemas/tag.yaml\nrepository       http://docs.icgc.org/portal/api-endpoints/#!/repositories/list"
-        },
-        "submitted_id": {
-          "type": "string",
-          "title": "OPTIONAL the id of the file as submitted"
         }
       },
       "title": "/-------------------------------------------------------------------"
@@ -634,7 +563,7 @@
         },
         "file_name": {
           "type": "string",
-          "title": "REQUIRED"
+          "title": "OPTIONAL"
         },
         "file_size": {
           "type": "string",
@@ -649,11 +578,11 @@
         "updated": {
           "type": "string",
           "format": "date-time",
-          "description": "REQUIRED\nTimestamp of update in RFC3339, identical to create timestamp in systems that do not support updates."
+          "description": "REQUIRED\nTimestamp of update in RFC3339, identical to create timestamp in systems\nthat do not support updates."
         },
         "version": {
           "type": "string",
-          "description": "REQUIRED\nA string representing a version, some systems may use checksum, a RFC3339 timestamp, or incrementing version number. For systems that do not support versioning please use your update timestamp as your version."
+          "description": "REQUIRED\nA string representing a version, some systems may use checksum, a RFC3339\ntimestamp, or incrementing version number. For systems that do not support\nversioning please use your update timestamp as your version."
         },
         "mime_type": {
           "type": "string",
@@ -681,24 +610,17 @@
           },
           "title": "OPTIONAL"
         },
-        "provenance": {
-          "$ref": "#/definitions/ga4gh_data_objectProvenance",
-          "title": "OPTIONAL"
+        "system_metadata": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
         },
-        "info": {
-          "$ref": "#/definitions/protobufStruct",
-          "title": "OPTIONAL"
-        },
-        "links": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/ga4gh_data_objectLink"
-          },
-          "title": "OPTIONAL\nA Resource can optionally be associated with the following linked entities :\nrelationship  example description\naliquots         https://github.com/NCI-GDC/gdcdictionary/blob/develop/gdcdictionary/schemas/aliquot.yaml\nanalytes         https://github.com/NCI-GDC/gdcdictionary/blob/develop/gdcdictionary/schemas/analyte.yaml\narchives         https://github.com/NCI-GDC/gdcdictionary/blob/develop/gdcdictionary/schemas/archive.yaml\nindividual (case,donor)   https://github.com/ga4gh/ga4gh-schemas/blob/master/src/main/proto/ga4gh/bio_metadata.proto#L11\ncenters          https://github.com/NCI-GDC/gdcdictionary/blob/develop/gdcdictionary/schemas/center.yaml\ndata_formats     https://github.com/NCI-GDC/gdcdictionary/blob/develop/gdcdictionary/schemas/data_format.yaml\ndataset          https://github.com/ga4gh/ga4gh-schemas/blob/master/src/main/proto/ga4gh/metadata.proto#L10\nderived_files    https://github.com/NCI-GDC/gdcdictionary/blob/develop/gdcdictionary/schemas/file.yaml#L50\nplatforms        https://github.com/NCI-GDC/gdcdictionary/blob/master/gdcdictionary/schemas/platform.yaml\nportions         https://github.com/NCI-GDC/gdcdictionary/blob/master/gdcdictionary/schemas/portion.yaml\nproject          https://github.com/NCI-GDC/gdcdictionary/blob/master/gdcdictionary/schemas/project.yaml\nrelated_files    https://github.com/NCI-GDC/gdcdictionary/blob/develop/gdcdictionary/schemas/file.yaml#L50\nbiosample        https://github.com/ga4gh/ga4gh-schemas/blob/master/src/main/proto/ga4gh/bio_metadata.proto#L65\nslides           https://github.com/NCI-GDC/gdcdictionary/blob/master/gdcdictionary/schemas/slide.yaml\ntags             https://github.com/NCI-GDC/gdcdictionary/blob/master/gdcdictionary/schemas/tag.yaml\nrepository       http://docs.icgc.org/portal/api-endpoints/#!/repositories/list"
-        },
-        "submitted_id": {
-          "type": "string",
-          "title": "OPTIONAL the id of the file as submitted"
+        "user_metadata": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          }
         }
       },
       "title": "/-------------------------------------------------------------------\nResource: a file, API or other resource\n/-------------------------------------------------------------------"
@@ -736,59 +658,19 @@
         }
       }
     },
-    "ga4gh_data_objectDeleteDataBundleObjectRequest": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "string"
-        }
-      }
-    },
-    "ga4gh_data_objectDeleteDataObjectRequest": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "string"
-        }
-      }
-    },
-    "ga4gh_data_objectFileChecksumStatusResponse": {
-      "type": "object",
-      "properties": {
-        "checksum": {
-          "type": "string",
-          "title": "REQUIRED"
-        },
-        "file_versions": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/ga4gh_data_objectDataObject"
-          },
-          "title": "REQUIRED"
-        }
-      }
-    },
-    "ga4gh_data_objectFileStatusResponse": {
+    "ga4gh_data_objectDataObjectStatusResponse": {
       "type": "object",
       "properties": {
         "id": {
           "type": "string",
           "title": "REQUIRED"
         },
-        "file_versions": {
+        "data_bundle_versions": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/ga4gh_data_objectDataObject"
           },
           "title": "REQUIRED"
-        }
-      }
-    },
-    "ga4gh_data_objectGetDataBundleObjectChecksumRequest": {
-      "type": "object",
-      "properties": {
-        "checksum": {
-          "type": "string"
         }
       }
     },
@@ -800,22 +682,19 @@
         }
       }
     },
-    "ga4gh_data_objectGetDataObjectChecksumRequest": {
+    "ga4gh_data_objectGetDataObjectChecksumResponse": {
       "type": "object",
       "properties": {
         "checksum": {
-          "type": "string"
-        }
-      }
-    },
-    "ga4gh_data_objectGetDataObjectCloudRequest": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "string"
+          "type": "string",
+          "title": "REQUIRED"
         },
-        "cloud": {
-          "type": "string"
+        "data_object_versions": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ga4gh_data_objectDataObject"
+          },
+          "title": "REQUIRED"
         }
       }
     },
@@ -828,57 +707,6 @@
       },
       "title": "/-------------------------------------------------------------------\nThe id of the data_object requested\n/-------------------------------------------------------------------"
     },
-    "ga4gh_data_objectLink": {
-      "type": "object",
-      "properties": {
-        "rel": {
-          "type": "string"
-        },
-        "url": {
-          "type": "string"
-        },
-        "id": {
-          "type": "string"
-        },
-        "mime_type": {
-          "type": "string"
-        }
-      },
-      "title": "/-------------------------------------------------------------------\nLink: for HATEOAS links (Hypermedia As The Engine Of Application State)\n/-------------------------------------------------------------------"
-    },
-    "ga4gh_data_objectListDataBundleObjectsRequest": {
-      "type": "object",
-      "properties": {
-        "id": {
-          "type": "string",
-          "title": "OPTIONAL"
-        },
-        "has_keys": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "title": "OPTIONAL, searching description, aliases, and urls"
-        },
-        "dataset_id": {
-          "type": "string",
-          "title": "OPTIONAL"
-        },
-        "submitted_id": {
-          "type": "string",
-          "title": "OPTIONAL"
-        },
-        "page_size": {
-          "type": "integer",
-          "format": "int32",
-          "description": "OPTIONAL\nSpecifies the maximum number of results to return in a single page.\nIf unspecified, a system default will be used."
-        },
-        "page_token": {
-          "type": "string",
-          "description": "OPTIONAL\nThe continuation token, which is used to page through large result sets.\nTo get the next page of results, set this parameter to the value of\n`next_page_token` from the previous response."
-        }
-      }
-    },
     "ga4gh_data_objectListDataBundleObjectsResponse": {
       "type": "object",
       "properties": {
@@ -887,40 +715,11 @@
           "items": {
             "$ref": "#/definitions/ga4gh_data_objectDataBundleObject"
           },
-          "description": "The list of datasets."
+          "description": "The list of Data Bundles."
         },
         "next_page_token": {
           "type": "string",
           "description": "The continuation token, which is used to page through large result sets.\nProvide this value in a subsequent request to return the next page of\nresults. This field will be empty if there aren't any additional results."
-        }
-      }
-    },
-    "ga4gh_data_objectListDataObjectsRequest": {
-      "type": "object",
-      "properties": {
-        "name_prefix": {
-          "type": "string",
-          "title": "OPTIONAL"
-        },
-        "has_keys": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "title": "OPTIONAL"
-        },
-        "dataset_id": {
-          "type": "string",
-          "title": "OPTIONAL"
-        },
-        "page_size": {
-          "type": "integer",
-          "format": "int32",
-          "description": "OPTIONAL\nSpecifies the maximum number of results to return in a single page.\nIf unspecified, a system default will be used."
-        },
-        "page_token": {
-          "type": "string",
-          "description": "OPTIONAL\nThe continuation token, which is used to page through large result sets.\nTo get the next page of results, set this parameter to the value of\n`next_page_token` from the previous response."
         }
       }
     },
@@ -932,95 +731,13 @@
           "items": {
             "$ref": "#/definitions/ga4gh_data_objectDataObject"
           },
-          "description": "The list of datasets."
+          "description": "The list of Data Objects."
         },
         "next_page_token": {
           "type": "string",
           "description": "The continuation token, which is used to page through large result sets.\nProvide this value in a subsequent request to return the next page of\nresults. This field will be empty if there aren't any additional results."
         }
       }
-    },
-    "ga4gh_data_objectProvenance": {
-      "type": "object",
-      "properties": {
-        "operation": {
-          "type": "string",
-          "title": "REQUIRED\nA string defining an operation"
-        },
-        "sources": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "title": "OPTIONAL\nAn array of data_object_id inputs to a operation\nTODO append other ideas here e.g. data descriptor"
-        }
-      }
-    },
-    "protobufListValue": {
-      "type": "object",
-      "properties": {
-        "values": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/protobufValue"
-          },
-          "description": "Repeated field of dynamically typed values."
-        }
-      },
-      "description": "`ListValue` is a wrapper around a repeated field of values.\n\nThe JSON representation for `ListValue` is JSON array."
-    },
-    "protobufNullValue": {
-      "type": "string",
-      "enum": [
-        "NULL_VALUE"
-      ],
-      "default": "NULL_VALUE",
-      "description": "`NullValue` is a singleton enumeration to represent the null value for the\n`Value` type union.\n\n The JSON representation for `NullValue` is JSON `null`.\n\n - NULL_VALUE: Null value."
-    },
-    "protobufStruct": {
-      "type": "object",
-      "properties": {
-        "fields": {
-          "type": "object",
-          "additionalProperties": {
-            "$ref": "#/definitions/protobufValue"
-          },
-          "description": "Unordered map of dynamically typed values."
-        }
-      },
-      "description": "`Struct` represents a structured data value, consisting of fields\nwhich map to dynamically typed values. In some languages, `Struct`\nmight be supported by a native representation. For example, in\nscripting languages like JS a struct is represented as an\nobject. The details of that representation are described together\nwith the proto support for the language.\n\nThe JSON representation for `Struct` is JSON object."
-    },
-    "protobufValue": {
-      "type": "object",
-      "properties": {
-        "null_value": {
-          "$ref": "#/definitions/protobufNullValue",
-          "description": "Represents a null value."
-        },
-        "number_value": {
-          "type": "number",
-          "format": "double",
-          "description": "Represents a double value."
-        },
-        "string_value": {
-          "type": "string",
-          "description": "Represents a string value."
-        },
-        "bool_value": {
-          "type": "boolean",
-          "format": "boolean",
-          "description": "Represents a boolean value."
-        },
-        "struct_value": {
-          "$ref": "#/definitions/protobufStruct",
-          "description": "Represents a structured value."
-        },
-        "list_value": {
-          "$ref": "#/definitions/protobufListValue",
-          "description": "Represents a repeated `Value`."
-        }
-      },
-      "description": "`Value` represents a dynamically typed value which can be either\nnull, a number, a string, a boolean, a recursive struct value, or a\nlist of values. A producer of value is expected to set one of that\nvariants, absence of any variant indicates an error.\n\nThe JSON representation for `Value` is JSON value."
     }
   }
 }
