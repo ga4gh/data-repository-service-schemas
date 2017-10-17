@@ -13,73 +13,73 @@ import "data_objects.proto";
 // Web service to get, create, list and delete Data Objects
 service DataObjectService {
 
-  // Make a new file
-  rpc CreateFile(DataObject) returns (AddDataObjectResponse) {
+  // Make a new Data Object
+  rpc CreateDataObject(DataObject) returns (AddDataObjectResponse) {
     option (google.api.http) = {
-      post: "/ga4gh/dos/v1/files/{id}"
+      post: "/ga4gh/dos/v1/dataobjects/{id}"
       body: "*"
     };
   }
 
-  // Update or create a new version of a file (depending on the capabilities of
-  // this implementation). For systems that support versioning, the combination
-  // of ID and version must be unique e.g. systems cannot support versioning
-  // and also allow changes to previous versions.
-  rpc UpdateFile(DataObject) returns (AddDataObjectResponse) {
+  // Update or create a new version of a DataObject (depending on the
+  // capabilities of this implementation). For systems that support versioning,
+  // the combination of ID and version must be unique e.g. systems cannot
+  // support versioning and also allow changes to previous versions.
+  rpc UpdateDataObject(DataObject) returns (AddDataObjectResponse) {
     option (google.api.http) = {
-      put: "/ga4gh/dos/v1/files/{id}"
+      put: "/ga4gh/dos/v1/dataobjects/{id}"
       body: "*"
     };
   }
 
-  // Get info about a file
-  rpc GetFileStatus(GetDataObjectRequest) returns (FileStatusResponse) {
+  // Get info about a Data Object
+  rpc GetDataObjectStatus(GetDataObjectRequest) returns (DataObjectStatusResponse) {
       option (google.api.http) = {
-        get: "/ga4gh/dos/v1/files/{id}/versions"
+        get: "/ga4gh/dos/v1/dataobjects/{id}/versions"
       };
   }
 
-  // Get info about files sharing a SHA256 checksum
-  rpc GetFileChecksumStatus(GetDataObjectChecksumRequest) returns (GetDataObjectChecksumResponse) {
+  // Get info about Data Objects sharing a SHA256 checksum
+  rpc GetDataObjectChecksumStatus(GetDataObjectChecksumRequest) returns (GetDataObjectChecksumResponse) {
       option (google.api.http) = {
-        get: "/ga4gh/dos/v1/files-by-checksum/{checksum}"
+        get: "/ga4gh/dos/v1/dataobjects-by-checksum/{checksum}"
       };
   }
 
-  // Get info about the clouds a file is on
-  rpc GetFileClouds(GetDataObjectRequest) returns (DataObjectCloudsResponse) {
+  // Get info about the clouds a Data Object is on
+  rpc GetDataObjectClouds(GetDataObjectRequest) returns (DataObjectCloudsResponse) {
       option (google.api.http) = {
-        get: "/ga4gh/dos/v1/files/{id}/clouds"
+        get: "/ga4gh/dos/v1/dataobjects/{id}/clouds"
       };
   }
 
-  // For a given cloud, create a signed URL for accessing this file
-  rpc GetFileCloudsSignedURL(GetDataObjectCloudRequest) returns (DataObjectSignedURLResponse) {
+  // For a given cloud, create a signed URL for accessing this Data Object
+  rpc GetDataObjectCloudsSignedURL(GetDataObjectCloudRequest) returns (DataObjectSignedURLResponse) {
       option (google.api.http) = {
-        get: "/ga4gh/dos/v1/files/{id}/signedurl"
+        get: "/ga4gh/dos/v1/dataobjects/{id}/signedurl"
       };
   }
 
   // For a given cloud, return the native path and optionally credentials for
-  // accessing this file
-  rpc GetFileCloudsNativeURL(GetDataObjectCloudRequest) returns (DataObjectNativeURLResponse) {
+  // accessing this Data Object
+  rpc GetDataObjectCloudsNativeURL(GetDataObjectCloudRequest) returns (DataObjectNativeURLResponse) {
       option (google.api.http) = {
-        get: "/ga4gh/dos/v1/files/{id}/nativeurl"
+        get: "/ga4gh/dos/v1/dataobjects/{id}/nativeurl"
       };
   }
 
-  // Delete a file.
+  // Delete a Data Object index entry.
   // TODO should this return DeleteDataObjectResponse?
-  rpc DeleteFile(DeleteDataObjectRequest) returns (GetDataObjectRequest) {
+  rpc DeleteDataObject(DeleteDataObjectRequest) returns (GetDataObjectRequest) {
       option (google.api.http) = {
-        delete: "/ga4gh/dos/v1/files/{id}"
+        delete: "/ga4gh/dos/v1/dataobjects/{id}"
       };
   }
 
-  // List the files.
-  rpc ListFiles(ListDataObjectsRequest) returns (ListDataObjectsResponse) {
+  // List the Data Objects.
+  rpc ListDataObjects(ListDataObjectsRequest) returns (ListDataObjectsResponse) {
     option (google.api.http) = {
-      get: "/ga4gh/dos/v1/files/list"
+      get: "/ga4gh/dos/v1/dataobjects/list"
     };
   }
 
@@ -214,21 +214,21 @@ message ListDataBundleObjectsResponse {
   string next_page_token = 2;
 }
 
-message FileStatusResponse {
-  //REQUIRED
+message DataObjectStatusResponse {
+  // REQUIRED
   string id = 1;
 
-  //REQUIRED
-  repeated DataObject file_versions = 2;
+  // REQUIRED
+  repeated DataObject data_bundle_versions = 2;
 
 }
 
 message GetDataObjectChecksumResponse {
-  //REQUIRED
+  // REQUIRED
   string checksum = 1;
 
-  //REQUIRED
-  repeated DataObject file_versions = 2;
+  // REQUIRED
+  repeated DataObject data_object_versions = 2;
 
 }
 

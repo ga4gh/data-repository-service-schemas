@@ -14,7 +14,7 @@ message DataBundleObject {
   string id = 1;
 
   //REQUIRED
-  repeated DataObject files = 2;
+  repeated DataObject dataobjects = 2;
 
   //REQUIRED
   // Timestamp of object creation in RFC3339.
@@ -32,7 +32,7 @@ message DataBundleObject {
   string version = 5;
 
   // REQUIRED, the bundle SHA256 checksum which is a SHA256 checksum of all the
-  // SHA256 checksums of the files that make up this bundle
+  // SHA256 checksums of the dataobjects that make up this bundle
   string checksum =  6;
 
   // OPTIONAL
