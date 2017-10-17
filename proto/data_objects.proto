@@ -64,10 +64,8 @@ message DataObject {
   // that do not support updates.
   google.protobuf.Timestamp updated = 5;
 
-  // REQUIRED
-  // A string representing a version, some systems may use checksum, a RFC3339
-  // timestamp, or incrementing version number. For systems that do not support
-  // versioning please use your update timestamp as your version.
+  // OPTIONAL
+  // A string representing a version.
   string version = 6;
 
   // OPTIONAL

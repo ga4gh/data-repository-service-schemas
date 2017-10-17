@@ -582,7 +582,7 @@
         },
         "version": {
           "type": "string",
-          "description": "REQUIRED\nA string representing a version, some systems may use checksum, a RFC3339\ntimestamp, or incrementing version number. For systems that do not support\nversioning please use your update timestamp as your version."
+          "description": "OPTIONAL\nA string representing a version."
         },
         "mime_type": {
           "type": "string",
