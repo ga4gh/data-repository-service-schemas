@@ -36,9 +36,6 @@ message DataBundleObject {
   string checksum =  6;
 
   // OPTIONAL
-  repeated string urls = 8;
-
-  // OPTIONAL
   string description = 9;
 
   // OPTIONAL
