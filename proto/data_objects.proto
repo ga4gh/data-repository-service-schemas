@@ -43,10 +43,6 @@ message DataBundleObject {
 
   // OPTIONAL
   repeated string aliases = 10;
-
-  // OPTIONAL
-  google.protobuf.Struct info = 12;
-
 }
 
 ///-------------------------------------------------------------------
