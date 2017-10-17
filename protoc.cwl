@@ -33,4 +33,4 @@ outputs:
   outfile:
     type: File
     outputBinding:
-      glob: '*.json'
+      glob: 'data_objects_service.swagger.json'
