@@ -83,7 +83,11 @@ message DataObject {
   // OPTIONAL
   repeated string aliases = 11;
 
+  // OPTIONAL
+  // A set of key-value pairs that represent system metadata about the object.
   map<string, string> system_metadata = 12;
 
+  // OPTIONAL
+  // A set of key-value pairs that represent metadata provided by the uploader.
   map<string, string> user_metadata = 13;
 }

@@ -614,13 +614,15 @@
           "type": "object",
           "additionalProperties": {
             "type": "string"
-          }
+          },
+          "description": "OPTIONAL\nA set of key-value pairs that represent system metadata about the object."
         },
         "user_metadata": {
           "type": "object",
           "additionalProperties": {
             "type": "string"
-          }
+          },
+          "description": "OPTIONAL\nA set of key-value pairs that represent metadata provided by the uploader."
         }
       },
       "title": "/-------------------------------------------------------------------\nResource: a file, API or other resource\n/-------------------------------------------------------------------"
