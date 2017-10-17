@@ -25,29 +25,29 @@ message DataBundleObject {
   // that do not support updates.
   google.protobuf.Timestamp updated = 4;
 
-  //R EQUIRED
+  // REQUIRED
   // A string representing a version, some systems may use checksum, a RFC3339
   // timestamp, or incrementing version number. For systems that do not support
   // versioning please use your update timestamp as your version.
   string version = 5;
 
-  //REQUIRED, the bundle SHA256 checksum which is a SHA256 checksum of all the
+  // REQUIRED, the bundle SHA256 checksum which is a SHA256 checksum of all the
   // SHA256 checksums of the files that make up this bundle
   string checksum =  6;
 
-  //OPTIONAL
+  // OPTIONAL
   string dataset_id = 7;
 
-  //OPTIONAL
+  // OPTIONAL
   repeated string urls = 8;
 
-  //OPTIONAL
+  // OPTIONAL
   string description = 9;
 
-  //OPTIONAL
+  // OPTIONAL
   repeated string aliases = 10;
 
-  //OPTIONAL
+  // OPTIONAL
   google.protobuf.Struct info = 12;
 
   // OPTIONAL the id of the file as submitted
@@ -98,7 +98,7 @@ message DataObject {
   // OPTIONAL
   repeated string aliases = 11;
 
-  //OPTIONAL
+  // OPTIONAL
   google.protobuf.Struct info = 13;
 
   // OPTIONAL the id of the file as submitted
@@ -115,12 +115,12 @@ message ListDataObjectsRequest {
   // OPTIONAL
   string dataset_id = 3;
 
-  //OPTIONAL
+  // OPTIONAL
   // Specifies the maximum number of results to return in a single page.
   // If unspecified, a system default will be used.
   int32 page_size = 4;
 
-  //OPTIONAL
+  // OPTIONAL
   // The continuation token, which is used to page through large result sets.
   // To get the next page of results, set this parameter to the value of
   // `next_page_token` from the previous response.
