@@ -1,0 +1,7 @@
+includes:
+  - class: Directory
+    location: proto
+proto:
+  class: File
+  location: proto/data_objects_service.proto
+cwl:tool: protoc.cwl
