@@ -8,7 +8,7 @@ import "google/api/annotations.proto";
 import "google/protobuf/struct.proto";
 import "google/protobuf/timestamp.proto";
 
-///-------------------------------------------------------------------
+// A collection of files, APIs or other resource
 message DataBundleObject {
   //REQUIRED
   string id = 1;
@@ -42,9 +42,7 @@ message DataBundleObject {
   repeated string aliases = 10;
 }
 
-///-------------------------------------------------------------------
-// Resource: a file, API or other resource
-///-------------------------------------------------------------------
+// A file, API or other resource
 message DataObject {
   // REQUIRED
   string id = 1;
@@ -71,18 +69,23 @@ message DataObject {
   string version = 6;
 
   // OPTIONAL
+  // A Multipurpose Internet Mail Extension (MIME) type
   string mime_type = 7;
 
-  // REQUIRED, the file SHA256 checksum
+  // REQUIRED
+  // The file SHA256 checksum
   string checksum =  8;
 
   // OPTIONAL
+  // A url pointing to the object in a given container
   repeated string urls = 9;
 
   // OPTIONAL
+  // User controlled brief descriptions of object
   string description = 10;
 
   // OPTIONAL
+  // Identifiers of other dataobjects
   repeated string aliases = 11;
 
   // OPTIONAL
