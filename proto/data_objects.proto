@@ -50,10 +50,12 @@ message DataObject {
   string id = 1;
 
   // OPTIONAL
-  string file_name = 2;
+  // The name of the object
+  string name = 2;
 
   // REQUIRED
-  int64 file_size = 3;
+  // The size, in bytes, of the object
+  int64 size = 3;
 
   // REQUIRED
   // Timestamp of object creation in RFC3339.
