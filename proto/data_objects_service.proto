@@ -63,7 +63,7 @@ service DataObjectService {
   }
 
   // Make a new data bundle.
-  rpc CreateDataBundle(CreateDataBundleObjectRequest) returns (CreateDataBundleObjectResponse) {
+  rpc CreateDataBundle(CreateDataBundleRequest) returns (CreateDataBundleResponse) {
     option (google.api.http) = {
       post: "/ga4gh/dos/v1/databundles/{data_bundle_id}"
       body: "*"
@@ -74,7 +74,7 @@ service DataObjectService {
   // capabilities of this implementation). For systems that support versioning,
   // the combination of ID and version must be unique e.g. systems cannot
   // support versioning and also allow changes to previous versions.
-  rpc UpdateDataBundle(UpdateDataBundleObjectRequest) returns (UpdateDataBundleObjectResponse) {
+  rpc UpdateDataBundle(UpdateDataBundleRequest) returns (UpdateDataBundleResponse) {
     option (google.api.http) = {
       put: "/ga4gh/dos/v1/databundles/{data_bundle_id}"
       body: "*"
@@ -82,21 +82,21 @@ service DataObjectService {
   }
 
   // Get info about data bundles sharing a SHA256 checksum
-  rpc GetDataBundleChecksumStatus(GetDataBundleObjectChecksumRequest) returns (DataBundleChecksumStatusResponse) {
+  rpc GetDataBundleChecksumStatus(GetDataBundleChecksumRequest) returns (DataBundleChecksumStatusResponse) {
       option (google.api.http) = {
         get: "/ga4gh/dos/v1/databundles-by-checksum/{checksum}"
       };
   }
 
   // Delete a data bundle
-  rpc DeleteDataBundle(DeleteDataBundleObjectRequest) returns (GetDataBundleObjectRequest) {
+  rpc DeleteDataBundle(DeleteDataBundleRequest) returns (GetDataBundleRequest) {
       option (google.api.http) = {
         delete: "/ga4gh/dos/v1/databundles/{data_bundle_id}"
       };
   }
 
   // List the data bundles
-  rpc ListDataBundles(ListDataBundleObjectsRequest) returns (ListDataBundleObjectsResponse) {
+  rpc ListDataBundles(ListDataBundlesRequest) returns (ListDataBundlesResponse) {
     option (google.api.http) = {
       get: "/ga4gh/dos/v1/databundles/list"
     };
@@ -197,31 +197,31 @@ message DeleteDataObjectResponse {
   string data_object_id = 1;
 }
 
-message CreateDataBundleObjectRequest {
+message CreateDataBundleRequest {
   string data_bundle_id = 1;
 }
 
-message CreateDataBundleObjectResponse {
+message CreateDataBundleResponse {
   string data_bundle_id = 1;
 }
 
-message GetDataBundleObjectRequest {
+message GetDataBundleRequest {
   string data_bundle_id = 1;
 }
 
-message GetDataBundleObjectChecksumRequest {
+message GetDataBundleChecksumRequest {
   string checksum = 1;
 }
 
-message DeleteDataBundleObjectRequest {
+message DeleteDataBundleRequest {
   string data_bundle_id = 1;
 }
 
-message UpdateDataBundleObjectRequest {
+message UpdateDataBundleRequest {
   string data_bundle_id = 1;
 }
 
-message UpdateDataBundleObjectResponse {
+message UpdateDataBundleResponse {
   string data_bundle_id = 1;
 }
 
@@ -230,10 +230,10 @@ message DataBundleChecksumStatusResponse {
   string checksum = 1;
 
   // REQUIRED
-  repeated DataBundleObject data_bundle_versions = 2;
+  repeated DataBundle data_bundle_versions = 2;
 }
 
-message ListDataBundleObjectsRequest {
+message ListDataBundlesRequest {
   // OPTIONAL
   string id = 1;
 
@@ -250,9 +250,9 @@ message ListDataBundleObjectsRequest {
 
 }
 
-message ListDataBundleObjectsResponse {
+message ListDataBundlesResponse {
   // The list of Data Bundles.
-  repeated DataBundleObject data_bundle_objects = 1;
+  repeated DataBundle data_bundle_objects = 1;
 
   // The continuation token, which is used to page through large result sets.
   // Provide this value in a subsequent request to return the next page of

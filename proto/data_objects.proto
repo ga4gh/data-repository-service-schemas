@@ -9,7 +9,7 @@ import "google/protobuf/struct.proto";
 import "google/protobuf/timestamp.proto";
 
 ///-------------------------------------------------------------------
-message DataBundleObject {
+message DataBundle {
   //REQUIRED
   string id = 1;
 
