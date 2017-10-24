@@ -48,13 +48,6 @@ service DataObjectService {
     };
   }
 
-  // Get info about Data Objects sharing a SHA256 checksum
-  rpc GetDataObjectChecksumStatus(GetDataObjectChecksumRequest) returns (GetDataObjectChecksumResponse) {
-      option (google.api.http) = {
-        get: "/ga4gh/dos/v1/dataobjects-by-checksum/{checksum}"
-      };
-  }
-
   // List the Data Objects.
   rpc ListDataObjects(ListDataObjectsRequest) returns (ListDataObjectsResponse) {
     option (google.api.http) = {
@@ -81,13 +74,6 @@ service DataObjectService {
     };
   }
 
-  // Get info about data bundles sharing a SHA256 checksum
-  rpc GetDataBundleChecksumStatus(GetDataBundleChecksumRequest) returns (DataBundleChecksumStatusResponse) {
-      option (google.api.http) = {
-        get: "/ga4gh/dos/v1/databundles-by-checksum/{checksum}"
-      };
-  }
-
   // Delete a data bundle
   rpc DeleteDataBundle(DeleteDataBundleRequest) returns (GetDataBundleRequest) {
       option (google.api.http) = {
@@ -109,6 +95,11 @@ service DataObjectService {
 message ListDataObjectsRequest {
   // OPTIONAL
   string name_prefix = 1;
+
+  // OPTIONAL
+  // If provided will only return data object messages with the provided
+  // checksum.
+  string checksum = 2;
 
   // OPTIONAL
   // Specifies the maximum number of results to return in a single page.
@@ -165,22 +156,6 @@ message GetDataObjectResponse {
   DataObject data_object = 1;
 }
 
-message GetDataObjectChecksumRequest {
-  // REQUIRED
-  // The string encoded checksum that will be used to find a list of
-  // Data Objects.
-  string checksum = 1;
-}
-
-message GetDataObjectChecksumResponse {
-  // REQUIRED
-  // The checksum used to find the given data.
-  string checksum = 1;
-
-  // REQUIRED
-  repeated DataObject data_object_versions = 2;
-}
-
 message UpdateDataObjectRequest {
   string data_object_id = 1;
 }
@@ -209,10 +184,6 @@ message GetDataBundleRequest {
   string data_bundle_id = 1;
 }
 
-message GetDataBundleChecksumRequest {
-  string checksum = 1;
-}
-
 message DeleteDataBundleRequest {
   string data_bundle_id = 1;
 }
@@ -225,17 +196,14 @@ message UpdateDataBundleResponse {
   string data_bundle_id = 1;
 }
 
-message DataBundleChecksumStatusResponse {
-  // REQUIRED
-  string checksum = 1;
-
-  // REQUIRED
-  repeated DataBundle data_bundle_versions = 2;
-}
-
 message ListDataBundlesRequest {
   // OPTIONAL
   string id = 1;
+
+  // OPTIONAL
+  // If provided, will only return Data Bundles which have the provided
+  // checksum.
+  string checksum = 2;
 
   // OPTIONAL
   // Specifies the maximum number of results to return in a single page.
