@@ -1,7 +1,7 @@
 
 syntax = "proto3";
 
-package ga4gh_data_object;
+package ga4gh;
 
 // Import HTTP RESTful annotations
 // from github.com/googleapis/googleapis
@@ -21,20 +21,29 @@ service DataObjectService {
   }
 
   // Make a new Data Object
-  rpc CreateDataObject(DataObject) returns (AddDataObjectResponse) {
+  rpc CreateDataObject(CreateDataObjectRequest) returns (CreateDataObjectResponse) {
     option (google.api.http) = {
-      post: "/ga4gh/dos/v1/dataobjects/{id}"
+      post: "/ga4gh/dos/v1/dataobjects/{data_object_id}"
       body: "*"
     };
+  }
+
+
+  // Delete a Data Object index entry.
+  // TODO should this return DeleteDataObjectResponse?
+  rpc DeleteDataObject(DeleteDataObjectRequest) returns (DeleteDataObjectResponse) {
+      option (google.api.http) = {
+        delete: "/ga4gh/dos/v1/dataobjects/{id}"
+      };
   }
 
   // Update or create a new version of a DataObject (depending on the
   // capabilities of this implementation). For systems that support versioning,
   // the combination of ID and version must be unique e.g. systems cannot
   // support versioning and also allow changes to previous versions.
-  rpc UpdateDataObject(DataObject) returns (AddDataObjectResponse) {
+  rpc UpdateDataObject(UpdateDataObjectRequest) returns (UpdateDataObjectResponse) {
     option (google.api.http) = {
-      put: "/ga4gh/dos/v1/dataobjects/{id}"
+      put: "/ga4gh/dos/v1/dataobjects/{data_object_id}"
       body: "*"
     };
   }
@@ -46,14 +55,6 @@ service DataObjectService {
       };
   }
 
-  // Delete a Data Object index entry.
-  // TODO should this return DeleteDataObjectResponse?
-  rpc DeleteDataObject(DeleteDataObjectRequest) returns (GetDataObjectRequest) {
-      option (google.api.http) = {
-        delete: "/ga4gh/dos/v1/dataobjects/{id}"
-      };
-  }
-
   // List the Data Objects.
   rpc ListDataObjects(ListDataObjectsRequest) returns (ListDataObjectsResponse) {
     option (google.api.http) = {
@@ -62,7 +63,7 @@ service DataObjectService {
   }
 
   // Make a new data bundle.
-  rpc CreateDataBundle(DataBundleObject) returns (AddDataBundleObjectResponse) {
+  rpc CreateDataBundle(DataBundleObject) returns (CreateDataBundleObjectResponse) {
     option (google.api.http) = {
       post: "/ga4gh/dos/v1/databundles/{id}"
       body: "*"
@@ -73,7 +74,7 @@ service DataObjectService {
   // capabilities of this implementation). For systems that support versioning,
   // the combination of ID and version must be unique e.g. systems cannot
   // support versioning and also allow changes to previous versions.
-  rpc UpdateDataBundle(DataBundleObject) returns (AddDataBundleObjectResponse) {
+  rpc UpdateDataBundle(DataBundleObject) returns (CreateDataBundleObjectResponse) {
     option (google.api.http) = {
       put: "/ga4gh/dos/v1/databundles/{id}"
       body: "*"
@@ -100,10 +101,89 @@ service DataObjectService {
       get: "/ga4gh/dos/v1/databundles/list"
     };
   }
+}
+
+///-------------------------------------------------------------------
+// A request to list all objects in a dataset
+///-------------------------------------------------------------------
+message ListDataObjectsRequest {
+  // OPTIONAL
+  string name_prefix = 1;
+
+  // OPTIONAL
+  // Specifies the maximum number of results to return in a single page.
+  // If unspecified, a system default will be used.
+  int32 page_size = 4;
+
+  // OPTIONAL
+  // The continuation token, which is used to page through large result sets.
+  // To get the next page of results, set this parameter to the value of
+  // `next_page_token` from the previous response.
+  string page_token = 5;
 
 }
 
-message AddDataBundleObjectResponse {
+///-------------------------------------------------------------------
+// A list of data objects
+///-------------------------------------------------------------------
+message ListDataObjectsResponse {
+  // The list of Data Objects.
+  repeated DataObject dataobjects = 1;
+
+  // The continuation token, which is used to page through large result sets.
+  // Provide this value in a subsequent request to return the next page of
+  // results. This field will be empty if there aren't any additional results.
+  string next_page_token = 2;
+}
+
+message CreateDataObjectRequest {
+  string data_object_id = 1;
+}
+
+message CreateDataObjectResponse {
+  string id = 1;
+}
+
+message GetDataObjectRequest {
+  string data_object_id = 1;
+
+  // OPTIONAL
+  string version = 2;
+}
+
+message GetDataObjectResponse {
+  DataObject data_object = 1;
+}
+
+message GetDataObjectChecksumRequest {
+  string checksum = 1;
+}
+
+message GetDataObjectChecksumResponse {
+  // REQUIRED
+  string checksum = 1;
+
+  // REQUIRED
+  repeated DataObject data_object_versions = 2;
+}
+
+message UpdateDataObjectRequest {
+  string data_object_id = 1;
+}
+
+message UpdateDataObjectResponse {
+  string id = 1;
+}
+
+message DeleteDataObjectRequest {
+  string id = 1;
+}
+
+message DeleteDataObjectResponse {
+  string id = 1;
+}
+
+message CreateDataBundleObjectResponse {
   string id = 1;
 }
 
@@ -116,10 +196,6 @@ message GetDataBundleObjectChecksumRequest {
 }
 
 message DeleteDataBundleObjectRequest {
-  string id = 1;
-}
-
-message DeleteDataObjectRequest {
   string id = 1;
 }
 
@@ -156,73 +232,4 @@ message ListDataBundleObjectsResponse {
   // Provide this value in a subsequent request to return the next page of
   // results. This field will be empty if there aren't any additional results.
   string next_page_token = 2;
-}
-
-message GetDataObjectChecksumResponse {
-  // REQUIRED
-  string checksum = 1;
-
-  // REQUIRED
-  repeated DataObject data_object_versions = 2;
-
-}
-
-///-------------------------------------------------------------------
-// A request to list all objects in a dataset
-///-------------------------------------------------------------------
-message ListDataObjectsRequest {
-  // OPTIONAL
-  string name_prefix = 1;
-
-  // OPTIONAL
-  // Specifies the maximum number of results to return in a single page.
-  // If unspecified, a system default will be used.
-  int32 page_size = 4;
-
-  // OPTIONAL
-  // The continuation token, which is used to page through large result sets.
-  // To get the next page of results, set this parameter to the value of
-  // `next_page_token` from the previous response.
-  string page_token = 5;
-
-}
-
-///-------------------------------------------------------------------
-// A list of data objects
-///-------------------------------------------------------------------
-
-message ListDataObjectsResponse {
-  // The list of Data Objects.
-  repeated DataObject dataobjects = 1;
-
-  // The continuation token, which is used to page through large result sets.
-  // Provide this value in a subsequent request to return the next page of
-  // results. This field will be empty if there aren't any additional results.
-  string next_page_token = 2;
-}
-
-///-------------------------------------------------------------------
-// The id of the data_object created
-///-------------------------------------------------------------------
-
-message AddDataObjectResponse {
-  string id = 1;
-}
-
-///-------------------------------------------------------------------
-// The id of the data_object requested
-///-------------------------------------------------------------------
-message GetDataObjectRequest {
-  string data_object_id = 1;
-
-  // OPTIONAL
-  string version = 2;
-}
-
-message GetDataObjectResponse {
-  DataObject data_object = 1;
-}
-
-message GetDataObjectChecksumRequest {
-  string checksum = 1;
 }
