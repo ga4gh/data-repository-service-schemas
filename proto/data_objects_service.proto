@@ -39,32 +39,10 @@ service DataObjectService {
     };
   }
 
-  // Get info about a Data Object
-  rpc GetDataObjectStatus(GetDataObjectRequest) returns (DataObjectStatusResponse) {
-      option (google.api.http) = {
-        get: "/ga4gh/dos/v1/dataobjects/{data_object_id}/versions"
-      };
-  }
-
   // Get info about Data Objects sharing a SHA256 checksum
   rpc GetDataObjectChecksumStatus(GetDataObjectChecksumRequest) returns (GetDataObjectChecksumResponse) {
       option (google.api.http) = {
         get: "/ga4gh/dos/v1/dataobjects-by-checksum/{checksum}"
-      };
-  }
-
-  // For a given cloud, create a signed URL for accessing this Data Object
-  rpc GetDataObjectSignedURL(GetDataObjectCloudRequest) returns (DataObjectSignedURLResponse) {
-      option (google.api.http) = {
-        get: "/ga4gh/dos/v1/dataobjects/{id}/signedurl"
-      };
-  }
-
-  // For a given cloud, return the native path and optionally credentials for
-  // accessing this Data Object
-  rpc GetDataObjectCloudsNativeURL(GetDataObjectCloudRequest) returns (DataObjectNativeURLResponse) {
-      option (google.api.http) = {
-        get: "/ga4gh/dos/v1/dataobjects/{id}/nativeurl"
       };
   }
 
@@ -102,13 +80,6 @@ service DataObjectService {
     };
   }
 
-  // Get info about a data bundle
-  rpc GetDataBundleStatus(GetDataBundleObjectRequest) returns (DataBundleStatusResponse) {
-      option (google.api.http) = {
-        get: "/ga4gh/dos/v1/databundles/{id}/versions"
-      };
-  }
-
   // Get info about data bundles sharing a SHA256 checksum
   rpc GetDataBundleChecksumStatus(GetDataBundleObjectChecksumRequest) returns (DataBundleChecksumStatusResponse) {
       option (google.api.http) = {
@@ -132,25 +103,6 @@ service DataObjectService {
 
 }
 
-message DataObjectCloudsResponse {
-  repeated string clouds = 1;
-}
-
-message DataObjectSignedURLResponse {
-  string url = 1;
-}
-
-message GetDataObjectCloudRequest {
-  string id = 1;
-  string cloud = 2;
-}
-
-message DataObjectNativeURLResponse {
-  string url = 1;
-  string key = 2;
-  string secret_key = 3;
-}
-
 message AddDataBundleObjectResponse {
   string id = 1;
 }
@@ -169,14 +121,6 @@ message DeleteDataBundleObjectRequest {
 
 message DeleteDataObjectRequest {
   string id = 1;
-}
-
-message DataBundleStatusResponse {
-  // REQUIRED
-  string id = 1;
-
-  // REQUIRED
-  repeated DataBundleObject data_bundle_versions = 2;
 }
 
 message DataBundleChecksumStatusResponse {
@@ -212,15 +156,6 @@ message ListDataBundleObjectsResponse {
   // Provide this value in a subsequent request to return the next page of
   // results. This field will be empty if there aren't any additional results.
   string next_page_token = 2;
-}
-
-message DataObjectStatusResponse {
-  // REQUIRED
-  string id = 1;
-
-  // REQUIRED
-  repeated DataObject data_bundle_versions = 2;
-
 }
 
 message GetDataObjectChecksumResponse {
@@ -279,6 +214,9 @@ message AddDataObjectResponse {
 ///-------------------------------------------------------------------
 message GetDataObjectRequest {
   string data_object_id = 1;
+
+  // OPTIONAL
+  string version = 2;
 }
 
 message GetDataObjectResponse {
