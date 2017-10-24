@@ -14,6 +14,13 @@ import "data_objects.proto";
 service DataObjectService {
 
   // Make a new Data Object
+  rpc GetDataObject(GetDataObjectRequest) returns (GetDataObjectResponse) {
+    option (google.api.http) = {
+      get: "/ga4gh/dos/v1/dataobjects/{data_object_id}"
+    };
+  }
+
+  // Make a new Data Object
   rpc CreateDataObject(DataObject) returns (AddDataObjectResponse) {
     option (google.api.http) = {
       post: "/ga4gh/dos/v1/dataobjects/{id}"
@@ -35,7 +42,7 @@ service DataObjectService {
   // Get info about a Data Object
   rpc GetDataObjectStatus(GetDataObjectRequest) returns (DataObjectStatusResponse) {
       option (google.api.http) = {
-        get: "/ga4gh/dos/v1/dataobjects/{id}/versions"
+        get: "/ga4gh/dos/v1/dataobjects/{data_object_id}/versions"
       };
   }
 
@@ -46,15 +53,8 @@ service DataObjectService {
       };
   }
 
-  // Get info about the clouds a Data Object is on
-  rpc GetDataObjectClouds(GetDataObjectRequest) returns (DataObjectCloudsResponse) {
-      option (google.api.http) = {
-        get: "/ga4gh/dos/v1/dataobjects/{id}/clouds"
-      };
-  }
-
   // For a given cloud, create a signed URL for accessing this Data Object
-  rpc GetDataObjectCloudsSignedURL(GetDataObjectCloudRequest) returns (DataObjectSignedURLResponse) {
+  rpc GetDataObjectSignedURL(GetDataObjectCloudRequest) returns (DataObjectSignedURLResponse) {
       option (google.api.http) = {
         get: "/ga4gh/dos/v1/dataobjects/{id}/signedurl"
       };
@@ -278,7 +278,11 @@ message AddDataObjectResponse {
 // The id of the data_object requested
 ///-------------------------------------------------------------------
 message GetDataObjectRequest {
-  string id = 1;
+  string data_object_id = 1;
+}
+
+message GetDataObjectResponse {
+  DataObject data_object = 1;
 }
 
 message GetDataObjectChecksumRequest {
