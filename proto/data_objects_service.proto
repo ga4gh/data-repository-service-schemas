@@ -23,7 +23,7 @@ service DataObjectService {
   // Make a new Data Object
   rpc CreateDataObject(CreateDataObjectRequest) returns (CreateDataObjectResponse) {
     option (google.api.http) = {
-      post: "/ga4gh/dos/v1/dataobjects/{data_object_id}"
+      post: "/ga4gh/dos/v1/dataobjects"
       body: "*"
     };
   }
@@ -33,7 +33,7 @@ service DataObjectService {
   // TODO should this return DeleteDataObjectResponse?
   rpc DeleteDataObject(DeleteDataObjectRequest) returns (DeleteDataObjectResponse) {
       option (google.api.http) = {
-        delete: "/ga4gh/dos/v1/dataobjects/{id}"
+        delete: "/ga4gh/dos/v1/dataobjects/{data_object_id}"
       };
   }
 
@@ -63,9 +63,9 @@ service DataObjectService {
   }
 
   // Make a new data bundle.
-  rpc CreateDataBundle(DataBundleObject) returns (CreateDataBundleObjectResponse) {
+  rpc CreateDataBundle(CreateDataBundleObjectRequest) returns (CreateDataBundleObjectResponse) {
     option (google.api.http) = {
-      post: "/ga4gh/dos/v1/databundles/{id}"
+      post: "/ga4gh/dos/v1/databundles/{data_bundle_id}"
       body: "*"
     };
   }
@@ -74,9 +74,9 @@ service DataObjectService {
   // capabilities of this implementation). For systems that support versioning,
   // the combination of ID and version must be unique e.g. systems cannot
   // support versioning and also allow changes to previous versions.
-  rpc UpdateDataBundle(DataBundleObject) returns (CreateDataBundleObjectResponse) {
+  rpc UpdateDataBundle(UpdateDataBundleObjectRequest) returns (UpdateDataBundleObjectResponse) {
     option (google.api.http) = {
-      put: "/ga4gh/dos/v1/databundles/{id}"
+      put: "/ga4gh/dos/v1/databundles/{data_bundle_id}"
       body: "*"
     };
   }
@@ -91,7 +91,7 @@ service DataObjectService {
   // Delete a data bundle
   rpc DeleteDataBundle(DeleteDataBundleObjectRequest) returns (GetDataBundleObjectRequest) {
       option (google.api.http) = {
-        delete: "/ga4gh/dos/v1/databundles/{id}"
+        delete: "/ga4gh/dos/v1/databundles/{data_bundle_id}"
       };
   }
 
@@ -137,14 +137,22 @@ message ListDataObjectsResponse {
 }
 
 message CreateDataObjectRequest {
-  string data_object_id = 1;
+  // REQUIRED
+  // The Data Object one would like to index. One must provide any aliases
+  // and URLs to this file when sending the CreateDataObjectRequest. It is up
+  // to implementations to validate that the Data Object is available from
+  // the provided URLs.
+  DataObject data_object = 1;
 }
 
 message CreateDataObjectResponse {
-  string id = 1;
+  // The ID of the created Data Object.
+  string data_object_id = 1;
 }
 
 message GetDataObjectRequest {
+  // REQUIRED
+  // The unique identifier for the requested data object.
   string data_object_id = 1;
 
   // OPTIONAL
@@ -152,15 +160,21 @@ message GetDataObjectRequest {
 }
 
 message GetDataObjectResponse {
+  // REQUIRED
+  // The Data Object that coincides with a specific GetDataObjectRequest.
   DataObject data_object = 1;
 }
 
 message GetDataObjectChecksumRequest {
+  // REQUIRED
+  // The string encoded checksum that will be used to find a list of
+  // Data Objects.
   string checksum = 1;
 }
 
 message GetDataObjectChecksumResponse {
   // REQUIRED
+  // The checksum used to find the given data.
   string checksum = 1;
 
   // REQUIRED
@@ -172,23 +186,27 @@ message UpdateDataObjectRequest {
 }
 
 message UpdateDataObjectResponse {
-  string id = 1;
+  string data_object_id = 1;
 }
 
 message DeleteDataObjectRequest {
-  string id = 1;
+  string data_object_id = 1;
 }
 
 message DeleteDataObjectResponse {
-  string id = 1;
+  string data_object_id = 1;
+}
+
+message CreateDataBundleObjectRequest {
+  string data_bundle_id = 1;
 }
 
 message CreateDataBundleObjectResponse {
-  string id = 1;
+  string data_bundle_id = 1;
 }
 
 message GetDataBundleObjectRequest {
-  string id = 1;
+  string data_bundle_id = 1;
 }
 
 message GetDataBundleObjectChecksumRequest {
@@ -196,7 +214,15 @@ message GetDataBundleObjectChecksumRequest {
 }
 
 message DeleteDataBundleObjectRequest {
-  string id = 1;
+  string data_bundle_id = 1;
+}
+
+message UpdateDataBundleObjectRequest {
+  string data_bundle_id = 1;
+}
+
+message UpdateDataBundleObjectResponse {
+  string data_bundle_id = 1;
 }
 
 message DataBundleChecksumStatusResponse {
