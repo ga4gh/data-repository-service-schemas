@@ -94,7 +94,8 @@ service DataObjectService {
 ///-------------------------------------------------------------------
 message ListDataObjectsRequest {
   // OPTIONAL
-  string name_prefix = 1;
+  // If provided will only return Data Objects with the given alias.
+  string alias = 1;
 
   // OPTIONAL
   // If provided will only return data object messages with the provided
@@ -143,10 +144,11 @@ message CreateDataObjectResponse {
 
 message GetDataObjectRequest {
   // REQUIRED
-  // The unique identifier for the requested data object.
+  // The unique identifier for the requested Data Object.
   string data_object_id = 1;
 
   // OPTIONAL
+  // If provided will return the requested version of the selected Data Object.
   string version = 2;
 }
 
@@ -157,25 +159,39 @@ message GetDataObjectResponse {
 }
 
 message UpdateDataObjectRequest {
+  // REQUIRED
+  // The identifier of the Data Object to be updated.
   string data_object_id = 1;
+
+  // REQUIRED
+  // An updated version of the Data Object including the fields to alter.
+  DataObject data_object = 2;
 }
 
 message UpdateDataObjectResponse {
+  // REQUIRED
+  // The identifier of the Data Object updated.
   string data_object_id = 1;
 }
 
 message DeleteDataObjectRequest {
+  // REQUIRED
+  // The identifier of the Data Object to delete.
   string data_object_id = 1;
 }
 
 message DeleteDataObjectResponse {
+  // REQUIRED
+  // The identifier of the Data Object deleted.
   string data_object_id = 1;
 }
 
 // Bundles
 message ListDataBundlesRequest {
   // OPTIONAL
-  string id = 1;
+  // If provided returns Data Bundles that have any alias that matches the
+  // request.
+  string alias = 1;
 
   // OPTIONAL
   // If provided, will only return Data Bundles which have the provided
@@ -206,15 +222,26 @@ message ListDataBundlesResponse {
 }
 
 message CreateDataBundleRequest {
+  // REQUIRED
+  // The Data Bundle message to be created by the service.
   DataBundle data_bundle = 1;
 }
 
 message CreateDataBundleResponse {
+  // REQUIRED
+  // The identifier of the Data Bundle created.
   string data_bundle_id = 1;
 }
 
 message GetDataBundleRequest {
+  // REQUIRED
+  // The identifier of the Data Bundle of interest.
   string data_bundle_id = 1;
+
+  // OPTIONAL
+  // If provided will return the requested version of the selected Data Bundle.
+  // Otherwise, only the latest version is returned.
+  string version = 2;
 }
 
 message GetDataBundleResponse {
@@ -230,9 +257,17 @@ message DeleteDataBundleResponse {
 }
 
 message UpdateDataBundleRequest {
+  // REQUIRED
+  // The identifier of the Data Bundle to be updated.
   string data_bundle_id = 1;
+
+  // REQUIRED
+  // A modified Data Bundle message that includes the fields to alter.
+  DataBundle data_bundle = 2;
 }
 
 message UpdateDataBundleResponse {
+  // REQUIRED
+  // The identifier of the Data Bundle updated.
   string data_bundle_id = 1;
 }
