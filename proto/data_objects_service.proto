@@ -172,30 +172,7 @@ message DeleteDataObjectResponse {
   string data_object_id = 1;
 }
 
-message CreateDataBundleRequest {
-  string data_bundle_id = 1;
-}
-
-message CreateDataBundleResponse {
-  string data_bundle_id = 1;
-}
-
-message GetDataBundleRequest {
-  string data_bundle_id = 1;
-}
-
-message DeleteDataBundleRequest {
-  string data_bundle_id = 1;
-}
-
-message UpdateDataBundleRequest {
-  string data_bundle_id = 1;
-}
-
-message UpdateDataBundleResponse {
-  string data_bundle_id = 1;
-}
-
+// Bundles
 message ListDataBundlesRequest {
   // OPTIONAL
   string id = 1;
@@ -226,4 +203,28 @@ message ListDataBundlesResponse {
   // Provide this value in a subsequent request to return the next page of
   // results. This field will be empty if there aren't any additional results.
   string next_page_token = 2;
+}
+
+message CreateDataBundleRequest {
+  string data_bundle_id = 1;
+}
+
+message CreateDataBundleResponse {
+  string data_bundle_id = 1;
+}
+
+message GetDataBundleRequest {
+  string data_bundle_id = 1;
+}
+
+message DeleteDataBundleRequest {
+  string data_bundle_id = 1;
+}
+
+message UpdateDataBundleRequest {
+  string data_bundle_id = 1;
+}
+
+message UpdateDataBundleResponse {
+  string data_bundle_id = 1;
 }
