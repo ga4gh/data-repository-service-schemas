@@ -63,6 +63,13 @@ service DataObjectService {
     };
   }
 
+  // Delete a data bundle
+  rpc GetDataBundle(GetDataBundleRequest) returns (GetDataBundleResponse) {
+      option (google.api.http) = {
+        delete: "/ga4gh/dos/v1/databundles/{data_bundle_id}"
+      };
+  }
+
   // Update or create a new version of a data bundle (depending on the
   // capabilities of this implementation). For systems that support versioning,
   // the combination of ID and version must be unique e.g. systems cannot
@@ -75,7 +82,7 @@ service DataObjectService {
   }
 
   // Delete a data bundle
-  rpc DeleteDataBundle(DeleteDataBundleRequest) returns (GetDataBundleRequest) {
+  rpc DeleteDataBundle(DeleteDataBundleRequest) returns (DeleteDataBundleResponse) {
       option (google.api.http) = {
         delete: "/ga4gh/dos/v1/databundles/{data_bundle_id}"
       };
@@ -217,7 +224,15 @@ message GetDataBundleRequest {
   string data_bundle_id = 1;
 }
 
+message GetDataBundleResponse {
+  DataBundle data_bundle = 1;
+}
+
 message DeleteDataBundleRequest {
+  string data_bundle_id = 1;
+}
+
+message DeleteDataBundleResponse {
   string data_bundle_id = 1;
 }
 
