@@ -101,4 +101,12 @@ message DataBundle {
   // OPTIONAL
   // A list of strings that can be used to identify this Data Bundle.
   repeated string aliases = 10;
+
+  // OPTIONAL
+  // A set of key-value pairs that represent system metadata about the object.
+  map<string, string> system_metadata = 11;
+
+  // OPTIONAL
+  // A set of key-value pairs that represent metadata provided by the uploader.
+  map<string, string> user_metadata = 12;
 }
