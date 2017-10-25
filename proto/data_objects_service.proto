@@ -30,17 +30,13 @@ service DataObjectService {
 
 
   // Delete a Data Object index entry.
-  // TODO should this return DeleteDataObjectResponse?
   rpc DeleteDataObject(DeleteDataObjectRequest) returns (DeleteDataObjectResponse) {
       option (google.api.http) = {
         delete: "/ga4gh/dos/v1/dataobjects/{data_object_id}"
       };
   }
 
-  // Update or create a new version of a DataObject (depending on the
-  // capabilities of this implementation). For systems that support versioning,
-  // the combination of ID and version must be unique e.g. systems cannot
-  // support versioning and also allow changes to previous versions.
+  // Update a Data Object
   rpc UpdateDataObject(UpdateDataObjectRequest) returns (UpdateDataObjectResponse) {
     option (google.api.http) = {
       put: "/ga4gh/dos/v1/dataobjects/{data_object_id}"
@@ -55,7 +51,7 @@ service DataObjectService {
     };
   }
 
-  // Make a new data bundle.
+  // Create a new Data Bundle.
   rpc CreateDataBundle(CreateDataBundleRequest) returns (CreateDataBundleResponse) {
     option (google.api.http) = {
       post: "/ga4gh/dos/v1/databundles/{data_bundle_id}"
@@ -63,17 +59,14 @@ service DataObjectService {
     };
   }
 
-  // Delete a data bundle
+  // Delete a Data Bundle
   rpc GetDataBundle(GetDataBundleRequest) returns (GetDataBundleResponse) {
       option (google.api.http) = {
         delete: "/ga4gh/dos/v1/databundles/{data_bundle_id}"
       };
   }
 
-  // Update or create a new version of a data bundle (depending on the
-  // capabilities of this implementation). For systems that support versioning,
-  // the combination of ID and version must be unique e.g. systems cannot
-  // support versioning and also allow changes to previous versions.
+  // Update a Data Bundle
   rpc UpdateDataBundle(UpdateDataBundleRequest) returns (UpdateDataBundleResponse) {
     option (google.api.http) = {
       put: "/ga4gh/dos/v1/databundles/{data_bundle_id}"
@@ -81,14 +74,14 @@ service DataObjectService {
     };
   }
 
-  // Delete a data bundle
+  // Delete a Data Bundle
   rpc DeleteDataBundle(DeleteDataBundleRequest) returns (DeleteDataBundleResponse) {
       option (google.api.http) = {
         delete: "/ga4gh/dos/v1/databundles/{data_bundle_id}"
       };
   }
 
-  // List the data bundles
+  // List the Data Bundles
   rpc ListDataBundles(ListDataBundlesRequest) returns (ListDataBundlesResponse) {
     option (google.api.http) = {
       get: "/ga4gh/dos/v1/databundles/list"
