@@ -54,7 +54,7 @@ service DataObjectService {
   // Create a new Data Bundle.
   rpc CreateDataBundle(CreateDataBundleRequest) returns (CreateDataBundleResponse) {
     option (google.api.http) = {
-      post: "/ga4gh/dos/v1/databundles/{data_bundle_id}"
+      post: "/ga4gh/dos/v1/databundles"
       body: "*"
     };
   }
@@ -206,7 +206,7 @@ message ListDataBundlesResponse {
 }
 
 message CreateDataBundleRequest {
-  string data_bundle_id = 1;
+  DataBundle data_bundle = 1;
 }
 
 message CreateDataBundleResponse {
