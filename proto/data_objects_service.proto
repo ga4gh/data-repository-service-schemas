@@ -6,6 +6,7 @@ package ga4gh;
 // Import HTTP RESTful annotations
 // from github.com/googleapis/googleapis
 import "google/api/annotations.proto";
+import "google/protobuf/struct.proto";
 
 import "data_objects.proto";
 
@@ -13,7 +14,7 @@ import "data_objects.proto";
 // Web service to get, create, list and delete Data Objects
 service DataObjectService {
 
-  // Make a new Data Object
+  // Retrieve a Data Object
   rpc GetDataObject(GetDataObjectRequest) returns (GetDataObjectResponse) {
     option (google.api.http) = {
       get: "/ga4gh/dos/v1/dataobjects/{data_object_id}"
@@ -29,7 +30,7 @@ service DataObjectService {
   }
 
 
-  // Delete a Data Object index entry.
+  // Delete a Data Object index entry
   rpc DeleteDataObject(DeleteDataObjectRequest) returns (DeleteDataObjectResponse) {
       option (google.api.http) = {
         delete: "/ga4gh/dos/v1/dataobjects/{data_object_id}"
@@ -44,14 +45,14 @@ service DataObjectService {
     };
   }
 
-  // List the Data Objects.
+  // List the Data Objects
   rpc ListDataObjects(ListDataObjectsRequest) returns (ListDataObjectsResponse) {
     option (google.api.http) = {
       get: "/ga4gh/dos/v1/dataobjects/list"
     };
   }
 
-  // Create a new Data Bundle.
+  // Create a new Data Bundle
   rpc CreateDataBundle(CreateDataBundleRequest) returns (CreateDataBundleResponse) {
     option (google.api.http) = {
       post: "/ga4gh/dos/v1/databundles"
@@ -59,7 +60,7 @@ service DataObjectService {
     };
   }
 
-  // Delete a Data Bundle
+  // Retrieve a Data Bundle
   rpc GetDataBundle(GetDataBundleRequest) returns (GetDataBundleResponse) {
       option (google.api.http) = {
         delete: "/ga4gh/dos/v1/databundles/{data_bundle_id}"
@@ -99,8 +100,8 @@ message ListDataObjectsRequest {
 
   // OPTIONAL
   // If provided will only return data object messages with the provided
-  // checksum.
-  string checksum = 2;
+  // checksum. If no checksum type is provided SHA256 will be assumed.
+  Checksum checksum = 2;
 
   // OPTIONAL
   // Specifies the maximum number of results to return in a single page.
@@ -120,7 +121,7 @@ message ListDataObjectsRequest {
 ///-------------------------------------------------------------------
 message ListDataObjectsResponse {
   // The list of Data Objects.
-  repeated DataObject dataobjects = 1;
+  repeated DataObject data_objects = 1;
 
   // The continuation token, which is used to page through large result sets.
   // Provide this value in a subsequent request to return the next page of
@@ -147,8 +148,8 @@ message CreateDataObjectRequest {
   string mime_type = 3;
 
   // REQUIRED
-  // The checksum of the file.
-  string checksum =  4;
+  // At least one checksum must be provided.
+  repeated Checksum checksum =  4;
 
   // OPTIONAL
   // The list of URLs that can be used to access the Data Object.
@@ -164,11 +165,11 @@ message CreateDataObjectRequest {
 
   // OPTIONAL
   // A set of key-value pairs that represent system metadata about the object.
-  map<string, string> system_metadata = 8;
+  map<string, google.protobuf.ListValue> system_metadata = 8;
 
   // OPTIONAL
   // A set of key-value pairs that represent metadata provided by the uploader.
-  map<string, string> user_metadata = 9;
+  map<string, google.protobuf.ListValue> user_metadata = 9;
 }
 
 message CreateDataObjectResponse {
@@ -230,7 +231,7 @@ message ListDataBundlesRequest {
   // OPTIONAL
   // If provided, will only return Data Bundles which have the provided
   // checksum.
-  string checksum = 2;
+  Checksum checksum = 2;
 
   // OPTIONAL
   // Specifies the maximum number of results to return in a single page.
@@ -260,9 +261,11 @@ message CreateDataBundleRequest {
   // The list of Data Object identifiers that this Data Bundle contains.
   repeated string data_object_ids = 1;
 
-  // REQUIRED, the bundle SHA256 checksum which is a SHA256 checksum of all the
-  // SHA256 checksums of the dataobjects that make up this bundle
-  string checksum =  2;
+  // REQUIRED
+  // At least one checksum must be provided.
+  // The data bundle SHA256 checksum is computed over all the
+  // SHA256 checksums of the Data Objects that make up this bundle.
+  repeated Checksum checksum =  2;
 
   // OPTIONAL
   // A human readable description.
@@ -274,11 +277,11 @@ message CreateDataBundleRequest {
 
   // OPTIONAL
   // A set of key-value pairs that represent system metadata about the Bundle.
-  map<string, string> system_metadata = 5;
+  map<string, google.protobuf.ListValue> system_metadata = 5;
 
   // OPTIONAL
   // A set of key-value pairs that represent metadata provided by the uploader.
-  map<string, string> user_metadata = 6;
+  map<string, google.protobuf.ListValue> user_metadata = 6;
 }
 
 message CreateDataBundleResponse {

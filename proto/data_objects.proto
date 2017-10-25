@@ -8,7 +8,28 @@ import "google/api/annotations.proto";
 import "google/protobuf/struct.proto";
 import "google/protobuf/timestamp.proto";
 
-// Resource: a file, API or other resource
+message Checksum {
+  // REQUIRED
+  // The hex-string encoded checksum for the Data.
+  string checksum = 1;
+
+  // OPTIONAL
+  // The digest method used to create the checksum.If left unspecified it is
+  // assumed the SHA256 checksum was calculated over the data.
+  enum type {
+    SHA_256 = 0;
+
+    MD5 = 1;
+
+    SHA_512 = 2;
+
+    // If the data have been uploaded using an S3 multipart uploader the
+    // multipart tag can be provided here.
+    S3_MULTIPART_ETAG = 3;
+  }
+}
+
+// Data Object: a file, API or other resource
 message DataObject {
   // REQUIRED
   // An idenitifier unique to this Data Object.
@@ -36,13 +57,13 @@ message DataObject {
   string version = 6;
 
   // OPTIONAL
-  // A string providing the mime-type of the file.
+  // A string providing the mime-type of the Data Object.
   // For example, "application/json".
   string mime_type = 7;
 
   // REQUIRED
-  // The checksum of the file.
-  string checksum =  8;
+  // The checksum of the Data Object. At least one checksum must be provided.
+  repeated Checksum checksum =  8;
 
   // OPTIONAL
   // The list of URLs that can be used to access the Data Object.
@@ -65,7 +86,7 @@ message DataObject {
   map<string, string> user_metadata = 13;
 }
 
-// A collection of Data Objects
+// Data Bundle: A collection of Data Objects
 message DataBundle {
   // REQUIRED
   // An identifier, unique to this Data Bundle
@@ -90,12 +111,14 @@ message DataBundle {
   // versioning please use your update timestamp as your version.
   string version = 5;
 
-  // REQUIRED, the bundle SHA256 checksum which is a SHA256 checksum of all the
-  // SHA256 checksums of the dataobjects that make up this bundle
-  string checksum =  6;
+  // REQUIRED
+  // At least one checksum must be provided.
+  // The data bundle SHA256 checksum is computed over all the
+  // SHA256 checksums of the Data Objects that make up this bundle.
+  repeated Checksum checksum =  6;
 
   // OPTIONAL
-  // A human readable description
+  // A human readable description.
   string description = 9;
 
   // OPTIONAL
@@ -104,9 +127,9 @@ message DataBundle {
 
   // OPTIONAL
   // A set of key-value pairs that represent system metadata about the object.
-  map<string, string> system_metadata = 11;
+  map<string, google.protobuf.ListValue> system_metadata = 11;
 
   // OPTIONAL
   // A set of key-value pairs that represent metadata provided by the uploader.
-  map<string, string> user_metadata = 12;
+  map<string, google.protobuf.ListValue> user_metadata = 12;
 }
