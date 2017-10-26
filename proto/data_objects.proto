@@ -47,7 +47,7 @@ message DataObject {
   // Timestamp of object creation in RFC3339.
   google.protobuf.Timestamp created = 4;
 
-  // REQUIRED
+  // OPTIONAL
   // Timestamp of update in RFC3339, identical to create timestamp in systems
   // that do not support updates.
   google.protobuf.Timestamp updated = 5;
