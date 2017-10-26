@@ -48,7 +48,8 @@ service DataObjectService {
   // List the Data Objects
   rpc ListDataObjects(ListDataObjectsRequest) returns (ListDataObjectsResponse) {
     option (google.api.http) = {
-      get: "/ga4gh/dos/v1/dataobjects/list"
+      post: "/ga4gh/dos/v1/dataobjects/list"
+      body: "*"
     };
   }
 
@@ -85,7 +86,8 @@ service DataObjectService {
   // List the Data Bundles
   rpc ListDataBundles(ListDataBundlesRequest) returns (ListDataBundlesResponse) {
     option (google.api.http) = {
-      get: "/ga4gh/dos/v1/databundles/list"
+      post: "/ga4gh/dos/v1/databundles/list"
+      body: "*"
     };
   }
 }
