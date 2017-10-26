@@ -1,2 +1,5 @@
 cwl-runner
 cwltool==1.0.20161114152756
+connexion
+flask_cors
+bravado

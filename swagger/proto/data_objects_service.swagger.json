@@ -1,5 +1,5 @@
 {
-  "swagger": "2.0",
+    "basePath": "/", "swagger": "2.0",
   "info": {
     "title": "data_objects_service.proto",
     "version": "version not set"
@@ -18,6 +18,7 @@
     "/ga4gh/dos/v1/databundles": {
       "post": {
         "summary": "Create a new Data Bundle",
+        "x-swagger-router-controller": "app", 
         "operationId": "CreateDataBundle",
         "responses": {
           "200": {
@@ -43,8 +44,9 @@
       }
     },
     "/ga4gh/dos/v1/databundles/list": {
-      "get": {
+      "post": {
         "summary": "List the Data Bundles",
+        "x-swagger-router-controller": "app", 
         "operationId": "ListDataBundles",
         "responses": {
           "200": {
@@ -56,33 +58,12 @@
         },
         "parameters": [
           {
-            "name": "alias",
-            "description": "OPTIONAL\nIf provided returns Data Bundles that have any alias that matches the\nrequest.",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "checksum.checksum",
-            "description": "REQUIRED\nThe hex-string encoded checksum for the Data.",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "page_size",
-            "description": "OPTIONAL\nSpecifies the maximum number of results to return in a single page.\nIf unspecified, a system default will be used.",
-            "in": "query",
-            "required": false,
-            "type": "integer",
-            "format": "int32"
-          },
-          {
-            "name": "page_token",
-            "description": "OPTIONAL\nThe continuation token, which is used to page through large result sets.\nTo get the next page of results, set this parameter to the value of\n`next_page_token` from the previous response.",
-            "in": "query",
-            "required": false,
-            "type": "string"
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ga4ghListDataBundlesRequest"
+            }
           }
         ],
         "tags": [
@@ -93,6 +74,7 @@
     "/ga4gh/dos/v1/databundles/{data_bundle_id}": {
       "delete": {
         "summary": "Delete a Data Bundle",
+        "x-swagger-router-controller": "app", 
         "operationId": "DeleteDataBundle",
         "responses": {
           "200": {
@@ -116,6 +98,7 @@
       },
       "put": {
         "summary": "Update a Data Bundle",
+        "x-swagger-router-controller": "app", 
         "operationId": "UpdateDataBundle",
         "responses": {
           "200": {
@@ -149,6 +132,7 @@
     "/ga4gh/dos/v1/dataobjects": {
       "post": {
         "summary": "Make a new Data Object",
+        "x-swagger-router-controller": "app", 
         "operationId": "CreateDataObject",
         "responses": {
           "200": {
@@ -174,8 +158,9 @@
       }
     },
     "/ga4gh/dos/v1/dataobjects/list": {
-      "get": {
+      "post": {
         "summary": "List the Data Objects",
+        "x-swagger-router-controller": "app", 
         "operationId": "ListDataObjects",
         "responses": {
           "200": {
@@ -187,33 +172,12 @@
         },
         "parameters": [
           {
-            "name": "alias",
-            "description": "OPTIONAL\nIf provided will only return Data Objects with the given alias.",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "checksum.checksum",
-            "description": "REQUIRED\nThe hex-string encoded checksum for the Data.",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "page_size",
-            "description": "OPTIONAL\nSpecifies the maximum number of results to return in a single page.\nIf unspecified, a system default will be used.",
-            "in": "query",
-            "required": false,
-            "type": "integer",
-            "format": "int32"
-          },
-          {
-            "name": "page_token",
-            "description": "OPTIONAL\nThe continuation token, which is used to page through large result sets.\nTo get the next page of results, set this parameter to the value of\n`next_page_token` from the previous response.",
-            "in": "query",
-            "required": false,
-            "type": "string"
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ga4ghListDataObjectsRequest"
+            }
           }
         ],
         "tags": [
@@ -224,6 +188,7 @@
     "/ga4gh/dos/v1/dataobjects/{data_object_id}": {
       "get": {
         "summary": "Retrieve a Data Object",
+        "x-swagger-router-controller": "app", 
         "operationId": "GetDataObject",
         "responses": {
           "200": {
@@ -254,6 +219,7 @@
       },
       "delete": {
         "summary": "Delete a Data Object index entry",
+        "x-swagger-router-controller": "app", 
         "operationId": "DeleteDataObject",
         "responses": {
           "200": {
@@ -277,6 +243,7 @@
       },
       "put": {
         "summary": "Update a Data Object",
+        "x-swagger-router-controller": "app", 
         "operationId": "UpdateDataObject",
         "responses": {
           "200": {
@@ -525,7 +492,7 @@
         "updated": {
           "type": "string",
           "format": "date-time",
-          "description": "REQUIRED\nTimestamp of update in RFC3339, identical to create timestamp in systems\nthat do not support updates."
+          "description": "OPTIONAL\nTimestamp of update in RFC3339, identical to create timestamp in systems\nthat do not support updates."
         },
         "version": {
           "type": "string",
@@ -611,6 +578,29 @@
         }
       }
     },
+    "ga4ghListDataBundlesRequest": {
+      "type": "object",
+      "properties": {
+        "alias": {
+          "type": "string",
+          "description": "OPTIONAL\nIf provided returns Data Bundles that have any alias that matches the\nrequest."
+        },
+        "checksum": {
+          "$ref": "#/definitions/ga4ghChecksum",
+          "description": "OPTIONAL\nIf provided, will only return Data Bundles which have the provided\nchecksum."
+        },
+        "page_size": {
+          "type": "integer",
+          "format": "int32",
+          "description": "OPTIONAL\nSpecifies the maximum number of results to return in a single page.\nIf unspecified, a system default will be used."
+        },
+        "page_token": {
+          "type": "string",
+          "description": "OPTIONAL\nThe continuation token, which is used to page through large result sets.\nTo get the next page of results, set this parameter to the value of\n`next_page_token` from the previous response."
+        }
+      },
+      "title": "Bundles"
+    },
     "ga4ghListDataBundlesResponse": {
       "type": "object",
       "properties": {
@@ -626,6 +616,29 @@
           "description": "The continuation token, which is used to page through large result sets.\nProvide this value in a subsequent request to return the next page of\nresults. This field will be empty if there aren't any additional results."
         }
       }
+    },
+    "ga4ghListDataObjectsRequest": {
+      "type": "object",
+      "properties": {
+        "alias": {
+          "type": "string",
+          "description": "OPTIONAL\nIf provided will only return Data Objects with the given alias."
+        },
+        "checksum": {
+          "$ref": "#/definitions/ga4ghChecksum",
+          "description": "OPTIONAL\nIf provided will only return data object messages with the provided\nchecksum. If no checksum type is provided SHA256 will be assumed."
+        },
+        "page_size": {
+          "type": "integer",
+          "format": "int32",
+          "description": "OPTIONAL\nSpecifies the maximum number of results to return in a single page.\nIf unspecified, a system default will be used."
+        },
+        "page_token": {
+          "type": "string",
+          "description": "OPTIONAL\nThe continuation token, which is used to page through large result sets.\nTo get the next page of results, set this parameter to the value of\n`next_page_token` from the previous response."
+        }
+      },
+      "title": "/-------------------------------------------------------------------\nA request to list all objects in a dataset\n/-------------------------------------------------------------------"
     },
     "ga4ghListDataObjectsResponse": {
       "type": "object",
