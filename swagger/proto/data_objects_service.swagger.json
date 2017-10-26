@@ -686,9 +686,57 @@
           "type": "string",
           "description": "REQUIRED\nThe identifier of the Data Object to be updated."
         },
-        "data_object": {
-          "$ref": "#/definitions/ga4ghDataObject",
-          "description": "REQUIRED\nAn updated version of the Data Object including the fields to alter."
+        "file_name": {
+          "type": "string",
+          "description": "OPTIONAL\nA string that can be optionally used to name a file."
+        },
+        "file_size": {
+          "type": "string",
+          "format": "int64",
+          "description": "REQUIRED\nThe computed file size in bytes."
+        },
+        "mime_type": {
+          "type": "string",
+          "description": "OPTIONAL\nA string providing the mime-type of the file.\nFor example, \"application/json\"."
+        },
+        "checksum": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ga4ghChecksum"
+          },
+          "description": "REQUIRED\nAt least one checksum must be provided."
+        },
+        "urls": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "OPTIONAL\nThe list of URLs that can be used to access the Data Object."
+        },
+        "description": {
+          "type": "string",
+          "description": "OPTIONAL\nA human readable description of the contents of the Data Object."
+        },
+        "aliases": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "OPTIONAL\nA list of strings that can be used to identify this Data Object."
+        },
+        "system_metadata": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/protobufListValue"
+          },
+          "description": "OPTIONAL\nA set of key-value pairs that represent system metadata about the object."
+        },
+        "user_metadata": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/protobufListValue"
+          },
+          "description": "OPTIONAL\nA set of key-value pairs that represent metadata provided by the uploader."
         }
       }
     },
