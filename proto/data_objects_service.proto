@@ -200,9 +200,42 @@ message UpdateDataObjectRequest {
   // The identifier of the Data Object to be updated.
   string data_object_id = 1;
 
+  // OPTIONAL
+  // A string that can be optionally used to name a file.
+  string file_name = 2;
+
   // REQUIRED
-  // An updated version of the Data Object including the fields to alter.
-  DataObject data_object = 2;
+  // The computed file size in bytes.
+  int64 file_size = 3;
+
+  // OPTIONAL
+  // A string providing the mime-type of the file.
+  // For example, "application/json".
+  string mime_type = 4;
+
+  // REQUIRED
+  // At least one checksum must be provided.
+  repeated Checksum checksum =  5;
+
+  // OPTIONAL
+  // The list of URLs that can be used to access the Data Object.
+  repeated string urls = 6;
+
+  // OPTIONAL
+  // A human readable description of the contents of the Data Object.
+  string description = 7;
+
+  // OPTIONAL
+  // A list of strings that can be used to identify this Data Object.
+  repeated string aliases = 8;
+
+  // OPTIONAL
+  // A set of key-value pairs that represent system metadata about the object.
+  map<string, google.protobuf.ListValue> system_metadata = 9;
+
+  // OPTIONAL
+  // A set of key-value pairs that represent metadata provided by the uploader.
+  map<string, google.protobuf.ListValue> user_metadata = 10;
 }
 
 message UpdateDataObjectResponse {
