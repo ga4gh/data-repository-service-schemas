@@ -101,9 +101,13 @@ message ListDataObjectsRequest {
   string alias = 1;
 
   // OPTIONAL
+  // If provided will return only Data Objects with this URL.
+  string url = 2;
+
+  // OPTIONAL
   // If provided will only return data object messages with the provided
   // checksum. If no checksum type is provided SHA256 will be assumed.
-  Checksum checksum = 2;
+  Checksum checksum = 3;
 
   // OPTIONAL
   // Specifies the maximum number of results to return in a single page.
@@ -155,7 +159,7 @@ message CreateDataObjectRequest {
 
   // OPTIONAL
   // The list of URLs that can be used to access the Data Object.
-  repeated string urls = 5;
+  repeated URL urls = 5;
 
   // OPTIONAL
   // A human readable description of the contents of the Data Object.
@@ -219,7 +223,7 @@ message UpdateDataObjectRequest {
 
   // OPTIONAL
   // The list of URLs that can be used to access the Data Object.
-  repeated string urls = 6;
+  repeated URL urls = 6;
 
   // OPTIONAL
   // A human readable description of the contents of the Data Object.
@@ -228,14 +232,6 @@ message UpdateDataObjectRequest {
   // OPTIONAL
   // A list of strings that can be used to identify this Data Object.
   repeated string aliases = 8;
-
-  // OPTIONAL
-  // A set of key-value pairs that represent system metadata about the object.
-  map<string, google.protobuf.ListValue> system_metadata = 9;
-
-  // OPTIONAL
-  // A set of key-value pairs that represent metadata provided by the uploader.
-  map<string, google.protobuf.ListValue> user_metadata = 10;
 }
 
 message UpdateDataObjectResponse {

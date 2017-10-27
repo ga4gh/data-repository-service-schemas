@@ -364,7 +364,7 @@
         "urls": {
           "type": "array",
           "items": {
-            "type": "string"
+            "$ref": "#/definitions/ga4ghURL"
           },
           "description": "OPTIONAL\nThe list of URLs that can be used to access the Data Object."
         },
@@ -512,7 +512,7 @@
         "urls": {
           "type": "array",
           "items": {
-            "type": "string"
+            "$ref": "#/definitions/ga4ghURL"
           },
           "description": "OPTIONAL\nThe list of URLs that can be used to access the Data Object."
         },
@@ -526,20 +526,6 @@
             "type": "string"
           },
           "description": "OPTIONAL\nA list of strings that can be used to identify this Data Object."
-        },
-        "system_metadata": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          },
-          "description": "OPTIONAL\nA set of key-value pairs that represent system metadata about the object."
-        },
-        "user_metadata": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          },
-          "description": "OPTIONAL\nA set of key-value pairs that represent metadata provided by the uploader."
         }
       },
       "title": "Data Object: a file, API or other resource"
@@ -624,6 +610,10 @@
           "type": "string",
           "description": "OPTIONAL\nIf provided will only return Data Objects with the given alias."
         },
+        "url": {
+          "type": "string",
+          "description": "OPTIONAL\nIf provided will return only Data Objects with this URL."
+        },
         "checksum": {
           "$ref": "#/definitions/ga4ghChecksum",
           "description": "OPTIONAL\nIf provided will only return data object messages with the provided\nchecksum. If no checksum type is provided SHA256 will be assumed."
@@ -656,6 +646,29 @@
         }
       },
       "title": "/-------------------------------------------------------------------\nA list of data objects\n/-------------------------------------------------------------------"
+    },
+    "ga4ghURL": {
+      "type": "object",
+      "properties": {
+        "url": {
+          "type": "string",
+          "description": "REQUIRED\nA URL that can be used to access the file."
+        },
+        "system_metadata": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "OPTIONAL\nThese values are reported by the underlying object store.\nA set of key-value pairs that represent system metadata about the object."
+        },
+        "user_metadata": {
+          "type": "object",
+          "additionalProperties": {
+            "type": "string"
+          },
+          "description": "OPTIONAL\nThese values are reported by the underlying object store.\nA set of key-value pairs that represent metadata provided by the uploader."
+        }
+      }
     },
     "ga4ghUpdateDataBundleRequest": {
       "type": "object",
@@ -709,7 +722,7 @@
         "urls": {
           "type": "array",
           "items": {
-            "type": "string"
+            "$ref": "#/definitions/ga4ghURL"
           },
           "description": "OPTIONAL\nThe list of URLs that can be used to access the Data Object."
         },
@@ -723,20 +736,6 @@
             "type": "string"
           },
           "description": "OPTIONAL\nA list of strings that can be used to identify this Data Object."
-        },
-        "system_metadata": {
-          "type": "object",
-          "additionalProperties": {
-            "$ref": "#/definitions/protobufListValue"
-          },
-          "description": "OPTIONAL\nA set of key-value pairs that represent system metadata about the object."
-        },
-        "user_metadata": {
-          "type": "object",
-          "additionalProperties": {
-            "$ref": "#/definitions/protobufListValue"
-          },
-          "description": "OPTIONAL\nA set of key-value pairs that represent metadata provided by the uploader."
         }
       }
     },

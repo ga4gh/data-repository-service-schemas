@@ -8,6 +8,21 @@ import "google/api/annotations.proto";
 import "google/protobuf/struct.proto";
 import "google/protobuf/timestamp.proto";
 
+message URL {
+  // REQUIRED
+  // A URL that can be used to access the file.
+  string url = 1;
+
+  // OPTIONAL
+  // These values are reported by the underlying object store.
+  // A set of key-value pairs that represent system metadata about the object.
+  map<string, string> system_metadata = 12;
+
+  // OPTIONAL
+  // These values are reported by the underlying object store.
+  // A set of key-value pairs that represent metadata provided by the uploader.
+  map<string, string> user_metadata = 13;
+}
 
 message Checksum {
   // REQUIRED
@@ -68,7 +83,7 @@ message DataObject {
 
   // OPTIONAL
   // The list of URLs that can be used to access the Data Object.
-  repeated string urls = 9;
+  repeated URL urls = 9;
 
   // OPTIONAL
   // A human readable description of the contents of the Data Object.
@@ -77,14 +92,6 @@ message DataObject {
   // OPTIONAL
   // A list of strings that can be used to identify this Data Object.
   repeated string aliases = 11;
-
-  // OPTIONAL
-  // A set of key-value pairs that represent system metadata about the object.
-  map<string, string> system_metadata = 12;
-
-  // OPTIONAL
-  // A set of key-value pairs that represent metadata provided by the uploader.
-  map<string, string> user_metadata = 13;
 }
 
 // Data Bundle: A collection of Data Objects
