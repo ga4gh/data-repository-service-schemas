@@ -10,6 +10,15 @@ import datetime
 data_objects = {}
 data_bundles = {}
 
+# Application logic
+
+def filter_data_objects(predicate):
+    """
+    Filters data objects according to a function that acts on each item
+    returning either True or False per item.
+    """
+    return [x[1][0] for x in filter(predicate, data_objects.items())]
+
 def add_created_timestamps(doc):
     """
     Adds created and updated timestamps to the document.
@@ -25,6 +34,8 @@ def add_updated_timestamps(doc):
     doc['updated'] = str(datetime.datetime.now().isoformat("T") + "Z")
     return doc
 
+# Controllers
+
 def CreateDataObject(**kwargs):
     # Generate a unique identifier
     temp_id = str(uuid.uuid4())
@@ -32,6 +43,7 @@ def CreateDataObject(**kwargs):
     body = kwargs['body']
     doc = add_created_timestamps(body)
     doc['version'] = '0'
+    doc['id'] = temp_id
     data_objects[temp_id] = [doc]
     return({"data_object_id": temp_id}, 200)
 
@@ -60,6 +72,7 @@ def UpdateDataObject(**kwargs):
     # to add.
     version = str(len(data_objects[data_object_id]))
     doc['version'] = version
+    doc['id'] = old_data_object['id']
     data_objects[data_object_id] = [doc] + data_objects[data_object_id]
     return({"data_object_id": data_object_id}, 200)
 
@@ -69,7 +82,35 @@ def DeleteDataObject(**kwargs):
     return({"data_object_id": data_object_id}, 200)
 
 def ListDataObjects(**kwargs):
-    return(kwargs, 200)
+    body = kwargs.get('body')
+    def filterer(item):
+        selected = item[1][0]  # dict.items() gives us a tuple
+        # A list of true and false that all must be true to pass the filter
+        result_string = []
+        if body.get('checksum', None):
+            if body.get('checksum').get('checksum', None):
+                sums = filter(
+                    lambda x: x == body.get('checksum').get('checksum'),
+                    [x['checksum'] for x in selected.get('checksum', [])])
+                result_string.append(len(sums) > 0)
+            if body.get('checksum').get('type', None):
+                types = filter(
+                    lambda x: x == body.get('checksum').get('type'),
+                    [x['type'] for x in selected.get('checksum', [])])
+                result_string.append(len(types) > 0)
+        if body.get('url', None):
+            urls = filter(
+                lambda x: x == body.get('url'),
+                [x['url'] for x in selected.get('urls', [])])
+            result_string.append(len(urls) > 0)
+        if body.get('alias', None):
+            aliases = filter(
+                lambda x: x == body.get('alias'),
+                selected.get('aliases', []))
+            result_string.append(len(aliases) > 0)
+        return False not in result_string
+    filtered = filter_data_objects(filterer)
+    return({"data_objects": filtered}, 200)
 
 def CreateDataBundle(**kwargs):
     temp_id = str(uuid.uuid4())

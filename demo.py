@@ -12,7 +12,7 @@ def client_demo():
     CreateDataObjectRequest = models.get_model('ga4ghCreateDataObjectRequest')
     create_request = CreateDataObjectRequest(
         file_name="abc",
-        checksum=[Checksum(checksum="def", type=0)],
+        checksum=[Checksum(checksum="def", type="md5")],
         urls=[URL(url="a"), URL(url="b")])
     create_response = client.CreateDataObject(body=create_request).result()
     data_object_id = create_response['data_object_id']
@@ -28,7 +28,7 @@ def client_demo():
     UpdateDataObjectRequest = models.get_model('ga4ghUpdateDataObjectRequest')
     update_request = UpdateDataObjectRequest(
         file_name="abc",
-        checksum=[Checksum(checksum="def", type=0)],
+        checksum=[Checksum(checksum="def", type="md5")],
         urls=[URL(url="a"), URL(url="b"), URL(url="c")])
     update_response = client.UpdateDataObject(
         data_object_id=data_object_id, body=update_request).result()
@@ -37,17 +37,23 @@ def client_demo():
     print(updated_object)
 
     # ListDataObjects
+    print("..........List Data Objects...............")
+    ListDataObjectsRequest = models.get_model('ga4ghListDataObjectsRequest')
+    list_request = ListDataObjectsRequest()
+    list_response = client.ListDataObjects(body=list_request).result()
+    print(list_response)
+
 
     # DeleteDataObject
-    print("..........Delete the Object...............")
-    delete_response = client.DeleteDataObject(
-        data_object_id=data_object_id).result()
-    print(delete_response)
-    try:
-        deleted_object = client.GetDataObject(
-            data_object_id=update_response['data_object_id']).result()
-    except Exception as e:
-        print("The object no longer exists, 404 not found.")
+    # print("..........Delete the Object...............")
+    # delete_response = client.DeleteDataObject(
+    #     data_object_id=data_object_id).result()
+    # print(delete_response)
+    # try:
+    #     deleted_object = client.GetDataObject(
+    #         data_object_id=update_response['data_object_id']).result()
+    # except Exception as e:
+    #     print("The object no longer exists, 404 not found.")
 
     # CreateDataBundle
 
