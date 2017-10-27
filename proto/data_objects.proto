@@ -30,19 +30,15 @@ message Checksum {
   string checksum = 1;
 
   // OPTIONAL
-  // The digest method used to create the checksum.If left unspecified it is
-  // assumed the SHA256 checksum was calculated over the data.
-  enum type {
-    SHA_256 = 0;
-
-    MD5 = 1;
-
-    SHA_512 = 2;
-
-    // If the data have been uploaded using an S3 multipart uploader the
-    // multipart tag can be provided here.
-    S3_MULTIPART_ETAG = 3;
-  }
+  // The digest method used to create the checksum. If left unspecified md5
+  // will be assumed.
+  //
+  // possible values:
+  // md5                # most blob stores provide a checksum using this
+  // multipart-md5      # multipart uploads provide a specialized tag in S3
+  // sha256
+  // sha512
+  string type = 2;
 }
 
 // Data Object: a file, API or other resource

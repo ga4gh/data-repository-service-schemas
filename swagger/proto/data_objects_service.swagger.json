@@ -282,6 +282,23 @@
         "checksum": {
           "type": "string",
           "description": "REQUIRED\nThe hex-string encoded checksum for the Data."
+        },
+        "type": {
+          "type": "string",
+          "description": "OPTIONAL\nThe digest method used to create the checksum. If left unspecified md5\nwill be assumed.\n\npossible values:\nmd5                # most blob stores provide a checksum using this\nmultipart-md5      # multipart uploads provide a specialized tag in S3\nsha256\nsha512"
+        }
+      }
+    },
+    "ga4ghChecksumRequest": {
+      "type": "object",
+      "properties": {
+        "checksum": {
+          "type": "string",
+          "description": "REQUIRED\nThe hexlified checksum that one would like to match on."
+        },
+        "type": {
+          "type": "string",
+          "description": "OPTIONAL\nIf provided will restrict responses to those that match the provided\ntype.\n\npossible values:\nmd5                # most blob stores provide a checksum using this\nmultipart-md5      # multipart uploads provide a specialized tag in S3\nsha256\nsha512"
         }
       }
     },
@@ -612,11 +629,11 @@
         },
         "url": {
           "type": "string",
-          "description": "OPTIONAL\nIf provided will return only Data Objects with this URL."
+          "description": "OPTIONAL\nIf provided will return only Data Objects with a that URL matches\nthis string."
         },
         "checksum": {
-          "$ref": "#/definitions/ga4ghChecksum",
-          "description": "OPTIONAL\nIf provided will only return data object messages with the provided\nchecksum. If no checksum type is provided SHA256 will be assumed."
+          "$ref": "#/definitions/ga4ghChecksumRequest",
+          "title": "OPTIONAL\nIf provided will only return data object messages with the provided\nchecksum. If the checksum type is provided"
         },
         "page_size": {
           "type": "integer",
