@@ -8,6 +8,7 @@ import "google/api/annotations.proto";
 import "google/protobuf/struct.proto";
 import "google/protobuf/timestamp.proto";
 
+
 message Checksum {
   // REQUIRED
   // The hex-string encoded checksum for the Data.
