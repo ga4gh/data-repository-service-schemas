@@ -694,9 +694,44 @@
           "type": "string",
           "description": "REQUIRED\nThe identifier of the Data Bundle to be updated."
         },
-        "data_bundle": {
-          "$ref": "#/definitions/ga4ghDataBundle",
-          "description": "REQUIRED\nA modified Data Bundle message that includes the fields to alter."
+        "data_object_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "REQUIRED\nThe list of Data Object identifiers that this Data Bundle contains."
+        },
+        "checksum": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ga4ghChecksum"
+          },
+          "description": "REQUIRED\nAt least one checksum must be provided.\nThe data bundle SHA256 checksum is computed over all the\nSHA256 checksums of the Data Objects that make up this bundle."
+        },
+        "description": {
+          "type": "string",
+          "description": "OPTIONAL\nA human readable description."
+        },
+        "aliases": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "OPTIONAL\nA list of strings that can be used to identify this Data Bundle."
+        },
+        "system_metadata": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/protobufListValue"
+          },
+          "description": "OPTIONAL\nA set of key-value pairs that represent system metadata about the Bundle."
+        },
+        "user_metadata": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/protobufListValue"
+          },
+          "description": "OPTIONAL\nA set of key-value pairs that represent metadata provided by the uploader."
         }
       }
     },

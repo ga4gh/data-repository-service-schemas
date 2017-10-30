@@ -368,8 +368,30 @@ message UpdateDataBundleRequest {
   string data_bundle_id = 1;
 
   // REQUIRED
-  // A modified Data Bundle message that includes the fields to alter.
-  DataBundle data_bundle = 2;
+  // The list of Data Object identifiers that this Data Bundle contains.
+  repeated string data_object_ids = 2;
+
+  // REQUIRED
+  // At least one checksum must be provided.
+  // The data bundle SHA256 checksum is computed over all the
+  // SHA256 checksums of the Data Objects that make up this bundle.
+  repeated Checksum checksum =  3;
+
+  // OPTIONAL
+  // A human readable description.
+  string description = 4;
+
+  // OPTIONAL
+  // A list of strings that can be used to identify this Data Bundle.
+  repeated string aliases = 5;
+
+  // OPTIONAL
+  // A set of key-value pairs that represent system metadata about the Bundle.
+  map<string, google.protobuf.ListValue> system_metadata = 6;
+
+  // OPTIONAL
+  // A set of key-value pairs that represent metadata provided by the uploader.
+  map<string, google.protobuf.ListValue> user_metadata = 7;
 }
 
 message UpdateDataBundleResponse {
