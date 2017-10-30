@@ -165,7 +165,7 @@ def ListDataBundles(**kwargs):
 
 
 def configure_app():
-    # The model name has to match what is in prepare_openapi.sh controller.
+    # The model name has to match what is in tools/prepare_swagger.sh controller.
     app = connexion.App(
         "app",
         specification_dir='swagger/proto/',

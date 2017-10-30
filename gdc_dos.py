@@ -52,7 +52,7 @@ def gdc_to_ga4gh(gdc):
         checksums=[Checksum(checksum=gdc.get('md5sum'), type='md5')],
         file_name=gdc.get('file_name'),
         file_size=str(gdc.get('file_size')),
-        alias=[gdc['file_id']],
+        aliases=[gdc['file_id']],
         urls=[URL(url="{}/data/{}".format(GDC_URL, gdc.get('file_id')))])
     return create_request
 
