@@ -173,7 +173,7 @@ message CreateDataObjectRequest {
 
   // REQUIRED
   // At least one checksum must be provided.
-  repeated Checksum checksum =  4;
+  repeated Checksum checksums =  4;
 
   // OPTIONAL
   // The list of URLs that can be used to access the Data Object.
@@ -314,7 +314,7 @@ message CreateDataBundleRequest {
   // At least one checksum must be provided.
   // The data bundle SHA256 checksum is computed over all the
   // SHA256 checksums of the Data Objects that make up this bundle.
-  repeated Checksum checksum =  2;
+  repeated Checksum checksums =  2;
 
   // OPTIONAL
   // A human readable description.
@@ -375,7 +375,7 @@ message UpdateDataBundleRequest {
   // At least one checksum must be provided.
   // The data bundle SHA256 checksum is computed over all the
   // SHA256 checksums of the Data Objects that make up this bundle.
-  repeated Checksum checksum =  3;
+  repeated Checksum checksums =  3;
 
   // OPTIONAL
   // A human readable description.

@@ -108,12 +108,12 @@ def ListDataObjects(**kwargs):
             if body.get('checksum').get('checksum', None):
                 sums = filter(
                     lambda x: x == body.get('checksum').get('checksum'),
-                    [x['checksum'] for x in selected.get('checksum', [])])
+                    [x['checksum'] for x in selected.get('checksums', [])])
                 result_string.append(len(sums) > 0)
             if body.get('checksum').get('type', None):
                 types = filter(
                     lambda x: x == body.get('checksum').get('type'),
-                    [x['type'] for x in selected.get('checksum', [])])
+                    [x['type'] for x in selected.get('checksums', [])])
                 result_string.append(len(types) > 0)
         if body.get('url', None):
             urls = filter(
@@ -124,6 +124,7 @@ def ListDataObjects(**kwargs):
             aliases = filter(
                 lambda x: x == body.get('alias'),
                 selected.get('aliases', []))
+            print(result_string)
             result_string.append(len(aliases) > 0)
         return False not in result_string
     filtered = filter_data_objects(filterer)
@@ -179,4 +180,4 @@ def configure_app():
 
 if __name__ == '__main__':
     app = configure_app()
-    app.run(port=8080,)
+    app.run(port=8080,debug=True)

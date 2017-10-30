@@ -49,7 +49,7 @@ def gdc_to_ga4gh(gdc):
     Checksum = models.get_model('ga4ghChecksum')
     print(str(gdc.get('file_size')))
     create_request = CreateDataObjectRequest(
-        checksum=[Checksum(checksum=gdc.get('md5sum'), type='md5')],
+        checksums=[Checksum(checksum=gdc.get('md5sum'), type='md5')],
         file_name=gdc.get('file_name'),
         file_size=str(gdc.get('file_size')),
         alias=[gdc['file_id']],

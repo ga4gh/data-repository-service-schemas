@@ -75,7 +75,7 @@ message DataObject {
 
   // REQUIRED
   // The checksum of the Data Object. At least one checksum must be provided.
-  repeated Checksum checksum =  8;
+  repeated Checksum checksums =  8;
 
   // OPTIONAL
   // The list of URLs that can be used to access the Data Object.
@@ -119,21 +119,21 @@ message DataBundle {
   // At least one checksum must be provided.
   // The data bundle SHA256 checksum is computed over all the
   // SHA256 checksums of the Data Objects that make up this bundle.
-  repeated Checksum checksum =  6;
+  repeated Checksum checksums =  6;
 
   // OPTIONAL
   // A human readable description.
-  string description = 9;
+  string description = 7;
 
   // OPTIONAL
   // A list of strings that can be used to identify this Data Bundle.
-  repeated string aliases = 10;
+  repeated string aliases = 8;
 
   // OPTIONAL
   // A set of key-value pairs that represent system metadata about the object.
-  map<string, google.protobuf.ListValue> system_metadata = 11;
+  map<string, google.protobuf.ListValue> system_metadata = 9;
 
   // OPTIONAL
   // A set of key-value pairs that represent metadata provided by the uploader.
-  map<string, google.protobuf.ListValue> user_metadata = 12;
+  map<string, google.protobuf.ListValue> user_metadata = 10;
 }
