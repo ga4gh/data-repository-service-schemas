@@ -7,5 +7,6 @@ config = {
     'host': 'localhost'
 }
 
-models = SwaggerClient.from_url('http://localhost:8080/swagger.json', config=config)
+URL = 'http://localhost:8080'
+models = SwaggerClient.from_url('{}/swagger.json'.format(URL), config=config)
 client = models.DataObjectService

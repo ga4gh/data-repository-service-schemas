@@ -4,6 +4,7 @@ import client
 models = client.models
 client = client.client
 
+
 def client_demo():
     # CreateDataObject
     print("..........Create an object............")
@@ -43,17 +44,16 @@ def client_demo():
     list_response = client.ListDataObjects(body=list_request).result()
     print(list_response)
 
-
     # DeleteDataObject
-    # print("..........Delete the Object...............")
-    # delete_response = client.DeleteDataObject(
-    #     data_object_id=data_object_id).result()
-    # print(delete_response)
-    # try:
-    #     deleted_object = client.GetDataObject(
-    #         data_object_id=update_response['data_object_id']).result()
-    # except Exception as e:
-    #     print("The object no longer exists, 404 not found.")
+    print("..........Delete the Object...............")
+    delete_response = client.DeleteDataObject(
+        data_object_id=data_object_id).result()
+    print(delete_response)
+    try:
+        client.GetDataObject(
+            data_object_id=update_response['data_object_id']).result()
+    except Exception as e:
+        print('The object no longer exists, 404 not found. {}'.format(e))
 
     # CreateDataBundle
 
@@ -64,6 +64,7 @@ def client_demo():
     # ListDataBundles
 
     # DeleteDataBundle
+
 
 if __name__ == '__main__':
     client_demo()

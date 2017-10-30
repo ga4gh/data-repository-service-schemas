@@ -3,6 +3,11 @@ import client
 
 import requests
 
+models = client.models
+client = client.client
+
+GDC_URL = 'https://api.gdc.cancer.gov'
+
 """
 {'data': {'hits': [
 {u'data_type': u'Annotated Somatic Mutation',
@@ -11,7 +16,7 @@ u'created_datetime': u'2017-06-17T19:12:16.993774-05:00',
 u'file_name': u'a6c070d8-0619-4c55-b679-0420ace91903.vep.vcf.gz',
 u'md5sum': u'd26f933e8b38c5dfba4aa57e47bb4c4c',
 u'data_format': u'VCF',
-u'submitter_id': u'TCGA-AK-3447-01A-01W-0886-08_TCGA-AK-3447-10A-01W-0886-08_muse_annotated',
+u'submitter_id': u'TCGA-AK-3447-01A-01W-0886-08_TCGA-AK-...',
 u'access': u'controlled',
 u'state': u'live',
 u'file_id': u'a6c070d8-0619-4c55-b679-0420ace91903',
@@ -51,10 +56,6 @@ def gdc_to_ga4gh(gdc):
         urls=[URL(url="{}/data/{}".format(GDC_URL, gdc.get('file_id')))])
     return create_request
 
-models = client.models
-client = client.client
-
-GDC_URL = 'https://api.gdc.cancer.gov'
 
 def post_dos(gdc):
     """
@@ -66,12 +67,14 @@ def post_dos(gdc):
     create_response = client.CreateDataObject(body=create_request).result()
     return create_response
 
+
 def load_gdc():
     """
     Gets data from GDC and loads it to DOS.
     :return:
     """
-    response = requests.post('https://api.gdc.cancer.gov/files?related_files=true', json={}).json()
+    response = requests.post(
+        '{}/files?related_files=true'.format(GDC_URL), json={}).json()
     hits = response['data']['hits']
     # Initialize to kick off paging
     pagination = {}
