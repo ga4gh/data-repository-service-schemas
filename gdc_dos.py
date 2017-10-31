@@ -19,7 +19,7 @@ u'data_format': u'VCF',
 u'submitter_id': u'TCGA-AK-3447-01A-01W-0886-08_TCGA-AK-...',
 u'access': u'controlled',
 u'state': u'live',
-u'file_id': u'a6c070d8-0619-4c55-b679-0420ace91903',
+u'file_id': u'ba6c070d8-0619-4c55-b679-0420ace91903',
 u'data_category': u'Simple Nucleotide Variation',
 u'file_size': 202612,
 u'acl': [u'phs000178'],
@@ -39,6 +39,19 @@ u'warnings': {}}}
 """
 
 
+def dict_to_structured_dict(input_dict):
+    output_dict = {}
+    for key in input_dict.keys():
+        item = input_dict[key]
+        if isinstance(item, (str)):
+            output_dict[key] = item
+        elif isinstance(item, (list)):
+            output_dict[key] = ",".join(item)
+        else:
+            output_dict[key] = str(item)
+    return output_dict
+
+
 def gdc_to_ga4gh(gdc):
     """
     Accepts a gdc dictionary and returns a CreateDataObjectRequest
@@ -48,12 +61,17 @@ def gdc_to_ga4gh(gdc):
     URL = models.get_model('ga4ghURL')
     Checksum = models.get_model('ga4ghChecksum')
     print(str(gdc.get('file_size')))
+    metadata = dict_to_structured_dict(gdc)
+    print(metadata)
     create_request = CreateDataObjectRequest(
         checksums=[Checksum(checksum=gdc.get('md5sum'), type='md5')],
         file_name=gdc.get('file_name'),
         file_size=str(gdc.get('file_size')),
         aliases=[gdc['file_id']],
-        urls=[URL(url="{}/data/{}".format(GDC_URL, gdc.get('file_id')))])
+        urls=[
+            URL(
+                url="{}/data/{}".format(GDC_URL, gdc.get('file_id')),
+                system_metadata=dict_to_structured_dict(gdc))])
     return create_request
 
 
