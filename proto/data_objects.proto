@@ -117,8 +117,8 @@ message DataBundle {
 
   // REQUIRED
   // At least one checksum must be provided.
-  // The data bundle SHA256 checksum is computed over all the
-  // SHA256 checksums of the Data Objects that make up this bundle.
+  // The data bundle checksum is computed over all the checksums of the
+  // Data Objects that bundle contains.
   repeated Checksum checksums =  6;
 
   // OPTIONAL

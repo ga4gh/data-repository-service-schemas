@@ -165,7 +165,8 @@ def ListDataBundles(**kwargs):
 
 
 def configure_app():
-    # The model name has to match what is in tools/prepare_swagger.sh controller.
+    # The model name has to match what is in
+    # tools/prepare_swagger.sh controller.
     app = connexion.App(
         "app",
         specification_dir='swagger/proto/',
@@ -180,4 +181,4 @@ def configure_app():
 
 if __name__ == '__main__':
     app = configure_app()
-    app.run(port=8080,debug=True)
+    app.run(port=8080, debug=True)
