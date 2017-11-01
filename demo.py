@@ -11,10 +11,12 @@ def client_demo():
     Checksum = models.get_model('ga4ghChecksum')
     URL = models.get_model('ga4ghURL')
     CreateDataObjectRequest = models.get_model('ga4ghCreateDataObjectRequest')
-    create_request = CreateDataObjectRequest(
+    DataObject = models.get_model('ga4ghCreateDataObjectRequest')
+    create_data_object = DataObject(
         file_name="abc",
         checksums=[Checksum(checksum="def", type="md5")],
         urls=[URL(url="a"), URL(url="b")])
+    create_request = CreateDataObjectRequest(data_object=create_data_object)
     create_response = client.CreateDataObject(body=create_request).result()
     data_object_id = create_response['data_object_id']
     print(data_object_id)
@@ -27,10 +29,11 @@ def client_demo():
     # UpdateDataObject
     print("..........Update that object.................")
     UpdateDataObjectRequest = models.get_model('ga4ghUpdateDataObjectRequest')
-    update_request = UpdateDataObjectRequest(
+    update_data_object = DataObject(
         file_name="abc",
         checksums=[Checksum(checksum="def", type="md5")],
         urls=[URL(url="a"), URL(url="b"), URL(url="c")])
+    update_request = UpdateDataObjectRequest(data_object=update_data_object)
     update_response = client.UpdateDataObject(
         data_object_id=data_object_id, body=update_request).result()
     updated_object = client.GetDataObject(

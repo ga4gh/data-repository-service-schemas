@@ -305,44 +305,8 @@
     "ga4ghCreateDataBundleRequest": {
       "type": "object",
       "properties": {
-        "data_object_ids": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "description": "REQUIRED\nThe list of Data Object identifiers that this Data Bundle contains."
-        },
-        "checksums": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/ga4ghChecksum"
-          },
-          "description": "REQUIRED\nAt least one checksum must be provided.\nThe data bundle SHA256 checksum is computed over all the\nSHA256 checksums of the Data Objects that make up this bundle."
-        },
-        "description": {
-          "type": "string",
-          "description": "OPTIONAL\nA human readable description."
-        },
-        "aliases": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "description": "OPTIONAL\nA list of strings that can be used to identify this Data Bundle."
-        },
-        "system_metadata": {
-          "type": "object",
-          "additionalProperties": {
-            "$ref": "#/definitions/protobufListValue"
-          },
-          "description": "OPTIONAL\nA set of key-value pairs that represent system metadata about the Bundle."
-        },
-        "user_metadata": {
-          "type": "object",
-          "additionalProperties": {
-            "$ref": "#/definitions/protobufListValue"
-          },
-          "description": "OPTIONAL\nA set of key-value pairs that represent metadata provided by the uploader."
+        "data_bundle": {
+          "$ref": "#/definitions/ga4ghDataBundle"
         }
       }
     },
@@ -358,57 +322,9 @@
     "ga4ghCreateDataObjectRequest": {
       "type": "object",
       "properties": {
-        "file_name": {
-          "type": "string",
-          "description": "OPTIONAL\nA string that can be optionally used to name a file."
-        },
-        "file_size": {
-          "type": "string",
-          "format": "int64",
-          "description": "REQUIRED\nThe computed file size in bytes."
-        },
-        "mime_type": {
-          "type": "string",
-          "description": "OPTIONAL\nA string providing the mime-type of the file.\nFor example, \"application/json\"."
-        },
-        "checksums": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/ga4ghChecksum"
-          },
-          "description": "REQUIRED\nAt least one checksum must be provided."
-        },
-        "urls": {
-          "type": "array",
-          "items": {
-            "$ref": "#/definitions/ga4ghURL"
-          },
-          "description": "OPTIONAL\nThe list of URLs that can be used to access the Data Object."
-        },
-        "description": {
-          "type": "string",
-          "description": "OPTIONAL\nA human readable description of the contents of the Data Object."
-        },
-        "aliases": {
-          "type": "array",
-          "items": {
-            "type": "string"
-          },
-          "description": "OPTIONAL\nA list of strings that can be used to identify this Data Object."
-        },
-        "system_metadata": {
-          "type": "object",
-          "additionalProperties": {
-            "$ref": "#/definitions/protobufListValue"
-          },
-          "description": "OPTIONAL\nA set of key-value pairs that represent system metadata about the object."
-        },
-        "user_metadata": {
-          "type": "object",
-          "additionalProperties": {
-            "$ref": "#/definitions/protobufListValue"
-          },
-          "description": "OPTIONAL\nA set of key-value pairs that represent metadata provided by the uploader."
+        "data_object": {
+          "$ref": "#/definitions/ga4ghDataObject",
+          "description": "REQUIRED\nThe data object to be created. The ID scheme is left up to the\nimplementor but should be unique to the server instance."
         }
       },
       "description": "The Data Object one would like to index. One must provide any aliases\nand URLs to this file when sending the CreateDataObjectRequest. It is up\nto implementations to validate that the Data Object is available from\nthe provided URLs."
@@ -455,7 +371,7 @@
           "items": {
             "$ref": "#/definitions/ga4ghChecksum"
           },
-          "description": "REQUIRED\nAt least one checksum must be provided.\nThe data bundle SHA256 checksum is computed over all the\nSHA256 checksums of the Data Objects that make up this bundle."
+          "description": "REQUIRED\nAt least one checksum must be provided.\nThe data bundle checksum is computed over all the checksums of the\nData Objects that bundle contains."
         },
         "description": {
           "type": "string",
@@ -469,17 +385,11 @@
           "description": "OPTIONAL\nA list of strings that can be used to identify this Data Bundle."
         },
         "system_metadata": {
-          "type": "object",
-          "additionalProperties": {
-            "$ref": "#/definitions/protobufListValue"
-          },
+          "$ref": "#/definitions/protobufStruct",
           "description": "OPTIONAL\nA set of key-value pairs that represent system metadata about the object."
         },
         "user_metadata": {
-          "type": "object",
-          "additionalProperties": {
-            "$ref": "#/definitions/protobufListValue"
-          },
+          "$ref": "#/definitions/protobufStruct",
           "description": "OPTIONAL\nA set of key-value pairs that represent metadata provided by the uploader."
         }
       },
@@ -490,16 +400,16 @@
       "properties": {
         "id": {
           "type": "string",
-          "description": "REQUIRED\nAn idenitifier unique to this Data Object."
+          "description": "REQUIRED\nAn identifier unique to this Data Object."
         },
-        "file_name": {
+        "name": {
           "type": "string",
-          "description": "OPTIONAL\nA string that can be optionally used to name a file."
+          "description": "OPTIONAL\nA string that can be optionally used to name a Data Object."
         },
-        "file_size": {
+        "size": {
           "type": "string",
           "format": "int64",
-          "description": "REQUIRED\nThe computed file size in bytes."
+          "description": "REQUIRED\nThe computed size in bytes."
         },
         "created": {
           "type": "string",
@@ -542,7 +452,7 @@
           "items": {
             "type": "string"
           },
-          "description": "OPTIONAL\nA list of strings that can be used to identify this Data Object."
+          "title": "OPTIONAL\nA list of strings that can be used to find this Data Object.\nThese aliases can be used to represent the Data Object's location in\na directory (e.g. \"bucket/folder/file.name\") to make Data Objects\nmore discoverable. They might also be used to represent"
         }
       },
       "title": "Data Object: a file, API or other resource"
@@ -672,17 +582,11 @@
           "description": "REQUIRED\nA URL that can be used to access the file."
         },
         "system_metadata": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          },
+          "$ref": "#/definitions/protobufStruct",
           "description": "OPTIONAL\nThese values are reported by the underlying object store.\nA set of key-value pairs that represent system metadata about the object."
         },
         "user_metadata": {
-          "type": "object",
-          "additionalProperties": {
-            "type": "string"
-          },
+          "$ref": "#/definitions/protobufStruct",
           "description": "OPTIONAL\nThese values are reported by the underlying object store.\nA set of key-value pairs that represent metadata provided by the uploader."
         }
       }
@@ -720,17 +624,11 @@
           "description": "OPTIONAL\nA list of strings that can be used to identify this Data Bundle."
         },
         "system_metadata": {
-          "type": "object",
-          "additionalProperties": {
-            "$ref": "#/definitions/protobufListValue"
-          },
+          "$ref": "#/definitions/protobufStruct",
           "description": "OPTIONAL\nA set of key-value pairs that represent system metadata about the Bundle."
         },
         "user_metadata": {
-          "type": "object",
-          "additionalProperties": {
-            "$ref": "#/definitions/protobufListValue"
-          },
+          "$ref": "#/definitions/protobufStruct",
           "description": "OPTIONAL\nA set of key-value pairs that represent metadata provided by the uploader."
         }
       }
@@ -751,20 +649,20 @@
           "type": "string",
           "description": "REQUIRED\nThe identifier of the Data Object to be updated."
         },
-        "file_name": {
+        "name": {
           "type": "string",
-          "description": "OPTIONAL\nA string that can be optionally used to name a file."
+          "description": "OPTIONAL\nA string that can be optionally used to name a resource."
         },
-        "file_size": {
+        "size": {
           "type": "string",
           "format": "int64",
           "description": "REQUIRED\nThe computed file size in bytes."
         },
         "mime_type": {
           "type": "string",
-          "description": "OPTIONAL\nA string providing the mime-type of the file.\nFor example, \"application/json\"."
+          "description": "OPTIONAL\nA string providing the mime-type of the resource.\nFor example, \"application/json\"."
         },
-        "checksum": {
+        "checksums": {
           "type": "array",
           "items": {
             "$ref": "#/definitions/ga4ghChecksum"

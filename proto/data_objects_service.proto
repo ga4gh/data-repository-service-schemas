@@ -159,8 +159,9 @@ message ListDataObjectsResponse {
 // the provided URLs.
 message CreateDataObjectRequest {
   // REQUIRED
-  // The data object to be created.
-  DataObject data_object = 1
+  // The data object to be created. The ID scheme is left up to the
+  // implementor but should be unique to the server instance.
+  DataObject data_object = 1;
 }
 
 message CreateDataObjectResponse {
@@ -190,15 +191,15 @@ message UpdateDataObjectRequest {
   string data_object_id = 1;
 
   // OPTIONAL
-  // A string that can be optionally used to name a file.
-  string file_name = 2;
+  // A string that can be optionally used to name a resource.
+  string name = 2;
 
   // REQUIRED
   // The computed file size in bytes.
-  int64 file_size = 3;
+  int64 size = 3;
 
   // OPTIONAL
-  // A string providing the mime-type of the file.
+  // A string providing the mime-type of the resource.
   // For example, "application/json".
   string mime_type = 4;
 

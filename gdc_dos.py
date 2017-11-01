@@ -39,31 +39,17 @@ u'warnings': {}}}
 """
 
 
-def dict_to_structured_dict(input_dict):
-    output_dict = {}
-    for key in input_dict.keys():
-        item = input_dict[key]
-        if isinstance(item, (str)):
-            output_dict[key] = item
-        elif isinstance(item, (list)):
-            output_dict[key] = ",".join(item)
-        else:
-            output_dict[key] = str(item)
-    return output_dict
-
-
 def gdc_to_ga4gh(gdc):
     """
     Accepts a gdc dictionary and returns a CreateDataObjectRequest
     :return:
     """
+    DataObject = models.get_model('ga4ghDataObject')
     CreateDataObjectRequest = models.get_model('ga4ghCreateDataObjectRequest')
     URL = models.get_model('ga4ghURL')
     Checksum = models.get_model('ga4ghChecksum')
     print(str(gdc.get('file_size')))
-    metadata = dict_to_structured_dict(gdc)
-    print(metadata)
-    create_request = CreateDataObjectRequest(
+    create_data_object = DataObject(
         checksums=[Checksum(checksum=gdc.get('md5sum'), type='md5')],
         file_name=gdc.get('file_name'),
         file_size=str(gdc.get('file_size')),
@@ -71,7 +57,8 @@ def gdc_to_ga4gh(gdc):
         urls=[
             URL(
                 url="{}/data/{}".format(GDC_URL, gdc.get('file_id')),
-                system_metadata=dict_to_structured_dict(gdc))])
+                system_metadata=gdc)])
+    create_request = CreateDataObjectRequest(data_object=create_data_object)
     return create_request
 
 

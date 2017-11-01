@@ -45,10 +45,12 @@ def CreateDataObject(**kwargs):
     # Generate a unique identifier
     temp_id = str(uuid.uuid4())
     # TODO Safely create
-    body = kwargs['body']
+    body = kwargs['body']['data_object']
     doc = add_created_timestamps(body)
     doc['version'] = '0'
-    doc['id'] = temp_id
+    if not doc.get('id', None) or data_objects.get(doc['id'], None):
+        # issue an identifier if a valid one hasn't been provided
+        doc['id'] = temp_id
     data_objects[temp_id] = [doc]
     return({"data_object_id": temp_id}, 200)
 
@@ -69,7 +71,7 @@ def GetDataObject(**kwargs):
 
 def UpdateDataObject(**kwargs):
     data_object_id = kwargs['data_object_id']
-    body = kwargs['body']
+    body = kwargs['body']['data_object']
     # Check to make sure we are updating an existing document.
     old_data_object = data_objects[data_object_id][0]
     # Upsert the new body in place of the old document
@@ -124,7 +126,6 @@ def ListDataObjects(**kwargs):
             aliases = filter(
                 lambda x: x == body.get('alias'),
                 selected.get('aliases', []))
-            print(result_string)
             result_string.append(len(aliases) > 0)
         return False not in result_string
     filtered = filter_data_objects(filterer)
