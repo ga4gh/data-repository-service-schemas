@@ -16,12 +16,12 @@ message URL {
   // OPTIONAL
   // These values are reported by the underlying object store.
   // A set of key-value pairs that represent system metadata about the object.
-  map<string, string> system_metadata = 12;
+  google.protobuf.Struct system_metadata = 2;
 
   // OPTIONAL
   // These values are reported by the underlying object store.
   // A set of key-value pairs that represent metadata provided by the uploader.
-  map<string, string> user_metadata = 13;
+  google.protobuf.Struct user_metadata = 3;
 }
 
 message Checksum {
@@ -48,12 +48,12 @@ message DataObject {
   string id = 1;
 
   // OPTIONAL
-  // A string that can be optionally used to name a file.
-  string file_name = 2;
+  // A string that can be optionally used to name a Data Object.
+  string name = 2;
 
   // REQUIRED
-  // The computed file size in bytes.
-  int64 file_size = 3;
+  // The computed size in bytes.
+  int64 size = 3;
 
   // REQUIRED
   // Timestamp of object creation in RFC3339.
@@ -131,9 +131,9 @@ message DataBundle {
 
   // OPTIONAL
   // A set of key-value pairs that represent system metadata about the object.
-  map<string, google.protobuf.ListValue> system_metadata = 9;
+  google.protobuf.Struct system_metadata = 9;
 
   // OPTIONAL
   // A set of key-value pairs that represent metadata provided by the uploader.
-  map<string, google.protobuf.ListValue> user_metadata = 10;
+  google.protobuf.Struct user_metadata = 10;
 }

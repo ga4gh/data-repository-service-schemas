@@ -158,42 +158,9 @@ message ListDataObjectsResponse {
 // to implementations to validate that the Data Object is available from
 // the provided URLs.
 message CreateDataObjectRequest {
-  // OPTIONAL
-  // A string that can be optionally used to name a file.
-  string file_name = 1;
-
   // REQUIRED
-  // The computed file size in bytes.
-  int64 file_size = 2;
-
-  // OPTIONAL
-  // A string providing the mime-type of the file.
-  // For example, "application/json".
-  string mime_type = 3;
-
-  // REQUIRED
-  // At least one checksum must be provided.
-  repeated Checksum checksums =  4;
-
-  // OPTIONAL
-  // The list of URLs that can be used to access the Data Object.
-  repeated URL urls = 5;
-
-  // OPTIONAL
-  // A human readable description of the contents of the Data Object.
-  string description = 6;
-
-  // OPTIONAL
-  // A list of strings that can be used to identify this Data Object.
-  repeated string aliases = 7;
-
-  // OPTIONAL
-  // A set of key-value pairs that represent system metadata about the object.
-  map<string, google.protobuf.ListValue> system_metadata = 8;
-
-  // OPTIONAL
-  // A set of key-value pairs that represent metadata provided by the uploader.
-  map<string, google.protobuf.ListValue> user_metadata = 9;
+  // The data object to be created.
+  DataObject data_object = 1
 }
 
 message CreateDataObjectResponse {
@@ -237,7 +204,7 @@ message UpdateDataObjectRequest {
 
   // REQUIRED
   // At least one checksum must be provided.
-  repeated Checksum checksum =  5;
+  repeated Checksum checksums =  5;
 
   // OPTIONAL
   // The list of URLs that can be used to access the Data Object.
@@ -306,31 +273,7 @@ message ListDataBundlesResponse {
 }
 
 message CreateDataBundleRequest {
-  // REQUIRED
-  // The list of Data Object identifiers that this Data Bundle contains.
-  repeated string data_object_ids = 1;
-
-  // REQUIRED
-  // At least one checksum must be provided.
-  // The data bundle SHA256 checksum is computed over all the
-  // SHA256 checksums of the Data Objects that make up this bundle.
-  repeated Checksum checksums =  2;
-
-  // OPTIONAL
-  // A human readable description.
-  string description = 3;
-
-  // OPTIONAL
-  // A list of strings that can be used to identify this Data Bundle.
-  repeated string aliases = 4;
-
-  // OPTIONAL
-  // A set of key-value pairs that represent system metadata about the Bundle.
-  map<string, google.protobuf.ListValue> system_metadata = 5;
-
-  // OPTIONAL
-  // A set of key-value pairs that represent metadata provided by the uploader.
-  map<string, google.protobuf.ListValue> user_metadata = 6;
+    DataBundle data_bundle = 1;
 }
 
 message CreateDataBundleResponse {
@@ -387,11 +330,11 @@ message UpdateDataBundleRequest {
 
   // OPTIONAL
   // A set of key-value pairs that represent system metadata about the Bundle.
-  map<string, google.protobuf.ListValue> system_metadata = 6;
+  google.protobuf.Struct system_metadata = 6;
 
   // OPTIONAL
   // A set of key-value pairs that represent metadata provided by the uploader.
-  map<string, google.protobuf.ListValue> user_metadata = 7;
+  google.protobuf.Struct user_metadata = 7;
 }
 
 message UpdateDataBundleResponse {
