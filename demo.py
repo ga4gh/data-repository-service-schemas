@@ -56,8 +56,8 @@ def client_demo():
     list_response = client.ListDataObjects(body=list_request).result()
     print(len(list_response.data_objects))
 
-    # List all versions of a DataObject
-    print("..........List all Versions...............")
+    # Get all versions of a DataObject
+    print("..........Get all Versions...............")
     versions_response = client.GetDataObjectVersions(
         data_object_id=old_data_object.id).result()
     print(len(versions_response.data_objects))
@@ -98,6 +98,27 @@ def client_demo():
     create_response = client.CreateDataObject(body=create_request).result()
     data_object_id = create_response['data_object_id']
     print(data_object_id)
+
+    # Page through a listing of data objects
+    print("..........Page through a listing of Objects..............")
+    for i in range(100):
+        my_data_object = DataObject(
+            file_name="abc",
+            checksums=[Checksum(checksum="def", type="md5")],
+            urls=[URL(url="a")])
+        create_request = CreateDataObjectRequest(data_object=my_data_object)
+        client.CreateDataObject(body=create_request).result()
+    list_request = ListDataObjectsRequest(page_size=10)
+    list_response = client.ListDataObjects(body=list_request).result()
+    ids = [x.id for x in list_response.data_objects]
+    print(list_response.next_page_token)
+    print(ids)
+
+    list_request = ListDataObjectsRequest(
+        page_size=10, page_token=list_response.next_page_token)
+    list_response = client.ListDataObjects(body=list_request).result()
+    ids = [x.id for x in list_response.data_objects]
+    print(ids)
 
     # CreateDataBundle
 

@@ -7,6 +7,8 @@ import uuid
 import datetime
 from dateutil.parser import parse
 
+DEFAULT_PAGE_SIZE = 100
+
 # Our in memory registry
 data_objects = {}
 data_bundles = {}
@@ -22,8 +24,6 @@ def get_most_recent(key):
     max = {'created': '01-01-1965 00:00:00Z'}
     for version in data_objects[key].keys():
         data_object = data_objects[key][version]
-        print(max['created'])
-        print(parse(data_object['created']))
         if parse(data_object['created']) > parse(max['created']):
             max = data_object
     return max
@@ -63,7 +63,6 @@ def CreateDataObject(**kwargs):
     body = kwargs['body']['data_object']
     doc = add_created_timestamps(body)
     version = doc.get('version', None)
-    print(doc)
     if not version:
         doc['version'] = now()
     if doc.get('id', None):
@@ -74,7 +73,6 @@ def CreateDataObject(**kwargs):
     else:
         temp_id = str(uuid.uuid4())
         doc['id'] = temp_id
-    print(doc)
     data_objects[doc['id']] = {}
     data_objects[doc['id']][doc['version']] = doc
     return({"data_object_id": doc['id']}, 200)
@@ -148,7 +146,6 @@ def ListDataObjects(**kwargs):
         :param item:
         :return: bool
         """
-        print(item)
         selected = get_most_recent(item[0])  # dict.items() gives us a tuple
         # A list of true and false that all must be true to pass the filter
         result_string = []
@@ -174,8 +171,27 @@ def ListDataObjects(**kwargs):
                 selected.get('aliases', []))
             result_string.append(len(aliases) > 0)
         return False not in result_string
+    # Lazy since we're in memory
     filtered = filter_data_objects(filterer)
-    return({"data_objects": filtered}, 200)
+    page_size = int(body.get('page_size', DEFAULT_PAGE_SIZE))
+    # We'll page if there's a provided token or if we have too many
+    # objects.
+    if len(filtered) > page_size or body.get('page_token', None):
+        start_index = int(body.get('page_token', 0)) * page_size
+        end_index = start_index + page_size
+        # First fill a page
+        page = filtered[start_index:min(len(filtered), end_index)]
+        if len(filtered[start_index:]) > len(page):
+            # If there is more than one page left of results
+            next_page_token = int(body.get('page_token', 0)) + 1
+            return (
+                {"data_objects": page,
+                 "next_page_token": str(next_page_token)}, 200)
+        else:
+            return ({"data_objects": page}, 200)
+    else:
+        page = filtered
+    return({"data_objects": page}, 200)
 
 
 # Data Bundle Controllers
