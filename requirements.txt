@@ -1,3 +1,4 @@
 connexion
 flask_cors
-git+git://github.com/david4096/bravado-core.git
+git+git://github.com/Yelp/bravado.git
+git+git://github.com/david4096/bravado-core.git -I
