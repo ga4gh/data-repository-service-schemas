@@ -21,6 +21,12 @@ service DataObjectService {
     };
   }
 
+  rpc GetDataObjectVersions(GetDataObjectVersionsRequest) returns (GetDataObjectVersionsResponse) {
+    option (google.api.http) = {
+      get: "/ga4gh/dos/v1/dataobjects/{data_object_id}/versions"
+    };
+  }
+
   // Make a new Data Object
   rpc CreateDataObject(CreateDataObjectRequest) returns (CreateDataObjectResponse) {
     option (google.api.http) = {
@@ -183,6 +189,20 @@ message GetDataObjectResponse {
   // REQUIRED
   // The Data Object that coincides with a specific GetDataObjectRequest.
   DataObject data_object = 1;
+}
+
+message GetDataObjectVersionsRequest {
+  // REQUIRED
+  // The identifier of the Data Object you would like to retrieve all
+  // versions for.
+  string data_object_id = 1;
+}
+
+message GetDataObjectVersionsResponse {
+  // REQUIRED
+  // All versions of the Data Objects that match the GetDataObjectVersions
+  // request.
+  repeated DataObject data_objects = 1;
 }
 
 message UpdateDataObjectRequest {

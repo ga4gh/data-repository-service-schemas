@@ -63,8 +63,20 @@ def GetDataObject(**kwargs):
     # Get the Data Object from our dictionary
     data_object_key = data_objects.get(data_object_id)
     if data_object_key:
-        data_object = data_object_key[int(version)]
+        position = len(data_object_key) - int(version) - 1
+        data_object = data_object_key[position]
         return({"data_object": data_object}, 200)
+    else:
+        return("No Content", 404)
+
+
+def GetDataObjectVersions(**kwargs):
+    data_object_id = kwargs['data_object_id']
+    # Implementation detail, this server uses integer version numbers.
+    # Get the Data Object from our dictionary
+    data_object_versions = data_objects.get(data_object_id, None)
+    if data_object_versions:
+        return({"data_objects": data_object_versions}, 200)
     else:
         return("No Content", 404)
 

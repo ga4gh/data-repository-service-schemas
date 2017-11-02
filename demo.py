@@ -23,7 +23,9 @@ def client_demo():
 
     # GetDataObject
     print("..........Get the Object we just created..............")
-    data_object = client.GetDataObject(data_object_id=data_object_id).result()
+    get_object_response = client.GetDataObject(
+        data_object_id=data_object_id).result()
+    data_object = get_object_response.data_object
     print(data_object)
 
     # UpdateDataObject
@@ -40,12 +42,25 @@ def client_demo():
         data_object_id=update_response['data_object_id']).result()
     print(updated_object)
 
+    # Get the old DataObject
+    print("..........Get the old Data Object.................")
+    old_data_object = client.GetDataObject(
+        data_object_id=update_response['data_object_id'],
+        version=data_object.version).result().data_object
+    print(old_data_object)
+
     # ListDataObjects
     print("..........List Data Objects...............")
     ListDataObjectsRequest = models.get_model('ga4ghListDataObjectsRequest')
     list_request = ListDataObjectsRequest()
     list_response = client.ListDataObjects(body=list_request).result()
     print(list_response)
+
+    # List all versions of a DataObject
+    print("..........List all Versions...............")
+    versions_response = client.GetDataObjectVersions(
+        data_object_id=old_data_object.id).result()
+    print(versions_response)
 
     # DeleteDataObject
     print("..........Delete the Object...............")

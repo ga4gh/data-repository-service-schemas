@@ -273,6 +273,31 @@
           "DataObjectService"
         ]
       }
+    },
+    "/ga4gh/dos/v1/dataobjects/{data_object_id}/versions": {
+      "get": {
+        "x-swagger-router-controller": "app", 
+        "operationId": "GetDataObjectVersions",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/ga4ghGetDataObjectVersionsResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "data_object_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "DataObjectService"
+        ]
+      }
     }
   },
   "definitions": {
@@ -488,6 +513,18 @@
         "data_object": {
           "$ref": "#/definitions/ga4ghDataObject",
           "description": "REQUIRED\nThe Data Object that coincides with a specific GetDataObjectRequest."
+        }
+      }
+    },
+    "ga4ghGetDataObjectVersionsResponse": {
+      "type": "object",
+      "properties": {
+        "data_objects": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ga4ghDataObject"
+          },
+          "description": "REQUIRED\nAll versions of the Data Objects that match the GetDataObjectVersions\nrequest."
         }
       }
     },
