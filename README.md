@@ -8,7 +8,7 @@ Schemas for the Data Object Service (DOS) API
 
 This is used by the GA4GH Cloud Workstream
 
-<img src="swagger_editor.png" width="48">[View in Swagger](http://editor.swagger.io/#/?import=https://raw.githubusercontent.com/ga4gh/data-object-schemas/master/swagger/proto/data_objects_service.swagger.json)
+<img src="swagger_editor.png" width="48">[View in Swagger](http://editor2.swagger.io/#/?import=https://raw.githubusercontent.com/ga4gh/data-object-schemas/master/swagger/proto/data_objects_service.swagger.json)
 
 The [Global Alliance for Genomics and Health](http://genomicsandhealth.org/) is an international
 coalition, formed to enable the sharing of genomic and clinical data.
