@@ -87,3 +87,6 @@ ENV/
 
 # Rope project settings
 .ropeproject
+
+# swagger in the python directory
+python/ga4gh/dos/data_objects_service.swagger.json

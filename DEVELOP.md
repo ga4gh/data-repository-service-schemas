@@ -39,8 +39,8 @@ If you have virtualenv, it can make it easier to work with!
 ```
 virtualenv env
 source env/bin/activate
-pip install -r requirements.txt
-pip install -r dev-requirements.txt
+pip install -r python/requirements.txt -c python/constraints.txt
+pip install -r python/dev-requirements.txt
 ```
 
 This will create a workspace so we don't clobber your normal python

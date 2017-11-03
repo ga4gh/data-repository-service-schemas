@@ -12,9 +12,10 @@ before_install:
     - sudo apt-get update -qq
     - bash tools/travis-install-protoc.sh 3.2.0
     - export PATH=/tmp/proto3.2.0/bin:$PATH
-    - pip install -r requirements.txt
-    - pip install -r dev-requirements.txt
+    - pip install . --process-dependency-links
 script:
     - cwltool
     - sh tools/prepare_swagger.sh
-    - flake8 *.py
+    - flake8 python
+    - ga4gh_dos_client
+s

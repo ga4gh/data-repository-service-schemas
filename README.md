@@ -55,6 +55,29 @@ information about where these data objects are available.  This response will
 typically be used to find the same file or data bundle located across multiple
 cloud environments.
 
+Building the client and server
+------------------------------
+
+You can use `pip` to install a python client and server that implements these schemas.
+
+```
+virtualenv env
+source env/bin/activate
+pip install git+git://github.com/david4096/data-object-schemas@dos-minimal2 --process-dependency-links
+```
+
+This will add the python modules `ga4gh.dos.server` and `ga4gh.dos.client` you can use in
+your projects.
+
+There is also a CLI hook.
+
+```
+ga4gh_dos_server
+# In another terminal
+ga4gh_dos_demo
+```
+
+
 Building Documents
 ------------------
 
@@ -62,7 +85,7 @@ Make sure you have Docker installed for your platform and the `cwltool`.
 
     virtualenv env
     source env/bin/activate
-    pip install -r requirements.txt
+    pip install -r python/dev-requirements.txt
 
 You can generate the [Swagger](http://swagger.io/) YAML from the Protocol Buffers:
 

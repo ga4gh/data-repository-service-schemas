@@ -1,11 +1,17 @@
 # With app.py running start this demo
-import client
-
-models = client.models
-client = client.client
+from client import Client
 
 
-def client_demo():
+def main():
+    config = {
+        'validate_requests': False,
+        'validate_responses': False
+    }
+
+    local_client = Client('http://localhost:8080/', config=config)
+    client = local_client.client
+    models = local_client.models
+
     # CreateDataObject
     print("..........Create an object............")
     Checksum = models.get_model('ga4ghChecksum')
@@ -13,7 +19,8 @@ def client_demo():
     CreateDataObjectRequest = models.get_model('ga4ghCreateDataObjectRequest')
     DataObject = models.get_model('ga4ghCreateDataObjectRequest')
     create_data_object = DataObject(
-        file_name="abc",
+        name="abc",
+        size=12345,
         checksums=[Checksum(checksum="def", type="md5")],
         urls=[URL(url="a"), URL(url="b")])
     create_request = CreateDataObjectRequest(data_object=create_data_object)
@@ -32,7 +39,8 @@ def client_demo():
     print("..........Update that object.................")
     UpdateDataObjectRequest = models.get_model('ga4ghUpdateDataObjectRequest')
     update_data_object = DataObject(
-        file_name="abc",
+        name="abc",
+        size=12345,
         checksums=[Checksum(checksum="def", type="md5")],
         urls=[URL(url="a"), URL(url="b"), URL(url="c")])
     update_request = UpdateDataObjectRequest(data_object=update_data_object)
@@ -76,7 +84,8 @@ def client_demo():
     # Create a Data Object specifying your own version
     print(".......Create a Data Object with our own version..........")
     my_data_object = DataObject(
-        file_name="abc",
+        name="abc",
+        size=12345,
         checksums=[Checksum(checksum="def", type="md5")],
         urls=[URL(url="a"), URL(url="b")],
         version="great-version")
@@ -103,7 +112,8 @@ def client_demo():
     print("..........Page through a listing of Objects..............")
     for i in range(100):
         my_data_object = DataObject(
-            file_name="abc",
+            name="abc",
+            size=12345,
             checksums=[Checksum(checksum="def", type="md5")],
             urls=[URL(url="a")])
         create_request = CreateDataObjectRequest(data_object=my_data_object)
@@ -132,4 +142,4 @@ def client_demo():
 
 
 if __name__ == '__main__':
-    client_demo()
+    main()

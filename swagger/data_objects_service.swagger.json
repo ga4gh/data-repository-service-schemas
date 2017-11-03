@@ -18,7 +18,7 @@
     "/ga4gh/dos/v1/databundles": {
       "post": {
         "summary": "Create a new Data Bundle",
-        "x-swagger-router-controller": "app", 
+        "x-swagger-router-controller": "ga4gh.dos.server", 
         "operationId": "CreateDataBundle",
         "responses": {
           "200": {
@@ -46,7 +46,7 @@
     "/ga4gh/dos/v1/databundles/list": {
       "post": {
         "summary": "List the Data Bundles",
-        "x-swagger-router-controller": "app", 
+        "x-swagger-router-controller": "ga4gh.dos.server", 
         "operationId": "ListDataBundles",
         "responses": {
           "200": {
@@ -74,7 +74,7 @@
     "/ga4gh/dos/v1/databundles/{data_bundle_id}": {
       "delete": {
         "summary": "Delete a Data Bundle",
-        "x-swagger-router-controller": "app", 
+        "x-swagger-router-controller": "ga4gh.dos.server", 
         "operationId": "DeleteDataBundle",
         "responses": {
           "200": {
@@ -98,7 +98,7 @@
       },
       "put": {
         "summary": "Update a Data Bundle",
-        "x-swagger-router-controller": "app", 
+        "x-swagger-router-controller": "ga4gh.dos.server", 
         "operationId": "UpdateDataBundle",
         "responses": {
           "200": {
@@ -132,7 +132,7 @@
     "/ga4gh/dos/v1/dataobjects": {
       "post": {
         "summary": "Make a new Data Object",
-        "x-swagger-router-controller": "app", 
+        "x-swagger-router-controller": "ga4gh.dos.server", 
         "operationId": "CreateDataObject",
         "responses": {
           "200": {
@@ -160,7 +160,7 @@
     "/ga4gh/dos/v1/dataobjects/list": {
       "post": {
         "summary": "List the Data Objects",
-        "x-swagger-router-controller": "app", 
+        "x-swagger-router-controller": "ga4gh.dos.server", 
         "operationId": "ListDataObjects",
         "responses": {
           "200": {
@@ -188,7 +188,7 @@
     "/ga4gh/dos/v1/dataobjects/{data_object_id}": {
       "get": {
         "summary": "Retrieve a Data Object",
-        "x-swagger-router-controller": "app", 
+        "x-swagger-router-controller": "ga4gh.dos.server", 
         "operationId": "GetDataObject",
         "responses": {
           "200": {
@@ -219,7 +219,7 @@
       },
       "delete": {
         "summary": "Delete a Data Object index entry",
-        "x-swagger-router-controller": "app", 
+        "x-swagger-router-controller": "ga4gh.dos.server", 
         "operationId": "DeleteDataObject",
         "responses": {
           "200": {
@@ -243,7 +243,7 @@
       },
       "put": {
         "summary": "Update a Data Object",
-        "x-swagger-router-controller": "app", 
+        "x-swagger-router-controller": "ga4gh.dos.server", 
         "operationId": "UpdateDataObject",
         "responses": {
           "200": {
@@ -276,7 +276,7 @@
     },
     "/ga4gh/dos/v1/dataobjects/{data_object_id}/versions": {
       "get": {
-        "x-swagger-router-controller": "app", 
+        "x-swagger-router-controller": "ga4gh.dos.server", 
         "operationId": "GetDataObjectVersions",
         "responses": {
           "200": {

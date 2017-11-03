@@ -1,11 +1,7 @@
-# Simple server implementation
-
-import connexion
-from flask_cors import CORS
-
 import uuid
 import datetime
 from dateutil.parser import parse
+
 
 DEFAULT_PAGE_SIZE = 100
 
@@ -55,26 +51,37 @@ def add_updated_timestamps(doc):
     return doc
 
 
-# Data Object Controllers
+stores = {
+    'data_objects': data_objects,
+    'data_bundles': data_bundles
+}
 
 
-def CreateDataObject(**kwargs):
-    # TODO Safely create
-    body = kwargs['body']['data_object']
+def create(body, key):
+    store = stores[key]
     doc = add_created_timestamps(body)
     version = doc.get('version', None)
     if not version:
         doc['version'] = now()
     if doc.get('id', None):
         temp_id = str(uuid.uuid4())
-        if data_objects.get(doc['id'], None):
+        if store.get(doc['id'], None):
             # issue an identifier if a valid one hasn't been provided
             doc['id'] = temp_id
     else:
         temp_id = str(uuid.uuid4())
         doc['id'] = temp_id
-    data_objects[doc['id']] = {}
-    data_objects[doc['id']][doc['version']] = doc
+    store[doc['id']] = {}
+    store[doc['id']][doc['version']] = doc
+    return doc
+
+# Data Object Controllers
+
+
+def CreateDataObject(**kwargs):
+    # TODO Safely create
+    body = kwargs['body']['data_object']
+    doc = create(body, 'data_objects')
     return({"data_object_id": doc['id']}, 200)
 
 
@@ -225,23 +232,3 @@ def DeleteDataBundle(**kwargs):
 
 def ListDataBundles(**kwargs):
     return(kwargs, 200)
-
-
-def configure_app():
-    # The model name has to match what is in
-    # tools/prepare_swagger.sh controller.
-    app = connexion.App(
-        "app",
-        specification_dir='swagger/proto/',
-        swagger_ui=True,
-        swagger_json=True)
-
-    app.add_api('data_objects_service.swagger.json')
-
-    CORS(app.app)
-    return app
-
-
-if __name__ == '__main__':
-    app = configure_app()
-    app.run(port=8080, debug=True)
