@@ -1,10 +1,18 @@
-# With app.py running start this demo
-import client
-
+# With app.py running start this demo, it will load data from GDC public API
+# into the service.
 import requests
 
-models = client.models
-client = client.client
+from ga4gh.dos.client import Client
+
+config = {
+    'validate_requests': False,
+    'validate_responses': False
+}
+
+local_client = Client('http://localhost:8080/', config=config)
+client = local_client.client
+models = local_client.models
+
 
 GDC_URL = 'https://api.gdc.cancer.gov'
 
@@ -51,9 +59,9 @@ def gdc_to_ga4gh(gdc):
     print(str(gdc.get('file_size')))
     create_data_object = DataObject(
         checksums=[Checksum(checksum=gdc.get('md5sum'), type='md5')],
-        file_name=gdc.get('file_name'),
-        file_size=str(gdc.get('file_size')),
-        aliases=[gdc['file_id']],
+        name=gdc.get('file_name'),
+        size=str(gdc.get('file_size')),
+        aliases=[gdc['file_id'], gdc['file_name']],
         urls=[
             URL(
                 url="{}/data/{}".format(GDC_URL, gdc.get('file_id')),
@@ -79,18 +87,18 @@ def load_gdc():
     :return:
     """
     response = requests.post(
-        '{}/files?related_files=true'.format(GDC_URL), json={}).json()
+        '{}/files?size=10000&related_files=true'.format(GDC_URL), json={}).json()
     hits = response['data']['hits']
     # Initialize to kick off paging
     pagination = {}
     pagination['pages'] = 1
     pagination['page'] = 0
-    page_length = 10
+    page_length = 10000
     while int(pagination.get('page')) < int(pagination.get('pages')):
         map(post_dos, hits)
         next_record = pagination.get('page') * page_length
         response = requests.post(
-            '{}/files?related_files=true&from={}'.format(GDC_URL, next_record),
+            '{}/files?size=10000&related_files=true&from={}'.format(GDC_URL, next_record),
             json={}).json()
         hits = response['data']['hits']
         pagination = response['data']['pagination']

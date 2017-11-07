@@ -58,7 +58,6 @@ setup(
         'console_scripts': [
             'ga4gh_dos_server=ga4gh.dos.server:main',
             'ga4gh_dos_client=ga4gh.dos.client:main',
-            'ga4gh_dos_demo=ga4gh.dos.demo:main',
         ]
     },
     package_dir={'': 'python'},

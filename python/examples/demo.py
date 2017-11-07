@@ -1,5 +1,5 @@
 # With app.py running start this demo
-from client import Client
+from ga4gh.dos.client import Client
 
 
 def main():
