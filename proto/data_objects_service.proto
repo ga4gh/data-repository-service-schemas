@@ -6,7 +6,6 @@ package ga4gh;
 // Import HTTP RESTful annotations
 // from github.com/googleapis/googleapis
 import "google/api/annotations.proto";
-import "google/protobuf/struct.proto";
 
 import "data_objects.proto";
 
@@ -70,7 +69,7 @@ service DataObjectService {
   // Retrieve a Data Bundle
   rpc GetDataBundle(GetDataBundleRequest) returns (GetDataBundleResponse) {
       option (google.api.http) = {
-        delete: "/ga4gh/dos/v1/databundles/{data_bundle_id}"
+        get: "/ga4gh/dos/v1/databundles/{data_bundle_id}"
       };
   }
 
@@ -79,6 +78,12 @@ service DataObjectService {
     option (google.api.http) = {
       put: "/ga4gh/dos/v1/databundles/{data_bundle_id}"
       body: "*"
+    };
+  }
+
+  rpc GetDataBundleVersions(GetDataBundleVersionsRequest) returns (GetDataBundleVersionsResponse) {
+    option (google.api.http) = {
+      get: "/ga4gh/dos/v1/databundles/{data_bundle_id}/versions"
     };
   }
 
@@ -285,7 +290,7 @@ message ListDataBundlesRequest {
 
 message ListDataBundlesResponse {
   // The list of Data Bundles.
-  repeated DataBundle data_bundle_objects = 1;
+  repeated DataBundle data_bundles = 1;
 
   // The continuation token, which is used to page through large result sets.
   // Provide this value in a subsequent request to return the next page of
@@ -318,6 +323,20 @@ message GetDataBundleResponse {
   DataBundle data_bundle = 1;
 }
 
+message GetDataBundleVersionsRequest {
+  // REQUIRED
+  // The identifier of the Data Bundle you would like to retrieve all
+  // versions for.
+  string data_bundle_id = 1;
+}
+
+message GetDataBundleVersionsResponse {
+  // REQUIRED
+  // All versions of the Data Bundles that match the GetDataBundleVersions
+  // request.
+  repeated DataBundle data_bundles = 1;
+}
+
 message DeleteDataBundleRequest {
   string data_bundle_id = 1;
 }
@@ -328,34 +347,11 @@ message DeleteDataBundleResponse {
 
 message UpdateDataBundleRequest {
   // REQUIRED
-  // The identifier of the Data Bundle to be updated.
   string data_bundle_id = 1;
 
   // REQUIRED
-  // The list of Data Object identifiers that this Data Bundle contains.
-  repeated string data_object_ids = 2;
-
-  // REQUIRED
-  // At least one checksum must be provided.
-  // The data bundle SHA256 checksum is computed over all the
-  // SHA256 checksums of the Data Objects that make up this bundle.
-  repeated Checksum checksums =  3;
-
-  // OPTIONAL
-  // A human readable description.
-  string description = 4;
-
-  // OPTIONAL
-  // A list of strings that can be used to identify this Data Bundle.
-  repeated string aliases = 5;
-
-  // OPTIONAL
-  // A set of key-value pairs that represent system metadata about the Bundle.
-  google.protobuf.Struct system_metadata = 6;
-
-  // OPTIONAL
-  // A set of key-value pairs that represent metadata provided by the uploader.
-  google.protobuf.Struct user_metadata = 7;
+  // The new Data Bundle content.
+  DataBundle data_bundle = 2;
 }
 
 message UpdateDataBundleResponse {

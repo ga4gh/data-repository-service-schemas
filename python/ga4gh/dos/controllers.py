@@ -25,6 +25,16 @@ def get_most_recent(key):
     return max
 
 
+# TODO refactor to higher order function
+def get_most_recent_bundle(key):
+    max = {'created': '01-01-1965 00:00:00Z'}
+    for version in data_bundles[key].keys():
+        data_bundle = data_bundles[key][version]
+        if parse(data_bundle['created']) > parse(max['created']):
+            max = data_bundle
+    return max
+
+
 def filter_data_objects(predicate):
     """
     Filters data objects according to a function that acts on each item
@@ -32,6 +42,16 @@ def filter_data_objects(predicate):
     """
     return [
         get_most_recent(x[0]) for x in filter(predicate, data_objects.items())]
+
+
+def filter_data_bundles(predicate):
+    """
+    Filters data bundles according to a function that acts on each item
+    returning either True or False per item.
+    """
+    return [
+        get_most_recent_bundle(x[0]) for x in filter(
+            predicate, data_bundles.items())]
 
 
 def add_created_timestamps(doc):
@@ -121,8 +141,6 @@ def UpdateDataObject(**kwargs):
     # Upsert the new body in place of the old document
     doc = add_updated_timestamps(body)
     doc['created'] = old_data_object['created']
-    # Set the version number to be the length of the array +1, since
-    # we're about to append.
     # We need to safely set the version if they provided one that
     # collides we'll pad it. If they provided a good one, we will
     # accept it. If they don't provide one, we'll give one.
@@ -205,30 +223,113 @@ def ListDataObjects(**kwargs):
 
 
 def CreateDataBundle(**kwargs):
-    temp_id = str(uuid.uuid4())
-    data_bundles[temp_id] = kwargs
-    return({"data_bundle_id": temp_id}, 200)
+    body = kwargs['body']['data_bundle']
+    doc = create(body, 'data_bundles')
+    return({"data_bundle_id": doc['id']}, 200)
 
 
 def GetDataBundle(**kwargs):
     data_bundle_id = kwargs['data_bundle_id']
-    data_bundle = data_bundles[data_bundle_id]
-    return({"data_bundle": data_bundle}, 200)
+    version = kwargs.get('version', None)
+    # Implementation detail, this server uses integer version numbers.
+    # Get the Data Object from our dictionary
+    data_bundle_key = data_bundles.get(data_bundle_id, None)
+    if data_bundle_key and not version:
+        data_bundle = get_most_recent_bundle(data_bundle_id)
+        return({"data_bundle": data_bundle}, 200)
+    elif data_bundle_key and data_objects[data_bundle_id].get(version, None):
+        data_bundle = data_bundles[data_bundle_id][version]
+        return ({"data_bundle": data_bundle}, 200)
+    else:
+        return("No Content", 404)
 
 
 def UpdateDataBundle(**kwargs):
-    # TODO
-    # data_bundle_id = kwargs['data_bundle_id']
-    # data_bundle = data_bundles[data_bundle_id]
-    return(kwargs, 200)
+    data_bundle_id = kwargs['data_bundle_id']
+    body = kwargs['body']['data_bundle']
+    # Check to make sure we are updating an existing document.
+    old_data_bundle = get_most_recent_bundle(data_bundle_id)
+    # Upsert the new body in place of the old document
+    doc = add_updated_timestamps(body)
+    doc['created'] = old_data_bundle['created']
+    # We need to safely set the version if they provided one that
+    # collides we'll pad it. If they provided a good one, we will
+    # accept it. If they don't provide one, we'll give one.
+    new_version = doc.get('version', None)
+    if new_version and new_version != doc['version']:
+        doc['version'] = new_version
+    else:
+        doc['version'] = now()
+    doc['id'] = old_data_bundle['id']
+    data_bundles[data_bundle_id][doc['version']] = doc
+    return({"data_bundle_id": data_bundle_id}, 200)
+
+
+def GetDataBundleVersions(**kwargs):
+    data_bundle_id = kwargs['data_bundle_id']
+    data_bundle_versions_dict = data_bundles.get(data_bundle_id, None)
+    data_bundle_versions = [x[1] for x in data_bundle_versions_dict.items()]
+    if data_bundle_versions:
+        return({"data_bundles": data_bundle_versions}, 200)
+    else:
+        return("No Content", 404)
 
 
 def DeleteDataBundle(**kwargs):
-    # TODO
     data_bundle_id = kwargs['data_bundle_id']
     del data_bundles[data_bundle_id]
-    return(kwargs, 204)
+    return(kwargs, 200)
 
 
 def ListDataBundles(**kwargs):
-    return(kwargs, 200)
+    body = kwargs.get('body')
+
+    def filterer(item):
+        """
+        This filter is defined as a closure to set gather the kwargs from
+        the request. It returns true or false depending on whether to
+        include the item in the filter.
+        :param item:
+        :return: bool
+        """
+        selected = get_most_recent_bundle(item[0])
+        # A list of true and false that all must be true to pass the filter
+        result_string = []
+        if body.get('checksum', None):
+            if body.get('checksum').get('checksum', None):
+                sums = filter(
+                    lambda x: x == body.get('checksum').get('checksum'),
+                    [x['checksum'] for x in selected.get('checksums', [])])
+                result_string.append(len(sums) > 0)
+            if body.get('checksum').get('type', None):
+                types = filter(
+                    lambda x: x == body.get('checksum').get('type'),
+                    [x['type'] for x in selected.get('checksums', [])])
+                result_string.append(len(types) > 0)
+        if body.get('alias', None):
+            aliases = filter(
+                lambda x: x == body.get('alias'),
+                selected.get('aliases', []))
+            result_string.append(len(aliases) > 0)
+        return False not in result_string
+    # Lazy since we're in memory
+    filtered = filter_data_bundles(filterer)
+    page_size = int(body.get('page_size', DEFAULT_PAGE_SIZE))
+    # We'll page if there's a provided token or if we have too many
+    # objects.
+    if len(filtered) > page_size or body.get('page_token', None):
+        start_index = int(body.get('page_token', 0)) * page_size
+        end_index = start_index + page_size
+        # First fill a page
+        page = filtered[start_index:min(len(filtered), end_index)]
+        if len(filtered[start_index:]) > len(page):
+            # If there is more than one page left of results
+            next_page_token = int(body.get('page_token', 0)) + 1
+            return (
+                {"data_bundles": page,
+                 "next_page_token": str(next_page_token)}, 200)
+        else:
+            return ({"data_bundles": page}, 200)
+    else:
+        page = filtered
+    return({"data_bundles": page}, 200)

@@ -101,7 +101,7 @@ message DataBundle {
 
   // REQUIRED
   // The list of Data Objects that this Data Bundle contains.
-  repeated DataObject data_objects = 2;
+  repeated string data_object_ids = 2;
 
   // REQUIRED
   // Timestamp of object creation in RFC3339.
