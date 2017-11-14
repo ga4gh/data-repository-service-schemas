@@ -186,13 +186,19 @@ def main():
         data_object_ids=[x.id for x in list_response.data_objects],
         checksums=[Checksum(checksum="def", type="md5")],
         aliases=["ghi"])
-    update_request = UpdateDataBundleRequest(data_bundle=update_data_bundle)
+    update_request = UpdateDataBundleRequest(
+        data_bundle_id=data_bundle.id,
+        data_bundle=update_data_bundle)
     update_response = client.UpdateDataBundle(
-        data_bundle_id=data_bundle_id, body=update_request).result()
+        data_bundle_id=data_bundle_id,
+        body=update_request).result()
     updated_bundle = client.GetDataBundle(
         data_bundle_id=update_response['data_bundle_id']).result().data_bundle
+    print(updated_bundle)
+    print(data_bundle)
     print(updated_bundle.version)
     print(updated_bundle.aliases)
+    assert updated_bundle.aliases[0] == 'ghi'
 
     # ListDataBundles
     print("..........List Data Bundles...............")

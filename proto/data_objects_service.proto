@@ -215,34 +215,9 @@ message UpdateDataObjectRequest {
   // The identifier of the Data Object to be updated.
   string data_object_id = 1;
 
-  // OPTIONAL
-  // A string that can be optionally used to name a resource.
-  string name = 2;
-
   // REQUIRED
-  // The computed file size in bytes.
-  int64 size = 3;
-
-  // OPTIONAL
-  // A string providing the mime-type of the resource.
-  // For example, "application/json".
-  string mime_type = 4;
-
-  // REQUIRED
-  // At least one checksum must be provided.
-  repeated Checksum checksums =  5;
-
-  // OPTIONAL
-  // The list of URLs that can be used to access the Data Object.
-  repeated URL urls = 6;
-
-  // OPTIONAL
-  // A human readable description of the contents of the Data Object.
-  string description = 7;
-
-  // OPTIONAL
-  // A list of strings that can be used to identify this Data Object.
-  repeated string aliases = 8;
+  // The new Data Object for this identifier.
+  DataObject data_object = 2;
 }
 
 message UpdateDataObjectResponse {

@@ -255,8 +255,8 @@ def UpdateDataBundle(**kwargs):
     # We need to safely set the version if they provided one that
     # collides we'll pad it. If they provided a good one, we will
     # accept it. If they don't provide one, we'll give one.
-    new_version = doc.get('version', None)
-    if new_version and new_version != doc['version']:
+    new_version = old_data_bundle.get('version', None)
+    if new_version and new_version != doc.get('version', None):
         doc['version'] = new_version
     else:
         doc['version'] = now()

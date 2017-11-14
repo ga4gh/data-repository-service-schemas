@@ -3,8 +3,10 @@ import shutil
 import os
 
 # We need to copy the generated swagger to the Python package
-SWAGGER_JSON_PATH = os.path.abspath(os.path.join('swagger', 'data_objects_service.swagger.json'))
-SWAGGER_DEST_PATH = os.path.abspath(os.path.join('python', 'ga4gh', 'dos', 'data_objects_service.swagger.json'))
+SWAGGER_JSON_PATH = os.path.abspath(
+    os.path.join('swagger', 'data_objects_service.swagger.json'))
+SWAGGER_DEST_PATH = os.path.abspath(os.path.join(
+    'python', 'ga4gh', 'dos', 'data_objects_service.swagger.json'))
 shutil.copyfile(SWAGGER_JSON_PATH, SWAGGER_DEST_PATH)
 
 # First, we try to use setuptools. If it's not available locally,
