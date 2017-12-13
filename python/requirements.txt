@@ -1,7 +1,7 @@
 connexion
 flask_cors
 bravado-core
-bravado
+bravado==9.2.0
 
 # FIXME these optional dependencies should be installed
 rfc3987
