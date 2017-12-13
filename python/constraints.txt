@@ -1,0 +1,3 @@
+# git+git://github.com/Yelp/bravado.git@master#egg=bravado
+git+git://github.com/david4096/bravado-core.git@master#egg=bravado_core-99.9.9
+git+git://github.com/david4096/bravado-core.git@master#egg=bravado_core

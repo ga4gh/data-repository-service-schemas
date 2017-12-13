@@ -1,6 +1,6 @@
 ![ga4gh logo](http://genomicsandhealth.org/files/logo_ga.png)
 
-![travis status](https://travis-ci.org/david4096/data-object-schemas.svg?branch=develop)
+![travis status](https://travis-ci.org/ga4gh/data-object-schemas.svg?branch=master)
 
 
 Schemas for the Data Object Service (DOS) API
@@ -8,7 +8,7 @@ Schemas for the Data Object Service (DOS) API
 
 This is used by the GA4GH Cloud Workstream
 
-<img src="swagger_editor.png" width="48">[View in Swagger](http://editor2.swagger.io/#/?import=https://raw.githubusercontent.com/ga4gh/data-object-schemas/feature/protobuf-bdo-2/swagger/proto/data_objects_service.swagger.json)
+<img src="swagger_editor.png" width="48">[View in Swagger](http://editor2.swagger.io/#/?import=https://raw.githubusercontent.com/ga4gh/data-object-schemas/master/swagger/proto/data_objects_service.swagger.json)
 
 The [Global Alliance for Genomics and Health](http://genomicsandhealth.org/) is an international
 coalition, formed to enable the sharing of genomic and clinical data.
@@ -55,6 +55,29 @@ information about where these data objects are available.  This response will
 typically be used to find the same file or data bundle located across multiple
 cloud environments.
 
+Building the client and server
+------------------------------
+
+You can use `pip` to install a python client and server that implements these schemas.
+
+```
+virtualenv env
+source env/bin/activate
+pip install git+git://github.com/david4096/data-object-schemas@dos-minimal2 --process-dependency-links
+```
+
+This will add the python modules `ga4gh.dos.server` and `ga4gh.dos.client` you can use in
+your projects.
+
+There is also a CLI hook.
+
+```
+ga4gh_dos_server
+# In another terminal
+ga4gh_dos_demo
+```
+
+
 Building Documents
 ------------------
 
@@ -62,7 +85,7 @@ Make sure you have Docker installed for your platform and the `cwltool`.
 
     virtualenv env
     source env/bin/activate
-    pip install -r requirements.txt
+    pip install -r python/dev-requirements.txt
 
 You can generate the [Swagger](http://swagger.io/) YAML from the Protocol Buffers:
 
