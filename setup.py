@@ -49,7 +49,7 @@ print(dependency_links)
 
 setup(
     name="ga4gh_dos_schemas",
-    description="GA4GH Data Registry",
+    description="GA4GH Data Object Service Schemas",
     packages=[
         "ga4gh",
         "ga4gh.dos"
@@ -80,6 +80,7 @@ setup(
         'Programming Language :: Python :: 2.7',
         'Topic :: Scientific/Engineering :: Bio-Informatics',
     ],
+    version='0.0.1',
     keywords=['genomics'],
     # Use setuptools_scm to set the version number automatically from Git
     setup_requires=['setuptools_scm'],

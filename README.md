@@ -6,24 +6,30 @@
 Schemas for the Data Object Service (DOS) API
 =============================================
 
-This is used by the GA4GH Cloud Workstream
-
-<img src="swagger_editor.png" width="48">[View in Swagger](http://editor2.swagger.io/#/?import=https://raw.githubusercontent.com/ga4gh/data-object-schemas/master/swagger/proto/data_objects_service.swagger.json)
+[View the schemas in Swagger UI](http://ga4gh.github.io/data-object-schemas)
 
 The [Global Alliance for Genomics and Health](http://genomicsandhealth.org/) is an international
-coalition, formed to enable the sharing of genomic and clinical data.
+coalition, formed to enable the sharing of genomic and clinical data. This collaborative consortium
+takes place primarily via github and public meetings. Join the issues today to help us make
+a cloud agnostic Data Object Service!
 
 Cloud Workstream
 ----------------
 
-The [Data Working Group](http://ga4gh.org/#/) concentrates on data representation, storage, and analysis, including working with platform development partners and industry leaders to develop standards that will facilitate interoperability. The Cloud Workstream is an informal, multi-vendor working group focused on standards for exchanging Docker-based tools and CWL/WDL workflows, execution of Docker-based tools and workflows on clouds, and abstract access to cloud object stores.
+The [Data Working Group](http://ga4gh.org/#/) concentrates on data representation, storage, and analysis,
+including working with platform development partners and industry leaders to develop standards that will
+facilitate interoperability. The Cloud Workstream is an informal, multi-vendor working group focused on
+standards for exchanging Docker-based tools and CWL/WDL workflows, execution of Docker-based tools and
+workflows on clouds, and abstract access to cloud object stores.
 
 What is DOS?
 ------------
 
-Currently, this is the home of the Data Object Service (DOS) API proposal. This repo has a CWL-based build process ready to go and a place for us to collectively work on [USECASES.md](USECASES.md).
+Currently, this is the home of the Data Object Service (DOS) API proposal. This repo has a CWL-based
+build process ready to go and a place for us to collectively work on [USECASES.md](USECASES.md).
 
-This proposal for a DOS release is based on the schema work of Brian W. and others from OHSU along with work by UCSC.  It also is informed by existing object storage systems such as:
+This proposal for a DOS release is based on the schema work of Brian W. and others from OHSU along
+with work by UCSC.  It also is informed by existing object storage systems such as:
 
 * GNOS: http://annaisystems.com/ (as used by PCAWG, see https://pcawg.icgc.org)
 * ICGC Storage: as used to store data on S3, see https://github.com/icgc-dcc/dcc-storage and https://dcc.icgc.org/icgc-in-the-cloud/aws
@@ -31,7 +37,11 @@ This proposal for a DOS release is based on the schema work of Brian W. and othe
 * the GDC Storage: see https://gdc.cancer.gov
 * Keep by Curoverse: see https://arvados.org/ and https://github.com/curoverse/arvados
 
-The goal of DOS is to create a generic API on top of these and other projects, so workflow systems can access data in the same way regardless of project.  One section of the API focuses on how to read and write data objects to cloud environments and how to join them together as data bundles (Data object management).  Another focuses on the ability to find data objects across cloud environments and implementations of DOS (Data object queries).  The latter is likely to be worked on in conjunction with the GA4GH Discovery Workstream.
+The goal of DOS is to create a generic API on top of these and other projects, so workflow systems can
+access data in the same way regardless of project.  One section of the API focuses on how to read and
+write data objects to cloud environments and how to join them together as data bundles (Data object management).
+ Another focuses on the ability to find data objects across cloud environments and implementations of DOS
+ (Data object queries).  The latter is likely to be worked on in conjunction with the GA4GH Discovery Workstream.
 
 Key features of the current API proposal:
 
@@ -63,7 +73,7 @@ You can use `pip` to install a python client and server that implements these sc
 ```
 virtualenv env
 source env/bin/activate
-pip install git+git://github.com/david4096/data-object-schemas@dos-minimal2 --process-dependency-links
+pip install git+git://github.com/ga4gh/data-object-schemas@master --process-dependency-links
 ```
 
 This will add the python modules `ga4gh.dos.server` and `ga4gh.dos.client` you can use in
@@ -114,10 +124,3 @@ More Information
 
 * [Global Alliance for Genomics and Health](http://genomicsandhealth.org)
 * [Google Forum](https://groups.google.com/forum/#!forum/ga4gh-dwg-containers-workflows)
-
-
-TODO/Questions
---------------
-* do we want to use the [data bundles concept](https://docs.google.com/document/d/1d-9eu5X6ioOlqOJ9kkY8lHvXDF-KoynlmqJbuKVPMF0/edit#heading=h.b3jd47oqdd2e)? Often times we want to be able to model related files (like a workflow output) together in some way.  The data bundle concept supports this.
-* do we want to support versioning (of files and data bundles)?  Implicit support right now in the sense that you can get an array of files or data bundles and use timestamp to understand their version.
-* do all the timestamps need to be generated server-side?  This might be key for supporting versioning.
