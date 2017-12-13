@@ -1,4 +1,4 @@
-![ga4gh logo](http://genomicsandhealth.org/files/logo_ga.png)
+<img src="https://www.ga4gh.org/gfx/GA-logo-horizontal-tag-RGB.svg" alt="Drawing" style="width: 120px;" alt="GA4GH colored ring logo"/>
 
 ![travis status](https://travis-ci.org/ga4gh/data-object-schemas.svg?branch=master)
 
