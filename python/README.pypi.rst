@@ -86,6 +86,23 @@ data bundle or file UUIDs which returns information about where these
 data objects are available. This response will typically be used to find
 the same file or data bundle located across multiple cloud environments.
 
+Implementations
+---------------
+
+There are currently a few experimental implementations that use some
+version of these schemas.
+
+-  `DOS Connect <https://github.com/ohsu-comp-bio/dos_connect>`__
+   observes cloud and local storage systems and broadcasts their changes
+   to a service that presents DOS endpoints.
+-  `DOS Downloader <https://github.com/david4096/dos-downloader>`__ is a
+   mechanism for downloading Data Objects from DOS URLs.
+-  `dos-gdc-lambda <https://github.com/david4096/dos-gdc-lambda>`__
+   presents data from the GDC public rest API using the Data Object
+   Service.
+-  `dos-signpost-lambda <https://github.com/david4096/dos-signpost-lambda>`__
+   presents data from a signpost instance using the Data Object Service.
+
 Building the client and server
 ------------------------------
 
