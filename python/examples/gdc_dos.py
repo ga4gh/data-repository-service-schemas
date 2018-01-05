@@ -87,7 +87,8 @@ def load_gdc():
     :return:
     """
     response = requests.post(
-        '{}/files?size=10000&related_files=true'.format(GDC_URL), json={}).json()
+        '{}/files?size=10000&related_files=true'.format(
+            GDC_URL), json={}).json()
     hits = response['data']['hits']
     # Initialize to kick off paging
     pagination = {}
@@ -98,8 +99,8 @@ def load_gdc():
         map(post_dos, hits)
         next_record = pagination.get('page') * page_length
         response = requests.post(
-            '{}/files?size=10000&related_files=true&from={}'.format(GDC_URL, next_record),
-            json={}).json()
+            '{}/files?size=10000&related_files=true&from={}'.format(
+                GDC_URL, next_record), json={}).json()
         hits = response['data']['hits']
         pagination = response['data']['pagination']
 

@@ -1,8 +1,3 @@
-.. figure:: http://genomicsandhealth.org/files/logo_ga.png
-   :alt: ga4gh logo
-
-   ga4gh logo
-
 .. figure:: https://travis-ci.org/ga4gh/data-object-schemas.svg?branch=master
    :alt: travis status
 
@@ -11,14 +6,15 @@
 Schemas for the Data Object Service (DOS) API
 =============================================
 
-This is used by the GA4GH Cloud Workstream
-
-\ `View in
-Swagger <http://editor2.swagger.io/#/?import=https://raw.githubusercontent.com/ga4gh/data-object-schemas/master/swagger/proto/data_objects_service.swagger.json>`__
+`View the schemas in Swagger
+UI <http://ga4gh.github.io/data-object-schemas>`__
 
 The `Global Alliance for Genomics and
 Health <http://genomicsandhealth.org/>`__ is an international coalition,
-formed to enable the sharing of genomic and clinical data.
+formed to enable the sharing of genomic and clinical data. This
+collaborative consortium takes place primarily via github and public
+meetings. Join the issues today to help us make a cloud agnostic Data
+Object Service!
 
 Cloud Workstream
 ----------------
@@ -90,6 +86,46 @@ data bundle or file UUIDs which returns information about where these
 data objects are available. This response will typically be used to find
 the same file or data bundle located across multiple cloud environments.
 
+Implementations
+---------------
+
+There are currently a few experimental implementations that use some
+version of these schemas.
+
+-  `DOS Connect <https://github.com/ohsu-comp-bio/dos_connect>`__
+   observes cloud and local storage systems and broadcasts their changes
+   to a service that presents DOS endpoints.
+-  `DOS Downloader <https://github.com/david4096/dos-downloader>`__ is a
+   mechanism for downloading Data Objects from DOS URLs.
+-  `dos-gdc-lambda <https://github.com/david4096/dos-gdc-lambda>`__
+   presents data from the GDC public rest API using the Data Object
+   Service.
+-  `dos-signpost-lambda <https://github.com/david4096/dos-signpost-lambda>`__
+   presents data from a signpost instance using the Data Object Service.
+
+Building the client and server
+------------------------------
+
+You can use ``pip`` to install a python client and server that
+implements these schemas.
+
+::
+
+    virtualenv env
+    source env/bin/activate
+    pip install git+git://github.com/ga4gh/data-object-schemas@master --process-dependency-links
+
+This will add the python modules ``ga4gh.dos.server`` and
+``ga4gh.dos.client`` you can use in your projects.
+
+There is also a CLI hook.
+
+::
+
+    ga4gh_dos_server
+    # In another terminal
+    ga4gh_dos_demo
+
 Building Documents
 ------------------
 
@@ -100,7 +136,7 @@ Make sure you have Docker installed for your platform and the
 
     virtualenv env
     source env/bin/activate
-    pip install -r requirements.txt
+    pip install -r python/dev-requirements.txt
 
 You can generate the `Swagger <http://swagger.io/>`__ YAML from the
 Protocol Buffers:
@@ -140,17 +176,3 @@ More Information
    Health <http://genomicsandhealth.org>`__
 -  `Google
    Forum <https://groups.google.com/forum/#!forum/ga4gh-dwg-containers-workflows>`__
-
-TODO/Questions
---------------
-
--  do we want to use the `data bundles
-   concept <https://docs.google.com/document/d/1d-9eu5X6ioOlqOJ9kkY8lHvXDF-KoynlmqJbuKVPMF0/edit#heading=h.b3jd47oqdd2e>`__?
-   Often times we want to be able to model related files (like a
-   workflow output) together in some way. The data bundle concept
-   supports this.
--  do we want to support versioning (of files and data bundles)?
-   Implicit support right now in the sense that you can get an array of
-   files or data bundles and use timestamp to understand their version.
--  do all the timestamps need to be generated server-side? This might be
-   key for supporting versioning.
