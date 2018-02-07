@@ -1,12 +1,12 @@
 <img src="https://www.ga4gh.org/gfx/GA-logo-horizontal-tag-RGB.svg" alt="Drawing" style="width: 120px;" alt="GA4GH colored ring logo"/>
 
-![travis status](https://travis-ci.org/ga4gh/data-object-schemas.svg?branch=master)
+![travis status](https://travis-ci.org/ga4gh/data-object-service-schemas.svg?branch=master)
 
 
 Schemas for the Data Object Service (DOS) API
 =============================================
 
-[View the schemas in Swagger UI](http://ga4gh.github.io/data-object-schemas)
+[View the schemas in Swagger UI](http://ga4gh.github.io/data-object-service-schemas)
 
 The [Global Alliance for Genomics and Health](http://genomicsandhealth.org/) is an international
 coalition, formed to enable the sharing of genomic and clinical data. This collaborative consortium
@@ -88,7 +88,7 @@ You can use `pip` to install a python client and server that implements these sc
 ```
 virtualenv env
 source env/bin/activate
-pip install git+git://github.com/ga4gh/data-object-schemas@master --process-dependency-links
+pip install git+git://github.com/ga4gh/data-object-service-schemas@master --process-dependency-links
 ```
 
 This will add the python modules `ga4gh.dos.server` and `ga4gh.dos.client` you can use in
