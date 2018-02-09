@@ -2,6 +2,9 @@
 
 ![travis status](https://travis-ci.org/ga4gh/data-object-service-schemas.svg?branch=master)
 
+NIH Data Commons Feedback
+=======================================
+This branch is specifically for collecting feedback (and suggested changes) to support the NIH Data Commons Pilot Phase.
 
 Schemas for the Data Object Service (DOS) API
 =============================================
