@@ -106,6 +106,12 @@ ga4gh_dos_demo
 Building Documents
 ------------------
 
+The schemas are editable as OpenAPI 2 YAML files. To generate OpenAPI 3 descriptions install
+swagger2openapi and run the following:
+
+```
+swagger2openapi -y openapi/data_object_service.swagger.yaml > openapi/data_object_service.openapi.yaml
+```
 
 How to contribute changes
 -------------------------
