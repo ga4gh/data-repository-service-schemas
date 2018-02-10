@@ -1,7 +1,7 @@
 swagger: '2.0'
 info:
-  title: data_objects_service.proto
-  version: version not set
+  title: Data Object Serivce
+  version: 0.1.0
 schemes:
   - http
   - https
@@ -18,13 +18,13 @@ paths:
         '200':
           description: ''
           schema:
-            $ref: '#/definitions/ga4ghCreateDataBundleResponse'
+            $ref: '#/definitions/CreateDataBundleResponse'
       parameters:
         - name: body
           in: body
           required: true
           schema:
-            $ref: '#/definitions/ga4ghCreateDataBundleRequest'
+            $ref: '#/definitions/CreateDataBundleRequest'
       tags:
         - DataObjectService
   /ga4gh/dos/v1/databundles/list:
@@ -35,13 +35,13 @@ paths:
         '200':
           description: ''
           schema:
-            $ref: '#/definitions/ga4ghListDataBundlesResponse'
+            $ref: '#/definitions/ListDataBundlesResponse'
       parameters:
         - name: body
           in: body
           required: true
           schema:
-            $ref: '#/definitions/ga4ghListDataBundlesRequest'
+            $ref: '#/definitions/ListDataBundlesRequest'
       tags:
         - DataObjectService
   '/ga4gh/dos/v1/databundles/{data_bundle_id}':
@@ -52,7 +52,7 @@ paths:
         '200':
           description: ''
           schema:
-            $ref: '#/definitions/ga4ghGetDataBundleResponse'
+            $ref: '#/definitions/GetDataBundleResponse'
       parameters:
         - name: data_bundle_id
           in: path
@@ -75,7 +75,7 @@ paths:
         '200':
           description: ''
           schema:
-            $ref: '#/definitions/ga4ghDeleteDataBundleResponse'
+            $ref: '#/definitions/DeleteDataBundleResponse'
       parameters:
         - name: data_bundle_id
           in: path
@@ -90,7 +90,7 @@ paths:
         '200':
           description: ''
           schema:
-            $ref: '#/definitions/ga4ghUpdateDataBundleResponse'
+            $ref: '#/definitions/UpdateDataBundleResponse'
       parameters:
         - name: data_bundle_id
           in: path
@@ -100,7 +100,7 @@ paths:
           in: body
           required: true
           schema:
-            $ref: '#/definitions/ga4ghUpdateDataBundleRequest'
+            $ref: '#/definitions/UpdateDataBundleRequest'
       tags:
         - DataObjectService
   '/ga4gh/dos/v1/databundles/{data_bundle_id}/versions':
@@ -110,7 +110,7 @@ paths:
         '200':
           description: ''
           schema:
-            $ref: '#/definitions/ga4ghGetDataBundleVersionsResponse'
+            $ref: '#/definitions/GetDataBundleVersionsResponse'
       parameters:
         - name: data_bundle_id
           in: path
@@ -126,13 +126,13 @@ paths:
         '200':
           description: ''
           schema:
-            $ref: '#/definitions/ga4ghCreateDataObjectResponse'
+            $ref: '#/definitions/CreateDataObjectResponse'
       parameters:
         - name: body
           in: body
           required: true
           schema:
-            $ref: '#/definitions/ga4ghCreateDataObjectRequest'
+            $ref: '#/definitions/CreateDataObjectRequest'
       tags:
         - DataObjectService
   /ga4gh/dos/v1/dataobjects/list:
@@ -143,13 +143,13 @@ paths:
         '200':
           description: ''
           schema:
-            $ref: '#/definitions/ga4ghListDataObjectsResponse'
+            $ref: '#/definitions/ListDataObjectsResponse'
       parameters:
         - name: body
           in: body
           required: true
           schema:
-            $ref: '#/definitions/ga4ghListDataObjectsRequest'
+            $ref: '#/definitions/ListDataObjectsRequest'
       tags:
         - DataObjectService
   '/ga4gh/dos/v1/dataobjects/{data_object_id}':
@@ -160,7 +160,7 @@ paths:
         '200':
           description: ''
           schema:
-            $ref: '#/definitions/ga4ghGetDataObjectResponse'
+            $ref: '#/definitions/GetDataObjectResponse'
       parameters:
         - name: data_object_id
           in: path
@@ -182,7 +182,7 @@ paths:
         '200':
           description: ''
           schema:
-            $ref: '#/definitions/ga4ghDeleteDataObjectResponse'
+            $ref: '#/definitions/DeleteDataObjectResponse'
       parameters:
         - name: data_object_id
           in: path
@@ -197,7 +197,7 @@ paths:
         '200':
           description: ''
           schema:
-            $ref: '#/definitions/ga4ghUpdateDataObjectResponse'
+            $ref: '#/definitions/UpdateDataObjectResponse'
       parameters:
         - name: data_object_id
           in: path
@@ -207,7 +207,7 @@ paths:
           in: body
           required: true
           schema:
-            $ref: '#/definitions/ga4ghUpdateDataObjectRequest'
+            $ref: '#/definitions/UpdateDataObjectRequest'
       tags:
         - DataObjectService
   '/ga4gh/dos/v1/dataobjects/{data_object_id}/versions':
@@ -217,7 +217,7 @@ paths:
         '200':
           description: ''
           schema:
-            $ref: '#/definitions/ga4ghGetDataObjectVersionsResponse'
+            $ref: '#/definitions/GetDataObjectVersionsResponse'
       parameters:
         - name: data_object_id
           in: path
@@ -226,7 +226,7 @@ paths:
       tags:
         - DataObjectService
 definitions:
-  ga4ghChecksum:
+  Checksum:
     type: object
     properties:
       checksum:
@@ -246,7 +246,7 @@ definitions:
           multipart-md5      # multipart uploads provide a specialized tag in S3
           sha256
           sha512
-  ga4ghChecksumRequest:
+  ChecksumRequest:
     type: object
     properties:
       checksum:
@@ -266,12 +266,12 @@ definitions:
           multipart-md5      # multipart uploads provide a specialized tag in S3
           sha256
           sha512
-  ga4ghCreateDataBundleRequest:
+  CreateDataBundleRequest:
     type: object
     properties:
       data_bundle:
-        $ref: '#/definitions/ga4ghDataBundle'
-  ga4ghCreateDataBundleResponse:
+        $ref: '#/definitions/DataBundle'
+  CreateDataBundleResponse:
     type: object
     properties:
       data_bundle_id:
@@ -279,11 +279,11 @@ definitions:
         description: |-
           REQUIRED
           The identifier of the Data Bundle created.
-  ga4ghCreateDataObjectRequest:
+  CreateDataObjectRequest:
     type: object
     properties:
       data_object:
-        $ref: '#/definitions/ga4ghDataObject'
+        $ref: '#/definitions/DataObject'
         description: |-
           REQUIRED
           The data object to be created. The ID scheme is left up to the
@@ -293,13 +293,13 @@ definitions:
       and URLs to this file when sending the CreateDataObjectRequest. It is up
       to implementations to validate that the Data Object is available from
       the provided URLs.
-  ga4ghCreateDataObjectResponse:
+  CreateDataObjectResponse:
     type: object
     properties:
       data_object_id:
         type: string
         description: The ID of the created Data Object.
-  ga4ghDataBundle:
+  DataBundle:
     type: object
     properties:
       id:
@@ -337,7 +337,7 @@ definitions:
       checksums:
         type: array
         items:
-          $ref: '#/definitions/ga4ghChecksum'
+          $ref: '#/definitions/Checksum'
         description: |-
           REQUIRED
           At least one checksum must be provided.
@@ -366,7 +366,7 @@ definitions:
           OPTIONAL
           A set of key-value pairs that represent metadata provided by the uploader.
     title: 'Data Bundle: A collection of Data Objects'
-  ga4ghDataObject:
+  DataObject:
     type: object
     properties:
       id:
@@ -412,14 +412,14 @@ definitions:
       checksums:
         type: array
         items:
-          $ref: '#/definitions/ga4ghChecksum'
+          $ref: '#/definitions/Checksum'
         description: |-
           REQUIRED
           The checksum of the Data Object. At least one checksum must be provided.
       urls:
         type: array
         items:
-          $ref: '#/definitions/ga4ghURL'
+          $ref: '#/definitions/URL'
         description: |-
           OPTIONAL
           The list of URLs that can be used to access the Data Object.
@@ -439,12 +439,12 @@ definitions:
           a directory (e.g. "bucket/folder/file.name") to make Data Objects
           more discoverable. They might also be used to represent
     title: 'Data Object: a file, API or other resource'
-  ga4ghDeleteDataBundleResponse:
+  DeleteDataBundleResponse:
     type: object
     properties:
       data_bundle_id:
         type: string
-  ga4ghDeleteDataObjectResponse:
+  DeleteDataObjectResponse:
     type: object
     properties:
       data_object_id:
@@ -452,42 +452,42 @@ definitions:
         description: |-
           REQUIRED
           The identifier of the Data Object deleted.
-  ga4ghGetDataBundleResponse:
+  GetDataBundleResponse:
     type: object
     properties:
       data_bundle:
-        $ref: '#/definitions/ga4ghDataBundle'
-  ga4ghGetDataBundleVersionsResponse:
+        $ref: '#/definitions/DataBundle'
+  GetDataBundleVersionsResponse:
     type: object
     properties:
       data_bundles:
         type: array
         items:
-          $ref: '#/definitions/ga4ghDataBundle'
+          $ref: '#/definitions/DataBundle'
         description: |-
           REQUIRED
           All versions of the Data Bundles that match the GetDataBundleVersions
           request.
-  ga4ghGetDataObjectResponse:
+  GetDataObjectResponse:
     type: object
     properties:
       data_object:
-        $ref: '#/definitions/ga4ghDataObject'
+        $ref: '#/definitions/DataObject'
         description: |-
           REQUIRED
           The Data Object that coincides with a specific GetDataObjectRequest.
-  ga4ghGetDataObjectVersionsResponse:
+  GetDataObjectVersionsResponse:
     type: object
     properties:
       data_objects:
         type: array
         items:
-          $ref: '#/definitions/ga4ghDataObject'
+          $ref: '#/definitions/DataObject'
         description: |-
           REQUIRED
           All versions of the Data Objects that match the GetDataObjectVersions
           request.
-  ga4ghListDataBundlesRequest:
+  ListDataBundlesRequest:
     type: object
     properties:
       alias:
@@ -497,7 +497,7 @@ definitions:
           If provided returns Data Bundles that have any alias that matches the
           request.
       checksum:
-        $ref: '#/definitions/ga4ghChecksum'
+        $ref: '#/definitions/Checksum'
         description: |-
           OPTIONAL
           If provided, will only return Data Bundles which have the provided
@@ -517,13 +517,13 @@ definitions:
           To get the next page of results, set this parameter to the value of
           `next_page_token` from the previous response.
     title: Bundles
-  ga4ghListDataBundlesResponse:
+  ListDataBundlesResponse:
     type: object
     properties:
       data_bundles:
         type: array
         items:
-          $ref: '#/definitions/ga4ghDataBundle'
+          $ref: '#/definitions/DataBundle'
         description: The list of Data Bundles.
       next_page_token:
         type: string
@@ -531,7 +531,7 @@ definitions:
           The continuation token, which is used to page through large result sets.
           Provide this value in a subsequent request to return the next page of
           results. This field will be empty if there aren't any additional results.
-  ga4ghListDataObjectsRequest:
+  ListDataObjectsRequest:
     type: object
     properties:
       alias:
@@ -546,7 +546,7 @@ definitions:
           If provided will return only Data Objects with a that URL matches
           this string.
       checksum:
-        $ref: '#/definitions/ga4ghChecksumRequest'
+        $ref: '#/definitions/ChecksumRequest'
         title: |-
           OPTIONAL
           If provided will only return data object messages with the provided
@@ -569,13 +569,13 @@ definitions:
       /-------------------------------------------------------------------
       A request to list all objects in a dataset
       /-------------------------------------------------------------------
-  ga4ghListDataObjectsResponse:
+  ListDataObjectsResponse:
     type: object
     properties:
       data_objects:
         type: array
         items:
-          $ref: '#/definitions/ga4ghDataObject'
+          $ref: '#/definitions/DataObject'
         description: The list of Data Objects.
       next_page_token:
         type: string
@@ -587,7 +587,7 @@ definitions:
       /-------------------------------------------------------------------
       A list of data objects
       /-------------------------------------------------------------------
-  ga4ghURL:
+  URL:
     type: object
     properties:
       url:
@@ -607,18 +607,18 @@ definitions:
           OPTIONAL
           These values are reported by the underlying object store.
           A set of key-value pairs that represent metadata provided by the uploader.
-  ga4ghUpdateDataBundleRequest:
+  UpdateDataBundleRequest:
     type: object
     properties:
       data_bundle_id:
         type: string
         title: REQUIRED
       data_bundle:
-        $ref: '#/definitions/ga4ghDataBundle'
+        $ref: '#/definitions/DataBundle'
         description: |-
           REQUIRED
           The new Data Bundle content.
-  ga4ghUpdateDataBundleResponse:
+  UpdateDataBundleResponse:
     type: object
     properties:
       data_bundle_id:
@@ -626,7 +626,7 @@ definitions:
         description: |-
           REQUIRED
           The identifier of the Data Bundle updated.
-  ga4ghUpdateDataObjectRequest:
+  UpdateDataObjectRequest:
     type: object
     properties:
       data_object_id:
@@ -635,11 +635,11 @@ definitions:
           REQUIRED
           The identifier of the Data Object to be updated.
       data_object:
-        $ref: '#/definitions/ga4ghDataObject'
+        $ref: '#/definitions/DataObject'
         description: |-
           REQUIRED
           The new Data Object for this identifier.
-  ga4ghUpdateDataObjectResponse:
+  UpdateDataObjectResponse:
     type: object
     properties:
       data_object_id:
