@@ -1,0 +1,9 @@
+connexion
+flask_cors
+bravado-core
+bravado==9.2.0
+
+# FIXME these optional dependencies should be installed
+rfc3987
+webcolors
+strict-rfc3339

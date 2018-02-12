@@ -1,7 +1,7 @@
 
 syntax = "proto3";
 
-package ga4gh_data_object;
+package ga4gh;
 
 // Import HTTP RESTful annotations
 // from github.com/googleapis/googleapis
@@ -13,223 +13,111 @@ import "data_objects.proto";
 // Web service to get, create, list and delete Data Objects
 service DataObjectService {
 
+  // Retrieve a Data Object
+  rpc GetDataObject(GetDataObjectRequest) returns (GetDataObjectResponse) {
+    option (google.api.http) = {
+      get: "/ga4gh/dos/v1/dataobjects/{data_object_id}"
+    };
+  }
+
+  rpc GetDataObjectVersions(GetDataObjectVersionsRequest) returns (GetDataObjectVersionsResponse) {
+    option (google.api.http) = {
+      get: "/ga4gh/dos/v1/dataobjects/{data_object_id}/versions"
+    };
+  }
+
   // Make a new Data Object
-  rpc CreateDataObject(DataObject) returns (AddDataObjectResponse) {
+  rpc CreateDataObject(CreateDataObjectRequest) returns (CreateDataObjectResponse) {
     option (google.api.http) = {
-      post: "/ga4gh/dos/v1/dataobjects/{id}"
+      post: "/ga4gh/dos/v1/dataobjects"
       body: "*"
     };
   }
 
-  // Update or create a new version of a DataObject (depending on the
-  // capabilities of this implementation). For systems that support versioning,
-  // the combination of ID and version must be unique e.g. systems cannot
-  // support versioning and also allow changes to previous versions.
-  rpc UpdateDataObject(DataObject) returns (AddDataObjectResponse) {
+
+  // Delete a Data Object index entry
+  rpc DeleteDataObject(DeleteDataObjectRequest) returns (DeleteDataObjectResponse) {
+      option (google.api.http) = {
+        delete: "/ga4gh/dos/v1/dataobjects/{data_object_id}"
+      };
+  }
+
+  // Update a Data Object
+  rpc UpdateDataObject(UpdateDataObjectRequest) returns (UpdateDataObjectResponse) {
     option (google.api.http) = {
-      put: "/ga4gh/dos/v1/dataobjects/{id}"
+      put: "/ga4gh/dos/v1/dataobjects/{data_object_id}"
       body: "*"
     };
   }
 
-  // Get info about a Data Object
-  rpc GetDataObjectStatus(GetDataObjectRequest) returns (DataObjectStatusResponse) {
-      option (google.api.http) = {
-        get: "/ga4gh/dos/v1/dataobjects/{id}/versions"
-      };
-  }
-
-  // Get info about Data Objects sharing a SHA256 checksum
-  rpc GetDataObjectChecksumStatus(GetDataObjectChecksumRequest) returns (GetDataObjectChecksumResponse) {
-      option (google.api.http) = {
-        get: "/ga4gh/dos/v1/dataobjects-by-checksum/{checksum}"
-      };
-  }
-
-  // Get info about the clouds a Data Object is on
-  rpc GetDataObjectClouds(GetDataObjectRequest) returns (DataObjectCloudsResponse) {
-      option (google.api.http) = {
-        get: "/ga4gh/dos/v1/dataobjects/{id}/clouds"
-      };
-  }
-
-  // For a given cloud, create a signed URL for accessing this Data Object
-  rpc GetDataObjectCloudsSignedURL(GetDataObjectCloudRequest) returns (DataObjectSignedURLResponse) {
-      option (google.api.http) = {
-        get: "/ga4gh/dos/v1/dataobjects/{id}/signedurl"
-      };
-  }
-
-  // For a given cloud, return the native path and optionally credentials for
-  // accessing this Data Object
-  rpc GetDataObjectCloudsNativeURL(GetDataObjectCloudRequest) returns (DataObjectNativeURLResponse) {
-      option (google.api.http) = {
-        get: "/ga4gh/dos/v1/dataobjects/{id}/nativeurl"
-      };
-  }
-
-  // Delete a Data Object index entry.
-  // TODO should this return DeleteDataObjectResponse?
-  rpc DeleteDataObject(DeleteDataObjectRequest) returns (GetDataObjectRequest) {
-      option (google.api.http) = {
-        delete: "/ga4gh/dos/v1/dataobjects/{id}"
-      };
-  }
-
-  // List the Data Objects.
+  // List the Data Objects
   rpc ListDataObjects(ListDataObjectsRequest) returns (ListDataObjectsResponse) {
     option (google.api.http) = {
-      get: "/ga4gh/dos/v1/dataobjects/list"
-    };
-  }
-
-  // Make a new data bundle.
-  rpc CreateDataBundle(DataBundleObject) returns (AddDataBundleObjectResponse) {
-    option (google.api.http) = {
-      post: "/ga4gh/dos/v1/databundles/{id}"
+      post: "/ga4gh/dos/v1/dataobjects/list"
       body: "*"
     };
   }
 
-  // Update or create a new version of a data bundle (depending on the
-  // capabilities of this implementation). For systems that support versioning,
-  // the combination of ID and version must be unique e.g. systems cannot
-  // support versioning and also allow changes to previous versions.
-  rpc UpdateDataBundle(DataBundleObject) returns (AddDataBundleObjectResponse) {
+  // Create a new Data Bundle
+  rpc CreateDataBundle(CreateDataBundleRequest) returns (CreateDataBundleResponse) {
     option (google.api.http) = {
-      put: "/ga4gh/dos/v1/databundles/{id}"
+      post: "/ga4gh/dos/v1/databundles"
       body: "*"
     };
   }
 
-  // Get info about a data bundle
-  rpc GetDataBundleStatus(GetDataBundleObjectRequest) returns (DataBundleStatusResponse) {
+  // Retrieve a Data Bundle
+  rpc GetDataBundle(GetDataBundleRequest) returns (GetDataBundleResponse) {
       option (google.api.http) = {
-        get: "/ga4gh/dos/v1/databundles/{id}/versions"
+        get: "/ga4gh/dos/v1/databundles/{data_bundle_id}"
       };
   }
 
-  // Get info about data bundles sharing a SHA256 checksum
-  rpc GetDataBundleChecksumStatus(GetDataBundleObjectChecksumRequest) returns (DataBundleChecksumStatusResponse) {
-      option (google.api.http) = {
-        get: "/ga4gh/dos/v1/databundles-by-checksum/{checksum}"
-      };
-  }
-
-  // Delete a data bundle
-  rpc DeleteDataBundle(DeleteDataBundleObjectRequest) returns (GetDataBundleObjectRequest) {
-      option (google.api.http) = {
-        delete: "/ga4gh/dos/v1/databundles/{id}"
-      };
-  }
-
-  // List the data bundles
-  rpc ListDataBundles(ListDataBundleObjectsRequest) returns (ListDataBundleObjectsResponse) {
+  // Update a Data Bundle
+  rpc UpdateDataBundle(UpdateDataBundleRequest) returns (UpdateDataBundleResponse) {
     option (google.api.http) = {
-      get: "/ga4gh/dos/v1/databundles/list"
+      put: "/ga4gh/dos/v1/databundles/{data_bundle_id}"
+      body: "*"
     };
   }
 
+  rpc GetDataBundleVersions(GetDataBundleVersionsRequest) returns (GetDataBundleVersionsResponse) {
+    option (google.api.http) = {
+      get: "/ga4gh/dos/v1/databundles/{data_bundle_id}/versions"
+    };
+  }
+
+  // Delete a Data Bundle
+  rpc DeleteDataBundle(DeleteDataBundleRequest) returns (DeleteDataBundleResponse) {
+      option (google.api.http) = {
+        delete: "/ga4gh/dos/v1/databundles/{data_bundle_id}"
+      };
+  }
+
+  // List the Data Bundles
+  rpc ListDataBundles(ListDataBundlesRequest) returns (ListDataBundlesResponse) {
+    option (google.api.http) = {
+      post: "/ga4gh/dos/v1/databundles/list"
+      body: "*"
+    };
+  }
 }
 
-message DataObjectCloudsResponse {
-  repeated string clouds = 1;
-}
-
-message DataObjectSignedURLResponse {
-  string url = 1;
-}
-
-message GetDataObjectCloudRequest {
-  string id = 1;
-  string cloud = 2;
-}
-
-message DataObjectNativeURLResponse {
-  string url = 1;
-  string key = 2;
-  string secret_key = 3;
-}
-
-message AddDataBundleObjectResponse {
-  string id = 1;
-}
-
-message GetDataBundleObjectRequest {
-  string id = 1;
-}
-
-message GetDataBundleObjectChecksumRequest {
-  string checksum = 1;
-}
-
-message DeleteDataBundleObjectRequest {
-  string id = 1;
-}
-
-message DeleteDataObjectRequest {
-  string id = 1;
-}
-
-message DataBundleStatusResponse {
+message ChecksumRequest {
   // REQUIRED
-  string id = 1;
-
-  // REQUIRED
-  repeated DataBundleObject data_bundle_versions = 2;
-}
-
-message DataBundleChecksumStatusResponse {
-  // REQUIRED
+  // The hexlified checksum that one would like to match on.
   string checksum = 1;
 
-  // REQUIRED
-  repeated DataBundleObject data_bundle_versions = 2;
-}
-
-message ListDataBundleObjectsRequest {
   // OPTIONAL
-  string id = 1;
-
-  // OPTIONAL
-  // Specifies the maximum number of results to return in a single page.
-  // If unspecified, a system default will be used.
-  int32 page_size = 5;
-
-  // OPTIONAL
-  // The continuation token, which is used to page through large result sets.
-  // To get the next page of results, set this parameter to the value of
-  // `next_page_token` from the previous response.
-  string page_token = 6;
-
-}
-
-message ListDataBundleObjectsResponse {
-  // The list of Data Bundles.
-  repeated DataBundleObject data_bundle_objects = 1;
-
-  // The continuation token, which is used to page through large result sets.
-  // Provide this value in a subsequent request to return the next page of
-  // results. This field will be empty if there aren't any additional results.
-  string next_page_token = 2;
-}
-
-message DataObjectStatusResponse {
-  // REQUIRED
-  string id = 1;
-
-  // REQUIRED
-  repeated DataObject data_bundle_versions = 2;
-
-}
-
-message GetDataObjectChecksumResponse {
-  // REQUIRED
-  string checksum = 1;
-
-  // REQUIRED
-  repeated DataObject data_object_versions = 2;
-
+  // If provided will restrict responses to those that match the provided
+  // type.
+  //
+  // possible values:
+  // md5                # most blob stores provide a checksum using this
+  // multipart-md5      # multipart uploads provide a specialized tag in S3
+  // sha256
+  // sha512
+  string type = 2;
 }
 
 ///-------------------------------------------------------------------
@@ -237,7 +125,18 @@ message GetDataObjectChecksumResponse {
 ///-------------------------------------------------------------------
 message ListDataObjectsRequest {
   // OPTIONAL
-  string name_prefix = 1;
+  // If provided will only return Data Objects with the given alias.
+  string alias = 1;
+
+  // OPTIONAL
+  // If provided will return only Data Objects with a that URL matches
+  // this string.
+  string url = 2;
+
+  // OPTIONAL
+  // If provided will only return data object messages with the provided
+  // checksum. If the checksum type is provided
+  ChecksumRequest checksum = 3;
 
   // OPTIONAL
   // Specifies the maximum number of results to return in a single page.
@@ -255,10 +154,9 @@ message ListDataObjectsRequest {
 ///-------------------------------------------------------------------
 // A list of data objects
 ///-------------------------------------------------------------------
-
 message ListDataObjectsResponse {
   // The list of Data Objects.
-  repeated DataObject dataobjects = 1;
+  repeated DataObject data_objects = 1;
 
   // The continuation token, which is used to page through large result sets.
   // Provide this value in a subsequent request to return the next page of
@@ -266,21 +164,173 @@ message ListDataObjectsResponse {
   string next_page_token = 2;
 }
 
-///-------------------------------------------------------------------
-// The id of the data_object created
-///-------------------------------------------------------------------
-
-message AddDataObjectResponse {
-  string id = 1;
+// The Data Object one would like to index. One must provide any aliases
+// and URLs to this file when sending the CreateDataObjectRequest. It is up
+// to implementations to validate that the Data Object is available from
+// the provided URLs.
+message CreateDataObjectRequest {
+  // REQUIRED
+  // The data object to be created. The ID scheme is left up to the
+  // implementor but should be unique to the server instance.
+  DataObject data_object = 1;
 }
 
-///-------------------------------------------------------------------
-// The id of the data_object requested
-///-------------------------------------------------------------------
+message CreateDataObjectResponse {
+  // The ID of the created Data Object.
+  string data_object_id = 1;
+}
+
 message GetDataObjectRequest {
-  string id = 1;
+  // REQUIRED
+  // The unique identifier for the requested Data Object.
+  string data_object_id = 1;
+
+  // OPTIONAL
+  // If provided will return the requested version of the selected Data Object.
+  string version = 2;
 }
 
-message GetDataObjectChecksumRequest {
-  string checksum = 1;
+message GetDataObjectResponse {
+  // REQUIRED
+  // The Data Object that coincides with a specific GetDataObjectRequest.
+  DataObject data_object = 1;
+}
+
+message GetDataObjectVersionsRequest {
+  // REQUIRED
+  // The identifier of the Data Object you would like to retrieve all
+  // versions for.
+  string data_object_id = 1;
+}
+
+message GetDataObjectVersionsResponse {
+  // REQUIRED
+  // All versions of the Data Objects that match the GetDataObjectVersions
+  // request.
+  repeated DataObject data_objects = 1;
+}
+
+message UpdateDataObjectRequest {
+  // REQUIRED
+  // The identifier of the Data Object to be updated.
+  string data_object_id = 1;
+
+  // REQUIRED
+  // The new Data Object for this identifier.
+  DataObject data_object = 2;
+}
+
+message UpdateDataObjectResponse {
+  // REQUIRED
+  // The identifier of the Data Object updated.
+  string data_object_id = 1;
+}
+
+message DeleteDataObjectRequest {
+  // REQUIRED
+  // The identifier of the Data Object to delete.
+  string data_object_id = 1;
+}
+
+message DeleteDataObjectResponse {
+  // REQUIRED
+  // The identifier of the Data Object deleted.
+  string data_object_id = 1;
+}
+
+// Bundles
+message ListDataBundlesRequest {
+  // OPTIONAL
+  // If provided returns Data Bundles that have any alias that matches the
+  // request.
+  string alias = 1;
+
+  // OPTIONAL
+  // If provided, will only return Data Bundles which have the provided
+  // checksum.
+  Checksum checksum = 2;
+
+  // OPTIONAL
+  // Specifies the maximum number of results to return in a single page.
+  // If unspecified, a system default will be used.
+  int32 page_size = 5;
+
+  // OPTIONAL
+  // The continuation token, which is used to page through large result sets.
+  // To get the next page of results, set this parameter to the value of
+  // `next_page_token` from the previous response.
+  string page_token = 6;
+
+}
+
+message ListDataBundlesResponse {
+  // The list of Data Bundles.
+  repeated DataBundle data_bundles = 1;
+
+  // The continuation token, which is used to page through large result sets.
+  // Provide this value in a subsequent request to return the next page of
+  // results. This field will be empty if there aren't any additional results.
+  string next_page_token = 2;
+}
+
+message CreateDataBundleRequest {
+    DataBundle data_bundle = 1;
+}
+
+message CreateDataBundleResponse {
+  // REQUIRED
+  // The identifier of the Data Bundle created.
+  string data_bundle_id = 1;
+}
+
+message GetDataBundleRequest {
+  // REQUIRED
+  // The identifier of the Data Bundle of interest.
+  string data_bundle_id = 1;
+
+  // OPTIONAL
+  // If provided will return the requested version of the selected Data Bundle.
+  // Otherwise, only the latest version is returned.
+  string version = 2;
+}
+
+message GetDataBundleResponse {
+  DataBundle data_bundle = 1;
+}
+
+message GetDataBundleVersionsRequest {
+  // REQUIRED
+  // The identifier of the Data Bundle you would like to retrieve all
+  // versions for.
+  string data_bundle_id = 1;
+}
+
+message GetDataBundleVersionsResponse {
+  // REQUIRED
+  // All versions of the Data Bundles that match the GetDataBundleVersions
+  // request.
+  repeated DataBundle data_bundles = 1;
+}
+
+message DeleteDataBundleRequest {
+  string data_bundle_id = 1;
+}
+
+message DeleteDataBundleResponse {
+  string data_bundle_id = 1;
+}
+
+message UpdateDataBundleRequest {
+  // REQUIRED
+  string data_bundle_id = 1;
+
+  // REQUIRED
+  // The new Data Bundle content.
+  DataBundle data_bundle = 2;
+}
+
+message UpdateDataBundleResponse {
+  // REQUIRED
+  // The identifier of the Data Bundle updated.
+  string data_bundle_id = 1;
 }

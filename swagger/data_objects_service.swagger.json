@@ -1,0 +1,810 @@
+{
+    "basePath": "/", "swagger": "2.0",
+  "info": {
+    "title": "data_objects_service.proto",
+    "version": "version not set"
+  },
+  "schemes": [
+    "http",
+    "https"
+  ],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "paths": {
+    "/ga4gh/dos/v1/databundles": {
+      "post": {
+        "summary": "Create a new Data Bundle",
+        "x-swagger-router-controller": "ga4gh.dos.server", 
+        "operationId": "CreateDataBundle",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/ga4ghCreateDataBundleResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ga4ghCreateDataBundleRequest"
+            }
+          }
+        ],
+        "tags": [
+          "DataObjectService"
+        ]
+      }
+    },
+    "/ga4gh/dos/v1/databundles/list": {
+      "post": {
+        "summary": "List the Data Bundles",
+        "x-swagger-router-controller": "ga4gh.dos.server", 
+        "operationId": "ListDataBundles",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/ga4ghListDataBundlesResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ga4ghListDataBundlesRequest"
+            }
+          }
+        ],
+        "tags": [
+          "DataObjectService"
+        ]
+      }
+    },
+    "/ga4gh/dos/v1/databundles/{data_bundle_id}": {
+      "get": {
+        "summary": "Retrieve a Data Bundle",
+        "x-swagger-router-controller": "ga4gh.dos.server", 
+        "operationId": "GetDataBundle",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/ga4ghGetDataBundleResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "data_bundle_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "version",
+            "description": "OPTIONAL\nIf provided will return the requested version of the selected Data Bundle.\nOtherwise, only the latest version is returned.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "DataObjectService"
+        ]
+      },
+      "delete": {
+        "summary": "Delete a Data Bundle",
+        "x-swagger-router-controller": "ga4gh.dos.server", 
+        "operationId": "DeleteDataBundle",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/ga4ghDeleteDataBundleResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "data_bundle_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "DataObjectService"
+        ]
+      },
+      "put": {
+        "summary": "Update a Data Bundle",
+        "x-swagger-router-controller": "ga4gh.dos.server", 
+        "operationId": "UpdateDataBundle",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/ga4ghUpdateDataBundleResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "data_bundle_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ga4ghUpdateDataBundleRequest"
+            }
+          }
+        ],
+        "tags": [
+          "DataObjectService"
+        ]
+      }
+    },
+    "/ga4gh/dos/v1/databundles/{data_bundle_id}/versions": {
+      "get": {
+        "x-swagger-router-controller": "ga4gh.dos.server", 
+        "operationId": "GetDataBundleVersions",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/ga4ghGetDataBundleVersionsResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "data_bundle_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "DataObjectService"
+        ]
+      }
+    },
+    "/ga4gh/dos/v1/dataobjects": {
+      "post": {
+        "summary": "Make a new Data Object",
+        "x-swagger-router-controller": "ga4gh.dos.server", 
+        "operationId": "CreateDataObject",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/ga4ghCreateDataObjectResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ga4ghCreateDataObjectRequest"
+            }
+          }
+        ],
+        "tags": [
+          "DataObjectService"
+        ]
+      }
+    },
+    "/ga4gh/dos/v1/dataobjects/list": {
+      "post": {
+        "summary": "List the Data Objects",
+        "x-swagger-router-controller": "ga4gh.dos.server", 
+        "operationId": "ListDataObjects",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/ga4ghListDataObjectsResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ga4ghListDataObjectsRequest"
+            }
+          }
+        ],
+        "tags": [
+          "DataObjectService"
+        ]
+      }
+    },
+    "/ga4gh/dos/v1/dataobjects/{data_object_id}": {
+      "get": {
+        "summary": "Retrieve a Data Object",
+        "x-swagger-router-controller": "ga4gh.dos.server", 
+        "operationId": "GetDataObject",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/ga4ghGetDataObjectResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "data_object_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "version",
+            "description": "OPTIONAL\nIf provided will return the requested version of the selected Data Object.",
+            "in": "query",
+            "required": false,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "DataObjectService"
+        ]
+      },
+      "delete": {
+        "summary": "Delete a Data Object index entry",
+        "x-swagger-router-controller": "ga4gh.dos.server", 
+        "operationId": "DeleteDataObject",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/ga4ghDeleteDataObjectResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "data_object_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "DataObjectService"
+        ]
+      },
+      "put": {
+        "summary": "Update a Data Object",
+        "x-swagger-router-controller": "ga4gh.dos.server", 
+        "operationId": "UpdateDataObject",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/ga4ghUpdateDataObjectResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "data_object_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/ga4ghUpdateDataObjectRequest"
+            }
+          }
+        ],
+        "tags": [
+          "DataObjectService"
+        ]
+      }
+    },
+    "/ga4gh/dos/v1/dataobjects/{data_object_id}/versions": {
+      "get": {
+        "x-swagger-router-controller": "ga4gh.dos.server", 
+        "operationId": "GetDataObjectVersions",
+        "responses": {
+          "200": {
+            "description": "",
+            "schema": {
+              "$ref": "#/definitions/ga4ghGetDataObjectVersionsResponse"
+            }
+          }
+        },
+        "parameters": [
+          {
+            "name": "data_object_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "tags": [
+          "DataObjectService"
+        ]
+      }
+    }
+  },
+  "definitions": {
+    "ga4ghChecksum": {
+      "type": "object",
+      "properties": {
+        "checksum": {
+          "type": "string",
+          "description": "REQUIRED\nThe hex-string encoded checksum for the Data."
+        },
+        "type": {
+          "type": "string",
+          "description": "OPTIONAL\nThe digest method used to create the checksum. If left unspecified md5\nwill be assumed.\n\npossible values:\nmd5                # most blob stores provide a checksum using this\nmultipart-md5      # multipart uploads provide a specialized tag in S3\nsha256\nsha512"
+        }
+      }
+    },
+    "ga4ghChecksumRequest": {
+      "type": "object",
+      "properties": {
+        "checksum": {
+          "type": "string",
+          "description": "REQUIRED\nThe hexlified checksum that one would like to match on."
+        },
+        "type": {
+          "type": "string",
+          "description": "OPTIONAL\nIf provided will restrict responses to those that match the provided\ntype.\n\npossible values:\nmd5                # most blob stores provide a checksum using this\nmultipart-md5      # multipart uploads provide a specialized tag in S3\nsha256\nsha512"
+        }
+      }
+    },
+    "ga4ghCreateDataBundleRequest": {
+      "type": "object",
+      "properties": {
+        "data_bundle": {
+          "$ref": "#/definitions/ga4ghDataBundle"
+        }
+      }
+    },
+    "ga4ghCreateDataBundleResponse": {
+      "type": "object",
+      "properties": {
+        "data_bundle_id": {
+          "type": "string",
+          "description": "REQUIRED\nThe identifier of the Data Bundle created."
+        }
+      }
+    },
+    "ga4ghCreateDataObjectRequest": {
+      "type": "object",
+      "properties": {
+        "data_object": {
+          "$ref": "#/definitions/ga4ghDataObject",
+          "description": "REQUIRED\nThe data object to be created. The ID scheme is left up to the\nimplementor but should be unique to the server instance."
+        }
+      },
+      "description": "The Data Object one would like to index. One must provide any aliases\nand URLs to this file when sending the CreateDataObjectRequest. It is up\nto implementations to validate that the Data Object is available from\nthe provided URLs."
+    },
+    "ga4ghCreateDataObjectResponse": {
+      "type": "object",
+      "properties": {
+        "data_object_id": {
+          "type": "string",
+          "description": "The ID of the created Data Object."
+        }
+      }
+    },
+    "ga4ghDataBundle": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "title": "REQUIRED\nAn identifier, unique to this Data Bundle"
+        },
+        "data_object_ids": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "REQUIRED\nThe list of Data Objects that this Data Bundle contains."
+        },
+        "created": {
+          "type": "string",
+          "format": "date-time",
+          "description": "REQUIRED\nTimestamp of object creation in RFC3339."
+        },
+        "updated": {
+          "type": "string",
+          "format": "date-time",
+          "description": "REQUIRED\nTimestamp of update in RFC3339, identical to create timestamp in systems\nthat do not support updates."
+        },
+        "version": {
+          "type": "string",
+          "description": "REQUIRED\nA string representing a version, some systems may use checksum, a RFC3339\ntimestamp, or incrementing version number. For systems that do not support\nversioning please use your update timestamp as your version."
+        },
+        "checksums": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ga4ghChecksum"
+          },
+          "description": "REQUIRED\nAt least one checksum must be provided.\nThe data bundle checksum is computed over all the checksums of the\nData Objects that bundle contains."
+        },
+        "description": {
+          "type": "string",
+          "description": "OPTIONAL\nA human readable description."
+        },
+        "aliases": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "description": "OPTIONAL\nA list of strings that can be used to identify this Data Bundle."
+        },
+        "system_metadata": {
+          "$ref": "#/definitions/protobufStruct",
+          "description": "OPTIONAL\nA set of key-value pairs that represent system metadata about the object."
+        },
+        "user_metadata": {
+          "$ref": "#/definitions/protobufStruct",
+          "description": "OPTIONAL\nA set of key-value pairs that represent metadata provided by the uploader."
+        }
+      },
+      "title": "Data Bundle: A collection of Data Objects"
+    },
+    "ga4ghDataObject": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "REQUIRED\nAn identifier unique to this Data Object."
+        },
+        "name": {
+          "type": "string",
+          "description": "OPTIONAL\nA string that can be optionally used to name a Data Object."
+        },
+        "size": {
+          "type": "string",
+          "format": "int64",
+          "description": "REQUIRED\nThe computed size in bytes."
+        },
+        "created": {
+          "type": "string",
+          "format": "date-time",
+          "description": "REQUIRED\nTimestamp of object creation in RFC3339."
+        },
+        "updated": {
+          "type": "string",
+          "format": "date-time",
+          "description": "OPTIONAL\nTimestamp of update in RFC3339, identical to create timestamp in systems\nthat do not support updates."
+        },
+        "version": {
+          "type": "string",
+          "description": "OPTIONAL\nA string representing a version."
+        },
+        "mime_type": {
+          "type": "string",
+          "description": "OPTIONAL\nA string providing the mime-type of the Data Object.\nFor example, \"application/json\"."
+        },
+        "checksums": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ga4ghChecksum"
+          },
+          "description": "REQUIRED\nThe checksum of the Data Object. At least one checksum must be provided."
+        },
+        "urls": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ga4ghURL"
+          },
+          "description": "OPTIONAL\nThe list of URLs that can be used to access the Data Object."
+        },
+        "description": {
+          "type": "string",
+          "description": "OPTIONAL\nA human readable description of the contents of the Data Object."
+        },
+        "aliases": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "title": "OPTIONAL\nA list of strings that can be used to find this Data Object.\nThese aliases can be used to represent the Data Object's location in\na directory (e.g. \"bucket/folder/file.name\") to make Data Objects\nmore discoverable. They might also be used to represent"
+        }
+      },
+      "title": "Data Object: a file, API or other resource"
+    },
+    "ga4ghDeleteDataBundleResponse": {
+      "type": "object",
+      "properties": {
+        "data_bundle_id": {
+          "type": "string"
+        }
+      }
+    },
+    "ga4ghDeleteDataObjectResponse": {
+      "type": "object",
+      "properties": {
+        "data_object_id": {
+          "type": "string",
+          "description": "REQUIRED\nThe identifier of the Data Object deleted."
+        }
+      }
+    },
+    "ga4ghGetDataBundleResponse": {
+      "type": "object",
+      "properties": {
+        "data_bundle": {
+          "$ref": "#/definitions/ga4ghDataBundle"
+        }
+      }
+    },
+    "ga4ghGetDataBundleVersionsResponse": {
+      "type": "object",
+      "properties": {
+        "data_bundles": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ga4ghDataBundle"
+          },
+          "description": "REQUIRED\nAll versions of the Data Bundles that match the GetDataBundleVersions\nrequest."
+        }
+      }
+    },
+    "ga4ghGetDataObjectResponse": {
+      "type": "object",
+      "properties": {
+        "data_object": {
+          "$ref": "#/definitions/ga4ghDataObject",
+          "description": "REQUIRED\nThe Data Object that coincides with a specific GetDataObjectRequest."
+        }
+      }
+    },
+    "ga4ghGetDataObjectVersionsResponse": {
+      "type": "object",
+      "properties": {
+        "data_objects": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ga4ghDataObject"
+          },
+          "description": "REQUIRED\nAll versions of the Data Objects that match the GetDataObjectVersions\nrequest."
+        }
+      }
+    },
+    "ga4ghListDataBundlesRequest": {
+      "type": "object",
+      "properties": {
+        "alias": {
+          "type": "string",
+          "description": "OPTIONAL\nIf provided returns Data Bundles that have any alias that matches the\nrequest."
+        },
+        "checksum": {
+          "$ref": "#/definitions/ga4ghChecksum",
+          "description": "OPTIONAL\nIf provided, will only return Data Bundles which have the provided\nchecksum."
+        },
+        "page_size": {
+          "type": "integer",
+          "format": "int32",
+          "description": "OPTIONAL\nSpecifies the maximum number of results to return in a single page.\nIf unspecified, a system default will be used."
+        },
+        "page_token": {
+          "type": "string",
+          "description": "OPTIONAL\nThe continuation token, which is used to page through large result sets.\nTo get the next page of results, set this parameter to the value of\n`next_page_token` from the previous response."
+        }
+      },
+      "title": "Bundles"
+    },
+    "ga4ghListDataBundlesResponse": {
+      "type": "object",
+      "properties": {
+        "data_bundles": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ga4ghDataBundle"
+          },
+          "description": "The list of Data Bundles."
+        },
+        "next_page_token": {
+          "type": "string",
+          "description": "The continuation token, which is used to page through large result sets.\nProvide this value in a subsequent request to return the next page of\nresults. This field will be empty if there aren't any additional results."
+        }
+      }
+    },
+    "ga4ghListDataObjectsRequest": {
+      "type": "object",
+      "properties": {
+        "alias": {
+          "type": "string",
+          "description": "OPTIONAL\nIf provided will only return Data Objects with the given alias."
+        },
+        "url": {
+          "type": "string",
+          "description": "OPTIONAL\nIf provided will return only Data Objects with a that URL matches\nthis string."
+        },
+        "checksum": {
+          "$ref": "#/definitions/ga4ghChecksumRequest",
+          "title": "OPTIONAL\nIf provided will only return data object messages with the provided\nchecksum. If the checksum type is provided"
+        },
+        "page_size": {
+          "type": "integer",
+          "format": "int32",
+          "description": "OPTIONAL\nSpecifies the maximum number of results to return in a single page.\nIf unspecified, a system default will be used."
+        },
+        "page_token": {
+          "type": "string",
+          "description": "OPTIONAL\nThe continuation token, which is used to page through large result sets.\nTo get the next page of results, set this parameter to the value of\n`next_page_token` from the previous response."
+        }
+      },
+      "title": "/-------------------------------------------------------------------\nA request to list all objects in a dataset\n/-------------------------------------------------------------------"
+    },
+    "ga4ghListDataObjectsResponse": {
+      "type": "object",
+      "properties": {
+        "data_objects": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/ga4ghDataObject"
+          },
+          "description": "The list of Data Objects."
+        },
+        "next_page_token": {
+          "type": "string",
+          "description": "The continuation token, which is used to page through large result sets.\nProvide this value in a subsequent request to return the next page of\nresults. This field will be empty if there aren't any additional results."
+        }
+      },
+      "title": "/-------------------------------------------------------------------\nA list of data objects\n/-------------------------------------------------------------------"
+    },
+    "ga4ghURL": {
+      "type": "object",
+      "properties": {
+        "url": {
+          "type": "string",
+          "description": "REQUIRED\nA URL that can be used to access the file."
+        },
+        "system_metadata": {
+          "$ref": "#/definitions/protobufStruct",
+          "description": "OPTIONAL\nThese values are reported by the underlying object store.\nA set of key-value pairs that represent system metadata about the object."
+        },
+        "user_metadata": {
+          "$ref": "#/definitions/protobufStruct",
+          "description": "OPTIONAL\nThese values are reported by the underlying object store.\nA set of key-value pairs that represent metadata provided by the uploader."
+        }
+      }
+    },
+    "ga4ghUpdateDataBundleRequest": {
+      "type": "object",
+      "properties": {
+        "data_bundle_id": {
+          "type": "string",
+          "title": "REQUIRED"
+        },
+        "data_bundle": {
+          "$ref": "#/definitions/ga4ghDataBundle",
+          "description": "REQUIRED\nThe new Data Bundle content."
+        }
+      }
+    },
+    "ga4ghUpdateDataBundleResponse": {
+      "type": "object",
+      "properties": {
+        "data_bundle_id": {
+          "type": "string",
+          "description": "REQUIRED\nThe identifier of the Data Bundle updated."
+        }
+      }
+    },
+    "ga4ghUpdateDataObjectRequest": {
+      "type": "object",
+      "properties": {
+        "data_object_id": {
+          "type": "string",
+          "description": "REQUIRED\nThe identifier of the Data Object to be updated."
+        },
+        "data_object": {
+          "$ref": "#/definitions/ga4ghDataObject",
+          "description": "REQUIRED\nThe new Data Object for this identifier."
+        }
+      }
+    },
+    "ga4ghUpdateDataObjectResponse": {
+      "type": "object",
+      "properties": {
+        "data_object_id": {
+          "type": "string",
+          "description": "REQUIRED\nThe identifier of the Data Object updated."
+        }
+      }
+    },
+    "protobufListValue": {
+      "type": "object",
+      "properties": {
+        "values": {
+          "type": "array",
+          "items": {
+            "$ref": "#/definitions/protobufValue"
+          },
+          "description": "Repeated field of dynamically typed values."
+        }
+      },
+      "description": "`ListValue` is a wrapper around a repeated field of values.\n\nThe JSON representation for `ListValue` is JSON array."
+    },
+    "protobufNullValue": {
+      "type": "string",
+      "enum": [
+        "NULL_VALUE"
+      ],
+      "default": "NULL_VALUE",
+      "description": "`NullValue` is a singleton enumeration to represent the null value for the\n`Value` type union.\n\n The JSON representation for `NullValue` is JSON `null`.\n\n - NULL_VALUE: Null value."
+    },
+    "protobufStruct": {
+      "type": "object",
+      "properties": {
+        "fields": {
+          "type": "object",
+          "additionalProperties": {
+            "$ref": "#/definitions/protobufValue"
+          },
+          "description": "Unordered map of dynamically typed values."
+        }
+      },
+      "description": "`Struct` represents a structured data value, consisting of fields\nwhich map to dynamically typed values. In some languages, `Struct`\nmight be supported by a native representation. For example, in\nscripting languages like JS a struct is represented as an\nobject. The details of that representation are described together\nwith the proto support for the language.\n\nThe JSON representation for `Struct` is JSON object."
+    },
+    "protobufValue": {
+      "type": "object",
+      "properties": {
+        "null_value": {
+          "$ref": "#/definitions/protobufNullValue",
+          "description": "Represents a null value."
+        },
+        "number_value": {
+          "type": "number",
+          "format": "double",
+          "description": "Represents a double value."
+        },
+        "string_value": {
+          "type": "string",
+          "description": "Represents a string value."
+        },
+        "bool_value": {
+          "type": "boolean",
+          "format": "boolean",
+          "description": "Represents a boolean value."
+        },
+        "struct_value": {
+          "$ref": "#/definitions/protobufStruct",
+          "description": "Represents a structured value."
+        },
+        "list_value": {
+          "$ref": "#/definitions/protobufListValue",
+          "description": "Represents a repeated `Value`."
+        }
+      },
+      "description": "`Value` represents a dynamically typed value which can be either\nnull, a number, a string, a boolean, a recursive struct value, or a\nlist of values. A producer of value is expected to set one of that\nvariants, absence of any variant indicates an error.\n\nThe JSON representation for `Value` is JSON value."
+    }
+  }
+}

@@ -1,22 +1,109 @@
 
 syntax = "proto3";
 
-package ga4gh_data_object;
+package ga4gh;
 
 // Import HTTP RESTful annotations
 import "google/api/annotations.proto";
 import "google/protobuf/struct.proto";
 import "google/protobuf/timestamp.proto";
 
-///-------------------------------------------------------------------
-message DataBundleObject {
-  //REQUIRED
+message URL {
+  // REQUIRED
+  // A URL that can be used to access the file.
+  string url = 1;
+
+  // OPTIONAL
+  // These values are reported by the underlying object store.
+  // A set of key-value pairs that represent system metadata about the object.
+  google.protobuf.Struct system_metadata = 2;
+
+  // OPTIONAL
+  // These values are reported by the underlying object store.
+  // A set of key-value pairs that represent metadata provided by the uploader.
+  google.protobuf.Struct user_metadata = 3;
+}
+
+message Checksum {
+  // REQUIRED
+  // The hex-string encoded checksum for the Data.
+  string checksum = 1;
+
+  // OPTIONAL
+  // The digest method used to create the checksum. If left unspecified md5
+  // will be assumed.
+  //
+  // possible values:
+  // md5                # most blob stores provide a checksum using this
+  // multipart-md5      # multipart uploads provide a specialized tag in S3
+  // sha256
+  // sha512
+  string type = 2;
+}
+
+// Data Object: a file, API or other resource
+message DataObject {
+  // REQUIRED
+  // An identifier unique to this Data Object.
   string id = 1;
 
-  //REQUIRED
-  repeated DataObject dataobjects = 2;
+  // OPTIONAL
+  // A string that can be optionally used to name a Data Object.
+  string name = 2;
 
-  //REQUIRED
+  // REQUIRED
+  // The computed size in bytes.
+  int64 size = 3;
+
+  // REQUIRED
+  // Timestamp of object creation in RFC3339.
+  google.protobuf.Timestamp created = 4;
+
+  // OPTIONAL
+  // Timestamp of update in RFC3339, identical to create timestamp in systems
+  // that do not support updates.
+  google.protobuf.Timestamp updated = 5;
+
+  // OPTIONAL
+  // A string representing a version.
+  string version = 6;
+
+  // OPTIONAL
+  // A string providing the mime-type of the Data Object.
+  // For example, "application/json".
+  string mime_type = 7;
+
+  // REQUIRED
+  // The checksum of the Data Object. At least one checksum must be provided.
+  repeated Checksum checksums =  8;
+
+  // OPTIONAL
+  // The list of URLs that can be used to access the Data Object.
+  repeated URL urls = 9;
+
+  // OPTIONAL
+  // A human readable description of the contents of the Data Object.
+  string description = 10;
+
+  // OPTIONAL
+  // A list of strings that can be used to find this Data Object.
+  // These aliases can be used to represent the Data Object's location in
+  // a directory (e.g. "bucket/folder/file.name") to make Data Objects
+  // more discoverable. They might also be used to represent
+  repeated string aliases = 11;
+}
+
+// Data Bundle: A collection of Data Objects
+message DataBundle {
+  // REQUIRED
+  // An identifier, unique to this Data Bundle
+  string id = 1;
+
+  // REQUIRED
+  // The list of Data Objects that this Data Bundle contains.
+  repeated string data_object_ids = 2;
+
+  // REQUIRED
   // Timestamp of object creation in RFC3339.
   google.protobuf.Timestamp created = 3;
 
@@ -31,63 +118,25 @@ message DataBundleObject {
   // versioning please use your update timestamp as your version.
   string version = 5;
 
-  // REQUIRED, the bundle SHA256 checksum which is a SHA256 checksum of all the
-  // SHA256 checksums of the dataobjects that make up this bundle
-  string checksum =  6;
-
-  // OPTIONAL
-  string description = 9;
-
-  // OPTIONAL
-  repeated string aliases = 10;
-}
-
-///-------------------------------------------------------------------
-// Resource: a file, API or other resource
-///-------------------------------------------------------------------
-message DataObject {
   // REQUIRED
-  string id = 1;
+  // At least one checksum must be provided.
+  // The data bundle checksum is computed over all the checksums of the
+  // Data Objects that bundle contains.
+  repeated Checksum checksums =  6;
 
   // OPTIONAL
-  string file_name = 2;
-
-  // REQUIRED
-  int64 file_size = 3;
-
-  // REQUIRED
-  // Timestamp of object creation in RFC3339.
-  google.protobuf.Timestamp created = 4;
-
-  // REQUIRED
-  // Timestamp of update in RFC3339, identical to create timestamp in systems
-  // that do not support updates.
-  google.protobuf.Timestamp updated = 5;
+  // A human readable description.
+  string description = 7;
 
   // OPTIONAL
-  // A string representing a version.
-  string version = 6;
-
-  // OPTIONAL
-  string mime_type = 7;
-
-  // REQUIRED, the file SHA256 checksum
-  string checksum =  8;
-
-  // OPTIONAL
-  repeated string urls = 9;
-
-  // OPTIONAL
-  string description = 10;
-
-  // OPTIONAL
-  repeated string aliases = 11;
+  // A list of strings that can be used to identify this Data Bundle.
+  repeated string aliases = 8;
 
   // OPTIONAL
   // A set of key-value pairs that represent system metadata about the object.
-  map<string, string> system_metadata = 12;
+  google.protobuf.Struct system_metadata = 9;
 
   // OPTIONAL
   // A set of key-value pairs that represent metadata provided by the uploader.
-  map<string, string> user_metadata = 13;
+  google.protobuf.Struct user_metadata = 10;
 }
