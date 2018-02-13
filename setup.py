@@ -4,9 +4,9 @@ import os
 
 # We need to copy the generated swagger to the Python package
 SWAGGER_JSON_PATH = os.path.abspath(
-    os.path.join('swagger', 'data_objects_service.swagger.json'))
+    os.path.join('openapi', 'data_object_service.swagger.yaml'))
 SWAGGER_DEST_PATH = os.path.abspath(os.path.join(
-    'python', 'ga4gh', 'dos', 'data_objects_service.swagger.json'))
+    'python', 'ga4gh', 'dos', 'data_object_service.swagger.yaml'))
 shutil.copyfile(SWAGGER_JSON_PATH, SWAGGER_DEST_PATH)
 
 # First, we try to use setuptools. If it's not available locally,

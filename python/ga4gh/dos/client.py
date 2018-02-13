@@ -5,7 +5,7 @@ import os
 from bravado.client import SwaggerClient
 # from bravado.swagger_model import load_file
 
-SWAGGER_FILENAME = 'data_objects_service.swagger.json'
+SWAGGER_FILENAME = 'data_objects_service.swagger.yaml'
 current_directory = os.path.dirname(os.path.realpath(__file__))
 SWAGGER_PATH = os.path.join(current_directory, SWAGGER_FILENAME)
 
