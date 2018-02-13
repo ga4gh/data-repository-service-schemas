@@ -1,8 +1,8 @@
 swagger: '2.0'
-basePath: '/'
+basePath: '/ga4gh/dos/v1'
 info:
   title: Data Object Service
-  version: 0.1.0
+  version: 0.1.1
 schemes:
   - http
   - https
@@ -11,7 +11,7 @@ consumes:
 produces:
   - application/json
 paths:
-  /ga4gh/dos/v1/databundles:
+  /databundles:
     post:
       summary: Create a new Data Bundle
       operationId: CreateDataBundle
@@ -29,7 +29,7 @@ paths:
       tags:
         - DataObjectService
       x-swagger-router-controller: ga4gh.dos.server
-  /ga4gh/dos/v1/databundles/list:
+  /databundles/list:
     post:
       summary: List the Data Bundles
       operationId: ListDataBundles
@@ -47,7 +47,7 @@ paths:
       tags:
         - DataObjectService
       x-swagger-router-controller: ga4gh.dos.server
-  '/ga4gh/dos/v1/databundles/{data_bundle_id}':
+  '/databundles/{data_bundle_id}':
     get:
       summary: Retrieve a Data Bundle
       operationId: GetDataBundle
@@ -109,7 +109,7 @@ paths:
       tags:
         - DataObjectService
       x-swagger-router-controller: ga4gh.dos.server
-  '/ga4gh/dos/v1/databundles/{data_bundle_id}/versions':
+  '/databundles/{data_bundle_id}/versions':
     get:
       operationId: GetDataBundleVersions
       responses:
@@ -125,7 +125,7 @@ paths:
       tags:
         - DataObjectService
       x-swagger-router-controller: ga4gh.dos.server
-  /ga4gh/dos/v1/dataobjects:
+  /dataobjects:
     post:
       summary: Make a new Data Object
       operationId: CreateDataObject
@@ -143,7 +143,7 @@ paths:
       tags:
         - DataObjectService
       x-swagger-router-controller: ga4gh.dos.server
-  /ga4gh/dos/v1/dataobjects/list:
+  /dataobjects/list:
     post:
       summary: List the Data Objects
       operationId: ListDataObjects
@@ -161,7 +161,7 @@ paths:
       tags:
         - DataObjectService
       x-swagger-router-controller: ga4gh.dos.server
-  '/ga4gh/dos/v1/dataobjects/{data_object_id}':
+  '/dataobjects/{data_object_id}':
     get:
       summary: Retrieve a Data Object
       operationId: GetDataObject
@@ -222,7 +222,7 @@ paths:
       tags:
         - DataObjectService
       x-swagger-router-controller: ga4gh.dos.server
-  '/ga4gh/dos/v1/dataobjects/{data_object_id}/versions':
+  '/dataobjects/{data_object_id}/versions':
     get:
       operationId: GetDataObjectVersions
       responses:
