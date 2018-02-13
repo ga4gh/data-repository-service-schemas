@@ -67,7 +67,7 @@ setup(
     install_requires=install_requires,
     dependency_links=dependency_links,
     license='Apache License 2.0',
-    package_data={'ga4gh.dos': ['data_objects_service.swagger.json'],},
+    package_data={'ga4gh.dos': ['data_object_service.swagger.yaml'],},
     include_package_data=True,
     zip_safe=True,
     author="Global Alliance for Genomics and Health",

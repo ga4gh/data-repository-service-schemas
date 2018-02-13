@@ -28,6 +28,7 @@ paths:
             $ref: '#/definitions/CreateDataBundleRequest'
       tags:
         - DataObjectService
+      x-swagger-router-controller: ga4gh.dos.server
   /ga4gh/dos/v1/databundles/list:
     post:
       summary: List the Data Bundles
@@ -45,6 +46,7 @@ paths:
             $ref: '#/definitions/ListDataBundlesRequest'
       tags:
         - DataObjectService
+      x-swagger-router-controller: ga4gh.dos.server
   '/ga4gh/dos/v1/databundles/{data_bundle_id}':
     get:
       summary: Retrieve a Data Bundle
@@ -69,6 +71,7 @@ paths:
           type: string
       tags:
         - DataObjectService
+      x-swagger-router-controller: ga4gh.dos.server
     delete:
       summary: Delete a Data Bundle
       operationId: DeleteDataBundle
@@ -84,6 +87,7 @@ paths:
           type: string
       tags:
         - DataObjectService
+      x-swagger-router-controller: ga4gh.dos.server
     put:
       summary: Update a Data Bundle
       operationId: UpdateDataBundle
@@ -104,6 +108,7 @@ paths:
             $ref: '#/definitions/UpdateDataBundleRequest'
       tags:
         - DataObjectService
+      x-swagger-router-controller: ga4gh.dos.server
   '/ga4gh/dos/v1/databundles/{data_bundle_id}/versions':
     get:
       operationId: GetDataBundleVersions
@@ -119,6 +124,7 @@ paths:
           type: string
       tags:
         - DataObjectService
+      x-swagger-router-controller: ga4gh.dos.server
   /ga4gh/dos/v1/dataobjects:
     post:
       summary: Make a new Data Object
@@ -136,6 +142,7 @@ paths:
             $ref: '#/definitions/CreateDataObjectRequest'
       tags:
         - DataObjectService
+      x-swagger-router-controller: ga4gh.dos.server
   /ga4gh/dos/v1/dataobjects/list:
     post:
       summary: List the Data Objects
@@ -153,6 +160,7 @@ paths:
             $ref: '#/definitions/ListDataObjectsRequest'
       tags:
         - DataObjectService
+      x-swagger-router-controller: ga4gh.dos.server
   '/ga4gh/dos/v1/dataobjects/{data_object_id}':
     get:
       summary: Retrieve a Data Object
@@ -176,6 +184,7 @@ paths:
           type: string
       tags:
         - DataObjectService
+      x-swagger-router-controller: ga4gh.dos.server
     delete:
       summary: Delete a Data Object index entry
       operationId: DeleteDataObject
@@ -191,6 +200,7 @@ paths:
           type: string
       tags:
         - DataObjectService
+      x-swagger-router-controller: ga4gh.dos.server
     put:
       summary: Update a Data Object
       operationId: UpdateDataObject
@@ -211,6 +221,7 @@ paths:
             $ref: '#/definitions/UpdateDataObjectRequest'
       tags:
         - DataObjectService
+      x-swagger-router-controller: ga4gh.dos.server
   '/ga4gh/dos/v1/dataobjects/{data_object_id}/versions':
     get:
       operationId: GetDataObjectVersions
@@ -226,6 +237,7 @@ paths:
           type: string
       tags:
         - DataObjectService
+      x-swagger-router-controller: ga4gh.dos.server
 definitions:
   SystemMetadata:
     description: |-
