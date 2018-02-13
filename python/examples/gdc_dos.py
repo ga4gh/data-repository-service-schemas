@@ -6,7 +6,8 @@ from ga4gh.dos.client import Client
 
 config = {
     'validate_requests': False,
-    'validate_responses': False
+    'validate_responses': False,
+    'use_models': False
 }
 
 local_client = Client('http://localhost:8080/', config=config)
@@ -52,10 +53,10 @@ def gdc_to_ga4gh(gdc):
     Accepts a gdc dictionary and returns a CreateDataObjectRequest
     :return:
     """
-    DataObject = models.get_model('ga4ghDataObject')
-    CreateDataObjectRequest = models.get_model('ga4ghCreateDataObjectRequest')
-    URL = models.get_model('ga4ghURL')
-    Checksum = models.get_model('ga4ghChecksum')
+    DataObject = models.get_model('DataObject')
+    CreateDataObjectRequest = models.get_model('CreateDataObjectRequest')
+    URL = models.get_model('URL')
+    Checksum = models.get_model('Checksum')
     print(str(gdc.get('file_size')))
     create_data_object = DataObject(
         checksums=[Checksum(checksum=gdc.get('md5sum'), type='md5')],

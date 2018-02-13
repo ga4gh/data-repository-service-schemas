@@ -14,10 +14,10 @@ def main():
 
     # CreateDataObject
     print("..........Create an object............")
-    Checksum = models.get_model('ga4ghChecksum')
-    URL = models.get_model('ga4ghURL')
-    CreateDataObjectRequest = models.get_model('ga4ghCreateDataObjectRequest')
-    DataObject = models.get_model('ga4ghCreateDataObjectRequest')
+    Checksum = models.get_model('Checksum')
+    URL = models.get_model('URL')
+    CreateDataObjectRequest = models.get_model('CreateDataObjectRequest')
+    DataObject = models.get_model('CreateDataObjectRequest')
     create_data_object = DataObject(
         name="abc",
         size=12345,
@@ -37,7 +37,7 @@ def main():
 
     # UpdateDataObject
     print("..........Update that object.................")
-    UpdateDataObjectRequest = models.get_model('ga4ghUpdateDataObjectRequest')
+    UpdateDataObjectRequest = models.get_model('UpdateDataObjectRequest')
     update_data_object = DataObject(
         name="abc",
         size=12345,
@@ -59,7 +59,7 @@ def main():
 
     # ListDataObjects
     print("..........List Data Objects...............")
-    ListDataObjectsRequest = models.get_model('ga4ghListDataObjectsRequest')
+    ListDataObjectsRequest = models.get_model('ListDataObjectsRequest')
     list_request = ListDataObjectsRequest()
     list_response = client.ListDataObjects(body=list_request).result()
     print(len(list_response.data_objects))
@@ -155,10 +155,10 @@ def main():
 
     # CreateDataBundle
     print("..........Create a Data Bundle............")
-    Checksum = models.get_model('ga4ghChecksum')
-    URL = models.get_model('ga4ghURL')
-    CreateDataBundleRequest = models.get_model('ga4ghCreateDataBundleRequest')
-    DataBundle = models.get_model('ga4ghDataBundle')
+    Checksum = models.get_model('Checksum')
+    URL = models.get_model('URL')
+    CreateDataBundleRequest = models.get_model('CreateDataBundleRequest')
+    DataBundle = models.get_model('DataBundle')
     create_data_bundle = DataBundle(
         name="abc",
         size=12345,
@@ -179,7 +179,7 @@ def main():
 
     # UpdateDataBundle
     print("..........Update that Bundle.................")
-    UpdateDataBundleRequest = models.get_model('ga4ghUpdateDataBundleRequest')
+    UpdateDataBundleRequest = models.get_model('UpdateDataBundleRequest')
     update_data_bundle = DataBundle(
         name="abc",
         size=12345,
@@ -202,7 +202,7 @@ def main():
 
     # ListDataBundles
     print("..........List Data Bundles...............")
-    ListDataBundlesRequest = models.get_model('ga4ghListDataBundlesRequest')
+    ListDataBundlesRequest = models.get_model('ListDataBundlesRequest')
     list_request = ListDataBundlesRequest()
     list_response = client.ListDataBundles(body=list_request).result()
     print(len(list_response.data_bundles))
