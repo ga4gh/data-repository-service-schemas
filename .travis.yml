@@ -1,13 +1,8 @@
 language: python
 python:
 - '2.7'
-cache:
-  directories:
-  - "/tmp/proto3.2.0"
 before_install:
 - sudo apt-get update -qq
-- bash tools/travis-install-protoc.sh 3.2.0
-- export PATH=/tmp/proto3.2.0/bin:$PATH
 - pip install . --process-dependency-links
 - pip install -r python/dev-requirements.txt
 script:
