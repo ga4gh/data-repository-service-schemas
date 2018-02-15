@@ -17,20 +17,20 @@ def now():
 
 
 def get_most_recent(key):
-    max = {'created': '01-01-1965 00:00:00Z'}
+    max = {'updated': '01-01-1965 00:00:00Z'}
     for version in data_objects[key].keys():
         data_object = data_objects[key][version]
-        if parse(data_object['created']) > parse(max['created']):
+        if parse(data_object['updated']) > parse(max['updated']):
             max = data_object
     return max
 
 
 # TODO refactor to higher order function
 def get_most_recent_bundle(key):
-    max = {'created': '01-01-1965 00:00:00Z'}
+    max = {'updated': '01-01-1965 00:00:00Z'}
     for version in data_bundles[key].keys():
         data_bundle = data_bundles[key][version]
-        if parse(data_bundle['created']) > parse(max['created']):
+        if parse(data_bundle['updated']) > parse(max['updated']):
             max = data_bundle
     return max
 
@@ -145,9 +145,7 @@ def UpdateDataObject(**kwargs):
     # collides we'll pad it. If they provided a good one, we will
     # accept it. If they don't provide one, we'll give one.
     new_version = doc.get('version', None)
-    if new_version and new_version != doc['version']:
-        doc['version'] = new_version
-    else:
+    if not new_version or new_version in data_objects[data_object_id].keys():
         doc['version'] = now()
     doc['id'] = old_data_object['id']
     data_objects[data_object_id][doc['version']] = doc
@@ -206,7 +204,7 @@ def ListDataObjects(**kwargs):
         end_index = start_index + page_size
         # First fill a page
         page = filtered[start_index:min(len(filtered), end_index)]
-        if len(filtered[start_index:]) > len(page):
+        if len(filtered[start_index:]) > len(page) + 1:
             # If there is more than one page left of results
             next_page_token = int(body.get('page_token', 0)) + 1
             return (
@@ -255,10 +253,8 @@ def UpdateDataBundle(**kwargs):
     # We need to safely set the version if they provided one that
     # collides we'll pad it. If they provided a good one, we will
     # accept it. If they don't provide one, we'll give one.
-    new_version = old_data_bundle.get('version', None)
-    if new_version and new_version != doc.get('version', None):
-        doc['version'] = new_version
-    else:
+    new_version = doc.get('version', None)
+    if not new_version or new_version in data_bundles[data_bundle_id].keys():
         doc['version'] = now()
     doc['id'] = old_data_bundle['id']
     data_bundles[data_bundle_id][doc['version']] = doc
