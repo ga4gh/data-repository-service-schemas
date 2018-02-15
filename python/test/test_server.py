@@ -203,19 +203,21 @@ class TestServer(unittest.TestCase):
         print("..........List Data Objects...............")
         ListDataObjectsRequest = self._models.get_model(
             'ListDataObjectsRequest')
-        next_page_token = None
+        next_page_token = "0"
         count = 0
         while(True):
+            print(next_page_token)
             list_request = ListDataObjectsRequest(
-                checksum={'checksum': "def"}, page_token=next_page_token)
-            list_request.page_size = 1
-            if next_page_token:
-                list_request.next_page_token = next_page_token
+                checksum={'checksum': "def"},
+                page_token=next_page_token,
+                page_size=1)
             list_response = self._client.ListDataObjects(
                 body=list_request).result()
+            print(list_response)
             next_page_token = list_response.next_page_token
             count += 1
             if not list_response.next_page_token:
+                print('done paging')
                 break
         assert count > 1
 

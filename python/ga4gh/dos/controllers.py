@@ -206,7 +206,7 @@ def ListDataObjects(**kwargs):
         end_index = start_index + page_size
         # First fill a page
         page = filtered[start_index:min(len(filtered), end_index)]
-        if len(filtered[start_index:]) > len(page) + 1:
+        if len(filtered[start_index:]) - len(page) > 0:
             # If there is more than one page left of results
             next_page_token = int(body.get('page_token', 0)) + 1
             return (
@@ -317,12 +317,12 @@ def ListDataBundles(**kwargs):
     page_size = int(body.get('page_size', DEFAULT_PAGE_SIZE))
     # We'll page if there's a provided token or if we have too many
     # objects.
-    if len(filtered) > page_size or body.get('page_token', None):
+    if len(filtered) > page_size:
         start_index = int(body.get('page_token', 0)) * page_size
         end_index = start_index + page_size
         # First fill a page
         page = filtered[start_index:min(len(filtered), end_index)]
-        if len(filtered[start_index:]) > len(page):
+        if len(filtered[start_index:]) - len(page) > 0:
             # If there is more than one page left of results
             next_page_token = int(body.get('page_token', 0)) + 1
             return (
