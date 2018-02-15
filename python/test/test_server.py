@@ -67,7 +67,7 @@ class TestServer(unittest.TestCase):
         create_data_object = DataObject(
             id=id,
             name="abc",
-            size=12345,
+            size="12345",
             checksums=[Checksum(checksum=checksum, type="md5")],
             urls=[URL(url="a"), URL(url="b")])
         create_request = CreateDataObjectRequest(
@@ -89,7 +89,7 @@ class TestServer(unittest.TestCase):
         print("..........Create an object............")
         create_data_object = DataObject(
             name="abc",
-            size=12345,
+            size="12345",
             checksums=[Checksum(checksum=checksum, type="md5")],
             urls=[URL(url="a"), URL(url="b")])
         create_request = CreateDataObjectRequest(
@@ -101,7 +101,7 @@ class TestServer(unittest.TestCase):
         print("..........Create a 2nd  object............")
         create_data_object = DataObject(
             name="xyz",
-            size=12345,
+            size="12345",
             checksums=[Checksum(checksum=checksum, type="md5")],
             urls=[URL(url="c")])
         create_request = CreateDataObjectRequest(
@@ -149,7 +149,7 @@ class TestServer(unittest.TestCase):
         print("..........Create an object............")
         create_data_object = DataObject(
             name="abc",
-            size=12345,
+            size="12345",
             checksums=[Checksum(checksum="def", type="md5")],
             urls=[URL(url="a"), URL(url="b")],
             version="0")
@@ -173,7 +173,7 @@ class TestServer(unittest.TestCase):
             'UpdateDataObjectRequest')
         update_data_object = DataObject(
             name="abc",
-            size=12345,
+            size="12345",
             checksums=[Checksum(checksum="def", type="md5")],
             urls=[URL(url="a"), URL(url="b"), URL(url="c")])
         update_request = UpdateDataObjectRequest(
@@ -189,7 +189,7 @@ class TestServer(unittest.TestCase):
         print("..........Create another object w/ same checksum............")
         create_data_object = DataObject(
             name="fubar",
-            size=12345,
+            size="12345",
             checksums=[Checksum(checksum="def", type="md5")],
             urls=[URL(url="foo"), URL(url="bar")])
         create_request = CreateDataObjectRequest(
@@ -232,7 +232,7 @@ class TestServer(unittest.TestCase):
         print("..........Create an object............")
         create_data_object = DataObject(
             name="abc",
-            size=12345,
+            size='12345',
             checksums=[Checksum(checksum="def", type="md5")],
             urls=[URL(url="a"), URL(url="b")])
         create_request = CreateDataObjectRequest(
@@ -255,7 +255,7 @@ class TestServer(unittest.TestCase):
             'UpdateDataObjectRequest')
         update_data_object = DataObject(
             name="abc",
-            size=12345,
+            size='12345',
             checksums=[Checksum(checksum="def", type="md5")],
             urls=[URL(url="a"), URL(url="b"), URL(url="c")])
         update_request = UpdateDataObjectRequest(
@@ -308,7 +308,7 @@ class TestServer(unittest.TestCase):
         print(".......Create a Data Object with our own version..........")
         my_data_object = DataObject(
             name="abc",
-            size=12345,
+            size='12345',
             checksums=[Checksum(checksum="def", type="md5")],
             urls=[URL(url="a"), URL(url="b")],
             version="great-version")
@@ -341,7 +341,7 @@ class TestServer(unittest.TestCase):
             my_data_object = DataObject(
                 name="OBJ{}".format(i),
                 aliases=["OBJ{}".format(i)],
-                size=10 * i,
+                size=str(10 * i),
                 checksums=[Checksum(
                     checksum="def{}".format(i), type="md5")],
                 urls=[URL(url="http://{}".format(i))])
@@ -400,7 +400,7 @@ class TestServer(unittest.TestCase):
             my_data_object = DataObject(
                 name="OBJ{}".format(i),
                 aliases=["OBJ{}".format(i)],
-                size=10 * i,
+                size=str(10 * i),
                 checksums=[Checksum(
                     checksum="def{}".format(i), type="md5")],
                 urls=[URL(url="http://{}".format(i))])
@@ -422,7 +422,7 @@ class TestServer(unittest.TestCase):
         DataBundle = self._models.get_model('DataBundle')
         create_data_bundle = DataBundle(
             name="abc",
-            size=12345,
+            size="12345",
             checksums=[Checksum(checksum="def", type="md5")],
             data_object_ids=[x.id for x in list_response.data_objects])
         create_request = CreateDataBundleRequest(
@@ -446,7 +446,7 @@ class TestServer(unittest.TestCase):
             'UpdateDataBundleRequest')
         update_data_bundle = DataBundle(
             name="abc",
-            size=12345,
+            size="12345",
             data_object_ids=[x.id for x in list_response.data_objects],
             checksums=[Checksum(checksum="def", type="md5")],
             aliases=["ghi"])
@@ -523,7 +523,7 @@ class TestServer(unittest.TestCase):
             my_data_bundle = DataBundle(
                 name="BDL{}".format(i),
                 aliases=["BDL{}".format(i)],
-                size=10 * i,
+                size=str(10 * i),
                 data_object_ids=data_bundle.data_object_ids,
                 checksums=[Checksum(
                     checksum="def", type="md5")],)
