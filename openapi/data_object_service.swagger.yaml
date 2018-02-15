@@ -17,9 +17,25 @@ paths:
       operationId: CreateDataBundle
       responses:
         '200':
-          description: ''
+          description: The Data Bundle was successfully created.
           schema:
             $ref: '#/definitions/CreateDataBundleResponse'
+        '400':
+          description: The request is malformed.
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '401':
+          description: The request is unauthorized.
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '403':
+          description: The requester is not authorized to perform this action.
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '500':
+          description: An unexpected error occurred.
+          schema:
+            $ref: '#/definitions/ErrorResponse'
       parameters:
         - name: body
           in: body
@@ -35,9 +51,25 @@ paths:
       operationId: ListDataBundles
       responses:
         '200':
-          description: ''
+          description: 'Successfully listed Data Bundles.'
           schema:
             $ref: '#/definitions/ListDataBundlesResponse'
+        '400':
+          description: The request is malformed.
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '401':
+          description: The request is unauthorized.
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '403':
+          description: The requester is not authorized to perform this action.
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '500':
+          description: An unexpected error occurred.
+          schema:
+            $ref: '#/definitions/ErrorResponse'
       parameters:
         - name: body
           in: body
@@ -53,9 +85,29 @@ paths:
       operationId: GetDataBundle
       responses:
         '200':
-          description: ''
+          description: Successfully found the Data Bundle.
           schema:
             $ref: '#/definitions/GetDataBundleResponse'
+        '400':
+          description: The request is malformed.
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '401':
+          description: The request is unauthorized.
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '404':
+          description: The requested Data Bundle wasn't found.
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '403':
+          description: The requester is not authorized to perform this action.
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '500':
+          description: An unexpected error occurred.
+          schema:
+            $ref: '#/definitions/ErrorResponse'
       parameters:
         - name: data_bundle_id
           in: path
@@ -93,9 +145,29 @@ paths:
       operationId: UpdateDataBundle
       responses:
         '200':
-          description: ''
+          description: The Data Bundle was updated successfully.
           schema:
             $ref: '#/definitions/UpdateDataBundleResponse'
+        '400':
+          description: The request is malformed.
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '401':
+          description: The request is unauthorized.
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '404':
+          description: The requested Data Bundle wasn't found.
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '403':
+          description: The requester is not authorized to perform this action.
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '500':
+          description: An unexpected error occurred.
+          schema:
+            $ref: '#/definitions/ErrorResponse'
       parameters:
         - name: data_bundle_id
           in: path
@@ -114,9 +186,29 @@ paths:
       operationId: GetDataBundleVersions
       responses:
         '200':
-          description: ''
+          description: The versions for the Data Bundle were found successfully.
           schema:
             $ref: '#/definitions/GetDataBundleVersionsResponse'
+        '400':
+          description: The request is malformed.
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '401':
+          description: The request is unauthorized.
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '404':
+          description: The requested Data Bundle wasn't found.
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '403':
+          description: The requester is not authorized to perform this action.
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '500':
+          description: An unexpected error occurred.
+          schema:
+            $ref: '#/definitions/ErrorResponse'
       parameters:
         - name: data_bundle_id
           in: path
@@ -131,9 +223,25 @@ paths:
       operationId: CreateDataObject
       responses:
         '200':
-          description: ''
+          description: Successfully created the Data Object.
           schema:
             $ref: '#/definitions/CreateDataObjectResponse'
+        '400':
+          description: The request is malformed.
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '401':
+          description: The request is unauthorized.
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '403':
+          description: The requester is not authorized to perform this action.
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '500':
+          description: An unexpected error occurred.
+          schema:
+            $ref: '#/definitions/ErrorResponse'
       parameters:
         - name: body
           in: body
@@ -149,9 +257,25 @@ paths:
       operationId: ListDataObjects
       responses:
         '200':
-          description: ''
+          description: The Data Objects were listed successfully.
           schema:
             $ref: '#/definitions/ListDataObjectsResponse'
+        '400':
+          description: The request is malformed.
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '401':
+          description: The request is unauthorized.
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '403':
+          description: The requester is not authorized to perform this action.
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '500':
+          description: An unexpected error occurred.
+          schema:
+            $ref: '#/definitions/ErrorResponse'
       parameters:
         - name: body
           in: body
@@ -167,9 +291,29 @@ paths:
       operationId: GetDataObject
       responses:
         '200':
-          description: ''
+          description: The Data Object was found successfully.
           schema:
             $ref: '#/definitions/GetDataObjectResponse'
+        '400':
+          description: The request is malformed.
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '401':
+          description: The request is unauthorized.
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '404':
+          description: The requested Data Object wasn't found
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '403':
+          description: The requester is not authorized to perform this action.
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '500':
+          description: An unexpected error occurred.
+          schema:
+            $ref: '#/definitions/ErrorResponse'
       parameters:
         - name: data_object_id
           in: path
@@ -190,9 +334,29 @@ paths:
       operationId: DeleteDataObject
       responses:
         '200':
-          description: ''
+          description: 'The Data Object was deleted successfully.'
           schema:
             $ref: '#/definitions/DeleteDataObjectResponse'
+        '400':
+          description: The request is malformed.
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '401':
+          description: The request is unauthorized.
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '404':
+          description: The requested Data Object wasn't found.
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '403':
+          description: The requester is not authorized to perform this action.
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '500':
+          description: An unexpected error occurred.
+          schema:
+            $ref: '#/definitions/ErrorResponse'
       parameters:
         - name: data_object_id
           in: path
@@ -206,9 +370,29 @@ paths:
       operationId: UpdateDataObject
       responses:
         '200':
-          description: ''
+          description: The Data Object was successfully updated.
           schema:
             $ref: '#/definitions/UpdateDataObjectResponse'
+        '400':
+          description: The request is malformed.
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '401':
+          description: The request is unauthorized.
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '404':
+          description: The requested Data Object wasn't found.
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '403':
+          description: The requester is not authorized to perform this action.
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '500':
+          description: An unexpected error occurred.
+          schema:
+            $ref: '#/definitions/ErrorResponse'
       parameters:
         - name: data_object_id
           in: path
@@ -227,9 +411,29 @@ paths:
       operationId: GetDataObjectVersions
       responses:
         '200':
-          description: ''
+          description: The versions for the Data Object were returned successfully.
           schema:
             $ref: '#/definitions/GetDataObjectVersionsResponse'
+        '400':
+          description: The request is malformed.
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '401':
+          description: The request is unauthorized.
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '404':
+          description: The requested Data Object wasn't found.
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '403':
+          description: The requester is not authorized to perform this action.
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '500':
+          description: An unexpected error occurred.
+          schema:
+            $ref: '#/definitions/ErrorResponse'
       parameters:
         - name: data_object_id
           in: path
@@ -659,3 +863,15 @@ definitions:
         description: |-
           REQUIRED
           The identifier of the Data Object updated.
+  ErrorResponse:
+    description:
+      An object that can optionally include information about the error.
+    type: object
+    properties:
+      msg:
+        type: string
+        description: A detailed error message.
+      status_code:
+        type: integer
+        description: The integer representing the HTTP status code (e.g. 200, 404).
+

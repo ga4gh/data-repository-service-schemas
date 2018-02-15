@@ -118,7 +118,8 @@ def GetDataObject(**kwargs):
         data_object = data_objects[data_object_id][version]
         return ({"data_object": data_object}, 200)
     else:
-        return("No Content", 404)
+        return({'msg': "The requested Data "
+                       "Object wasn't found", 'status_code': 404}, 404)
 
 
 def GetDataObjectVersions(**kwargs):
@@ -130,7 +131,8 @@ def GetDataObjectVersions(**kwargs):
     if data_object_versions:
         return({"data_objects": data_object_versions}, 200)
     else:
-        return("No Content", 404)
+        return({'msg': "The requested Data "
+                       "Object wasn't found", 'status_code': 404}, 404)
 
 
 def UpdateDataObject(**kwargs):
@@ -239,7 +241,8 @@ def GetDataBundle(**kwargs):
         data_bundle = data_bundles[data_bundle_id][version]
         return ({"data_bundle": data_bundle}, 200)
     else:
-        return("No Content", 404)
+        return({'msg': "The requested Data "
+                       "Bundle wasn't found", 'status_code': 404}, 404)
 
 
 def UpdateDataBundle(**kwargs):
@@ -268,7 +271,8 @@ def GetDataBundleVersions(**kwargs):
     if data_bundle_versions:
         return({"data_bundles": data_bundle_versions}, 200)
     else:
-        return("No Content", 404)
+        return({'msg': "The requested Data "
+                       "Bundle wasn't found", 'status_code': 404}, 404)
 
 
 def DeleteDataBundle(**kwargs):
