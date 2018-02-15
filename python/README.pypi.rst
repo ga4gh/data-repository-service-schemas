@@ -1,4 +1,4 @@
-.. figure:: https://travis-ci.org/ga4gh/data-object-schemas.svg?branch=master
+.. figure:: https://travis-ci.org/ga4gh/data-object-service-schemas.svg?branch=master
    :alt: travis status
 
    travis status
@@ -7,7 +7,7 @@ Schemas for the Data Object Service (DOS) API
 =============================================
 
 `View the schemas in Swagger
-UI <http://ga4gh.github.io/data-object-schemas>`__
+UI <http://ga4gh.github.io/data-object-service-schemas>`__
 
 The `Global Alliance for Genomics and
 Health <http://genomicsandhealth.org/>`__ is an international coalition,
@@ -113,7 +113,7 @@ implements these schemas.
 
     virtualenv env
     source env/bin/activate
-    pip install git+git://github.com/ga4gh/data-object-schemas@master --process-dependency-links
+    pip install git+git://github.com/ga4gh/data-object-service-schemas@master --process-dependency-links
 
 This will add the python modules ``ga4gh.dos.server`` and
 ``ga4gh.dos.client`` you can use in your projects.
@@ -129,33 +129,12 @@ There is also a CLI hook.
 Building Documents
 ------------------
 
-Make sure you have Docker installed for your platform and the
-``cwltool``.
+The schemas are editable as OpenAPI 2 YAML files. To generate OpenAPI 3
+descriptions install swagger2openapi and run the following:
 
 ::
 
-    virtualenv env
-    source env/bin/activate
-    pip install -r python/dev-requirements.txt
-
-You can generate the `Swagger <http://swagger.io/>`__ YAML from the
-Protocol Buffers:
-
-::
-
-    cwltool CWLFile
-
-Find the output in ``data_objects_service.swagger.json`` and this can be
-loaded in the `Swagger editor <http://swagger.io/swagger-editor/>`__.
-Use the GitHub raw feature to generate a URL you can load.
-
-When you're happy with the changes, checkin this file:
-
-::
-
-    mv data_objects_service.swagger.json swagger/proto/
-
-And commit your changes, pushing to the appropriate branch.
+    swagger2openapi -y openapi/data_object_service.swagger.yaml > openapi/data_object_service.openapi.yaml
 
 How to contribute changes
 -------------------------
