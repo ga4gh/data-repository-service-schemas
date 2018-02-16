@@ -184,6 +184,7 @@ paths:
   '/databundles/{data_bundle_id}/versions':
     get:
       operationId: GetDataBundleVersions
+      summary: Retrieve all versions of a Data Bundle
       responses:
         '200':
           description: The versions for the Data Bundle were found successfully.
@@ -408,6 +409,7 @@ paths:
       x-swagger-router-controller: ga4gh.dos.server
   '/dataobjects/{data_object_id}/versions':
     get:
+      summary: Retrieve all versions of a Data Object
       operationId: GetDataObjectVersions
       responses:
         '200':
@@ -712,6 +714,10 @@ definitions:
           All versions of the Data Objects that match the GetDataObjectVersions
           request.
   ListDataBundlesRequest:
+    description: |-
+      Only return Data Bundles that match all of the request parameters. A
+      page_size and page_token are provided for retrieving a large number of
+      results.
     type: object
     properties:
       alias:
@@ -740,9 +746,11 @@ definitions:
           The continuation token, which is used to page through large result sets.
           To get the next page of results, set this parameter to the value of
           `next_page_token` from the previous response.
-    title: Bundles
   ListDataBundlesResponse:
     type: object
+    description: |-
+      A list of Data Bundles matching the request parameters and a continuation
+      token that can be used to retrieve more results.
     properties:
       data_bundles:
         type: array
@@ -790,9 +798,10 @@ definitions:
           To get the next page of results, set this parameter to the value of
           `next_page_token` from the previous response.
     title: |-
-      /-------------------------------------------------------------------
-      A request to list all objects in a dataset
-      /-------------------------------------------------------------------
+      List and filter Data Objects
+    description: |-
+      Allows a requester to list and filter Data Objects. Only Data Objects
+      matching all of the requested parameters will be returned.
   ListDataObjectsResponse:
     type: object
     properties:
@@ -807,10 +816,9 @@ definitions:
           The continuation token, which is used to page through large result sets.
           Provide this value in a subsequent request to return the next page of
           results. This field will be empty if there aren't any additional results.
-    title: |-
-      /-------------------------------------------------------------------
-      A list of data objects
-      /-------------------------------------------------------------------
+    description:  |-
+      A list of Data Objects matching the requested parameters, and a paging
+      token, that can be used to retrieve more results.
   URL:
     type: object
     properties:
