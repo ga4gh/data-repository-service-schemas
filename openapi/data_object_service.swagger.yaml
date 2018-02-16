@@ -2,7 +2,7 @@ swagger: '2.0'
 basePath: '/ga4gh/dos/v1'
 info:
   title: Data Object Service
-  version: 0.1.1
+  version: 0.2.0
 schemes:
   - http
   - https
