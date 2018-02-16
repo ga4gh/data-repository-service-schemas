@@ -3,12 +3,7 @@ from ga4gh.dos.client import Client
 
 
 def main():
-    config = {
-        'validate_requests': False,
-        'validate_responses': False
-    }
-
-    local_client = Client('http://localhost:8080/', config=config)
+    local_client = Client('http://localhost:8080/ga4gh/dos/v1/')
     client = local_client.client
     models = local_client.models
 
@@ -20,7 +15,7 @@ def main():
     DataObject = models.get_model('CreateDataObjectRequest')
     create_data_object = DataObject(
         name="abc",
-        size=12345,
+        size="12345",
         checksums=[Checksum(checksum="def", type="md5")],
         urls=[URL(url="a"), URL(url="b")])
     create_request = CreateDataObjectRequest(data_object=create_data_object)
@@ -40,7 +35,7 @@ def main():
     UpdateDataObjectRequest = models.get_model('UpdateDataObjectRequest')
     update_data_object = DataObject(
         name="abc",
-        size=12345,
+        size="12345",
         checksums=[Checksum(checksum="def", type="md5")],
         urls=[URL(url="a"), URL(url="b"), URL(url="c")])
     update_request = UpdateDataObjectRequest(data_object=update_data_object)
@@ -85,7 +80,7 @@ def main():
     print(".......Create a Data Object with our own version..........")
     my_data_object = DataObject(
         name="abc",
-        size=12345,
+        size="12345",
         checksums=[Checksum(checksum="def", type="md5")],
         urls=[URL(url="a"), URL(url="b")],
         version="great-version")
@@ -114,7 +109,7 @@ def main():
         my_data_object = DataObject(
             name="OBJ{}".format(i),
             aliases=["OBJ{}".format(i)],
-            size=10 * i,
+            size=str(10 * i),
             checksums=[Checksum(checksum="def{}".format(i), type="md5")],
             urls=[URL(url="http://{}".format(i))])
         create_request = CreateDataObjectRequest(data_object=my_data_object)
@@ -161,7 +156,7 @@ def main():
     DataBundle = models.get_model('DataBundle')
     create_data_bundle = DataBundle(
         name="abc",
-        size=12345,
+        size="12345",
         checksums=[Checksum(checksum="def", type="md5")],
         data_object_ids=[x.id for x in list_response.data_objects])
     create_request = CreateDataBundleRequest(data_bundle=create_data_bundle)
@@ -182,7 +177,7 @@ def main():
     UpdateDataBundleRequest = models.get_model('UpdateDataBundleRequest')
     update_data_bundle = DataBundle(
         name="abc",
-        size=12345,
+        size="12345",
         data_object_ids=[x.id for x in list_response.data_objects],
         checksums=[Checksum(checksum="def", type="md5")],
         aliases=["ghi"])
@@ -250,7 +245,7 @@ def main():
         my_data_bundle = DataBundle(
             name="BDL{}".format(i),
             aliases=["BDL{}".format(i)],
-            size=10 * i,
+            size=str(10 * i),
             data_object_ids=data_bundle.data_object_ids,
             checksums=[Checksum(checksum="def", type="md5")],)
         create_request = CreateDataBundleRequest(data_bundle=my_data_bundle)

@@ -10,7 +10,7 @@ config = {
     'use_models': False
 }
 
-local_client = Client('http://localhost:8080/', config=config)
+local_client = Client('http://localhost:8080/ga4gh/dos/v1/', config=config)
 client = local_client.client
 models = local_client.models
 
