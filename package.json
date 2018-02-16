@@ -1,0 +1,22 @@
+{
+  "name": "data-object-service-schemas",
+  "version": "0.1.0",
+  "description": "<img src=\"https://www.ga4gh.org/gfx/GA-logo-horizontal-tag-RGB.svg\" alt=\"Drawing\" style=\"width: 120px;\" alt=\"GA4GH colored ring logo\"/>",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/david4096/data-object-service-schemas.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/david4096/data-object-service-schemas/issues"
+  },
+  "homepage": "https://github.com/david4096/data-object-service-schemas#readme",
+  "devDependencies": {
+    "swagger2openapi": "^2.11.16"
+  }
+}

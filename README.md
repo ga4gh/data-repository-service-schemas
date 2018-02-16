@@ -106,23 +106,12 @@ ga4gh_dos_demo
 Building Documents
 ------------------
 
-Make sure you have Docker installed for your platform and the `cwltool`.
+The schemas are editable as OpenAPI 2 YAML files. To generate OpenAPI 3 descriptions install
+swagger2openapi and run the following:
 
-    virtualenv env
-    source env/bin/activate
-    pip install -r python/dev-requirements.txt
-
-You can generate the [Swagger](http://swagger.io/) YAML from the Protocol Buffers:
-
-    cwltool CWLFile
-
-Find the output in `data_objects_service.swagger.json` and this can be loaded in the [Swagger editor](http://swagger.io/swagger-editor/).  Use the GitHub raw feature to generate a URL you can load.
-
-When you're happy with the changes, checkin this file:
-
-    mv data_objects_service.swagger.json swagger/proto/
-
-And commit your changes, pushing to the appropriate branch.
+```
+swagger2openapi -y openapi/data_object_service.swagger.yaml > openapi/data_object_service.openapi.yaml
+```
 
 How to contribute changes
 -------------------------

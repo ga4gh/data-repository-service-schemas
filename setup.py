@@ -4,9 +4,9 @@ import os
 
 # We need to copy the generated swagger to the Python package
 SWAGGER_JSON_PATH = os.path.abspath(
-    os.path.join('swagger', 'data_objects_service.swagger.json'))
+    os.path.join('openapi', 'data_object_service.swagger.yaml'))
 SWAGGER_DEST_PATH = os.path.abspath(os.path.join(
-    'python', 'ga4gh', 'dos', 'data_objects_service.swagger.json'))
+    'python', 'ga4gh', 'dos', 'data_object_service.swagger.yaml'))
 shutil.copyfile(SWAGGER_JSON_PATH, SWAGGER_DEST_PATH)
 
 # First, we try to use setuptools. If it's not available locally,
@@ -67,7 +67,7 @@ setup(
     install_requires=install_requires,
     dependency_links=dependency_links,
     license='Apache License 2.0',
-    package_data={'ga4gh.dos': ['data_objects_service.swagger.json'],},
+    package_data={'ga4gh.dos': ['data_object_service.swagger.yaml'],},
     include_package_data=True,
     zip_safe=True,
     author="Global Alliance for Genomics and Health",
@@ -80,7 +80,7 @@ setup(
         'Programming Language :: Python :: 2.7',
         'Topic :: Scientific/Engineering :: Bio-Informatics',
     ],
-    version='0.1.0',
+    version='0.2.0',
     keywords=['genomics'],
     # Use setuptools_scm to set the version number automatically from Git
     setup_requires=['setuptools_scm'],
