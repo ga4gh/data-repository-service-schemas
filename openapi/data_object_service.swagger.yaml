@@ -591,7 +591,6 @@ definitions:
         $ref: '#/definitions/SystemMetadata'
       user_metadata:
         $ref: '#/definitions/UserMetadata'
-    title: 'Data Bundle: A collection of Data Objects'
   DataObject:
     type: object
     properties:
@@ -797,8 +796,6 @@ definitions:
           The continuation token, which is used to page through large result sets.
           To get the next page of results, set this parameter to the value of
           `next_page_token` from the previous response.
-    title: |-
-      List and filter Data Objects
     description: |-
       Allows a requester to list and filter Data Objects. Only Data Objects
       matching all of the requested parameters will be returned.
