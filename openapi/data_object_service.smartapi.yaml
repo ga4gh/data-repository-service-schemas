@@ -369,11 +369,11 @@ paths:
                 $ref: '#/components/schemas/ListDataObjectsResponse'
           x-responseValueType:
             - path: data_objects.id
-             valueType: 'http://purl.org/dc/elements/1.1/identifier'
+              valueType: 'http://purl.org/dc/elements/1.1/identifier'
             - path: data_objects.version
-             valueType: 'http://purl.obolibrary.org/obo/IAO_0000129'
+              valueType: 'http://purl.obolibrary.org/obo/IAO_0000129'
             - path: data_objects.urls
-             valueType: 'http://edamontology.org/data_1052'
+              valueType: 'http://edamontology.org/data_1052'
         '400':
           description: The request is malformed.
           content:
