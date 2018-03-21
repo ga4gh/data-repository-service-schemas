@@ -536,7 +536,7 @@ definitions:
     properties:
       id:
         type: string
-        title: |-
+        description: |-
           REQUIRED
           An identifier, unique to this Data Bundle
       data_object_ids:
@@ -591,7 +591,6 @@ definitions:
         $ref: '#/definitions/SystemMetadata'
       user_metadata:
         $ref: '#/definitions/UserMetadata'
-    title: 'Data Bundle: A collection of Data Objects'
   DataObject:
     type: object
     properties:
@@ -658,13 +657,12 @@ definitions:
         type: array
         items:
           type: string
-        title: |-
+        description: |-
           OPTIONAL
           A list of strings that can be used to find this Data Object.
           These aliases can be used to represent the Data Object's location in
           a directory (e.g. "bucket/folder/file.name") to make Data Objects
           more discoverable. They might also be used to represent
-    title: 'Data Object: a file, API or other resource'
   DeleteDataBundleResponse:
     type: object
     properties:
@@ -779,7 +777,7 @@ definitions:
           this string.
       checksum:
         $ref: '#/definitions/ChecksumRequest'
-        title: |-
+        description: |-
           OPTIONAL
           If provided will only return data object messages with the provided
           checksum. If the checksum type is provided
@@ -797,8 +795,6 @@ definitions:
           The continuation token, which is used to page through large result sets.
           To get the next page of results, set this parameter to the value of
           `next_page_token` from the previous response.
-    title: |-
-      List and filter Data Objects
     description: |-
       Allows a requester to list and filter Data Objects. Only Data Objects
       matching all of the requested parameters will be returned.
@@ -836,7 +832,7 @@ definitions:
     properties:
       data_bundle_id:
         type: string
-        title: REQUIRED
+        description: REQUIRED
       data_bundle:
         $ref: '#/definitions/DataBundle'
         description: |-

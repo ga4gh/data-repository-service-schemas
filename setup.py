@@ -55,7 +55,7 @@ setup(
         "ga4gh.dos"
     ],
     namespace_packages=["ga4gh"],
-    url="https://github.com/ga4gh/data-object-schemas",
+    url="https://github.com/ga4gh/data-object-service-schemas",
     entry_points={
         'console_scripts': [
             'ga4gh_dos_server=ga4gh.dos.server:main',
@@ -80,7 +80,7 @@ setup(
         'Programming Language :: Python :: 2.7',
         'Topic :: Scientific/Engineering :: Bio-Informatics',
     ],
-    version='0.2.0',
+    version='0.2.1',
     keywords=['genomics'],
     # Use setuptools_scm to set the version number automatically from Git
     setup_requires=['setuptools_scm'],
