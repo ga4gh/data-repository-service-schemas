@@ -155,8 +155,6 @@ man_pages = [
     (master_doc, 'dataobjectserviceschemas', 'Data object service schemas Documentation',
      [author], 1)
 ]
-
-
 # -- Options for Texinfo output -------------------------------------------
 
 # Grouping the document tree into Texinfo files. List of tuples
@@ -167,6 +165,3 @@ texinfo_documents = [
      author, 'Dataobjectserviceschemas', 'One line description of project.',
      'Miscellaneous'),
 ]
-
-
-
