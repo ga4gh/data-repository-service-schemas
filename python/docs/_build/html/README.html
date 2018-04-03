@@ -1,0 +1,198 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Schemas for the Data Object Service (DOS) API &#8212; Data object service schemas 1.0 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <p><img src="https://www.ga4gh.org/gfx/GA-logo-horizontal-tag-RGB.svg" alt="Drawing" style="width: 120px;" alt="GA4GH colored ring logo"/></p>
+<p><img alt="travis status" src="https://travis-ci.org/ga4gh/data-object-service-schemas.svg?branch=master" /></p>
+<div class="section" id="schemas-for-the-data-object-service-dos-api">
+<span id="schemas-for-the-data-object-service-dos-api"></span><h1>Schemas for the Data Object Service (DOS) API<a class="headerlink" href="#schemas-for-the-data-object-service-dos-api" title="Permalink to this headline">¶</a></h1>
+<p><a class="reference external" href="http://ga4gh.github.io/data-object-service-schemas">View the schemas in Swagger UI</a></p>
+<p>The <a class="reference external" href="http://genomicsandhealth.org/">Global Alliance for Genomics and Health</a> is an international
+coalition, formed to enable the sharing of genomic and clinical data. This collaborative consortium
+takes place primarily via github and public meetings. Join the issues today to help us make
+a cloud agnostic Data Object Service!</p>
+<div class="section" id="cloud-workstream">
+<span id="cloud-workstream"></span><h2>Cloud Workstream<a class="headerlink" href="#cloud-workstream" title="Permalink to this headline">¶</a></h2>
+<p>The <a class="reference external" href="http://ga4gh.org/#/">Data Working Group</a> concentrates on data representation, storage, and analysis,
+including working with platform development partners and industry leaders to develop standards that will
+facilitate interoperability. The Cloud Workstream is an informal, multi-vendor working group focused on
+standards for exchanging Docker-based tools and CWL/WDL workflows, execution of Docker-based tools and
+workflows on clouds, and abstract access to cloud object stores.</p>
+</div>
+<div class="section" id="what-is-dos">
+<span id="what-is-dos"></span><h2>What is DOS?<a class="headerlink" href="#what-is-dos" title="Permalink to this headline">¶</a></h2>
+<p>Currently, this is the home of the Data Object Service (DOS) API proposal. This repo has a CWL-based
+build process ready to go and a place for us to collectively work on <a class="reference external" href="USECASES.md">USECASES.md</a>.</p>
+<p>This proposal for a DOS release is based on the schema work of Brian W. and others from OHSU along
+with work by UCSC.  It also is informed by existing object storage systems such as:</p>
+<ul class="simple">
+<li>GNOS: http://annaisystems.com/ (as used by PCAWG, see https://pcawg.icgc.org)</li>
+<li>ICGC Storage: as used to store data on S3, see https://github.com/icgc-dcc/dcc-storage and https://dcc.icgc.org/icgc-in-the-cloud/aws</li>
+<li>HCA Storage: see https://dss.staging.data.humancellatlas.org/ and https://github.com/HumanCellAtlas/data-store</li>
+<li>the GDC Storage: see https://gdc.cancer.gov</li>
+<li>Keep by Curoverse: see https://arvados.org/ and https://github.com/curoverse/arvados</li>
+</ul>
+<p>The goal of DOS is to create a generic API on top of these and other projects, so workflow systems can
+access data in the same way regardless of project.  One section of the API focuses on how to read and
+write data objects to cloud environments and how to join them together as data bundles (Data object management).
+Another focuses on the ability to find data objects across cloud environments and implementations of DOS
+(Data object queries).  The latter is likely to be worked on in conjunction with the GA4GH Discovery Workstream.</p>
+<p>Key features of the current API proposal:</p>
+<div class="section" id="data-object-management">
+<span id="data-object-management"></span><h3>Data object management<a class="headerlink" href="#data-object-management" title="Permalink to this headline">¶</a></h3>
+<p>This section of the API focuses on how to read and write data objects to cloud environments
+and how to join them together as data bundles.  Data bundles are simply a flat collection
+of one or more files.  This section of the API enables:</p>
+<ul class="simple">
+<li>create/update/delete a file</li>
+<li>create/update/delete a data bundle</li>
+<li>register UUIDs with these entities (an optionally track versions of each)</li>
+<li>generate signed URLs and/or cloud specific object storage paths and temporary credentials</li>
+</ul>
+</div>
+<div class="section" id="data-object-queries">
+<span id="data-object-queries"></span><h3>Data object queries<a class="headerlink" href="#data-object-queries" title="Permalink to this headline">¶</a></h3>
+<p>A key feature of this API beyond creating/modifying/deletion files is the ability to
+find data objects across cloud environments and implementations of DOS.  This
+section of the API allows users to query by data bundle or file UUIDs which returns
+information about where these data objects are available.  This response will
+typically be used to find the same file or data bundle located across multiple
+cloud environments.</p>
+</div>
+</div>
+<div class="section" id="implementations">
+<span id="implementations"></span><h2>Implementations<a class="headerlink" href="#implementations" title="Permalink to this headline">¶</a></h2>
+<p>There are currently a few experimental implementations that use some version of these
+schemas.</p>
+<ul class="simple">
+<li><a class="reference external" href="https://github.com/ohsu-comp-bio/dos_connect">DOS Connect</a> observes cloud and local
+storage systems and broadcasts their changes to a service that presents DOS endpoints.</li>
+<li><a class="reference external" href="https://github.com/david4096/dos-downloader">DOS Downloader</a> is a mechanism for
+downloading Data Objects from DOS URLs.</li>
+<li><a class="reference external" href="https://github.com/david4096/dos-gdc-lambda">dos-gdc-lambda</a> presents data from the
+GDC public rest API using the Data Object Service.</li>
+<li><a class="reference external" href="https://github.com/david4096/dos-signpost-lambda">dos-signpost-lambda</a> presents data
+from a signpost instance using the Data Object Service.</li>
+</ul>
+</div>
+<div class="section" id="building-the-client-and-server">
+<span id="building-the-client-and-server"></span><h2>Building the client and server<a class="headerlink" href="#building-the-client-and-server" title="Permalink to this headline">¶</a></h2>
+<p>You can use <code class="docutils literal"><span class="pre">pip</span></code> to install a python client and server that implements these schemas.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">virtualenv</span> <span class="n">env</span>
+<span class="n">source</span> <span class="n">env</span><span class="o">/</span><span class="nb">bin</span><span class="o">/</span><span class="n">activate</span>
+<span class="n">pip</span> <span class="n">install</span> <span class="n">git</span><span class="o">+</span><span class="n">git</span><span class="p">:</span><span class="o">//</span><span class="n">github</span><span class="o">.</span><span class="n">com</span><span class="o">/</span><span class="n">ga4gh</span><span class="o">/</span><span class="n">data</span><span class="o">-</span><span class="nb">object</span><span class="o">-</span><span class="n">service</span><span class="o">-</span><span class="n">schemas</span><span class="nd">@master</span> <span class="o">--</span><span class="n">process</span><span class="o">-</span><span class="n">dependency</span><span class="o">-</span><span class="n">links</span>
+</pre></div>
+</div>
+<p>This will add the python modules <code class="docutils literal"><span class="pre">ga4gh.dos.server</span></code> and <code class="docutils literal"><span class="pre">ga4gh.dos.client</span></code> you can use in
+your projects.</p>
+<p>There is also a CLI hook.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">ga4gh_dos_server</span>
+<span class="c1"># In another terminal</span>
+<span class="n">ga4gh_dos_demo</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="building-documents">
+<span id="building-documents"></span><h2>Building Documents<a class="headerlink" href="#building-documents" title="Permalink to this headline">¶</a></h2>
+<p>The schemas are editable as OpenAPI 2 YAML files. To generate OpenAPI 3 descriptions install
+swagger2openapi and run the following:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">swagger2openapi</span> <span class="o">-</span><span class="n">y</span> <span class="n">openapi</span><span class="o">/</span><span class="n">data_object_service</span><span class="o">.</span><span class="n">swagger</span><span class="o">.</span><span class="n">yaml</span> <span class="o">&gt;</span> <span class="n">openapi</span><span class="o">/</span><span class="n">data_object_service</span><span class="o">.</span><span class="n">openapi</span><span class="o">.</span><span class="n">yaml</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="how-to-contribute-changes">
+<span id="how-to-contribute-changes"></span><h2>How to contribute changes<a class="headerlink" href="#how-to-contribute-changes" title="Permalink to this headline">¶</a></h2>
+<p>Take cues for now from the <a class="reference external" href="https://github.com/ga4gh/schemas/blob/master/CONTRIBUTING.rst">ga4gh/schemas</a> document.</p>
+</div>
+<div class="section" id="license">
+<span id="license"></span><h2>License<a class="headerlink" href="#license" title="Permalink to this headline">¶</a></h2>
+<p>See the [LICENSE]</p>
+</div>
+<div class="section" id="more-information">
+<span id="more-information"></span><h2>More Information<a class="headerlink" href="#more-information" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><a class="reference external" href="http://genomicsandhealth.org">Global Alliance for Genomics and Health</a></li>
+<li><a class="reference external" href="https://groups.google.com/forum/#!forum/ga4gh-dwg-containers-workflows">Google Forum</a></li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, ga4gh.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="_sources/README.md.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>

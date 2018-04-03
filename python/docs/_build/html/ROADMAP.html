@@ -1,0 +1,178 @@
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Roadmap &#8212; Data object service schemas 1.0 documentation</title>
+    <link rel="stylesheet" href="_static/alabaster.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.0',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+   
+  <link rel="stylesheet" href="_static/custom.css" type="text/css" />
+  
+  
+  <meta name="viewport" content="width=device-width, initial-scale=0.9, maximum-scale=0.9" />
+
+  </head>
+  <body>
+  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="roadmap">
+<span id="roadmap"></span><h1>Roadmap<a class="headerlink" href="#roadmap" title="Permalink to this headline">¶</a></h1>
+</div>
+<div class="section" id="goal">
+<span id="goal"></span><h1>Goal<a class="headerlink" href="#goal" title="Permalink to this headline">¶</a></h1>
+<p>Create an interoperability layer that allows metadata about resources to be interchanged using a common client.</p>
+</div>
+<div class="section" id="metrics-of-success">
+<span id="metrics-of-success"></span><h1>Metrics of success<a class="headerlink" href="#metrics-of-success" title="Permalink to this headline">¶</a></h1>
+<p>What data are available by DOS? GDC? TOPMed? HCA? How many files/bundles/PB?</p>
+<p>How many workflows have been converted to use DOS downloader?</p>
+<p>How many applications or services offer a DOS interop layer?</p>
+</div>
+<div class="section" id="milestones">
+<span id="milestones"></span><h1>Milestones<a class="headerlink" href="#milestones" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="stable-schematization">
+<span id="stable-schematization"></span><h2>Stable schematization<a class="headerlink" href="#stable-schematization" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Bring the schemas repository to a stable state.</li>
+<li>Demonstrate usage of the schemas in clients and servers.</li>
+<li>Make the schematization easily available to other software.</li>
+</ul>
+</div>
+<div class="section" id="lambda-interoperability-layer">
+<span id="lambda-interoperability-layer"></span><h2>Lambda Interoperability Layer<a class="headerlink" href="#lambda-interoperability-layer" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Create an interop layer for:<ul>
+<li>DSS</li>
+<li>indexd</li>
+</ul>
+</li>
+<li>Demonstrate authentication/authorization handling.</li>
+</ul>
+</div>
+<div class="section" id="supporting-software">
+<span id="supporting-software"></span><h2>Supporting software<a class="headerlink" href="#supporting-software" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Create a DOS downloader that can handle resources in third party APIs.</li>
+<li>Demonstrate usage with Kafka/ES for DOS-connect.</li>
+<li>Create a &quot;best practices&quot; description of creating an HTTP-signing DOS endpoint.</li>
+<li>Demonstrate a DOS endpoint indexer, which will provide more flexible metadata queries.</li>
+</ul>
+</div>
+<div class="section" id="workflows-and-visualization">
+<span id="workflows-and-visualization"></span><h2>Workflows and Visualization<a class="headerlink" href="#workflows-and-visualization" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Extend a workflow to use the DOS downloader (as opposed to a single URL).</li>
+<li>Create a basic workflow stage that can be reused to extend other workflows to use DOS downloader.</li>
+<li>Create a basic single page app  for viewing the contents of a DOS registry.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="timeline">
+<span id="timeline"></span><h1>Timeline<a class="headerlink" href="#timeline" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="december-2017">
+<span id="december-2017"></span><h2>December 2017<a class="headerlink" href="#december-2017" title="Permalink to this headline">¶</a></h2>
+<p>We are currently most of the way through <em>Stabilizing Schemas</em> and headed into <em>Lambda Interoperability Layer</em>.</p>
+</div>
+<div class="section" id="january-2017">
+<span id="january-2017"></span><h2>January 2017<a class="headerlink" href="#january-2017" title="Permalink to this headline">¶</a></h2>
+<p>We are deep into <em>Lambda Interoperability Layer</em> demonstrating working tests against real data served by GDC.</p>
+<p>Some work towards demonstrating authentication will be offered for this lambda.</p>
+</div>
+<div class="section" id="february-2017">
+<span id="february-2017"></span><h2>February 2017<a class="headerlink" href="#february-2017" title="Permalink to this headline">¶</a></h2>
+<p>The lambda for signpost should have fleshed out all interop concerns. Work should focus on DSS lambda.</p>
+<p>Some work has been shown on the DOS downloader.</p>
+<p>Some software for syndication/replication is demonstrated (DOS-connect).</p>
+</div>
+<div class="section" id="march-2017">
+<span id="march-2017"></span><h2>March 2017<a class="headerlink" href="#march-2017" title="Permalink to this headline">¶</a></h2>
+<p>DOS lambdas are available for use for accessing data as a beta. Lambda deployment follows common SDLC practices (alpha, beta). Some metrics are added.</p>
+<p>Data in DOS endpoints has been indexed and made available for more complicated queries as a demonstration.</p>
+</div>
+<div class="section" id="april-2017">
+<span id="april-2017"></span><h2>April 2017<a class="headerlink" href="#april-2017" title="Permalink to this headline">¶</a></h2>
+<p>Practical authentication systems are combined with URL signing features in alpha.</p>
+<p>A demonstration workflow uses DOS to download data.</p>
+</div>
+<div class="section" id="may-2017">
+<span id="may-2017"></span><h2>May 2017<a class="headerlink" href="#may-2017" title="Permalink to this headline">¶</a></h2>
+<p>The DOS downloader is extended to support other resources types. Published to PyPi.</p>
+<p>Authentication schemes that require exchanging of third party API keys are demonstrated.</p>
+</div>
+<div class="section" id="june-2017">
+<span id="june-2017"></span><h2>June 2017<a class="headerlink" href="#june-2017" title="Permalink to this headline">¶</a></h2>
+<p>Publish a workflow stage that can be easily reused to access data using the DOS downloader.</p>
+<p>Demonstrate API integration with metadata indexes to analyze &quot;findability&quot; of data.</p>
+</div>
+<div class="section" id="july-2017">
+<span id="july-2017"></span><h2>July 2017<a class="headerlink" href="#july-2017" title="Permalink to this headline">¶</a></h2>
+<p>Integration with a single page webapp allows for DOS manifests to be realized as files by the DOS downloader.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper"><div class="relations">
+<h3>Related Topics</h3>
+<ul>
+  <li><a href="index.html">Documentation overview</a><ul>
+  </ul></li>
+</ul>
+</div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="footer">
+      &copy;2018, ga4gh.
+      
+      |
+      Powered by <a href="http://sphinx-doc.org/">Sphinx 1.6.5</a>
+      &amp; <a href="https://github.com/bitprophet/alabaster">Alabaster 0.7.10</a>
+      
+      |
+      <a href="_sources/ROADMAP.md.txt"
+          rel="nofollow">Page source</a>
+    </div>
+
+    
+
+    
+  </body>
+</html>
