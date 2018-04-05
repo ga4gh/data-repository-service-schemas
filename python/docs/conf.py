@@ -19,9 +19,8 @@
 #
 # import os
 # import sys
-# sys.path.insert(0, os.path.abspath('.'))
+
 from recommonmark.parser import CommonMarkParser
-# -- General configuration ------------------------------------------------
 
 # If your documentation needs a minimal Sphinx version, state it here.
 #
@@ -83,7 +82,7 @@ todo_include_todos = False
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
-#
+
 html_theme = 'alabaster'
 
 # Theme options are theme-specific and customize the look and feel of a theme
@@ -140,16 +139,14 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'Dataobjectserviceschemas.tex', 'Data object service schemas Documentation',
-     'ga4gh', 'manual'),
+    (master_doc, 'Dataobjectserviceschemas.tex', 'Data object service schemas Documentation', 'ga4gh', 'manual'),
 ]
 # -- Options for manual page output ---------------------------------------
 
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'dataobjectserviceschemas', 'Data object service schemas Documentation',
-     [author], 1)
+    (master_doc, 'dataobjectserviceschemas', 'Data object service schemas Documentation', [author], 1)
 ]
 # -- Options for Texinfo output -------------------------------------------
 
@@ -157,7 +154,5 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'Dataobjectserviceschemas', 'Data object service schemas Documentation',
-     author, 'Dataobjectserviceschemas', 'One line description of project.',
-     'Miscellaneous'),
+    (master_doc, 'Dataobjectserviceschemas', 'Data object service schemas Documentation', author, 'Dataobjectserviceschemas', 'One line description of project.', 'Miscellaneous'),
 ]
