@@ -17,6 +17,7 @@ server to make creating your own DOS implementation easy!
    intro
    server
    client
+   license
 
 
 Indices and tables

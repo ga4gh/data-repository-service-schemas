@@ -27,8 +27,7 @@ What is DOS?
 ------------
 
 Currently, this is the home of the Data Object Service (DOS) API
-proposal. This repo has a CWL-based build process ready to go and a
-place for us to collectively work on `USECASES.md <USECASES.md>`__.
+proposal.
 
 This proposal for a DOS release is based on the schema work of Brian W.
 and others from OHSU along with work by UCSC. It also is informed by
