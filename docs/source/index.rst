@@ -3,13 +3,20 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to Data Object Service's documentation!
-===============================================
+Data Object Service Schemas
+===========================
+
+Welcome to the documentation for the Data Object Service Schemas! These schemas
+present an easy-to-implement interface for publishing and accessing data in
+heterogeneous storage environments. It also includes a demonstration client and
+server to make creating your own DOS implementation easy!
 
 .. toctree::
    :maxdepth: 2
-   :caption: Contents:
 
+   intro
+   server
+   client
 
 
 Indices and tables
@@ -19,8 +26,3 @@ Indices and tables
 * :ref:`modindex`
 * :ref:`search`
 
-.. automodule:: ga4gh.dos
-
-.. autoclass:: ga4gh.dos.client
-
-.. autofunction:: ga4gh.dos.server.main
