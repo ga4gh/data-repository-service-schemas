@@ -113,6 +113,16 @@ swagger2openapi and run the following:
 swagger2openapi -y openapi/data_object_service.swagger.yaml > openapi/data_object_service.openapi.yaml
 ```
 
+To make the `sphinx` documentation, make sure you've installed sphinx:
+
+```
+pip install -r python/dev-requirements.txt
+cd docs
+make html
+```
+
+The resulting documents will be in the `build` directory.
+
 How to contribute changes
 -------------------------
 
