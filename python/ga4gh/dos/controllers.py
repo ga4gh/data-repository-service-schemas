@@ -1,3 +1,13 @@
+"""
+Data Object Service Controller Functions
+
+These controller functions for the demo server implement an opinionated version
+of DOS by providing uuid's to newly create objects, and using timestamp
+versions.
+
+Initializes an in-memory dictionary for storing Data Objects.
+"""
+
 import uuid
 import datetime
 from dateutil.parser import parse
@@ -13,10 +23,19 @@ data_bundles = {}
 
 
 def now():
+    """
+    Returns the current time in string format.
+    :return: Current ISO time.
+    """
     return str(datetime.datetime.now().isoformat("T") + "Z")
 
 
 def get_most_recent(key):
+    """
+    Gets the most recent Data Object for a key.
+    :param key:
+    :return:
+    """
     max = {'updated': '01-01-1965 00:00:00Z'}
     for version in data_objects[key].keys():
         data_object = data_objects[key][version]
@@ -27,6 +46,12 @@ def get_most_recent(key):
 
 # TODO refactor to higher order function
 def get_most_recent_bundle(key):
+    """
+    Returns the most recent bundle for the given key.
+
+    :param key:
+    :return:
+    """
     max = {'updated': '01-01-1965 00:00:00Z'}
     for version in data_bundles[key].keys():
         data_bundle = data_bundles[key][version]
@@ -48,6 +73,8 @@ def filter_data_bundles(predicate):
     """
     Filters data bundles according to a function that acts on each item
     returning either True or False per item.
+    :param predicate: A function used to test items
+    :return: List of Data Bundles
     """
     return [
         get_most_recent_bundle(x[0]) for x in filter(
@@ -57,6 +84,8 @@ def filter_data_bundles(predicate):
 def add_created_timestamps(doc):
     """
     Adds created and updated timestamps to the document.
+    :param doc: A document to be timestamped
+    :return doc: The timestamped document
     """
     doc['created'] = now()
     doc['updated'] = now()
@@ -78,6 +107,13 @@ stores = {
 
 
 def create(body, key):
+    """
+    Creates a new document at the given key by adding necessary metadata
+    and storing in the in-memory store.
+    :param body:
+    :param key:
+    :return:
+    """
     store = stores[key]
     doc = add_created_timestamps(body)
     version = doc.get('version', None)
@@ -99,6 +135,13 @@ def create(body, key):
 
 
 def CreateDataObject(**kwargs):
+    """
+    Creates a new Data Object by issuing an identifier if it is not
+    provided.
+
+    :param kwargs:
+    :return:
+    """
     # TODO Safely create
     body = kwargs['body']['data_object']
     doc = create(body, 'data_objects')
@@ -106,6 +149,11 @@ def CreateDataObject(**kwargs):
 
 
 def GetDataObject(**kwargs):
+    """
+    Get a Data Object by data_object_id.
+    :param kwargs:
+    :return:
+    """
     data_object_id = kwargs['data_object_id']
     version = kwargs.get('version', None)
     # Implementation detail, this server uses integer version numbers.
@@ -123,6 +171,11 @@ def GetDataObject(**kwargs):
 
 
 def GetDataObjectVersions(**kwargs):
+    """
+    Returns all versions of a Data Object.
+    :param kwargs:
+    :return:
+    """
     data_object_id = kwargs['data_object_id']
     # Implementation detail, this server uses integer version numbers.
     # Get the Data Object from our dictionary
@@ -136,6 +189,11 @@ def GetDataObjectVersions(**kwargs):
 
 
 def UpdateDataObject(**kwargs):
+    """
+    Update a Data Object by creating a new version.
+    :param kwargs:
+    :return:
+    """
     data_object_id = kwargs['data_object_id']
     body = kwargs['body']['data_object']
     # Check to make sure we are updating an existing document.
@@ -155,12 +213,23 @@ def UpdateDataObject(**kwargs):
 
 
 def DeleteDataObject(**kwargs):
+    """
+    Delete a Data Object by data_object_id.
+
+    :param kwargs:
+    :return:
+    """
     data_object_id = kwargs['data_object_id']
     del data_objects[data_object_id]
     return({"data_object_id": data_object_id}, 200)
 
 
 def ListDataObjects(**kwargs):
+    """
+    Returns a list of Data Objects matching a ListDataObjectsRequest.
+    :param kwargs:
+    :return:
+    """
     body = kwargs.get('body')
 
     def filterer(item):
@@ -223,12 +292,24 @@ def ListDataObjects(**kwargs):
 
 
 def CreateDataBundle(**kwargs):
+    """
+    Create a Data Bundle, issuing a new identifier if one is not provided.
+
+    :param kwargs:
+    :return:
+    """
     body = kwargs['body']['data_bundle']
     doc = create(body, 'data_bundles')
     return({"data_bundle_id": doc['id']}, 200)
 
 
 def GetDataBundle(**kwargs):
+    """
+    Get a Data Bundle by identifier.
+
+    :param kwargs:
+    :return:
+    """
     data_bundle_id = kwargs['data_bundle_id']
     version = kwargs.get('version', None)
     # Implementation detail, this server uses integer version numbers.
@@ -246,6 +327,13 @@ def GetDataBundle(**kwargs):
 
 
 def UpdateDataBundle(**kwargs):
+    """
+    Updates a Data Bundle to include new metadata by upserting the new
+    bundle.
+
+    :param kwargs:
+    :return:
+    """
     data_bundle_id = kwargs['data_bundle_id']
     body = kwargs['body']['data_bundle']
     # Check to make sure we are updating an existing document.
@@ -265,6 +353,12 @@ def UpdateDataBundle(**kwargs):
 
 
 def GetDataBundleVersions(**kwargs):
+    """
+    Get all versions of a Data Bundle.
+
+    :param kwargs:
+    :return:
+    """
     data_bundle_id = kwargs['data_bundle_id']
     data_bundle_versions_dict = data_bundles.get(data_bundle_id, None)
     data_bundle_versions = [x[1] for x in data_bundle_versions_dict.items()]
@@ -276,12 +370,25 @@ def GetDataBundleVersions(**kwargs):
 
 
 def DeleteDataBundle(**kwargs):
+    """
+    Deletes a Data Bundle by ID.
+
+    :param kwargs:
+    :return:
+    """
     data_bundle_id = kwargs['data_bundle_id']
     del data_bundles[data_bundle_id]
     return(kwargs, 200)
 
 
 def ListDataBundles(**kwargs):
+    """
+    Takes a ListDataBundles request and returns the bundles that match
+    that request.
+
+    :param kwargs: ListDataBundles request.
+    :return:
+    """
     body = kwargs.get('body')
 
     def filterer(item):
