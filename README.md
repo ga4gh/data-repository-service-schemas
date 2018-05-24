@@ -128,11 +128,6 @@ How to contribute changes
 
 Take cues for now from the [ga4gh/schemas](https://github.com/ga4gh/schemas/blob/master/CONTRIBUTING.rst) document.
 
-License
--------
-
-See the [LICENSE]
-
 More Information
 ----------------
 

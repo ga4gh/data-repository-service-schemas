@@ -17,8 +17,12 @@ server to make creating your own DOS implementation easy!
    intro
    server
    client
-   license
 
+
+Data Object Service Schemas is licensed under the Apache 2.0 license. See `LICENSE`_
+for more info.
+
+.. _LICENSE: https://github.com/ga4gh/data-object-service-schemas/blob/master/LICENSE
 
 Indices and tables
 ==================
