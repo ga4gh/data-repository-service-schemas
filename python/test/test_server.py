@@ -232,7 +232,10 @@ class TestServer(unittest.TestCase):
         print("..........Create an object............")
         create_data_object = DataObject(
             name="abc",
-            size='12345',
+            # Specify `size` as an int greater than 2^31 - 1 (Javascript's
+            # maximum int size) but lower than 2^63 - 1 (Python's maximum int
+            # size) to test json serialization/casting (#63)
+            size=2**63 - 2,
             checksums=[Checksum(checksum="def", type="md5")],
             urls=[URL(url="a"), URL(url="b")])
         create_request = CreateDataObjectRequest(

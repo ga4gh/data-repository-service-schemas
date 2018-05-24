@@ -22,11 +22,12 @@ def validate_int64(test):
 # This is to support serializing int64 as strings on the wire. JavaScript
 # only supports up to 2^53.
 int64_format = SwaggerFormat(
-        format='int64',
-        to_wire=lambda i: str(i) if isinstance(int, long) else i,
-        to_python=lambda i: i if isinstance(str, long) else long(i),
-        validate=validate_int64,  # jsonschema validates integer
-        description='Converts [wire]str:int64 <=> python long')
+    format='int64',
+    to_wire=lambda i: str(i),
+    to_python=lambda i: long(i),
+    validate=validate_int64,  # jsonschema validates integer
+    description='Converts [wire]str:int64 <=> python long'
+)
 
 
 class Client:
