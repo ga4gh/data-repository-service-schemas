@@ -14,9 +14,11 @@ server to make creating your own DOS implementation easy!
 .. toctree::
    :maxdepth: 2
 
+   quickstart
    intro
    server
    client
+   contributors
 
 
 Data Object Service Schemas is licensed under the Apache 2.0 license. See `LICENSE`_

@@ -97,29 +97,6 @@ version of these schemas.
 -  `dos-signpost-lambda <https://github.com/david4096/dos-signpost-lambda>`__
    presents data from a signpost instance using the Data Object Service.
 
-Building the client and server
-------------------------------
-
-You can use ``pip`` to install a python client and server that
-implements these schemas.
-
-::
-
-    virtualenv env
-    source env/bin/activate
-    pip install git+git://github.com/ga4gh/data-object-service-schemas@master --process-dependency-links
-
-This will add the python modules ``ga4gh.dos.server`` and
-``ga4gh.dos.client`` you can use in your projects.
-
-There is also a CLI hook.
-
-::
-
-    ga4gh_dos_server
-    # In another terminal
-    ga4gh_dos_demo
-
 Building Documents
 ------------------
 
@@ -129,13 +106,6 @@ descriptions install swagger2openapi and run the following:
 ::
 
     swagger2openapi -y openapi/data_object_service.swagger.yaml > openapi/data_object_service.openapi.yaml
-
-How to contribute changes
--------------------------
-
-Take cues for now from the
-`ga4gh/schemas <https://github.com/ga4gh/schemas/blob/master/CONTRIBUTING.rst>`__
-document.
 
 More Information
 ----------------

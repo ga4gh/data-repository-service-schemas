@@ -1,6 +1,7 @@
 <img src="https://www.ga4gh.org/gfx/GA-logo-horizontal-tag-RGB.svg" alt="Drawing" style="width: 120px;" alt="GA4GH colored ring logo"/>
 
-![travis status](https://travis-ci.org/ga4gh/data-object-service-schemas.svg?branch=master)
+[![Build Status](https://travis-ci.org/ga4gh/data-object-service-schemas.svg?branch=master)](https://travis-ci.org/ga4gh/data-object-service-schemas)
+[![Swagger syntax](https://online.swagger.io/validator?url=https://raw.githubusercontent.com/ga4gh/data-object-service-schemas/master/openapi/data_object_service.swagger.yaml)](https://github.com/swagger-api/validator-badge)
 
 
 Schemas for the Data Object Service (DOS) API
@@ -10,7 +11,7 @@ Schemas for the Data Object Service (DOS) API
 
 The [Global Alliance for Genomics and Health](http://genomicsandhealth.org/) is an international
 coalition, formed to enable the sharing of genomic and clinical data. This collaborative consortium
-takes place primarily via github and public meetings. Join the issues today to help us make
+takes place primarily via GitHub and public meetings. Join the issues today to help us make
 a cloud agnostic Data Object Service!
 
 Cloud Workstream
@@ -83,50 +84,13 @@ from a signpost instance using the Data Object Service.
 Building the client and server
 ------------------------------
 
-You can use `pip` to install a python client and server that implements these schemas.
+Installing is easy:
 
 ```
-virtualenv env
-source env/bin/activate
-pip install git+git://github.com/ga4gh/data-object-service-schemas@master --process-dependency-links
+$ pip install ga4gh-dos-schemas
 ```
 
-This will add the python modules `ga4gh.dos.server` and `ga4gh.dos.client` you can use in
-your projects.
-
-There is also a CLI hook.
-
-```
-ga4gh_dos_server
-# In another terminal
-ga4gh_dos_demo
-```
-
-
-Building Documents
-------------------
-
-The schemas are editable as OpenAPI 2 YAML files. To generate OpenAPI 3 descriptions install
-swagger2openapi and run the following:
-
-```
-swagger2openapi -y openapi/data_object_service.swagger.yaml > openapi/data_object_service.openapi.yaml
-```
-
-To make the `sphinx` documentation, make sure you've installed sphinx:
-
-```
-pip install -r python/dev-requirements.txt
-cd docs
-make html
-```
-
-The resulting documents will be in the `build` directory.
-
-How to contribute changes
--------------------------
-
-Take cues for now from the [ga4gh/schemas](https://github.com/ga4gh/schemas/blob/master/CONTRIBUTING.rst) document.
+Read the quickstart TODO
 
 More Information
 ----------------
