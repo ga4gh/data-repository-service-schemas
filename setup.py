@@ -64,7 +64,7 @@ setup(
     },
     package_dir={'': 'python'},
     long_description=long_description,
-    long_desceiption_content_type='text/markdown',
+    long_description_content_type='text/markdown',
     install_requires=install_requires,
     dependency_links=dependency_links,
     license='Apache License 2.0',
