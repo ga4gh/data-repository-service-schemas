@@ -1,98 +1,32 @@
-<img src="https://www.ga4gh.org/gfx/GA-logo-horizontal-tag-RGB.svg" alt="Drawing" style="width: 120px;" alt="GA4GH colored ring logo"/>
-
+[![GA4GH Logo](https://www.ga4gh.org/gfx/GA-logo-horizontal-tag-RGB.svg" style="width: 120px;" alt="GA4GH colored ring logo)](https://www.ga4gh.org/)
 [![Build Status](https://travis-ci.org/ga4gh/data-object-service-schemas.svg?branch=master)](https://travis-ci.org/ga4gh/data-object-service-schemas)
 [![Swagger Validator](https://img.shields.io/swagger/valid/2.0/https/raw.githubusercontent.com/OAI/OpenAPI-Specification/master/examples/v2.0/json/petstore-expanded.json.svg)](https://raw.githubusercontent.com/ga4gh/data-object-service-schemas/master/openapi/data_object_service.swagger.yaml)
 
-Schemas for the Data Object Service (DOS) API
-=============================================
+# Schemas for the Data Object Service (DOS) API
 
 [View the schemas in Swagger UI](http://ga4gh.github.io/data-object-service-schemas)
 
-The [Global Alliance for Genomics and Health](http://genomicsandhealth.org/) is an international
-coalition, formed to enable the sharing of genomic and clinical data. This collaborative consortium
-takes place primarily via GitHub and public meetings. Join the issues today to help us make
-a cloud agnostic Data Object Service!
+The goal of DOS is to create a generic API on top of existing object storage systems
+so workflow systems can access data in a single, standard way regardless of where it's
+stored. It's maintained by the [GA4GH Data Working Group](https://www.ga4gh.org).
 
-Cloud Workstream
-----------------
+## Key features
 
-The [Data Working Group](http://ga4gh.org/#/) concentrates on data representation, storage, and analysis,
-including working with platform development partners and industry leaders to develop standards that will
-facilitate interoperability. The Cloud Workstream is an informal, multi-vendor working group focused on
-standards for exchanging Docker-based tools and CWL/WDL workflows, execution of Docker-based tools and
-workflows on clouds, and abstract access to cloud object stores.
+The API is split into two sections:
 
-What is DOS?
-------------
+* **data object management**, which enables the creation, updating, deletion, versioning,
+  and unique identification of files and data bundles (flat collections of files); and
+* **data object querying**, which can locate data objects across different cloud environments
+  and DOS implementations.
 
-Currently, this is the home of the Data Object Service (DOS) API proposal. Please add your use cases
- to the [USECASES.md](USECASES.md) document.
+## Getting started
 
-This proposal for a DOS release is based on the schema work of Brian W. and others from OHSU along
-with work by UCSC.  It also is informed by existing object storage systems such as:
-
-* GNOS: http://annaisystems.com/ (as used by PCAWG, see https://pcawg.icgc.org)
-* ICGC Storage: as used to store data on S3, see https://github.com/icgc-dcc/dcc-storage and https://dcc.icgc.org/icgc-in-the-cloud/aws
-* HCA Storage: see https://dss.staging.data.humancellatlas.org/ and https://github.com/HumanCellAtlas/data-store
-* the GDC Storage: see https://gdc.cancer.gov
-* Keep by Curoverse: see https://arvados.org/ and https://github.com/curoverse/arvados
-
-The goal of DOS is to create a generic API on top of these and other projects, so workflow systems can
-access data in the same way regardless of project.  One section of the API focuses on how to read and
-write data objects to cloud environments and how to join them together as data bundles (Data object management).
- Another focuses on the ability to find data objects across cloud environments and implementations of DOS
- (Data object queries).  The latter is likely to be worked on in conjunction with the GA4GH Discovery Workstream.
-
-Key features of the current API proposal:
-
-#### Data object management
-
-This section of the API focuses on how to read and write data objects to cloud environments
-and how to join them together as data bundles.  Data bundles are simply a flat collection
-of one or more files.  This section of the API enables:
-
-* create/update/delete a file
-* create/update/delete a data bundle
-* register UUIDs with these entities (an optionally track versions of each)
-* generate signed URLs and/or cloud specific object storage paths and temporary credentials
-
-#### Data object queries
-
-A key feature of this API beyond creating/modifying/deletion files is the ability to
-find data objects across cloud environments and implementations of DOS.  This
-section of the API allows users to query by data bundle or file UUIDs which returns
-information about where these data objects are available.  This response will
-typically be used to find the same file or data bundle located across multiple
-cloud environments.
-
-Implementations
----------------
-
-There are currently a few experimental implementations that use some version of these
-schemas.
-
-* [DOS Connect](https://github.com/ohsu-comp-bio/dos_connect) observes cloud and local
-storage systems and broadcasts their changes to a service that presents DOS endpoints.
-* [DOS Downloader](https://github.com/david4096/dos-downloader) is a mechanism for
-downloading Data Objects from DOS URLs.
-* [dos-gdc-lambda](https://github.com/david4096/dos-gdc-lambda) presents data from the
-GDC public rest API using the Data Object Service.
-* [dos-signpost-lambda](https://github.com/david4096/dos-signpost-lambda) presents data
-from a signpost instance using the Data Object Service.
-
-Building the client and server
-------------------------------
-
-Installing is easy:
+Installing is as easy as:
 
 ```
 $ pip install ga4gh-dos-schemas
 ```
 
-Read the quickstart TODO
-
-More Information
-----------------
-
-* [Global Alliance for Genomics and Health](http://genomicsandhealth.org)
-* [Google Forum](https://groups.google.com/forum/#!forum/ga4gh-dwg-containers-workflows)
+For more on getting started, check out the [quickstart guide](docs/source/quickstart.rst).
+For everything else, including API documentation and project background, refer to our
+[ReadTheDocs](https://example.com) site.

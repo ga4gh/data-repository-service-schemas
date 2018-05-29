@@ -32,3 +32,12 @@ There's a handy command line hook for the server::
 and for the client::
 
     $ ga4gh_dos_demo
+
+Building documents
+------------------
+
+The schemas are editable as OpenAPI 2 YAML files. To generate OpenAPI 3
+descriptions install `swagger2openapi <https://github.com/Mermade/swagger2openapi>`_
+and run the following::
+
+    $ swagger2openapi -y openapi/data_object_service.swagger.yaml > openapi/data_object_service.openapi.yaml

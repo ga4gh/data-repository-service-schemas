@@ -1,20 +1,16 @@
 Schemas for the Data Object Service (DOS) API
 =============================================
 
-`View the schemas in Swagger
-UI <http://ga4gh.github.io/data-object-service-schemas>`__
-
 The `Global Alliance for Genomics and
-Health <http://genomicsandhealth.org/>`__ is an international coalition,
+Health <http://genomicsandhealth.org/>`_ is an international coalition
 formed to enable the sharing of genomic and clinical data. This
-collaborative consortium takes place primarily via github and public
-meetings. Join the issues today to help us make a cloud agnostic Data
-Object Service!
+collaborative consortium takes place primarily via GitHub and public
+meetings.
 
 Cloud Workstream
 ----------------
 
-The `Data Working Group <http://ga4gh.org/#/>`__ concentrates on data
+The `Data Working Group <http://ga4gh.org/#/>`_ concentrates on data
 representation, storage, and analysis, including working with platform
 development partners and industry leaders to develop standards that will
 facilitate interoperability. The Cloud Workstream is an informal,
@@ -26,34 +22,32 @@ stores.
 What is DOS?
 ------------
 
-Currently, this is the home of the Data Object Service (DOS) API
-proposal.
-
 This proposal for a DOS release is based on the schema work of Brian W.
 and others from OHSU along with work by UCSC. It also is informed by
 existing object storage systems such as:
 
--  GNOS: http://annaisystems.com/ (as used by PCAWG, see
-   https://pcawg.icgc.org)
--  ICGC Storage: as used to store data on S3, see
-   https://github.com/icgc-dcc/dcc-storage and
-   https://dcc.icgc.org/icgc-in-the-cloud/aws
--  HCA Storage: see https://dss.staging.data.humancellatlas.org/ and
-   https://github.com/HumanCellAtlas/data-store
--  the GDC Storage: see https://gdc.cancer.gov
--  Keep by Curoverse: see https://arvados.org/ and
-   https://github.com/curoverse/arvados
+-  `GNOS`_ (as used by `PCAWG`_)
+-  ICGC Storage (`as used to store data on S3`_, see `overture-stack/score`_)
+-  `Human Cell Atlas Storage`_ (see `HumanCellAtlas/data-store`_)
+-  `NCI GDC Storage`_
+-  `Keep by Curoverse`_ (see `curoverse/arvados`_)
 
 The goal of DOS is to create a generic API on top of these and other
 projects, so workflow systems can access data in the same way regardless
-of project. One section of the API focuses on how to read and write data
-objects to cloud environments and how to join them together as data
-bundles (Data object management). Another focuses on the ability to find
-data objects across cloud environments and implementations of DOS (Data
-object queries). The latter is likely to be worked on in conjunction
-with the GA4GH Discovery Workstream.
+of project.
 
-Key features of the current API proposal:
+.. _GNOS: http://annaisystems.com/
+.. _PCAWG: https://dcc.icgc.org/pcawg
+.. _as used to store data on S3: https://dcc.icgc.org/icgc-in-the-cloud/aws
+.. _overture-stack/score: https://github.com/overture-stack/score
+.. _Human Cell Atlas Storage: https://dss.staging.data.humancellatlas.org/
+.. _HumanCellAtlas/data-store: https://github.com/HumanCellAtlas/data-store
+.. _NCI GDC Storage: https://gdc.cancer.gov
+.. _Keep by Curoverse: https://arvados.org/
+.. _curoverse/arvados: https://github.com/curoverse/arvados
+
+Key features
+------------
 
 Data object management
 ^^^^^^^^^^^^^^^^^^^^^^
@@ -86,28 +80,18 @@ Implementations
 There are currently a few experimental implementations that use some
 version of these schemas.
 
--  `DOS Connect <https://github.com/ohsu-comp-bio/dos_connect>`__
+-  `DOS Connect <https://github.com/ohsu-comp-bio/dos_connect>`_
    observes cloud and local storage systems and broadcasts their changes
    to a service that presents DOS endpoints.
--  `DOS Downloader <https://github.com/david4096/dos-downloader>`__ is a
+-  `DOS Downloader <https://github.com/david4096/dos-downloader>`_ is a
    mechanism for downloading Data Objects from DOS URLs.
--  `dos-gdc-lambda <https://github.com/david4096/dos-gdc-lambda>`__
-   presents data from the GDC public rest API using the Data Object
+-  `dos-gdc-lambda <https://github.com/david4096/dos-gdc-lambda>`_
+   presents data from the GDC public REST API using the Data Object
    Service.
--  `dos-signpost-lambda <https://github.com/david4096/dos-signpost-lambda>`__
+-  `dos-signpost-lambda <https://github.com/david4096/dos-signpost-lambda>`_
    presents data from a signpost instance using the Data Object Service.
 
-Building Documents
-------------------
-
-The schemas are editable as OpenAPI 2 YAML files. To generate OpenAPI 3
-descriptions install swagger2openapi and run the following:
-
-::
-
-    swagger2openapi -y openapi/data_object_service.swagger.yaml > openapi/data_object_service.openapi.yaml
-
-More Information
+More information
 ----------------
 
 -  `Global Alliance for Genomics and
