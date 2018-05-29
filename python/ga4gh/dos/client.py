@@ -27,6 +27,7 @@ def validate_int64(test):
     """
     Accepts an int64 and checks for numerality. Throws a Swagger Validation
     exception when failing the test.
+
     :param test:
     :return:
     :raises SwaggerValidationError:

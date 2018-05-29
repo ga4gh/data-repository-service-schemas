@@ -191,6 +191,7 @@ def GetDataObjectVersions(**kwargs):
 def UpdateDataObject(**kwargs):
     """
     Update a Data Object by creating a new version.
+
     :param kwargs:
     :return:
     """
@@ -227,6 +228,7 @@ def DeleteDataObject(**kwargs):
 def ListDataObjects(**kwargs):
     """
     Returns a list of Data Objects matching a ListDataObjectsRequest.
+
     :param kwargs:
     :return:
     """
