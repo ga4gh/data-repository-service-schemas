@@ -96,5 +96,4 @@ More information
 
 -  `Global Alliance for Genomics and
    Health <http://genomicsandhealth.org>`__
--  `Google
-   Forum <https://groups.google.com/forum/#!forum/ga4gh-dwg-containers-workflows>`__
+-  `GA4GH Cloud Workstream <http://ga4gh.cloud>`__
