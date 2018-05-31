@@ -1,4 +1,14 @@
-# Simple client usage via bravo
+"""
+This module exposes a single class :class:`ga4gh.dos.client.Client`, which
+exposes the HTTP methods of the Data Object Service as named Python functions.
+
+This makes it easy to access resources that are described following these
+schemas, and uses bravado to dynamically generate the client functions
+following the OpenAPI schema.
+
+It currently assumes that the service also hosts the swagger.json, in a style
+similar to the demonstration server, :mod:`ga4gh.dos.server`.
+"""
 
 
 from bravado.client import SwaggerClient
@@ -14,7 +24,14 @@ DEFAULT_CONFIG = {
 
 
 def validate_int64(test):
-    # TODO improve to check numerality
+    """
+    Accepts an int64 and checks for numerality. Throws a Swagger Validation
+    exception when failing the test.
+
+    :param test:
+    :return:
+    :raises SwaggerValidationError:
+    """
     if str(test) != test:
         raise SwaggerValidationError('int64 are serialized as strings')
 
@@ -32,9 +49,37 @@ int64_format = SwaggerFormat(
 
 class Client:
     """
-    simple wrapper around bravado swagger Client. see
-    https://github.com/Yelp/bravado/blob/master/docs/source/configuration.rst#client-configuration # NOQA
-    https://github.com/Yelp/bravado#example-with-basic-authentication
+    This class is the instantiated to create a new connection to a DOS. It
+    connects to the service to download the swagger.json and returns a client
+    in the DataObjectService namespace.
+
+    ::
+
+        from ga4gh.dos.client import Client
+        client = Client("http://localhost:8000/ga4gh/dos/v1")
+
+        models = client.models
+        c = client.client
+
+        # Will return a Data Object by identifier
+        c.GetDataObject(data_object_id="abc").result()
+
+        # To access models in the Data Object Service namespace:
+        ListDataObjectRequest = models.get_model('ListDataObjectsRequest')
+
+        # And then instantiate a request with our own query:
+        my_request = ListDataObjectsRequest(alias="doi:10.0.1.1/1234")
+
+        # Finally, send the request to the service and evaluate the response.
+        c.ListDataObjects(body=my_request).result()
+
+
+    The class accepts a configuration dictionary that maps directly to the
+    bravado configuration.
+
+    For more information on configuring the client, see
+    `bravado documentation
+    <https://github.com/Yelp/bravado/blob/master/docs/source/configuration.rst>`_.
     """
     def __init__(
           self, url,
@@ -50,6 +95,16 @@ class Client:
 
     @classmethod
     def config(cls, url, http_client=None, request_headers=None):
+        """
+        Accepts an optionally configured requests client with authentication
+        details set.
+
+        :param url: The URL of the service to connect to
+        :param http_client: The http_client to use, \
+          defaults to :func:`RequestsClient`
+        :param request_headers: The headers to set on each request.
+        :return:
+        """
         swagger_path = '{}/swagger.json'.format(url.rstrip("/"))
         http_client = http_client or RequestsClient()
         loader = Loader(http_client, request_headers=request_headers)

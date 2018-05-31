@@ -18,7 +18,7 @@ except ImportError:
     use_setuptools()
     from setuptools import setup
 
-with open("python/README.pypi.rst") as readmeFile:
+with open("README.md") as readmeFile:
     long_description = readmeFile.read()
 
 install_requires = []
@@ -64,6 +64,7 @@ setup(
     },
     package_dir={'': 'python'},
     long_description=long_description,
+    long_description_content_type='text/markdown',
     install_requires=install_requires,
     dependency_links=dependency_links,
     license='Apache License 2.0',

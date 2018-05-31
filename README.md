@@ -1,130 +1,58 @@
-<img src="https://www.ga4gh.org/gfx/GA-logo-horizontal-tag-RGB.svg" alt="Drawing" style="width: 120px;" alt="GA4GH colored ring logo"/>
+<a href="https://ga4gh.org"><img src="https://www.ga4gh.org/gfx/GA-logo-horizontal-tag-RGB.svg" width="200" /></a><br />
+[![Build Status](https://travis-ci.org/ga4gh/data-object-service-schemas.svg?branch=master)](https://travis-ci.org/ga4gh/data-object-service-schemas)
+[![Swagger Validator](https://img.shields.io/swagger/valid/2.0/https/raw.githubusercontent.com/OAI/OpenAPI-Specification/master/examples/v2.0/json/petstore-expanded.json.svg)](https://raw.githubusercontent.com/ga4gh/data-object-service-schemas/master/openapi/data_object_service.swagger.yaml)
 
-![travis status](https://travis-ci.org/ga4gh/data-object-service-schemas.svg?branch=master)
-
-
-Schemas for the Data Object Service (DOS) API
-=============================================
+# Schemas for the Data Object Service (DOS) API
 
 [View the schemas in Swagger UI](http://ga4gh.github.io/data-object-service-schemas)
 
-The [Global Alliance for Genomics and Health](http://genomicsandhealth.org/) is an international
-coalition, formed to enable the sharing of genomic and clinical data. This collaborative consortium
-takes place primarily via github and public meetings. Join the issues today to help us make
-a cloud agnostic Data Object Service!
+The goal of DOS is to create a generic API on top of existing object storage systems
+so workflow systems can access data in a single, standard way regardless of where it's
+stored. It's maintained by the [GA4GH Data Working Group](https://www.ga4gh.org).
 
-Cloud Workstream
-----------------
+## Key features
 
-The [Data Working Group](http://ga4gh.org/#/) concentrates on data representation, storage, and analysis,
-including working with platform development partners and industry leaders to develop standards that will
-facilitate interoperability. The Cloud Workstream is an informal, multi-vendor working group focused on
-standards for exchanging Docker-based tools and CWL/WDL workflows, execution of Docker-based tools and
-workflows on clouds, and abstract access to cloud object stores.
+The API is split into two sections:
 
-What is DOS?
-------------
+* **data object management**, which enables the creation, updating, deletion, versioning,
+  and unique identification of files and data bundles (flat collections of files); and
+* **data object querying**, which can locate data objects across different cloud environments
+  and DOS implementations.
 
-Currently, this is the home of the Data Object Service (DOS) API proposal. This repo has a CWL-based
-build process ready to go and a place for us to collectively work on [USECASES.md](USECASES.md).
+## Getting started
 
-This proposal for a DOS release is based on the schema work of Brian W. and others from OHSU along
-with work by UCSC.  It also is informed by existing object storage systems such as:
-
-* GNOS: http://annaisystems.com/ (as used by PCAWG, see https://pcawg.icgc.org)
-* ICGC Storage: as used to store data on S3, see https://github.com/icgc-dcc/dcc-storage and https://dcc.icgc.org/icgc-in-the-cloud/aws
-* HCA Storage: see https://dss.staging.data.humancellatlas.org/ and https://github.com/HumanCellAtlas/data-store
-* the GDC Storage: see https://gdc.cancer.gov
-* Keep by Curoverse: see https://arvados.org/ and https://github.com/curoverse/arvados
-
-The goal of DOS is to create a generic API on top of these and other projects, so workflow systems can
-access data in the same way regardless of project.  One section of the API focuses on how to read and
-write data objects to cloud environments and how to join them together as data bundles (Data object management).
- Another focuses on the ability to find data objects across cloud environments and implementations of DOS
- (Data object queries).  The latter is likely to be worked on in conjunction with the GA4GH Discovery Workstream.
-
-Key features of the current API proposal:
-
-#### Data object management
-
-This section of the API focuses on how to read and write data objects to cloud environments
-and how to join them together as data bundles.  Data bundles are simply a flat collection
-of one or more files.  This section of the API enables:
-
-* create/update/delete a file
-* create/update/delete a data bundle
-* register UUIDs with these entities (an optionally track versions of each)
-* generate signed URLs and/or cloud specific object storage paths and temporary credentials
-
-#### Data object queries
-
-A key feature of this API beyond creating/modifying/deletion files is the ability to
-find data objects across cloud environments and implementations of DOS.  This
-section of the API allows users to query by data bundle or file UUIDs which returns
-information about where these data objects are available.  This response will
-typically be used to find the same file or data bundle located across multiple
-cloud environments.
-
-Implementations
----------------
-
-There are currently a few experimental implementations that use some version of these
-schemas.
-
-* [DOS Connect](https://github.com/ohsu-comp-bio/dos_connect) observes cloud and local
-storage systems and broadcasts their changes to a service that presents DOS endpoints.
-* [DOS Downloader](https://github.com/david4096/dos-downloader) is a mechanism for
-downloading Data Objects from DOS URLs.
-* [dos-gdc-lambda](https://github.com/david4096/dos-gdc-lambda) presents data from the
-GDC public rest API using the Data Object Service.
-* [dos-signpost-lambda](https://github.com/david4096/dos-signpost-lambda) presents data
-from a signpost instance using the Data Object Service.
-
-Building the client and server
-------------------------------
-
-You can use `pip` to install a python client and server that implements these schemas.
+Installing is as easy as:
 
 ```
-virtualenv env
-source env/bin/activate
-pip install git+git://github.com/ga4gh/data-object-service-schemas@master --process-dependency-links
+$ pip install ga4gh-dos-schemas
 ```
 
-This will add the python modules `ga4gh.dos.server` and `ga4gh.dos.client` you can use in
-your projects.
-
-There is also a CLI hook.
-
-```
-ga4gh_dos_server
-# In another terminal
-ga4gh_dos_demo
-```
-
-
-Building Documents
-------------------
-
-The schemas are editable as OpenAPI 2 YAML files. To generate OpenAPI 3 descriptions install
-swagger2openapi and run the following:
+This will install both a demonstration server and a Python client that will allow you to 
+manage Data Objects in a local server. You can start the demo server using `ga4gh_dos_server`. 
+This starts a Data Object Service at http://localhost:8080.
 
 ```
-swagger2openapi -y openapi/data_object_service.swagger.yaml > openapi/data_object_service.openapi.yaml
+wget http://hgdownload.cse.ucsc.edu/goldenPath/hg38/chromosomes/chr22.fa.gz
+md5sum chr22.fa.gz
+# 41b47ce1cc21b558409c19b892e1c0d1  chr22.fa.gz
+curl -X POST -H 'Content-Type: application/json' \
+    --data '{"data_object":
+              {"id": "hg38-chr22",
+               "name": "Human Reference Chromosome 22",
+               "checksums": [{"checksum": "41b47ce1cc21b558409c19b892e1c0d1", "type": "md5"}],
+               "urls": [{"url": "http://hgdownload.cse.ucsc.edu/goldenPath/hg38/chromosomes/chr22.fa.gz"}],
+               "size": "12255678"}}' http://localhost:8080/ga4gh/dos/v1/dataobjects
+# We can then get the newly created Data Object by id
+curl http://localhost:8080/ga4gh/dos/v1/dataobjects/hg38-chr22
+# Or by checksum!
+curl -X POST -H 'Content-Type: application/json' \
+    --data '{"checksum": {"checksum": "41b47ce1cc21b558409c19b892e1c0d1"}}' http://localhost:8080/ga4gh/dos/v1/dataobjects/list
 ```
 
-How to contribute changes
--------------------------
+For more on getting started, check out the [quickstart guide](docs/source/quickstart.rst)!
 
-Take cues for now from the [ga4gh/schemas](https://github.com/ga4gh/schemas/blob/master/CONTRIBUTING.rst) document.
+## Getting involved!
 
-License
--------
-
-See the [LICENSE]
-
-More Information
-----------------
-
-* [Global Alliance for Genomics and Health](http://genomicsandhealth.org)
-* [Google Forum](https://groups.google.com/forum/#!forum/ga4gh-dwg-containers-workflows)
+The Data Object Service Schemas are Apache 2 Licensed Open Source software. Please join us
+in the [issues](https://github.com/ga4gh/data-object-service-schemas/issues) or check out the
+contributing docs!
