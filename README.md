@@ -1,8 +1,8 @@
+# Schemas for the Data Object Service (DOS) API
 <a href="https://ga4gh.org"><img src="https://www.ga4gh.org/gfx/GA-logo-horizontal-tag-RGB.svg" width="200" /></a><br />
 [![Build Status](https://travis-ci.org/ga4gh/data-object-service-schemas.svg?branch=master)](https://travis-ci.org/ga4gh/data-object-service-schemas)
 [![Swagger Validator](https://img.shields.io/swagger/valid/2.0/https/raw.githubusercontent.com/OAI/OpenAPI-Specification/master/examples/v2.0/json/petstore-expanded.json.svg)](https://raw.githubusercontent.com/ga4gh/data-object-service-schemas/master/openapi/data_object_service.swagger.yaml)
-
-# Schemas for the Data Object Service (DOS) API
+[![Read the Docs badge](https://readthedocs.org/projects/data-object-service/badge/)](https://data-object-service.readthedocs.io/en/latest)
 
 [View the schemas in Swagger UI](http://ga4gh.github.io/data-object-service-schemas)
 
@@ -49,7 +49,8 @@ curl -X POST -H 'Content-Type: application/json' \
     --data '{"checksum": {"checksum": "41b47ce1cc21b558409c19b892e1c0d1"}}' http://localhost:8080/ga4gh/dos/v1/dataobjects/list
 ```
 
-For more on getting started, check out the [quickstart guide](docs/source/quickstart.rst)!
+For more on getting started, check out the [quickstart guide](docs/source/quickstart.rst) or 
+the documentation at readthedocs: https://data-object-service.readthedocs.io/en/latest/ !
 
 ## Getting involved!
 
