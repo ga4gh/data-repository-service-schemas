@@ -1,12 +1,12 @@
 """
 DOS Demonstration Server
 
-Running this server will start an ephemeral DOS service (its registry
+Running this server will start an ephemeral Data Object Service (its registry
 contents won't be saved after exiting). It uses the connexion module
 to translate the OpenAPI schema into named controller functions.
 
 These functions are described in :mod:`ga4gh.dos.controllers` and
-are meant to provide a simple implementation of the DOS service
+are meant to provide a simple implementation of DOS.
 """
 
 import os
