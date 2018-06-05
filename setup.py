@@ -2,6 +2,8 @@
 import shutil
 import os
 
+from ga4gh.dos import __version__
+
 # We need to copy the generated swagger to the Python package
 SWAGGER_JSON_PATH = os.path.abspath(
     os.path.join('openapi', 'data_object_service.swagger.yaml'))
@@ -81,8 +83,6 @@ setup(
         'Programming Language :: Python :: 2.7',
         'Topic :: Scientific/Engineering :: Bio-Informatics',
     ],
-    version='0.2.1',
+    version=__version__,
     keywords=['genomics'],
-    # Use setuptools_scm to set the version number automatically from Git
-    setup_requires=['setuptools_scm'],
 )

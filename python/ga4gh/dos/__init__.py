@@ -9,5 +9,7 @@ Python functions.
 import client
 import server
 
+__version__ = "0.2.1"
+
 assert server
 assert client
