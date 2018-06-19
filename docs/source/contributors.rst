@@ -12,7 +12,7 @@ development requirements as well)::
     $ git clone https://github.com/ga4gh/data-object-service-schemas.git
     $ cd data-object-service-schemas
     $ python setup.py develop
-    $ pip install -r dev-requirements.txt
+    $ pip install -r requirements.txt
 
 Documentation
 -------------

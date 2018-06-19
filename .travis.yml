@@ -4,7 +4,7 @@ python:
 before_install:
 - sudo apt-get update -qq
 - pip install . --process-dependency-links
-- pip install -r python/dev-requirements.txt
+- pip install -r requirements.txt
 script:
 - nosetests python
 - flake8 python

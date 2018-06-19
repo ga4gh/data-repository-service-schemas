@@ -21,31 +21,6 @@ except ImportError:
 with open("README.md") as readmeFile:
     long_description = readmeFile.read()
 
-install_requires = []
-with open("python/requirements.txt") as requirementsFile:
-    for line in requirementsFile:
-        line = line.strip()
-        if len(line) == 0:
-            continue
-        if line[0] == '#':
-            continue
-        pinnedVersion = line.split()[0]
-        install_requires.append(pinnedVersion)
-
-dependency_links = []
-try:
-    with open("python/constraints.txt") as constraintsFile:
-        for line in constraintsFile:
-            line = line.strip()
-            if len(line) == 0:
-                continue
-            if line[0] == '#':
-                continue
-            dependency_links.append(line)
-except EnvironmentError:
-    print('No constraints file found, proceeding without '
-          'creating dependency links.')
-print(dependency_links)
 
 setup(
     name="ga4gh_dos_schemas",
@@ -65,10 +40,14 @@ setup(
     package_dir={'': 'python'},
     long_description=long_description,
     long_description_content_type='text/markdown',
-    install_requires=install_requires,
-    dependency_links=dependency_links,
+    install_requires=[
+        'connexion==1.4.2',
+        'Flask-Cors==3.0.4',
+        'bravado-core==4.13.4',
+        'bravado==9.2.2'
+    ],
     license='Apache License 2.0',
-    package_data={'ga4gh.dos': ['data_object_service.swagger.yaml'],},
+    package_data={'ga4gh.dos': ['data_object_service.swagger.yaml']},
     include_package_data=True,
     zip_safe=True,
     author="Global Alliance for Genomics and Health",
