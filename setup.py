@@ -1,14 +1,4 @@
-# Don't import __future__ packages here; they make setup fail
-import shutil
-import os
-
-# We need to copy the generated swagger to the Python package
-SWAGGER_JSON_PATH = os.path.abspath(
-    os.path.join('openapi', 'data_object_service.swagger.yaml'))
-SWAGGER_DEST_PATH = os.path.abspath(os.path.join(
-    'python', 'ga4gh', 'dos', 'data_object_service.swagger.yaml'))
-shutil.copyfile(SWAGGER_JSON_PATH, SWAGGER_DEST_PATH)
-
+# -*- coding: utf-8 -*-
 # First, we try to use setuptools. If it's not available locally,
 # we fall back on ez_setup.
 try:
@@ -47,7 +37,10 @@ setup(
         'bravado==9.2.2'
     ],
     license='Apache License 2.0',
-    package_data={'ga4gh.dos': ['data_object_service.swagger.yaml']},
+    package_data={
+        'ga4gh.dos': ['data_object_service.swagger.yaml'],
+        '': ['openapi/data_object_service.swagger.yaml']
+    },
     include_package_data=True,
     zip_safe=True,
     author="Global Alliance for Genomics and Health",
