@@ -75,7 +75,7 @@ class TestServer(unittest.TestCase):
         create_response = self._client.CreateDataObject(
             body=create_request).result()
         data_object_id = create_response['data_object_id']
-        assert data_object_id == id,  "expected server to use client's id"
+        assert data_object_id == id, "expected server to use client's id"
 
     def test_duplicate_checksums(self):
         """ validate expected behavior of multiple creates of same checksum """
