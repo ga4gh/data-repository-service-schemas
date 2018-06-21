@@ -86,7 +86,6 @@ paths:
         - name: checksum_type
           in: query
           type: string
-          enum: [md5, multipart-md5, sha256, sha512]
           description: |-
             OPTIONAL
             If provided will restrict responses to those that match the provided
@@ -336,7 +335,6 @@ paths:
         - name: checksum_type
           in: query
           type: string
-          enum: [md5, multipart-md5, sha256, sha512]
           description: |-
             OPTIONAL
             If provided will restrict responses to those that match the provided
@@ -791,7 +789,6 @@ definitions:
           The hexlified checksum that one would like to match on.
       checksum_type:
         type: string
-        enum: [md5, multipart-md5, sha256, sha512]
         description: |-
           OPTIONAL
           If provided will restrict responses to those that match the provided
@@ -854,7 +851,6 @@ definitions:
           The hexlified checksum that one would like to match on.
       checksum_type:
         type: string
-        enum: [md5, multipart-md5, sha256, sha512]
         description: |-
           OPTIONAL
           If provided will restrict responses to those that match the provided
