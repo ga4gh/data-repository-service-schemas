@@ -1,8 +1,10 @@
 # Don't import __future__ packages here; they make setup fail
 import shutil
 import os
+import sys
 
-from ga4gh.dos import __version__
+sys.path.insert(0, 'python/')
+from ga4gh.dos import __version__  # noqa
 
 # We need to copy the generated swagger to the Python package
 SWAGGER_JSON_PATH = os.path.abspath(
