@@ -4,6 +4,7 @@ import unittest
 
 import yaml
 
+
 class TestPackage(unittest.TestCase):
     @classmethod
     def get_spec_version(cls, filename):
