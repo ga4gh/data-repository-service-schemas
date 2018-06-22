@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+
 # First, we try to use setuptools. If it's not available locally,
 # we fall back on ez_setup.
 try:
@@ -52,8 +53,6 @@ setup(
         'Programming Language :: Python :: 2.7',
         'Topic :: Scientific/Engineering :: Bio-Informatics',
     ],
-    version='0.2.1',
+    version=__version__,
     keywords=['genomics'],
-    # Use setuptools_scm to set the version number automatically from Git
-    setup_requires=['setuptools_scm'],
 )

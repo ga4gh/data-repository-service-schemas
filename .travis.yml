@@ -6,8 +6,8 @@ before_install:
 - pip install . --process-dependency-links
 - pip install -r requirements.txt
 script:
-- nosetests python
-- flake8 python
+- nosetests python/
+- flake8 --select=E121,E123,E126,E226,E24,E704,W503,W504 --ignore=E501 python/
 - ga4gh_dos_client
 deploy:
   provider: pypi

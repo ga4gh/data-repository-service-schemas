@@ -75,7 +75,7 @@ class TestServer(unittest.TestCase):
         create_response = self._client.CreateDataObject(
             body=create_request).result()
         data_object_id = create_response['data_object_id']
-        assert data_object_id == id,  "expected server to use client's id"
+        assert data_object_id == id, "expected server to use client's id"
 
     def test_duplicate_checksums(self):
         """ validate expected behavior of multiple creates of same checksum """
@@ -119,13 +119,16 @@ class TestServer(unittest.TestCase):
         urls = []
         names = []
         while(True):
-            list_request = ListDataObjectsRequest(
-                checksum={'checksum': checksum})
+            list_request = ListDataObjectsRequest(checksum=checksum)
             list_request.page_size = 10
             if next_page_token:
                 list_request.next_page_token = next_page_token
             list_response = self._client.ListDataObjects(
-                body=list_request).result()
+                alias=list_request.alias,
+                checksum=list_request.checksum,
+                checksum_type=list_request.checksum_type,
+                page_size=list_request.page_size,
+                page_token=list_request.page_token).result()
             next_page_token = list_response.next_page_token
             for data_object in list_response.data_objects:
                 count = count + 1
@@ -208,11 +211,16 @@ class TestServer(unittest.TestCase):
         while(True):
             print(next_page_token)
             list_request = ListDataObjectsRequest(
-                checksum={'checksum': "def"},
+                checksum='def',
                 page_token=next_page_token,
                 page_size=1)
             list_response = self._client.ListDataObjects(
-                body=list_request).result()
+                alias=list_request.alias,
+                checksum=list_request.checksum,
+                checksum_type=list_request.checksum_type,
+                page_size=list_request.page_size,
+                page_token=list_request.page_token,
+                url=list_request.url).result()
             print(list_response)
             next_page_token = list_response.next_page_token
             count += 1
@@ -286,7 +294,12 @@ class TestServer(unittest.TestCase):
             'ListDataObjectsRequest')
         list_request = ListDataObjectsRequest()
         list_response = self._client.ListDataObjects(
-            body=list_request).result()
+            alias=list_request.alias,
+            checksum=list_request.checksum,
+            checksum_type=list_request.checksum_type,
+            page_size=list_request.page_size,
+            page_token=list_request.page_token,
+            url=list_request.url).result()
         print(len(list_response.data_objects))
         assert len(list_response.data_objects) > 0
 
@@ -354,7 +367,12 @@ class TestServer(unittest.TestCase):
                 body=create_request).result()
         list_request = ListDataObjectsRequest(page_size=10)
         list_response = self._client.ListDataObjects(
-            body=list_request).result()
+            alias=list_request.alias,
+            checksum=list_request.checksum,
+            checksum_type=list_request.checksum_type,
+            page_size=list_request.page_size,
+            page_token=list_request.page_token,
+            url=list_request.url).result()
         ids = [x.id for x in list_response.data_objects]
         print(list_response.next_page_token)
         print(ids)
@@ -362,7 +380,12 @@ class TestServer(unittest.TestCase):
         list_request = ListDataObjectsRequest(
             page_size=10, page_token=list_response.next_page_token)
         list_response = self._client.ListDataObjects(
-            body=list_request).result()
+            alias=list_request.alias,
+            checksum=list_request.checksum,
+            checksum_type=list_request.checksum_type,
+            page_size=list_request.page_size,
+            page_token=list_request.page_token,
+            url=list_request.url).result()
         ids = [x.id for x in list_response.data_objects]
         print(ids)
 
@@ -370,22 +393,37 @@ class TestServer(unittest.TestCase):
         print("..........List Objects by alias..............")
         object_list_request = ListDataObjectsRequest(alias="OBJ1")
         object_list_response = self._client.ListDataObjects(
-            body=object_list_request).result()
+            alias=object_list_request.alias,
+            checksum=object_list_request.checksum,
+            checksum_type=object_list_request.checksum_type,
+            page_size=object_list_request.page_size,
+            page_token=object_list_request.page_token,
+            url=object_list_request.url).result()
         print(object_list_response.data_objects[0].aliases)
 
         # Find a DataObject by checksum
         print("..........List Objects by checksum..............")
         object_list_request = ListDataObjectsRequest(
-            checksum=Checksum(checksum="def1"))
+            checksum="def1")
         object_list_response = self._client.ListDataObjects(
-            body=object_list_request).result()
+            alias=object_list_request.alias,
+            checksum=object_list_request.checksum,
+            checksum_type=object_list_request.checksum_type,
+            page_size=object_list_request.page_size,
+            page_token=object_list_request.page_token,
+            url=object_list_request.url).result()
         print(object_list_response.data_objects[0].checksums)
 
         # Find a DataObject by URL
         print("..........List Objects by url..............")
         object_list_request = ListDataObjectsRequest(url="http://1")
         object_list_response = self._client.ListDataObjects(
-            body=object_list_request).result()
+            alias=object_list_request.alias,
+            checksum=object_list_request.checksum,
+            checksum_type=object_list_request.checksum_type,
+            page_size=object_list_request.page_size,
+            page_token=object_list_request.page_token,
+            url=object_list_request.url).result()
         print(object_list_response.data_objects[0].urls)
 
     def test_data_bundles(self):
@@ -412,7 +450,12 @@ class TestServer(unittest.TestCase):
             self._client.CreateDataObject(body=create_request).result()
         list_request = ListDataObjectsRequest(page_size=10)
         list_response = self._client.ListDataObjects(
-            body=list_request).result()
+            alias=list_request.alias,
+            checksum=list_request.checksum,
+            checksum_type=list_request.checksum_type,
+            page_size=list_request.page_size,
+            page_token=list_request.page_token,
+            url=list_request.url).result()
         ids = [x.id for x in list_response.data_objects]
         print(list_response.next_page_token)
 
@@ -477,7 +520,11 @@ class TestServer(unittest.TestCase):
             'ListDataBundlesRequest')
         list_request = ListDataBundlesRequest()
         list_response = self._client.ListDataBundles(
-            body=list_request).result()
+            alias=list_request.alias,
+            checksum=list_request.checksum,
+            checksum_type=list_request.checksum_type,
+            page_size=list_request.page_size,
+            page_token=list_request.page_token).result()
         print(len(list_response.data_bundles))
 
         # Get all versions of a DataBundle
@@ -535,7 +582,11 @@ class TestServer(unittest.TestCase):
             self._client.CreateDataBundle(body=create_request).result()
         list_request = ListDataBundlesRequest(page_size=10)
         list_response = self._client.ListDataBundles(
-            body=list_request).result()
+            alias=list_request.alias,
+            checksum=list_request.checksum,
+            checksum_type=list_request.checksum_type,
+            page_size=list_request.page_size,
+            page_token=list_request.page_token).result()
         ids = [x['id'] for x in list_response.data_bundles]
         print(list_response.next_page_token)
         print(ids)
@@ -543,7 +594,11 @@ class TestServer(unittest.TestCase):
         list_request = ListDataBundlesRequest(
             page_size=10, page_token=list_response.next_page_token)
         list_response = self._client.ListDataBundles(
-            body=list_request).result()
+            alias=list_request.alias,
+            checksum=list_request.checksum,
+            checksum_type=list_request.checksum_type,
+            page_size=list_request.page_size,
+            page_token=list_request.page_token).result()
         ids = [x['id'] for x in list_response.data_bundles]
         print(ids)
 
@@ -552,7 +607,11 @@ class TestServer(unittest.TestCase):
         list_request = ListDataBundlesRequest(
             alias=list_response.data_bundles[0].aliases[0])
         alias_list_response = self._client.ListDataBundles(
-            body=list_request).result()
+            alias=list_request.alias,
+            checksum=list_request.checksum,
+            checksum_type=list_request.checksum_type,
+            page_size=list_request.page_size,
+            page_token=list_request.page_token).result()
         print(list_response.data_bundles[0].aliases[0])
         print(alias_list_response.data_bundles[0].aliases[0])
 

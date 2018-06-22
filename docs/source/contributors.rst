@@ -31,10 +31,10 @@ To run tests::
 
     $ nosetests python/
 
-The Travis test suite also tests for PEP8 compliance (with
-`some exceptions <http://flake8.pycqa.org/en/latest/user/violations.html#ignoring-violations-with-flake8>`_)::
+The Travis test suite also tests for PEP8 compliance (checking for all errors
+except line length)::
 
-    $ flake8 python/
+    $ flake8 --select=E121,E123,E126,E226,E24,E704,W503,W504 --ignore=E501 python/
 
 Schema architecture
 -------------------
@@ -48,3 +48,4 @@ Code contributions
 We welcome code contributions! Feel free to fork the repository and submit a
 pull request. Please refer to this `contribution guide <https://github.com/ga4gh/ga4gh-schemas/blob/master/CONTRIBUTING.rst>`_
 for guidance as to how you should submit changes.
+

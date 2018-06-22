@@ -15,7 +15,7 @@ servers:
         default: ga4gh/dos/v1
 info:
   title: Data Object Service
-  version: 0.2.0
+  version: 0.2.1
   x-implementationLanguage: en
   termsOfService: https://www.ga4gh.org/policies/termsandconditions.html
 paths:
