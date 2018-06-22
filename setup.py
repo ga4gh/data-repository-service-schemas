@@ -1,17 +1,4 @@
-# Don't import __future__ packages here; they make setup fail
-import shutil
-import os
-import sys
-
-sys.path.insert(0, 'python/')
-from ga4gh.dos import __version__  # noqa
-
-# We need to copy the generated swagger to the Python package
-SWAGGER_JSON_PATH = os.path.abspath(
-    os.path.join('openapi', 'data_object_service.swagger.yaml'))
-SWAGGER_DEST_PATH = os.path.abspath(os.path.join(
-    'python', 'ga4gh', 'dos', 'data_object_service.swagger.yaml'))
-shutil.copyfile(SWAGGER_JSON_PATH, SWAGGER_DEST_PATH)
+# -*- coding: utf-8 -*-
 
 # First, we try to use setuptools. If it's not available locally,
 # we fall back on ez_setup.
@@ -25,31 +12,6 @@ except ImportError:
 with open("README.md") as readmeFile:
     long_description = readmeFile.read()
 
-install_requires = []
-with open("python/requirements.txt") as requirementsFile:
-    for line in requirementsFile:
-        line = line.strip()
-        if len(line) == 0:
-            continue
-        if line[0] == '#':
-            continue
-        pinnedVersion = line.split()[0]
-        install_requires.append(pinnedVersion)
-
-dependency_links = []
-try:
-    with open("python/constraints.txt") as constraintsFile:
-        for line in constraintsFile:
-            line = line.strip()
-            if len(line) == 0:
-                continue
-            if line[0] == '#':
-                continue
-            dependency_links.append(line)
-except EnvironmentError:
-    print('No constraints file found, proceeding without '
-          'creating dependency links.')
-print(dependency_links)
 
 setup(
     name="ga4gh_dos_schemas",
@@ -69,10 +31,17 @@ setup(
     package_dir={'': 'python'},
     long_description=long_description,
     long_description_content_type='text/markdown',
-    install_requires=install_requires,
-    dependency_links=dependency_links,
+    install_requires=[
+        'connexion==1.4.2',
+        'Flask-Cors==3.0.4',
+        'bravado-core==4.13.4',
+        'bravado==9.2.2'
+    ],
     license='Apache License 2.0',
-    package_data={'ga4gh.dos': ['data_object_service.swagger.yaml'],},
+    package_data={
+        'ga4gh.dos': ['data_object_service.swagger.yaml'],
+        '': ['openapi/data_object_service.swagger.yaml']
+    },
     include_package_data=True,
     zip_safe=True,
     author="Global Alliance for Genomics and Health",
@@ -81,7 +50,6 @@ setup(
         'Development Status :: 3 - Alpha',
         'Intended Audience :: Science/Research',
         'License :: OSI Approved :: Apache Software License',
-        'Natural Language :: English',
         'Programming Language :: Python :: 2.7',
         'Topic :: Scientific/Engineering :: Bio-Informatics',
     ],
