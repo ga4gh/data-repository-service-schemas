@@ -39,6 +39,19 @@
     <script>
     window.onload = function() {
 
+    // https://github.com/swagger-api/swagger-ui/issues/3725#issuecomment-334899276
+    const DisableTryItOutPlugin = function() {
+      return {
+        statePlugins: {
+          spec: {
+            wrapSelectors: {
+              allowTryItOutFor: () => () => false
+            }
+          }
+        }
+      }
+    }
+
       // Build a system
       const ui = SwaggerUIBundle({
         url: "https://raw.githubusercontent.com/ga4gh/data-object-service-schemas/master/openapi/data_object_service.swagger.yaml",
@@ -49,7 +62,8 @@
           SwaggerUIStandalonePreset
         ],
         plugins: [
-          SwaggerUIBundle.plugins.DownloadUrl
+          SwaggerUIBundle.plugins.DownloadUrl,
+          DisableTryItOutPlugin
         ],
         layout: "StandaloneLayout"
       })
