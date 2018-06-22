@@ -1,4 +1,9 @@
 # -*- coding: utf-8 -*-
+import sys
+
+# Get version
+sys.path.insert(0, 'python/')
+from ga4gh.dos import __version__  # noqa
 
 # First, we try to use setuptools. If it's not available locally,
 # we fall back on ez_setup.
