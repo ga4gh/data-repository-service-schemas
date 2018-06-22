@@ -36,6 +36,12 @@ The Travis test suite also tests for PEP8 compliance (with
 
     $ flake8 python/
 
+Schema architecture
+-------------------
+
+The canonical, authoritative schema is located at ``openapi/data_object_service.swagger.yaml``. All schema changes
+must be made to the Swagger schema, and all other specifications (e.g. SmartAPI, OpenAPI 3) are derived from it.
+
 Code contributions
 ------------------
 
