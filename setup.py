@@ -1,6 +1,10 @@
 # Don't import __future__ packages here; they make setup fail
 import shutil
 import os
+import sys
+
+sys.path.insert(0, 'python/')
+from ga4gh.dos import __version__  # noqa
 
 # We need to copy the generated swagger to the Python package
 SWAGGER_JSON_PATH = os.path.abspath(
@@ -81,8 +85,6 @@ setup(
         'Programming Language :: Python :: 2.7',
         'Topic :: Scientific/Engineering :: Bio-Informatics',
     ],
-    version='0.2.1',
+    version=__version__,
     keywords=['genomics'],
-    # Use setuptools_scm to set the version number automatically from Git
-    setup_requires=['setuptools_scm'],
 )
