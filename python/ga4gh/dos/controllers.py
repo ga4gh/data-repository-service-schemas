@@ -229,11 +229,9 @@ def ListDataObjects(**kwargs):
     """
     Returns a list of Data Objects matching a ListDataObjectsRequest.
 
-    :param kwargs:
+    :param kwargs: alias, url, checksum, checksum_type, page_size, page_token
     :return:
     """
-    body = kwargs.get('body')
-
     def filterer(item):
         """
         This filter is defined as a closure to set gather the kwargs from
@@ -243,43 +241,35 @@ def ListDataObjects(**kwargs):
         :return: bool
         """
         selected = get_most_recent(item[0])  # dict.items() gives us a tuple
-        # A list of true and false that all must be true to pass the filter
-        result_string = []
-        if body.get('checksum', None):
-            if body.get('checksum').get('checksum', None):
-                sums = filter(
-                    lambda x: x == body.get('checksum').get('checksum'),
-                    [x['checksum'] for x in selected.get('checksums', [])])
-                result_string.append(len(sums) > 0)
-            if body.get('checksum').get('type', None):
-                types = filter(
-                    lambda x: x == body.get('checksum').get('type'),
-                    [x['type'] for x in selected.get('checksums', [])])
-                result_string.append(len(types) > 0)
-        if body.get('url', None):
-            urls = filter(
-                lambda x: x == body.get('url'),
-                [x['url'] for x in selected.get('urls', [])])
-            result_string.append(len(urls) > 0)
-        if body.get('alias', None):
-            aliases = filter(
-                lambda x: x == body.get('alias'),
-                selected.get('aliases', []))
-            result_string.append(len(aliases) > 0)
-        return False not in result_string
+        sel_checksum = selected.get('checksums', [])
+
+        if kwargs.get('checksum', None):
+            if kwargs['checksum'] not in [i['checksum'] for i in sel_checksum]:
+                return False
+        if kwargs.get('checksum_type', None):
+            if kwargs['checksum_type'] not in [i['type'] for i in sel_checksum]:
+                return False
+        if kwargs.get('url', None):
+            if kwargs['url'] not in [i['url'] for i in selected.get('urls', [])]:
+                return False
+        if kwargs.get('alias', None):
+            if kwargs['alias'] not in selected.get('aliases', []):
+                return False
+        return True
+
     # Lazy since we're in memory
     filtered = filter_data_objects(filterer)
-    page_size = int(body.get('page_size', DEFAULT_PAGE_SIZE))
+    page_size = int(kwargs.get('page_size', DEFAULT_PAGE_SIZE))
     # We'll page if there's a provided token or if we have too many
     # objects.
-    if len(filtered) > page_size or body.get('page_token', None):
-        start_index = int(body.get('page_token', 0)) * page_size
+    if len(filtered) > page_size or kwargs.get('page_token', None):
+        start_index = int(kwargs.get('page_token', 0)) * page_size
         end_index = start_index + page_size
         # First fill a page
         page = filtered[start_index:min(len(filtered), end_index)]
         if len(filtered[start_index:]) - len(page) > 0:
             # If there is more than one page left of results
-            next_page_token = int(body.get('page_token', 0)) + 1
+            next_page_token = int(kwargs.get('page_token', 0)) + 1
             return (
                 {"data_objects": page,
                  "next_page_token": str(next_page_token)}, 200)
@@ -386,54 +376,44 @@ def DeleteDataBundle(**kwargs):
 def ListDataBundles(**kwargs):
     """
     Takes a ListDataBundles request and returns the bundles that match
-    that request.
+    that request. Possible kwargs: alias, url, checksum, checksum_type, page_size, page_token
 
     :param kwargs: ListDataBundles request.
     :return:
     """
-    body = kwargs.get('body')
-
     def filterer(item):
         """
         This filter is defined as a closure to set gather the kwargs from
         the request. It returns true or false depending on whether to
         include the item in the filter.
         :param item:
-        :return: bool
+        :rtype: bool
         """
         selected = get_most_recent_bundle(item[0])
-        # A list of true and false that all must be true to pass the filter
-        result_string = []
-        if body.get('checksum', None):
-            if body.get('checksum').get('checksum', None):
-                sums = filter(
-                    lambda x: x == body.get('checksum').get('checksum'),
-                    [x['checksum'] for x in selected.get('checksums', [])])
-                result_string.append(len(sums) > 0)
-            if body.get('checksum').get('type', None):
-                types = filter(
-                    lambda x: x == body.get('checksum').get('type'),
-                    [x['type'] for x in selected.get('checksums', [])])
-                result_string.append(len(types) > 0)
-        if body.get('alias', None):
-            aliases = filter(
-                lambda x: x == body.get('alias'),
-                selected.get('aliases', []))
-            result_string.append(len(aliases) > 0)
-        return False not in result_string
+        sel_checksum = selected.get('checksums', [])
+        if kwargs.get('checksum', None):
+            if kwargs['checksum'] not in [i['checksum'] for i in sel_checksum]:
+                return False
+        if kwargs.get('checksum_type', None):
+            if kwargs['checksum_type'] not in [i['type'] for i in sel_checksum]:
+                return False
+        if kwargs.get('alias', None):
+            if kwargs['alias'] not in selected.get('aliases', []):
+                return False
+        return True
     # Lazy since we're in memory
     filtered = filter_data_bundles(filterer)
-    page_size = int(body.get('page_size', DEFAULT_PAGE_SIZE))
+    page_size = int(kwargs.get('page_size', DEFAULT_PAGE_SIZE))
     # We'll page if there's a provided token or if we have too many
     # objects.
     if len(filtered) > page_size:
-        start_index = int(body.get('page_token', 0)) * page_size
+        start_index = int(kwargs.get('page_token', 0)) * page_size
         end_index = start_index + page_size
         # First fill a page
         page = filtered[start_index:min(len(filtered), end_index)]
         if len(filtered[start_index:]) - len(page) > 0:
             # If there is more than one page left of results
-            next_page_token = int(body.get('page_token', 0)) + 1
+            next_page_token = int(kwargs.get('page_token', 0)) + 1
             return (
                 {"data_bundles": page,
                  "next_page_token": str(next_page_token)}, 200)

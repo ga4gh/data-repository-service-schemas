@@ -45,8 +45,7 @@ paths:
       tags:
         - DataObjectService
       x-swagger-router-controller: ga4gh.dos.server
-  /databundles/list:
-    post:
+    get:
       summary: List the Data Bundles
       operationId: ListDataBundles
       responses:
@@ -71,11 +70,48 @@ paths:
           schema:
             $ref: '#/definitions/ErrorResponse'
       parameters:
-        - name: body
-          in: body
-          required: true
-          schema:
-            $ref: '#/definitions/ListDataBundlesRequest'
+        - name: alias
+          in: query
+          type: string
+          description: |-
+            OPTIONAL
+            If provided returns Data Bundles that have any alias that matches the
+            request.
+        - name: checksum
+          in: query
+          type: string
+          description: |-
+            REQUIRED
+            The hexlified checksum that one would like to match on.
+        - name: checksum_type
+          in: query
+          type: string
+          description: |-
+            OPTIONAL
+            If provided will restrict responses to those that match the provided
+            type.
+
+            possible values:
+            md5                # most blob stores provide a checksum using this
+            multipart-md5      # multipart uploads provide a specialized tag in S3
+            sha256
+            sha512
+        - name: page_size
+          in: query
+          type: integer
+          format: int32
+          description: |-
+            OPTIONAL
+            Specifies the maximum number of results to return in a single page.
+            If unspecified, a system default will be used.
+        - name: page_token
+          type: string
+          in: query
+          description: |-
+            OPTIONAL
+            The continuation token, which is used to page through large result sets.
+            To get the next page of results, set this parameter to the value of
+            `next_page_token` from the previous response.
       tags:
         - DataObjectService
       x-swagger-router-controller: ga4gh.dos.server
@@ -252,8 +288,7 @@ paths:
       tags:
         - DataObjectService
       x-swagger-router-controller: ga4gh.dos.server
-  /dataobjects/list:
-    post:
+    get:
       summary: List the Data Objects
       operationId: ListDataObjects
       responses:
@@ -278,11 +313,54 @@ paths:
           schema:
             $ref: '#/definitions/ErrorResponse'
       parameters:
-        - name: body
-          in: body
-          required: true
-          schema:
-            $ref: '#/definitions/ListDataObjectsRequest'
+        - name: alias
+          in: query
+          type: string
+          description: |-
+            OPTIONAL
+            If provided will only return Data Objects with the given alias.
+        - name: url
+          in: query
+          type: string
+          description: |-
+            OPTIONAL
+            If provided will return only Data Objects with a that URL matches
+            this string.
+        - name: checksum
+          in: query
+          type: string
+          description: |-
+            REQUIRED
+            The hexlified checksum that one would like to match on.
+        - name: checksum_type
+          in: query
+          type: string
+          description: |-
+            OPTIONAL
+            If provided will restrict responses to those that match the provided
+            type.
+
+            possible values:
+            md5                # most blob stores provide a checksum using this
+            multipart-md5      # multipart uploads provide a specialized tag in S3
+            sha256
+            sha512
+        - name: page_size
+          in: query
+          type: integer
+          format: int32
+          description: |-
+            OPTIONAL
+            Specifies the maximum number of results to return in a single page.
+            If unspecified, a system default will be used.
+        - name: page_token
+          in: query
+          type: string
+          description: |-
+            OPTIONAL
+            The continuation token, which is used to page through large result sets.
+            To get the next page of results, set this parameter to the value of
+            `next_page_token` from the previous response.
       tags:
         - DataObjectService
       x-swagger-router-controller: ga4gh.dos.server
@@ -472,26 +550,6 @@ definitions:
           OPTIONAL
           The digest method used to create the checksum. If left unspecified md5
           will be assumed.
-
-          possible values:
-          md5                # most blob stores provide a checksum using this
-          multipart-md5      # multipart uploads provide a specialized tag in S3
-          sha256
-          sha512
-  ChecksumRequest:
-    type: object
-    properties:
-      checksum:
-        type: string
-        description: |-
-          REQUIRED
-          The hexlified checksum that one would like to match on.
-      type:
-        type: string
-        description: |-
-          OPTIONAL
-          If provided will restrict responses to those that match the provided
-          type.
 
           possible values:
           md5                # most blob stores provide a checksum using this
@@ -725,11 +783,22 @@ definitions:
           If provided returns Data Bundles that have any alias that matches the
           request.
       checksum:
-        $ref: '#/definitions/Checksum'
+        type: string
+        description: |-
+          REQUIRED
+          The hexlified checksum that one would like to match on.
+      checksum_type:
+        type: string
         description: |-
           OPTIONAL
-          If provided, will only return Data Bundles which have the provided
-          checksum.
+          If provided will restrict responses to those that match the provided
+          type.
+
+          possible values:
+          md5                # most blob stores provide a checksum using this
+          multipart-md5      # multipart uploads provide a specialized tag in S3
+          sha256
+          sha512
       page_size:
         type: integer
         format: int32
@@ -776,11 +845,22 @@ definitions:
           If provided will return only Data Objects with a that URL matches
           this string.
       checksum:
-        $ref: '#/definitions/ChecksumRequest'
+        type: string
+        description: |-
+          REQUIRED
+          The hexlified checksum that one would like to match on.
+      checksum_type:
+        type: string
         description: |-
           OPTIONAL
-          If provided will only return data object messages with the provided
-          checksum. If the checksum type is provided
+          If provided will restrict responses to those that match the provided
+          type.
+
+          possible values:
+          md5                # most blob stores provide a checksum using this
+          multipart-md5      # multipart uploads provide a specialized tag in S3
+          sha256
+          sha512
       page_size:
         type: integer
         format: int32
