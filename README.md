@@ -27,8 +27,8 @@ Installing is as easy as:
 $ pip install ga4gh-dos-schemas
 ```
 
-This will install both a demonstration server and a Python client that will allow you to 
-manage Data Objects in a local server. You can start the demo server using `ga4gh_dos_server`. 
+This will install both a demonstration server and a Python client that will allow you to
+manage Data Objects in a local server. You can start the demo server using `ga4gh_dos_server`.
 This starts a Data Object Service at http://localhost:8080.
 
 ```
@@ -45,11 +45,10 @@ curl -X POST -H 'Content-Type: application/json' \
 # We can then get the newly created Data Object by id
 curl http://localhost:8080/ga4gh/dos/v1/dataobjects/hg38-chr22
 # Or by checksum!
-curl -X POST -H 'Content-Type: application/json' \
-    --data '{"checksum": {"checksum": "41b47ce1cc21b558409c19b892e1c0d1"}}' http://localhost:8080/ga4gh/dos/v1/dataobjects/list
+curl -X GET http://localhost:8080/ga4gh/dos/v1/dataobjects -d checksum=41b47ce1cc21b558409c19b892e1c0d1
 ```
 
-For more on getting started, check out the [quickstart guide](docs/source/quickstart.rst) or 
+For more on getting started, check out the [quickstart guide](docs/source/quickstart.rst) or
 the documentation at readthedocs: https://data-object-service.readthedocs.io/en/latest/ !
 
 ## Getting involved!
