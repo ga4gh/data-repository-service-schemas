@@ -33,11 +33,12 @@ and for the client::
 
     $ ga4gh_dos_demo
 
-Building documents
-------------------
+(The client doesn't do anything yet but will soon.)
 
-The schemas are editable as OpenAPI 2 YAML files. To generate OpenAPI 3
-descriptions install `swagger2openapi <https://github.com/Mermade/swagger2openapi>`_
-and run the following::
+Further reading
+---------------
 
-    $ swagger2openapi -y openapi/data_object_service.swagger.yaml > openapi/data_object_service.openapi.yaml
+* `gdc_notebook.ipynb <https://github.com/ga4gh/data-object-service-schemas/blob/master/python/examples/gdc_notebook.ipynb>`_
+  outlines examples of how to access data with this tool.
+* `demo.py <https://github.com/ga4gh/data-object-service-schemas/blob/master/python/examples/gdc_dos.py>`_
+  demonstrates basic CRUD functionality implemented by this package.

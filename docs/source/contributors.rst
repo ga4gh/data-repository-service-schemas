@@ -22,7 +22,7 @@ We use Sphinx for our documentation. You can generate an HTML build like so::
     $ cd docs/
     $ make html
 
-You'll find the built documentation in `docs/build/`.
+You'll find the built documentation in ``docs/build/``.
 
 Tests
 -----
@@ -42,10 +42,18 @@ Schema architecture
 The canonical, authoritative schema is located at ``openapi/data_object_service.swagger.yaml``. All schema changes
 must be made to the Swagger schema, and all other specifications (e.g. SmartAPI, OpenAPI 3) are derived from it.
 
+Building documents
+******************
+
+The schemas are editable as OpenAPI 2 YAML files. To generate OpenAPI 3
+descriptions install `swagger2openapi <https://github.com/Mermade/swagger2openapi>`_
+and run the following::
+
+    $ swagger2openapi -y openapi/data_object_service.swagger.yaml > openapi/data_object_service.openapi.yaml
+
 Code contributions
 ------------------
 
 We welcome code contributions! Feel free to fork the repository and submit a
 pull request. Please refer to this `contribution guide <https://github.com/ga4gh/ga4gh-schemas/blob/master/CONTRIBUTING.rst>`_
 for guidance as to how you should submit changes.
-
