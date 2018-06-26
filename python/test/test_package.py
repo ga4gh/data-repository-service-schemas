@@ -2,7 +2,7 @@
 import os
 import unittest
 
-import requests
+import swagger_spec_validator
 import yaml
 
 
@@ -29,8 +29,5 @@ class TestPackage(unittest.TestCase):
         is valid, the online validator will return 200 OK and an empty
         JSON response."""
         path = os.path.join(self.spec_dir, 'data_object_service.swagger.yaml')
-        with open(os.path.join(path), 'r') as data:
-            r = requests.post("http://online.swagger.io/validator/debug",
-                              data=data,
-                              headers={'Content-Type': 'application/x-yaml'})
-        assert r.ok and not r.json()
+        swagger_spec_validator.validate_spec_url('file://' + os.path.abspath(path))
+
