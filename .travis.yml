@@ -3,7 +3,8 @@ python:
 - '2.7'
 before_install:
 - sudo apt-get update -qq
-- pip install . --process-dependency-links
+- python setup.py sdist
+- pip install dist/ga4gh_dos_schemas-*.tar.gz
 - pip install -r requirements.txt
 script:
 - nosetests python/
