@@ -47,8 +47,7 @@ setup(
         'ga4gh.dos': ['data_object_service.swagger.yaml'],
         '': ['openapi/data_object_service.swagger.yaml']
     },
-    include_package_data=True,
-    zip_safe=True,
+    zip_safe=False,
     author="Global Alliance for Genomics and Health",
     author_email="theglobalalliance@genomicsandhealth.org",
     classifiers=[
