@@ -621,4 +621,4 @@ class TestServer(unittest.TestCase):
             self._client.GetDataBundle(
                 data_bundle_id='NON-EXISTING-KEY').result()
         except HTTPNotFound as e:
-            self.assertEquals(e.status_code, 404)
+            self.assertEqual(e.status_code, 404)
