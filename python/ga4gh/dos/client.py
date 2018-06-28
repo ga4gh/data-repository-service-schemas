@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 This module exposes a single class :class:`ga4gh.dos.client.Client`, which
 exposes the HTTP methods of the Data Object Service as named Python functions.
@@ -9,8 +10,6 @@ following the OpenAPI schema.
 It currently assumes that the service also hosts the swagger.json, in a style
 similar to the demonstration server, :mod:`ga4gh.dos.server`.
 """
-
-
 from bravado.client import SwaggerClient
 from bravado.swagger_model import Loader
 from bravado.requests_client import RequestsClient
@@ -41,9 +40,9 @@ def validate_int64(test):
 int64_format = SwaggerFormat(
     format='int64',
     to_wire=lambda i: str(i),
-    to_python=lambda i: long(i),
+    to_python=lambda i: int(i),
     validate=validate_int64,  # jsonschema validates integer
-    description='Converts [wire]str:int64 <=> python long'
+    description="Converts [wire]str:int64 <=> python long"
 )
 
 
@@ -103,7 +102,7 @@ class Client:
         :param request_headers: The headers to set on each request.
         :return:
         """
-        swagger_path = '{}/swagger.json'.format(url.rstrip("/"))
+        swagger_path = '{}/swagger.json'.format(url.rstrip('/'))
         http_client = http_client or RequestsClient()
         loader = Loader(http_client, request_headers=request_headers)
         spec_dict = loader.load_spec(swagger_path)

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 Data Object Service Controller Functions
 
@@ -7,7 +8,6 @@ versions.
 
 Initializes an in-memory dictionary for storing Data Objects.
 """
-
 import uuid
 import datetime
 from dateutil.parser import parse
@@ -65,8 +65,7 @@ def filter_data_objects(predicate):
     Filters data objects according to a function that acts on each item
     returning either True or False per item.
     """
-    return [
-        get_most_recent(x[0]) for x in filter(predicate, data_objects.items())]
+    return [get_most_recent(x[0]) for x in filter(predicate, data_objects.items())]
 
 
 def filter_data_bundles(predicate):

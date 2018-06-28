@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 DOS Demonstration Server
 
@@ -8,14 +9,13 @@ to translate the OpenAPI schema into named controller functions.
 These functions are described in :mod:`ga4gh.dos.controllers` and
 are meant to provide a simple implementation of DOS.
 """
-
 import os
 
 import connexion
 from flask_cors import CORS
 
 # These are imported by name by connexion so we assert it here.
-from controllers import *  # noqa
+from ga4gh.dos.controllers import *  # noqa
 
 
 SWAGGER_FILENAME = 'data_object_service.swagger.yaml'

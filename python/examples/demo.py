@@ -28,7 +28,7 @@ def main():
     get_object_response = client.GetDataObject(
         data_object_id=data_object_id).result()
     data_object = get_object_response.data_object
-    print(data_object.id)
+    print((data_object.id))
 
     # UpdateDataObject
     print("..........Update that object.................")
@@ -43,38 +43,38 @@ def main():
         data_object_id=data_object_id, body=update_request).result()
     updated_object = client.GetDataObject(
         data_object_id=update_response['data_object_id']).result().data_object
-    print(updated_object.version)
+    print((updated_object.version))
 
     # Get the old DataObject
     print("..........Get the old Data Object.................")
     old_data_object = client.GetDataObject(
         data_object_id=update_response['data_object_id'],
         version=data_object.version).result().data_object
-    print(old_data_object.version)
+    print((old_data_object.version))
 
     # ListDataObjects
     print("..........List Data Objects...............")
     ListDataObjectsRequest = models.get_model('ListDataObjectsRequest')
     list_request = ListDataObjectsRequest()
     list_response = client.ListDataObjects(body=list_request).result()
-    print(len(list_response.data_objects))
+    print((len(list_response.data_objects)))
 
     # Get all versions of a DataObject
     print("..........Get all Versions...............")
     versions_response = client.GetDataObjectVersions(
         data_object_id=old_data_object.id).result()
-    print(len(versions_response.data_objects))
+    print((len(versions_response.data_objects)))
 
     # DeleteDataObject
     print("..........Delete the Object...............")
     delete_response = client.DeleteDataObject(
         data_object_id=data_object_id).result()
-    print(delete_response.data_object_id)
+    print((delete_response.data_object_id))
     try:
         client.GetDataObject(
             data_object_id=update_response['data_object_id']).result()
     except Exception as e:
-        print('The object no longer exists, 404 not found. {}'.format(e))
+        print(('The object no longer exists, 404 not found. {}'.format(e)))
 
     # Create a Data Object specifying your own version
     print(".......Create a Data Object with our own version..........")
@@ -89,7 +89,7 @@ def main():
     data_object_id = create_response['data_object_id']
     data_object = client.GetDataObject(
         data_object_id=data_object_id).result().data_object
-    print(data_object.version)
+    print((data_object.version))
 
     # Create a Data Object specifying your own ID
     print("..........Create a Data Object with our own ID..............")
@@ -117,7 +117,7 @@ def main():
     list_request = ListDataObjectsRequest(page_size=10)
     list_response = client.ListDataObjects(body=list_request).result()
     ids = [x.id for x in list_response.data_objects]
-    print(list_response.next_page_token)
+    print((list_response.next_page_token))
     print(ids)
 
     list_request = ListDataObjectsRequest(
@@ -131,7 +131,7 @@ def main():
     object_list_request = ListDataObjectsRequest(alias="OBJ1")
     object_list_response = client.ListDataObjects(
         body=object_list_request).result()
-    print(object_list_response.data_objects[0].aliases)
+    print((object_list_response.data_objects[0].aliases))
 
     # Find a DataObject by checksum
     print("..........List Objects by checksum..............")
@@ -139,14 +139,14 @@ def main():
         checksum=Checksum(checksum="def1"))
     object_list_response = client.ListDataObjects(
         body=object_list_request).result()
-    print(object_list_response.data_objects[0].checksums)
+    print((object_list_response.data_objects[0].checksums))
 
     # Find a DataObject by URL
     print("..........List Objects by url..............")
     object_list_request = ListDataObjectsRequest(url="http://1")
     object_list_response = client.ListDataObjects(
         body=object_list_request).result()
-    print(object_list_response.data_objects[0].urls)
+    print((object_list_response.data_objects[0].urls))
 
     # CreateDataBundle
     print("..........Create a Data Bundle............")
@@ -170,7 +170,7 @@ def main():
         data_bundle_id=data_bundle_id).result()
     data_bundle = get_bundle_response.data_bundle
     print(data_bundle)
-    print(data_bundle.id)
+    print((data_bundle.id))
 
     # UpdateDataBundle
     print("..........Update that Bundle.................")
@@ -191,8 +191,8 @@ def main():
         data_bundle_id=update_response['data_bundle_id']).result().data_bundle
     print(updated_bundle)
     print(data_bundle)
-    print(updated_bundle.version)
-    print(updated_bundle.aliases)
+    print((updated_bundle.version))
+    print((updated_bundle.aliases))
     assert updated_bundle.aliases[0] == 'ghi'
 
     # ListDataBundles
@@ -200,13 +200,13 @@ def main():
     ListDataBundlesRequest = models.get_model('ListDataBundlesRequest')
     list_request = ListDataBundlesRequest()
     list_response = client.ListDataBundles(body=list_request).result()
-    print(len(list_response.data_bundles))
+    print((len(list_response.data_bundles)))
 
     # Get all versions of a DataBundle
     print("..........Get all Versions of a Bundle...............")
     versions_response = client.GetDataBundleVersions(
         data_bundle_id=data_bundle.id).result()
-    print(len(versions_response.data_bundles))
+    print((len(versions_response.data_bundles)))
 
     # Get a DataObject from a bundle
     print("..........Get an Object in a Bundle..............")
@@ -215,7 +215,7 @@ def main():
     data_bundle = get_bundle_response.data_bundle
     data_object = client.GetDataObject(
         data_object_id=data_bundle.data_object_ids[0]).result().data_object
-    print(data_object.urls)
+    print((data_object.urls))
 
     # Get all DataObjects from a bundle
     print("..........Get all Objects in a Bundle..............")
@@ -232,12 +232,12 @@ def main():
     print("..........Delete the Bundle...............")
     delete_response = client.DeleteDataBundle(
         data_bundle_id=data_bundle_id).result()
-    print(delete_response.data_bundle_id)
+    print((delete_response.data_bundle_id))
     try:
         client.GetDataBundle(
             data_bundle_id=update_response['data_bundle_id']).result()
     except Exception as e:
-        print('The object no longer exists, 404 not found. {}'.format(e))
+        print(('The object no longer exists, 404 not found. {}'.format(e)))
 
     # Page through a listing of Data Bundles
     print("..........Page through a listing of Data Bundles..............")
@@ -253,7 +253,7 @@ def main():
     list_request = ListDataBundlesRequest(page_size=10)
     list_response = client.ListDataBundles(body=list_request).result()
     ids = [x['id'] for x in list_response.data_bundles]
-    print(list_response.next_page_token)
+    print((list_response.next_page_token))
     print(ids)
 
     list_request = ListDataBundlesRequest(
@@ -267,8 +267,8 @@ def main():
     list_request = ListDataBundlesRequest(
         alias=list_response.data_bundles[0].aliases[0])
     alias_list_response = client.ListDataBundles(body=list_request).result()
-    print(list_response.data_bundles[0].aliases[0])
-    print(alias_list_response.data_bundles[0].aliases[0])
+    print((list_response.data_bundles[0].aliases[0]))
+    print((alias_list_response.data_bundles[0].aliases[0]))
 
 
 if __name__ == '__main__':
