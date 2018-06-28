@@ -49,8 +49,9 @@ curl http://localhost:8080/ga4gh/dos/v1/dataobjects/hg38-chr22
 curl -X GET http://localhost:8080/ga4gh/dos/v1/dataobjects -d checksum=41b47ce1cc21b558409c19b892e1c0d1
 ```
 
-For more on getting started, check out the [quickstart guide](docs/source/quickstart.rst) or
-the documentation at readthedocs: https://data-object-service.readthedocs.io/en/latest/ !
+For more on getting started, check out the
+[quickstart guide](https://data-object-service.readthedocs.io/en/latest/quickstart.html)
+or the rest of the documentation at [ReadtheDocs](https://data-object-service.readthedocs.io/en/latest/)!
 
 ## Getting involved!
 
