@@ -13,5 +13,5 @@ $(SMARTAPI_PATH) : $(OPENAPI3_PATH)
 schemas : $(OPENAPI3_PATH) $(SMARTAPI_PATH)
 	true
 
-.PHONY: schema
+.PHONY: schemas
 
