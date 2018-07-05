@@ -45,11 +45,11 @@ must be made to the Swagger schema, and all other specifications (e.g. SmartAPI,
 Building documents
 ******************
 
-The schemas are editable as OpenAPI 2 YAML files. To generate OpenAPI 3
-descriptions install `swagger2openapi <https://github.com/Mermade/swagger2openapi>`_
-and run the following::
+To generate the OpenAPI 3 and SmartAPI descriptions, install
+`swagger2openapi <https://github.com/Mermade/swagger2openapi>`_ then run::
 
-    $ swagger2openapi -y openapi/data_object_service.swagger.yaml > openapi/data_object_service.openapi.yaml
+    $ make schemas
+
 
 Releases
 --------
