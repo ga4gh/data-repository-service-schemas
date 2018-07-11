@@ -73,21 +73,21 @@ paths:
         - name: alias
           in: query
           type: string
+          required: false
           description: |-
-            OPTIONAL
             If provided returns Data Bundles that have any alias that matches the
             request.
         - name: checksum
           in: query
           type: string
+          required: true
           description: |-
-            REQUIRED
             The hexlified checksum that one would like to match on.
         - name: checksum_type
           in: query
           type: string
+          required: false
           description: |-
-            OPTIONAL
             If provided will restrict responses to those that match the provided
             type.
 
@@ -100,15 +100,15 @@ paths:
           in: query
           type: integer
           format: int32
+          required: false
           description: |-
-            OPTIONAL
             Specifies the maximum number of results to return in a single page.
             If unspecified, a system default will be used.
         - name: page_token
           type: string
           in: query
+          required: false
           description: |-
-            OPTIONAL
             The continuation token, which is used to page through large result sets.
             To get the next page of results, set this parameter to the value of
             `next_page_token` from the previous response.
@@ -150,12 +150,11 @@ paths:
           required: true
           type: string
         - name: version
+          required: false
           description: |-
-            OPTIONAL
             If provided will return the requested version of the selected Data Bundle.
             Otherwise, only the latest version is returned.
           in: query
-          required: false
           type: string
       tags:
         - DataObjectService
@@ -316,27 +315,27 @@ paths:
         - name: alias
           in: query
           type: string
+          required: false
           description: |-
-            OPTIONAL
             If provided will only return Data Objects with the given alias.
         - name: url
           in: query
           type: string
+          required: false
           description: |-
-            OPTIONAL
             If provided will return only Data Objects with a that URL matches
             this string.
         - name: checksum
           in: query
           type: string
+          required: true
           description: |-
-            REQUIRED
             The hexlified checksum that one would like to match on.
         - name: checksum_type
           in: query
           type: string
+          required: false
           description: |-
-            OPTIONAL
             If provided will restrict responses to those that match the provided
             type.
 
@@ -349,15 +348,15 @@ paths:
           in: query
           type: integer
           format: int32
+          required: false
           description: |-
-            OPTIONAL
             Specifies the maximum number of results to return in a single page.
             If unspecified, a system default will be used.
         - name: page_token
           in: query
           type: string
+          required: false
           description: |-
-            OPTIONAL
             The continuation token, which is used to page through large result sets.
             To get the next page of results, set this parameter to the value of
             `next_page_token` from the previous response.
@@ -399,11 +398,10 @@ paths:
           required: true
           type: string
         - name: version
+          required: false
           description: |-
-            OPTIONAL
             If provided will return the requested version of the selected Data Object.
           in: query
-          required: false
           type: string
       tags:
         - DataObjectService
