@@ -80,7 +80,7 @@ paths:
         - name: checksum
           in: query
           type: string
-          required: true
+          required: false
           description: |-
             The hexlified checksum that one would like to match on.
         - name: checksum_type
