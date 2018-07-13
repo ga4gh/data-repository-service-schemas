@@ -9,6 +9,7 @@ import time
 from bravado.requests_client import RequestsClient
 from bravado.exception import HTTPNotFound
 
+import ga4gh.dos
 from ga4gh.dos.client import Client
 
 SERVER_URL = 'http://localhost:8080/ga4gh/dos/v1'
@@ -622,3 +623,8 @@ class TestServer(unittest.TestCase):
                 data_bundle_id='NON-EXISTING-KEY').result()
         except HTTPNotFound as e:
             self.assertEqual(e.status_code, 404)
+
+    def test_service_info(self):
+        r = self._client.GetServiceInfo().result()
+        self.assertEqual(ga4gh.dos.__version__, r.version)
+

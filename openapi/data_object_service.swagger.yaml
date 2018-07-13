@@ -11,12 +11,12 @@ consumes:
 produces:
   - application/json
 paths:
-  /service-info:
+  '/service-info':
     get:
       summary: Returns service version and other information
       operationId: GetServiceInfo
       responses:
-        200:
+        '200':
           description: Service information returned successfully
           schema:
             $ref: '#/definitions/ServiceInfoResponse'
