@@ -9,6 +9,7 @@ import unittest
 # setup connection, models and security
 from bravado.requests_client import RequestsClient
 from bravado.exception import HTTPNotFound
+import jsonschema
 
 from ga4gh.dos.client import Client
 
@@ -658,3 +659,20 @@ class TestServer(unittest.TestCase):
                 data_bundle_id='NON-EXISTING-KEY').result()
         except HTTPNotFound as e:
             self.assertEqual(e.status_code, 404)
+
+    def test_schema_required(self):
+        """
+        Tests that the server properly rejects a request
+        missing a parameter that is marked as required.
+        """
+        CreateDataObjectRequest = self._models.get_model('CreateDataObjectRequest')
+        DataObject = self._models.get_model('CreateDataObjectRequest')
+        # Missing the `id` parameter
+        data_object = DataObject(name=str(uuid.uuid1()), size="1")
+        create_request = CreateDataObjectRequest(data_object=data_object)
+
+        with self.assertRaises(jsonschema.exceptions.ValidationError) as context:
+            self._client.CreateDataObject(body=create_request)
+
+        self.assertIn('required property', str(context.exception))
+
