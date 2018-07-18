@@ -20,10 +20,7 @@ class TestPackage(unittest.TestCase):
         assert __version__ == spec_version
 
     def test_schema_validity(self):
-        """Check to make sure that the Swagger schema specification is
-        valid by running it through the online validator. If the schema
-        is valid, the online validator will return 200 OK and an empty
-        JSON response."""
+        """Validate the schema using swagger_spec_validator."""
         path = os.path.abspath(self.swagger_path)
         swagger_spec_validator.validate_spec_url('file://' + path)
 

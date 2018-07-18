@@ -11,6 +11,7 @@ from bravado.requests_client import RequestsClient
 from bravado.exception import HTTPNotFound
 import jsonschema
 
+import ga4gh.dos
 from ga4gh.dos.client import Client
 
 SERVER_URL = 'http://localhost:8080/ga4gh/dos/v1'
@@ -675,4 +676,8 @@ class TestServer(unittest.TestCase):
             self._client.CreateDataObject(body=create_request)
 
         self.assertIn('required property', str(context.exception))
+
+    def test_service_info(self):
+        r = self._client.GetServiceInfo().result()
+        self.assertEqual(ga4gh.dos.__version__, r.version)
 

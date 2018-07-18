@@ -12,6 +12,7 @@ import uuid
 import datetime
 from dateutil.parser import parse
 
+import ga4gh.dos
 
 DEFAULT_PAGE_SIZE = 100
 
@@ -421,3 +422,12 @@ def ListDataBundles(**kwargs):
     else:
         page = filtered
     return({"data_bundles": page}, 200)
+
+
+def GetServiceInfo(**kwargs):
+    info = {
+        'version': ga4gh.dos.__version__,
+        'description': "https://github.com/ga4gh/data-object-service-schemas",
+        'name': "Data Object Service"
+    }
+    return info, 200
