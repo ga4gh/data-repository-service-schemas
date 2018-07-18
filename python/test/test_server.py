@@ -1,13 +1,15 @@
 # With app.py running start this test
+from datetime import datetime
 import logging
-import uuid
-import unittest
 import subprocess
 import time
+import uuid
+import unittest
 
 # setup connection, models and security
 from bravado.requests_client import RequestsClient
 from bravado.exception import HTTPNotFound
+import jsonschema
 
 import ga4gh.dos
 from ga4gh.dos.client import Client
@@ -58,25 +60,25 @@ class TestServer(unittest.TestCase):
         """ validate server uses client's id """
         Checksum = self._models.get_model('Checksum')
         URL = self._models.get_model('URL')
-        CreateDataObjectRequest = self._models.get_model(
-            'CreateDataObjectRequest')
+        CreateDataObjectRequest = self._models.get_model('CreateDataObjectRequest')
         DataObject = self._models.get_model('CreateDataObjectRequest')
         checksum = str(uuid.uuid1())
-        id = str(uuid.uuid1())
+        do_id = str(uuid.uuid1())
         # CreateDataObject
         print("..........Create an object............")
         create_data_object = DataObject(
-            id=id,
+            id=do_id,
             name="abc",
             size="12345",
             checksums=[Checksum(checksum=checksum, type="md5")],
+            created=datetime.utcnow(),
             urls=[URL(url="a"), URL(url="b")])
         create_request = CreateDataObjectRequest(
             data_object=create_data_object)
         create_response = self._client.CreateDataObject(
             body=create_request).result()
         data_object_id = create_response['data_object_id']
-        assert data_object_id == id, "expected server to use client's id"
+        self.assertEqual(data_object_id, do_id, "expected server to use client's id")
 
     def test_duplicate_checksums(self):
         """ validate expected behavior of multiple creates of same checksum """
@@ -89,6 +91,8 @@ class TestServer(unittest.TestCase):
         # CreateDataObject
         print("..........Create an object............")
         create_data_object = DataObject(
+            id=str(uuid.uuid1()),
+            created=datetime.utcnow(),
             name="abc",
             size="12345",
             checksums=[Checksum(checksum=checksum, type="md5")],
@@ -101,6 +105,8 @@ class TestServer(unittest.TestCase):
         print(data_object_id)
         print("..........Create a 2nd  object............")
         create_data_object = DataObject(
+            id=str(uuid.uuid1()),
+            created=datetime.utcnow(),
             name="xyz",
             size="12345",
             checksums=[Checksum(checksum=checksum, type="md5")],
@@ -152,6 +158,8 @@ class TestServer(unittest.TestCase):
         # CreateDataObject
         print("..........Create an object............")
         create_data_object = DataObject(
+            id=str(uuid.uuid1()),
+            created=datetime.utcnow(),
             name="abc",
             size="12345",
             checksums=[Checksum(checksum="def", type="md5")],
@@ -176,12 +184,14 @@ class TestServer(unittest.TestCase):
         UpdateDataObjectRequest = self._models.get_model(
             'UpdateDataObjectRequest')
         update_data_object = DataObject(
+            id=str(uuid.uuid1()),
+            created=datetime.utcnow(),
             name="abc",
             size="12345",
             checksums=[Checksum(checksum="def", type="md5")],
             urls=[URL(url="a"), URL(url="b"), URL(url="c")])
         update_request = UpdateDataObjectRequest(
-            data_object=update_data_object)
+            data_object=update_data_object, data_object_id=data_object_id)
         update_response = self._client.UpdateDataObject(
             data_object_id=data_object_id, body=update_request).result()
         updated_object = self._client.GetDataObject(
@@ -192,6 +202,8 @@ class TestServer(unittest.TestCase):
 
         print("..........Create another object w/ same checksum............")
         create_data_object = DataObject(
+            id=str(uuid.uuid1()),
+            created=datetime.utcnow(),
             name="fubar",
             size="12345",
             checksums=[Checksum(checksum="def", type="md5")],
@@ -240,6 +252,8 @@ class TestServer(unittest.TestCase):
         # CreateDataObject
         print("..........Create an object............")
         create_data_object = DataObject(
+            id=str(uuid.uuid1()),
+            created=datetime.utcnow(),
             name="abc",
             # Specify `size` as an int greater than 2^31 - 1 (Javascript's
             # maximum int size) but lower than 2^63 - 1 (Python's maximum int
@@ -266,12 +280,15 @@ class TestServer(unittest.TestCase):
         UpdateDataObjectRequest = self._models.get_model(
             'UpdateDataObjectRequest')
         update_data_object = DataObject(
+            id=data_object['id'],
+            created=data_object['created'],
             name="abc",
             size='12345',
             checksums=[Checksum(checksum="def", type="md5")],
             urls=[URL(url="a"), URL(url="b"), URL(url="c")])
         update_request = UpdateDataObjectRequest(
-            data_object=update_data_object)
+            data_object=update_data_object,
+            data_object_id=data_object['id'])
         update_response = self._client.UpdateDataObject(
             data_object_id=data_object.id,
             body=update_request).result()
@@ -324,6 +341,8 @@ class TestServer(unittest.TestCase):
         # Create a Data Object specifying your own version
         print(".......Create a Data Object with our own version..........")
         my_data_object = DataObject(
+            id=str(uuid.uuid1()),
+            created=datetime.utcnow(),
             name="abc",
             size='12345',
             checksums=[Checksum(checksum="def", type="md5")],
@@ -342,9 +361,11 @@ class TestServer(unittest.TestCase):
         print("..........Create a Data Object with our own ID...........")
         my_data_object = DataObject(
             id="myid",
+            created=datetime.utcnow(),
             file_name="abc",
             checksums=[Checksum(checksum="def", type="md5")],
-            urls=[URL(url="a"), URL(url="b")])
+            urls=[URL(url="a"), URL(url="b")],
+            size=0)
         create_request = CreateDataObjectRequest(
             data_object=my_data_object)
         create_response = self._client.CreateDataObject(
@@ -356,6 +377,8 @@ class TestServer(unittest.TestCase):
         print("..........Page through a listing of Objects..............")
         for i in range(100):
             my_data_object = DataObject(
+                id=str(uuid.uuid1()),
+                created=datetime.utcnow(),
                 name="OBJ{}".format(i),
                 aliases=["OBJ{}".format(i)],
                 size=str(10 * i),
@@ -440,6 +463,8 @@ class TestServer(unittest.TestCase):
         print("..........Create some data objects ............")
         for i in range(10):
             my_data_object = DataObject(
+                id=str(uuid.uuid1()),
+                created=datetime.utcnow(),
                 name="OBJ{}".format(i),
                 aliases=["OBJ{}".format(i)],
                 size=str(10 * i),
@@ -468,7 +493,11 @@ class TestServer(unittest.TestCase):
             'CreateDataBundleRequest')
         DataBundle = self._models.get_model('DataBundle')
         create_data_bundle = DataBundle(
+            id=str(uuid.uuid1()),
             name="abc",
+            created=datetime.utcnow(),
+            updated=datetime.utcnow(),
+            version=str(datetime.utcnow()),
             size="12345",
             checksums=[Checksum(checksum="def", type="md5")],
             data_object_ids=[x.id for x in list_response.data_objects])
@@ -492,8 +521,12 @@ class TestServer(unittest.TestCase):
         UpdateDataBundleRequest = self._models.get_model(
             'UpdateDataBundleRequest')
         update_data_bundle = DataBundle(
+            id=str(uuid.uuid1()),
             name="abc",
             size="12345",
+            created=datetime.utcnow(),
+            updated=datetime.utcnow(),
+            version=str(datetime.utcnow()),
             data_object_ids=[x.id for x in list_response.data_objects],
             checksums=[Checksum(checksum="def", type="md5")],
             aliases=["ghi"])
@@ -572,6 +605,10 @@ class TestServer(unittest.TestCase):
         print("..........Page through a listing of Data Bundles......")
         for i in range(100):
             my_data_bundle = DataBundle(
+                id=str(uuid.uuid1()),
+                created=datetime.utcnow(),
+                updated=datetime.utcnow(),
+                version=str(datetime.utcnow()),
                 name="BDL{}".format(i),
                 aliases=["BDL{}".format(i)],
                 size=str(10 * i),
@@ -623,6 +660,22 @@ class TestServer(unittest.TestCase):
                 data_bundle_id='NON-EXISTING-KEY').result()
         except HTTPNotFound as e:
             self.assertEqual(e.status_code, 404)
+
+    def test_schema_required(self):
+        """
+        Tests that the server properly rejects a request
+        missing a parameter that is marked as required.
+        """
+        CreateDataObjectRequest = self._models.get_model('CreateDataObjectRequest')
+        DataObject = self._models.get_model('CreateDataObjectRequest')
+        # Missing the `id` parameter
+        data_object = DataObject(name=str(uuid.uuid1()), size="1")
+        create_request = CreateDataObjectRequest(data_object=data_object)
+
+        with self.assertRaises(jsonschema.exceptions.ValidationError) as context:
+            self._client.CreateDataObject(body=create_request)
+
+        self.assertIn('required property', str(context.exception))
 
     def test_service_info(self):
         r = self._client.GetServiceInfo().result()
