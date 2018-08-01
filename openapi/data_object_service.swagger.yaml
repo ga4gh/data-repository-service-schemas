@@ -7,6 +7,9 @@ info:
   contact:
     name: David Steinberg
     email: david@resium.com
+  license:
+    name: Apache 2.0
+    url: https://raw.githubusercontent.com/ga4gh/data-object-service-schemas/master/LICENSE
 schemes:
   - http
   - https
@@ -960,3 +963,6 @@ definitions:
       contact:
         type: object
         description: Maintainer contact info
+      license:
+        type: object
+        description: License information for the exposed API
