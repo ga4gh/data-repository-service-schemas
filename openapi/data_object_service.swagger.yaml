@@ -4,6 +4,9 @@ info:
   title: Data Object Service
   version: 0.3.1
   description: https://github.com/ga4gh/data-object-service-schemas
+  contact:
+    name: David Steinberg
+    email: david@resium.com
 schemes:
   - http
   - https
@@ -954,4 +957,6 @@ definitions:
       description:
         type: string
         description: Service description
-
+      contact:
+        type: object
+        description: Maintainer contact info
