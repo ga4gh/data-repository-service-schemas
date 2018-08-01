@@ -3,6 +3,7 @@ basePath: '/ga4gh/dos/v1'
 info:
   title: Data Object Service
   version: 0.3.1
+  description: https://github.com/ga4gh/data-object-service-schemas
 schemes:
   - http
   - https
@@ -942,11 +943,12 @@ definitions:
   ServiceInfoResponse:
     type: object
     required: ['version']
+    description: Placeholder for the Info Object
     properties:
       version:
         type: string
         description: Service version
-      name:
+      title:
         type: string
         description: Service name
       description:

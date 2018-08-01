@@ -12,7 +12,7 @@ import uuid
 import datetime
 from dateutil.parser import parse
 
-import ga4gh.dos
+import yaml
 
 DEFAULT_PAGE_SIZE = 100
 
@@ -425,9 +425,7 @@ def ListDataBundles(**kwargs):
 
 
 def GetServiceInfo(**kwargs):
-    info = {
-        'version': ga4gh.dos.__version__,
-        'description': "https://github.com/ga4gh/data-object-service-schemas",
-        'name': "Data Object Service"
-    }
-    return info, 200
+    from ga4gh.dos.server import SWAGGER_PATH
+    with open(SWAGGER_PATH, 'r') as schema:
+        service_info = yaml.load(schema)['info']
+    return service_info, 200
