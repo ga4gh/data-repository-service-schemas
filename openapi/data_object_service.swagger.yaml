@@ -230,6 +230,7 @@ paths:
         - name: body
           in: body
           required: true
+          description: The new content for the Data Bundle identified by the given data_bundle_id.
           schema:
             $ref: '#/definitions/UpdateDataBundleRequest'
       tags:
@@ -301,6 +302,9 @@ paths:
         - name: body
           in: body
           required: true
+          description: |-
+            The data object to be created. The ID scheme is left up to the
+            implementor but should be unique to the server instance.
           schema:
             $ref: '#/definitions/CreateDataObjectRequest'
       tags:
@@ -497,6 +501,7 @@ paths:
         - name: body
           in: body
           required: true
+          description: The new Data Object for the given data_object_id.
           schema:
             $ref: '#/definitions/UpdateDataObjectRequest'
       tags:
@@ -591,9 +596,6 @@ definitions:
     properties:
       data_object:
         $ref: '#/definitions/DataObject'
-        description: |-
-          The data object to be created. The ID scheme is left up to the
-          implementor but should be unique to the server instance.
     description: |-
       The Data Object one would like to index. One must provide any aliases
       and URLs to this file when sending the CreateDataObjectRequest. It is up
@@ -755,8 +757,6 @@ definitions:
     properties:
       data_object:
         $ref: '#/definitions/DataObject'
-        description: |-
-          The Data Object that coincides with a specific GetDataObjectRequest.
   GetDataObjectVersionsResponse:
     type: object
     required: ['data_objects']
@@ -905,8 +905,6 @@ definitions:
         type: string
       data_bundle:
         $ref: '#/definitions/DataBundle'
-        description: |-
-          The new Data Bundle content.
   UpdateDataBundleResponse:
     type: object
     required: ['data_bundle_id']
@@ -925,8 +923,6 @@ definitions:
           The identifier of the Data Object to be updated.
       data_object:
         $ref: '#/definitions/DataObject'
-        description: |-
-          The new Data Object for this identifier.
   UpdateDataObjectResponse:
     type: object
     required: ['data_object_id']
