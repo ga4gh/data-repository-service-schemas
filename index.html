@@ -38,20 +38,6 @@
     <script src="./swagger-ui-standalone-preset.js"> </script>
     <script>
     window.onload = function() {
-
-    // https://github.com/swagger-api/swagger-ui/issues/3725#issuecomment-334899276
-    const DisableTryItOutPlugin = function() {
-      return {
-        statePlugins: {
-          spec: {
-            wrapSelectors: {
-              allowTryItOutFor: () => () => false
-            }
-          }
-        }
-      }
-    }
-
       // Build a system
       const ui = SwaggerUIBundle({
         url: "https://raw.githubusercontent.com/ga4gh/data-object-service-schemas/master/openapi/data_object_service.swagger.yaml",
@@ -62,13 +48,20 @@
           SwaggerUIStandalonePreset
         ],
         plugins: [
-          SwaggerUIBundle.plugins.DownloadUrl,
-          DisableTryItOutPlugin
+          SwaggerUIBundle.plugins.DownloadUrl
         ],
-        layout: "StandaloneLayout"
+        layout: "StandaloneLayout",
+        // This line configures the Try It Out feature to make requests
+        // against the dos-azul-lambda instance once the spec is fully
+        // loaded. This is the cleanest way to do so without changing the
+        // specification itself. One downside is that swagger-ui will
+        // interpret this URL as the schema URL, so if the user attempts
+        // to press the 'Explore' button, swagger-ui will fail.
+        onComplete: function() { ui.specActions.updateUrl('https://dos.commons.ucsc-cgp.org/') }
       })
 
       window.ui = ui
+
     }
   </script>
   </body>
