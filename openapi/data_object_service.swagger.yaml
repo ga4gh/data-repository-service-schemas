@@ -11,8 +11,8 @@ info:
     name: Apache 2.0
     url: https://raw.githubusercontent.com/ga4gh/data-object-service-schemas/master/LICENSE
 schemes:
-  - http
   - https
+  - http
 consumes:
   - application/json
 produces:
