@@ -425,7 +425,5 @@ def ListDataBundles(**kwargs):
 
 
 def GetServiceInfo(**kwargs):
-    from ga4gh.dos.server import SWAGGER_PATH
-    with open(SWAGGER_PATH, 'r') as schema:
-        service_info = yaml.load(schema)['info']
-    return service_info, 200
+    import ga4gh.dos.schema
+    return ga4gh.dos.schema.present_schema()['info'], 200
