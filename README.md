@@ -9,7 +9,7 @@
 
 The goal of DOS is to create a generic API on top of existing object storage systems
 so workflow systems can access data in a single, standard way regardless of where it's
-stored. It's maintained by the [GA4GH Data Working Group](https://www.ga4gh.org).
+stored. It's maintained by the [GA4GH Cloud Workstream](https://github.com/ga4gh/wiki/wiki).
 
 ## Key features
 
