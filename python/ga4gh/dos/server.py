@@ -9,18 +9,12 @@ to translate the OpenAPI schema into named controller functions.
 These functions are described in :mod:`ga4gh.dos.controllers` and
 are meant to provide a simple implementation of DOS.
 """
-import os
-
 import connexion
 from flask_cors import CORS
 
 # These are imported by name by connexion so we assert it here.
 from ga4gh.dos.controllers import *  # noqa
-
-
-SWAGGER_FILENAME = 'data_object_service.swagger.yaml'
-current_directory = os.path.dirname(os.path.realpath(__file__))
-SWAGGER_PATH = os.path.join(current_directory, SWAGGER_FILENAME)
+from ga4gh.dos.schema import SWAGGER_PATH
 
 
 def configure_app():
