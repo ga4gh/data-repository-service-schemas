@@ -12,7 +12,6 @@ import uuid
 import datetime
 from dateutil.parser import parse
 
-import yaml
 
 DEFAULT_PAGE_SIZE = 100
 

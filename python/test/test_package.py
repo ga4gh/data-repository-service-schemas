@@ -2,7 +2,6 @@
 import os.path
 import unittest
 
-import json
 import swagger_spec_validator
 import yaml
 

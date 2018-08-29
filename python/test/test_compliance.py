@@ -1,6 +1,5 @@
 # -*- coding: utf-8 -*-
 import hashlib
-import json
 import random
 import uuid
 
