@@ -285,7 +285,7 @@ class AbstractComplianceTest(unittest.TestCase):
         request returns HTTP 400
         """
         _, url = self.get_random_data_object()
-        self.dos_request('PUT', url, expected_status=400, body={'data_object': {}})
+        self.dos_request('PUT', url, expected_status=400, body={})
 
     @test_requires('ListDataObjects')
     def test_paging(self):
@@ -330,8 +330,9 @@ class AbstractComplianceTest(unittest.TestCase):
         data_object, url = self.get_random_data_object()
 
         # Try and update with no changes.
-        self.dos_request('PUT', url, body={'data_object': data_object, 'data_object_id': data_object['id']},
-                         headers={'Content-Type': 'application/json'})
+        self.dos_request('PUT', url, headers={'Content-Type': 'application/json'},
+                         body={'data_object': data_object,
+                               'data_object_id': data_object['id']})
         # We specify the Content-Type since Chalice looks for it when
         # deserializing the request body server-side
 
@@ -340,8 +341,9 @@ class AbstractComplianceTest(unittest.TestCase):
         data_object['aliases'].append(alias)
 
         # Try and update, this time with a change.
-        update_response = self.dos_request('PUT', url, body={'data_object': data_object},
-                                           headers={'Content-Type': 'application/json'})
+        update_response = self.dos_request('PUT', url, headers={'Content-Type': 'application/json'},
+                                           body={'data_object': data_object,
+                                                 'data_object_id': data_object['id']})
         self.assertEqual(data_object['id'], update_response['data_object_id'])
 
         time.sleep(2)
@@ -392,10 +394,14 @@ class AbstractComplianceTest(unittest.TestCase):
         data_object.update(attributes)
 
         # Now update the old data object with the new attributes we added
-        self.dos_request('PUT', url, body={'data_object': data_object, 'data_object_id': data_object['id']},
-                         headers={'Content-Type': 'application/json'})
+        self.dos_request('PUT', url, headers={'Content-Type': 'application/json'},
+                         body={'data_object': data_object,
+                               'data_object_id': data_object['id']})
         time.sleep(2)  # Give the server some time to catch up
 
         # Test and see if the update took place
-        get_response = self.dos_request('GET', url)
-        self.assertEqual(get_response['data_object'], data_object)
+        get_response = self.dos_request('GET', url)['data_object']
+        # We only compare the change attributes as DOS implementations
+        # can update timestamps server-side
+        self.assertEqual(get_response['name'], data_object['name'])
+        self.assertEqual(get_response['urls'], data_object['urls'])
