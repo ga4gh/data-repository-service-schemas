@@ -29,3 +29,20 @@ If you have a different ``basePath``, you can also specify that::
     def swagger():
         return ga4gh.dos.schema.from_chalice_routes(app.routes, base_path='/api')
 
+Compliance testing
+------------------
+
+This package contains a testing suite
+(:class:`~ga4gh.dos.test.integration.AbstractComplianceTest`)
+that streamlines testing implementations of the Data Object Service
+for compliance with the DOS schema.
+
+This test suite is meant to supplement, and not replace, an existing
+test suite. It does not:
+
+* test authentication
+* test health of the service(s) underpinning an implementation
+* test any endpoints not defined in the Data Object Service schema
+
+.. autoclass:: ga4gh.dos.test.integration.AbstractComplianceTest
+   :members: _make_request

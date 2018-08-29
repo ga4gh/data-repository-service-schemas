@@ -12,7 +12,6 @@ import uuid
 import datetime
 from dateutil.parser import parse
 
-import yaml
 
 DEFAULT_PAGE_SIZE = 100
 
@@ -38,6 +37,8 @@ def get_most_recent(key):
     :return:
     """
     max = {'updated': '01-01-1965 00:00:00Z'}
+    if key not in data_objects:
+        raise KeyError("Data object not found!")
     for version in data_objects[key].keys():
         data_object = data_objects[key][version]
         if parse(data_object['updated']) > parse(max['updated']):
@@ -198,7 +199,10 @@ def UpdateDataObject(**kwargs):
     data_object_id = kwargs['data_object_id']
     body = kwargs['body']['data_object']
     # Check to make sure we are updating an existing document.
-    old_data_object = get_most_recent(data_object_id)
+    try:
+        old_data_object = get_most_recent(data_object_id)
+    except KeyError:
+        return "Data object not found", 404
     # Upsert the new body in place of the old document
     doc = add_updated_timestamps(body)
     doc['created'] = old_data_object['created']
