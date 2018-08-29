@@ -86,6 +86,7 @@ class AbstractComplianceTest(unittest.TestCase):
             def setUpClass(cls):
                 cls.lg = LocalGateway(chalice_app, Config())
 
+            @classmethod
             def _make_request(self, meth, path, headers=None, body=None)
                 headers = headers or {}
                 r = self.lg.handle_request(method=meth, path='/ga4gh/dos/v1' + path,
@@ -119,7 +120,8 @@ class AbstractComplianceTest(unittest.TestCase):
         for method in path.values():
             supports.append(method['operationId'])
 
-    def _make_request(self, meth, path, headers=None, body=None):
+    @classmethod
+    def _make_request(cls, meth, path, headers=None, body=None):
         """
         Method that makes requests to a DOS implementation under test
         given a method, path, request headers, and a request body.
@@ -145,7 +147,8 @@ class AbstractComplianceTest(unittest.TestCase):
         """
         raise NotImplementedError
 
-    def dos_request(self, meth, path, headers=None, body=None, expected_status=200):
+    @classmethod
+    def dos_request(cls, meth, path, headers=None, body=None, expected_status=200):
         """
         Wrapper function around :meth:`AbstractComplianceTest._make_request`.
         Logs the request being made, makes the request with
@@ -177,13 +180,21 @@ class AbstractComplianceTest(unittest.TestCase):
         headers = headers or {}
         if body and 'Content-Type' not in headers:
             headers['Content-Type'] = 'application/json'
-        request, status = self._make_request(meth=meth, path=path, headers=headers,
-                                             body=json.dumps(body))
+        request, status = cls._make_request(meth=meth, path=path, headers=headers,
+                                            body=json.dumps(body))
         logger.info("{meth} {path} [{status}]".format(**locals()))
 
         # Check to make sure the return code is what we expect
         msg = "{meth} {path} returned {status}, expected {expected_status}: {request}"
-        self.assertEqual(status, expected_status, msg=msg.format(**locals()))
+        # We could use :meth:`assertEqual` here, but if we do,
+        # :meth:`dos_request` must be an instance method. Since the only
+        # advantage we really lose is a prettier error message, we can
+        # be a little verbose this one time.
+        # It's preferable that :meth:`dos_request` be defined as a class method
+        # to allow one-time server setup to be performed in meth:`setUpClass`,
+        # which must necessarily be a class method.
+        if not status == expected_status:
+            raise AssertionError(msg.format(**locals()))
 
         # Return the deserialized request body
         return json.loads(request)
