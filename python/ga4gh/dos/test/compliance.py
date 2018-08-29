@@ -2,6 +2,7 @@
 import functools
 import json
 import logging
+import random
 import time
 import unittest
 try:
@@ -197,6 +198,39 @@ class AbstractComplianceTest(unittest.TestCase):
         """
         return path + '?' + urllib.urlencode(kwargs)
 
+    def get_random_data_object(self):
+        """
+        Retrieves a 'random' data object by performing a ListDataBundles
+        request with a large page size then randomly selecting a data
+        object from the response.
+
+        As this test utilizes the ListDataObjects operation, be sure to
+        specify that as a test requirement with :func:`test_requires`
+        when using this context manager in a test case.
+
+        Usage::
+
+            obj, url = self.get_random_data_object()
+
+        :returns: a random data object as a dict and its relative URL
+                  (e.g. '/dataobjects/abcdefg-12345') as a string
+        :rtype: tuple
+        """
+        r = self.dos_request('GET', self.get_query_url('/dataobjects', page_size=100))
+        data_obj = random.choice(r['data_objects'])
+        url = '/dataobjects/' + data_obj['id']
+        return data_obj, url
+
+    def get_random_data_bundle(self):
+        """
+        Retrieves a 'random' data bundle. Similar to :meth:`get_random_data_object`
+        but retrieves a data bundle instead.
+        """
+        r = self.dos_request('GET', self.get_query_url('/databundles', page_size=100))
+        data_bdl = random.choice(r['data_bundles'])
+        url = '/databundles/' + data_bdl['id']
+        return data_bdl, url
+
     @test_requires('ListDataObjects')
     def test_list_data_objects_simple(self):
         """Smoke test to verify that `GET /dataobjects` returns a response."""
@@ -208,32 +242,31 @@ class AbstractComplianceTest(unittest.TestCase):
         """
         Lists Data Objects and then gets one by ID.
         """
-        # List all the data objects so we can pick one to test.
-        r = self.dos_request('GET', '/dataobjects')
-        data_object_1 = r['data_objects'][0]
-        r = self.dos_request('GET', '/dataobjects/' + data_object_1['id'])
-        data_object_2 = r['data_object']
-        self.assertEqual(data_object_1, data_object_2)
+        data_obj_1, url = self.get_random_data_object()
+        data_obj_2 = self.dos_request('GET', url)['data_object']
+        # Test that the data object randomly chosen via `/dataobjects`
+        # can be retrieved via `/dataobjects/{data_object_id}`
+        self.assertEqual(data_obj_1, data_obj_2)
 
     @test_requires('ListDataBundles', 'GetDataBundle')
     def test_get_data_bundle(self):
         """
         Lists data bundles and then gets one by ID.
         """
-        # List all the data objects so we can pick one to test.
-        r = self.dos_request('GET', '/databundles')
-        data_bundle_1 = r['data_bundles'][0]
-        r = self.dos_request('GET', '/databundles/' + data_bundle_1['id'])
-        data_bundle_2 = r['data_bundle']
-        self.assertEqual(data_bundle_1, data_bundle_2)
+        data_bdl_1, url = self.get_random_data_bundle()
+        data_bdl_2 = self.dos_request('GET', url)['data_bundle']
+        # Test that the data object randomly chosen via `/databundles`
+        # can be retrieved via `/databundles/{data_bundle_id}`
+        self.assertEqual(data_bdl_1, data_bdl_2)
 
     @test_requires('GetDataBundle')
     def test_get_nonexistent_data_bundle(self):
         """
         Verifies that requesting a data bundle that doesn't exist results in HTTP 404
         """
+        bdl, url = self.get_random_data_bundle()
         self.dos_request('GET', '/databundles/NonexistentDataBundle',
-                         expected_status=404)
+                         body={'data_bundle': bdl}, expected_status=404)
 
     @test_requires('UpdateDataObject')
     def test_update_nonexistent_data_object(self):
@@ -241,8 +274,9 @@ class AbstractComplianceTest(unittest.TestCase):
         Verifies that trying to update a data object that doesn't exist
         returns HTTP 404
         """
-        self.dos_request(meth='PUT', expected_status=404,
-                         path='/dataobjects/NonexistentObjID')
+        obj, url = self.get_random_data_object()
+        self.dos_request('PUT', '/dataobjects/NonexistentObjID', expected_status=404,
+                         body={'data_object': obj, 'data_object_id': obj['id']})
 
     @test_requires('GetDataObject', 'ListDataObjects')
     def test_update_data_object_with_bad_request(self):
@@ -250,9 +284,8 @@ class AbstractComplianceTest(unittest.TestCase):
         Verifies that attempting to update a data object with a malformed
         request returns HTTP 400
         """
-        data_obj = self.dos_request('GET', '/dataobjects')['data_objects'][1]
-        self.dos_request(meth='PUT', expected_status=400,
-                         path='/dataobjects/' + data_obj['id'])
+        _, url = self.get_random_data_object()
+        self.dos_request('PUT', url, expected_status=400, body={'data_object': {}})
 
     @test_requires('ListDataObjects')
     def test_paging(self):
@@ -281,7 +314,7 @@ class AbstractComplianceTest(unittest.TestCase):
         Test to ensure that looking up a nonexistent alias returns an
         empty list.
         """
-        alias = str(uuid.uuid1())
+        alias = str(uuid.uuid1())  # An alias that is very likely to not exist
         body = self.dos_request('GET', self.get_query_url('/dataobjects', alias=alias))
         self.assertEqual(len(body['data_objects']), 0)
         body = self.dos_request('GET', self.get_query_url('/databundles', alias=alias))
@@ -294,12 +327,10 @@ class AbstractComplianceTest(unittest.TestCase):
         """
         alias = 'daltest:' + str(uuid.uuid1())
         # First, select a "random" object that we can test
-        body = self.dos_request('GET', '/dataobjects')
-        data_object = body['data_objects'][9]
-        url = '/dataobjects/' + data_object['id']
+        data_object, url = self.get_random_data_object()
 
         # Try and update with no changes.
-        self.dos_request('PUT', url, body={'data_object': data_object},
+        self.dos_request('PUT', url, body={'data_object': data_object, 'data_object_id': data_object['id']},
                          headers={'Content-Type': 'application/json'})
         # We specify the Content-Type since Chalice looks for it when
         # deserializing the request body server-side
@@ -345,9 +376,7 @@ class AbstractComplianceTest(unittest.TestCase):
         This incidentally also tests object conversion.
         """
         # First, select a "random" object that we can test
-        body = self.dos_request('GET', '/dataobjects')
-        data_object = body['data_objects'][6]
-        url = '/dataobjects/' + data_object['id']
+        data_object, url = self.get_random_data_object()
 
         # Make a new data object that is different from the data object we retrieved
         attributes = {
@@ -363,7 +392,7 @@ class AbstractComplianceTest(unittest.TestCase):
         data_object.update(attributes)
 
         # Now update the old data object with the new attributes we added
-        self.dos_request('PUT', url, body={'data_object': data_object},
+        self.dos_request('PUT', url, body={'data_object': data_object, 'data_object_id': data_object['id']},
                          headers={'Content-Type': 'application/json'})
         time.sleep(2)  # Give the server some time to catch up
 
