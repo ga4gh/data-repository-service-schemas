@@ -23,7 +23,8 @@ setup(
     description="GA4GH Data Object Service Schemas",
     packages=[
         "ga4gh",
-        "ga4gh.dos"
+        "ga4gh.dos",
+        'ga4gh.dos.test'
     ],
     namespace_packages=["ga4gh"],
     url="https://github.com/ga4gh/data-object-service-schemas",
