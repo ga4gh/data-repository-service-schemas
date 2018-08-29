@@ -62,29 +62,17 @@ class TestCompliance(AbstractComplianceTest):
                     {'url': str(uuid.uuid1())}
                 ],
                 'checksums': [{
-                    'checksum': hashlib.md5(str(uuid.uuid1())).hexdigest(),
+                    'checksum': hashlib.md5(str(uuid.uuid1()).encode('utf-8')).hexdigest(),
                     'type': 'md5'
                 }]
             }
 
     @staticmethod
     def generate_data_bundles(amount):
-        for _ in range(amount):
-            yield {
-                'id': str(uuid.uuid1()),
-                'name': str(uuid.uuid1()),
+        for bdl in TestCompliance.generate_data_objects(amount):
+            bdl.update({
                 'data_object_ids': [str(uuid.uuid1()), str(uuid.uuid1())],
-                'created': '2018-08-29T19:58:52.648Z',
                 'updated': '2018-08-29T19:58:52.648Z',
                 'version': str(uuid.uuid1()),
-                'size': str(random.randint(2**0, 2**32)),
-                'aliases': [str(uuid.uuid1())],
-                'urls': [
-                    {'url': str(uuid.uuid1())},
-                    {'url': str(uuid.uuid1())}
-                ],
-                'checksums': [{
-                    'checksum': hashlib.md5(str(uuid.uuid1())).hexdigest(),
-                    'type': 'md5'
-                }]
-            }
+            })
+            yield bdl
