@@ -145,7 +145,7 @@ class AbstractComplianceTest(unittest.TestCase):
         """
         raise NotImplementedError
 
-    def dos_request(self, meth, path, headers={}, body=None, expected_status=200):
+    def dos_request(self, meth, path, headers=None, body=None, expected_status=200):
         """
         Wrapper function around :meth:`AbstractComplianceTest._make_request`.
         Logs the request being made, makes the request with
@@ -172,6 +172,11 @@ class AbstractComplianceTest(unittest.TestCase):
         """
         # Log the request being made, make the request itself, then log the response.
         logger.debug("%s %s", meth, path)
+        # DOS only really speaks JSON, so we can assume that if data is being
+        # sent with a request, that data will be JSON
+        headers = headers or {}
+        if body and 'Content-Type' not in headers:
+            headers['Content-Type'] = 'application/json'
         request, status = self._make_request(meth=meth, path=path, headers=headers,
                                              body=json.dumps(body))
         logger.info("{meth} {path} [{status}]".format(**locals()))
@@ -330,9 +335,8 @@ class AbstractComplianceTest(unittest.TestCase):
         data_object, url = self.get_random_data_object()
 
         # Try and update with no changes.
-        self.dos_request('PUT', url, headers={'Content-Type': 'application/json'},
-                         body={'data_object': data_object,
-                               'data_object_id': data_object['id']})
+        self.dos_request('PUT', url, body={'data_object': data_object,
+                                           'data_object_id': data_object['id']})
         # We specify the Content-Type since Chalice looks for it when
         # deserializing the request body server-side
 
@@ -341,7 +345,7 @@ class AbstractComplianceTest(unittest.TestCase):
         data_object['aliases'].append(alias)
 
         # Try and update, this time with a change.
-        update_response = self.dos_request('PUT', url, headers={'Content-Type': 'application/json'},
+        update_response = self.dos_request('PUT', url,
                                            body={'data_object': data_object,
                                                  'data_object_id': data_object['id']})
         self.assertEqual(data_object['id'], update_response['data_object_id'])
@@ -394,9 +398,8 @@ class AbstractComplianceTest(unittest.TestCase):
         data_object.update(attributes)
 
         # Now update the old data object with the new attributes we added
-        self.dos_request('PUT', url, headers={'Content-Type': 'application/json'},
-                         body={'data_object': data_object,
-                               'data_object_id': data_object['id']})
+        self.dos_request('PUT', url, body={'data_object': data_object,
+                                           'data_object_id': data_object['id']})
         time.sleep(2)  # Give the server some time to catch up
 
         # Test and see if the update took place
