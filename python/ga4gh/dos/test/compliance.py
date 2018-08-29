@@ -290,7 +290,7 @@ class AbstractComplianceTest(unittest.TestCase):
         request returns HTTP 400
         """
         _, url = self.get_random_data_object()
-        self.dos_request('PUT', url, expected_status=400, body={})
+        self.dos_request('PUT', url, expected_status=400, body={'abc': ''})
 
     @test_requires('ListDataObjects')
     def test_paging(self):
