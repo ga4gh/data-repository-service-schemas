@@ -100,18 +100,18 @@ class AbstractComplianceTest(unittest.TestCase):
                    the list of all DOS operations, named by the `operationId`
                    key in the schema::
 
-                       supports = ['GetServiceInfo', 'GetDataBundleVersions',
-                                   'CreateDataBundle', 'ListDataBundles',
-                                   'UpdateDataObject', 'GetDataObject', ...]
+                      supports = ['GetServiceInfo', 'GetDataBundleVersions',
+                                  'CreateDataBundle', 'ListDataBundles',
+                                  'UpdateDataObject', 'GetDataObject', ...]
 
-                    Adding / removing operations from this list will adjust
-                    which tests are run. So, doing something like::
+                   Adding / removing operations from this list will adjust
+                   which tests are run. So, doing something like::
 
-                        class Test(AbstractComplianceTest):
-                            self.supports = ['ListDataObjects']
+                      class Test(AbstractComplianceTest):
+                          self.supports = ['ListDataObjects']
 
-                    would skip all tests calling UpdateDataBundle, GetDataBundle,
-                    and any other endpoint that is not ListDataObjects.
+                   would skip all tests calling UpdateDataBundle, GetDataBundle,
+                   and any other endpoint that is not ListDataObjects.
     """
     # Populate :var:`supports` with the `operationId` of each DOS endpoint
     # specified in the schema.
