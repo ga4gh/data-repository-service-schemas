@@ -44,5 +44,5 @@ test suite. It does not:
 * test health of the service(s) underpinning an implementation
 * test any endpoints not defined in the Data Object Service schema
 
-.. autoclass:: ga4gh.dos.test.integration.AbstractComplianceTest
+.. autoclass:: ga4gh.dos.test.compliance.AbstractComplianceTest
    :members: _make_request
