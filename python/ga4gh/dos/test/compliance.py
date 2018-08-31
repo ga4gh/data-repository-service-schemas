@@ -96,7 +96,7 @@ class AbstractComplianceTest(unittest.TestCase):
     You would then be able to run the compliance test suite however you
     normally run your tests (e.g. ``nosetests`` or ``python -m unittest discover``).
 
-    :var supports: a list of supported DOS implementations. By default, this is
+    :var supports: a list of supported DOS operations. By default, this is
                    the list of all DOS operations, named by the `operationId`
                    key in the schema::
 
