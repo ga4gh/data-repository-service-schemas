@@ -681,3 +681,32 @@ class TestServer(unittest.TestCase):
         r = self._client.GetServiceInfo().result()
         self.assertEqual(ga4gh.dos.__version__, r.version)
 
+
+class TestServerWithLocalClient(TestServer):
+    """
+    Runs all of the test cases in the :class:`TestServer` test suite but
+    using :class:`ga4gh.dos.client.Client` when loaded locally. (In fact,
+    this suite is exactly the same as :class:`TestServer` except with
+    :meth:`setUpClass` modified to load the client locally.) Running all
+    the same tests is a little overkill but they're fast enough that it
+    really doesn't make a difference at all.
+    """
+
+    @classmethod
+    def setUpClass(cls):
+        # Start a test server
+        p = subprocess.Popen(['ga4gh_dos_server'], stdout=subprocess.PIPE,
+                             stderr=subprocess.PIPE, shell=False)
+        time.sleep(2)
+        cls._server_process = p
+
+        local_client = Client(SERVER_URL, local=True)
+
+        # setup logging
+        root = logging.getLogger()
+        root.setLevel(logging.ERROR)
+        logging.captureWarnings(True)
+
+        cls._models = local_client.models
+        cls._client = local_client.client
+        cls._local_client = local_client
