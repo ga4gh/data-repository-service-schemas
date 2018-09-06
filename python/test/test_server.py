@@ -190,8 +190,7 @@ class TestServer(unittest.TestCase):
             size="12345",
             checksums=[Checksum(checksum="def", type="md5")],
             urls=[URL(url="a"), URL(url="b"), URL(url="c")])
-        update_request = UpdateDataObjectRequest(
-            data_object=update_data_object, data_object_id=data_object_id)
+        update_request = UpdateDataObjectRequest(data_object=update_data_object)
         update_response = self._client.UpdateDataObject(
             data_object_id=data_object_id, body=update_request).result()
         updated_object = self._client.GetDataObject(
@@ -286,9 +285,7 @@ class TestServer(unittest.TestCase):
             size='12345',
             checksums=[Checksum(checksum="def", type="md5")],
             urls=[URL(url="a"), URL(url="b"), URL(url="c")])
-        update_request = UpdateDataObjectRequest(
-            data_object=update_data_object,
-            data_object_id=data_object['id'])
+        update_request = UpdateDataObjectRequest(data_object=update_data_object)
         update_response = self._client.UpdateDataObject(
             data_object_id=data_object.id,
             body=update_request).result()
@@ -530,9 +527,7 @@ class TestServer(unittest.TestCase):
             data_object_ids=[x.id for x in list_response.data_objects],
             checksums=[Checksum(checksum="def", type="md5")],
             aliases=["ghi"])
-        update_request = UpdateDataBundleRequest(
-            data_bundle_id=data_bundle.id,
-            data_bundle=update_data_bundle)
+        update_request = UpdateDataBundleRequest(data_bundle=update_data_bundle)
         update_response = self._client.UpdateDataBundle(
             data_bundle_id=data_bundle_id,
             body=update_request).result()
