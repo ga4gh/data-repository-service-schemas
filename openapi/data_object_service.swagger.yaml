@@ -560,6 +560,13 @@ definitions:
     description: |-
             OPTIONAL
             A set of key-value pairs that represent metadata provided by the uploader.
+  AuthorizationMetadata:
+    type: object
+    additionalProperties: true
+    description: |-
+            OPTIONAL
+            A set of key-value pairs that represent sufficient metadata to be granted 
+            access to a resource.
   Checksum:
     type: object
     required: ['checksum']
@@ -899,6 +906,8 @@ definitions:
         $ref: '#/definitions/SystemMetadata'
       user_metadata:
         $ref: '#/definitions/UserMetadata'
+      authorization_metadata:
+        $ref: '#/definitions/AuthorizationMetadata'
   UpdateDataBundleRequest:
     type: object
     required: ['data_bundle']
