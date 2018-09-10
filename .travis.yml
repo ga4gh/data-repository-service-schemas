@@ -16,8 +16,7 @@ branches:
 stages:
   - linting
   - test
-  - name: deploy
-    if: type != pull_request
+  - deploy
 
 jobs:
   include:
