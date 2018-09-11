@@ -355,7 +355,7 @@ class AbstractComplianceTest(unittest.TestCase):
 
         # Next, given that the adjusting page_size works, we can test that paging
         # works by making a ListDataObjects request with page_size=2, then making
-        # two requests with page_size=1, and commparing that the results are the same.
+        # two requests with page_size=1, and comparing that the results are the same.
         both = self.dos_request('GET', self.get_query_url('/dataobjects', page_size=2))
         self.assertEqual(len(both['data_objects']), 2)
         first = self.dos_request('GET', self.get_query_url('/dataobjects', page_size=1))
