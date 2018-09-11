@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import functools
+import hashlib
 import json
 import logging
 import random
@@ -214,9 +215,52 @@ class AbstractComplianceTest(unittest.TestCase):
         """
         return path + '?' + urllib.urlencode(kwargs)
 
+    @staticmethod
+    def generate_data_objects(amount):
+        """
+        Yields a specified number of data objects with random attributes.
+
+        :param int amount: the amount of data objects to generate
+        """
+        for _ in range(amount):
+            yield {
+                'id': str(uuid.uuid1()),
+                'name': str(uuid.uuid1()),
+                'size': str(random.randint(2**0, 2**32)),
+                'created': '2018-08-29T19:58:52.648Z',
+                'updated': '2018-08-29T19:58:52.648Z',
+                'version': str(uuid.uuid1()),
+                'mime_type': 'application/json',
+                'checksums': [{
+                    'checksum': hashlib.md5(str(uuid.uuid1()).encode('utf-8')).hexdigest(),
+                    'type': 'md5'
+                }],
+                'urls': [
+                    {'url': str(uuid.uuid1())},
+                    {'url': str(uuid.uuid1())}
+                ],
+                'description': str(uuid.uuid1()),
+                'aliases': [str(uuid.uuid1())],
+            }
+
+    @staticmethod
+    def generate_data_bundles(amount):
+        """
+        Yields a specified number of data bundles with random attributes.
+
+        :param int amount: the amount of data bundles to generate
+        """
+        for bdl in AbstractComplianceTest.generate_data_objects(amount):
+            del bdl['name']
+            del bdl['size']
+            del bdl['mime_type']
+            del bdl['urls']
+            bdl.update({'data_object_ids': [str(uuid.uuid1()), str(uuid.uuid1())]})
+            yield bdl
+
     def get_random_data_object(self):
         """
-        Retrieves a 'random' data object by performing a ListDataBundles
+        Retrieves a 'random' data object by performing a ListDataObjects
         request with a large page size then randomly selecting a data
         object from the response.
 
@@ -247,12 +291,138 @@ class AbstractComplianceTest(unittest.TestCase):
         url = '/databundles/' + data_bdl['id']
         return data_bdl, url
 
+    # # ListDataObject tests
     @test_requires('ListDataObjects')
     def test_list_data_objects_simple(self):
-        """Smoke test to verify that `GET /dataobjects` returns a response."""
+        """
+        Smoke test to verify that `GET /dataobjects` returns a response.
+        """
         r = self.dos_request('GET', '/dataobjects')
         self.assertTrue(r)
 
+    @test_requires('ListDataObjects')
+    def test_list_data_objects_by_checksum(self):
+        """
+        Test that filtering by checksum in ListDataObjects works nicely.
+        Since we can assume that checksums are unique between data
+        objects, we can test this functionality by selecting a random
+        data object then using ListDataObjects with a checksum parameter
+        and asserting that only one result is returned and that the
+        result returned is the same as the one queried.
+        """
+        obj, _ = self.get_random_data_object()
+        for cs in obj['checksums']:
+            url = self.get_query_url('/dataobjects', checksum=cs['checksum'], checksum_type=cs['type'])
+            r = self.dos_request('GET', url)
+            self.assertEqual(len(r['data_objects']), 1)
+            self.assertEqual(r['data_objects'][0]['id'], obj['id'])
+
+    @test_requires('ListDataObjects')
+    def test_list_data_objects_by_alias(self):
+        """
+        Tests that filtering by alias in ListDataObjects works. We do
+        this by selecting a random data object with ListDataObjects
+        then performing another ListDataObjects query but filtering
+        by the alias, then checking that every returned object contains
+        the proper aliases.
+        """
+        reference_obj, _ = self.get_random_data_object()
+        url = self.get_query_url('/dataobjects', alias=reference_obj['aliases'][0])
+        queried_objs = self.dos_request('GET', url)['data_objects']
+        for queried_obj in queried_objs:
+            self.assertIn(reference_obj['aliases'][0], queried_obj['aliases'])
+
+    @test_requires('ListDataObjects')
+    def test_list_data_objects_with_nonexist_alias(self):
+        """
+        Test to ensure that looking up a nonexistent alias returns an
+        empty list.
+        """
+        alias = str(uuid.uuid1())  # An alias that is unlikely to exist
+        body = self.dos_request('GET', self.get_query_url('/dataobjects', alias=alias))
+        self.assertEqual(len(body['data_objects']), 0)
+
+    @test_requires('ListDataObjects')
+    def test_list_data_objects_paging(self):
+        """
+        Demonstrates basic paging features.
+        """
+        # Test the page_size parameter
+        r = self.dos_request('GET', self.get_query_url('/dataobjects', page_size=3))
+        self.assertEqual(len(r['data_objects']), 3)
+        r = self.dos_request('GET', self.get_query_url('/dataobjects', page_size=7))
+        self.assertEqual(len(r['data_objects']), 7)
+
+        # Next, given that the adjusting page_size works, we can test that paging
+        # works by making a ListDataObjects request with page_size=2, then making
+        # two requests with page_size=1, and comparing that the results are the same.
+        both = self.dos_request('GET', self.get_query_url('/dataobjects', page_size=2))
+        self.assertEqual(len(both['data_objects']), 2)
+        first = self.dos_request('GET', self.get_query_url('/dataobjects', page_size=1))
+        self.assertEqual(len(first['data_objects']), 1)
+        second = self.dos_request('GET', self.get_query_url('/dataobjects', page_size=1,
+                                                            page_token=first['next_page_token']))
+        self.assertEqual(len(second['data_objects']), 1)
+        self.assertEqual(first['data_objects'][0], both['data_objects'][0])
+        self.assertEqual(second['data_objects'][0], both['data_objects'][1])
+
+    @test_requires('ListDataObjects')
+    def test_list_data_object_querying(self):
+        """
+        Tests if ListDataObject handles multiple query parameters correctly.
+        """
+        # ListDataObjects supports querying by checksum, URL, and alias.
+        # To test this, let us take a data object with a unique checksum,
+        # URL, and alias:
+        obj, _ = self.get_random_data_object()
+
+        def query(expected_results, expected_object=None, **kwargs):
+            """
+            Makes a ListDataObject query with parameters specifying
+            the checksum, URL, and alias of the ``obj`` data object above.
+
+            :param int expected_results: the amount of results to expect
+                                         from the ListDataObjects request
+            :param dict expected_object: if expected_results is 1, then
+                                         if only one object is returned
+                                         from the query, assert that the
+                                         returned object is this object
+            :param kwargs: query parameters for the ListDataObjects request
+            """
+            args = {
+                'url': obj['urls'][0]['url'],
+                'alias': obj['aliases'][0],
+                'checksum': obj['checksums'][0]['checksum'],
+                'checksum_type': obj['checksums'][0]['type']
+            }
+            args.update(kwargs)
+            url = self.get_query_url('/dataobjects', **args)
+            r = self.dos_request('GET', url)
+            self.assertEqual(len(r['data_objects']), expected_results)
+            if expected_object and expected_results == 1:
+                self.assertEqual(expected_object, r['data_objects'][0])
+
+        rand = str(uuid.uuid1())
+
+        # If the data object we selected has a unique checksum, alias, and URL,
+        # then when we make a ListDataObjects requesting all three of those
+        # parameters, we should receive exactly one data object back - the one
+        # we chose above.
+        query(expected_results=1, expected_object=obj)
+
+        # That said, if we query for the above checksum and alias but also
+        # query for a URL that is unlikely to exist, then we should receive
+        # no results, as the search criteria should be logically ANDed together.
+        # If `expected_results != 0`, then it is likely that the criteria are
+        # being ORed.
+        query(expected_results=0, url=rand)
+
+        # And to finish up the test, we repeat the test directly aforementioned
+        # on the other two attributes we expect to be unique.
+        query(expected_results=0, alias=rand)
+        query(expected_results=0, checksum=rand)
+
+    # # GetDataObject tests
     @test_requires('ListDataObjects', 'GetDataObject')
     def test_get_data_object(self):
         """
@@ -274,6 +444,16 @@ class AbstractComplianceTest(unittest.TestCase):
         # Test that the data object randomly chosen via `/databundles`
         # can be retrieved via `/databundles/{data_bundle_id}`
         self.assertEqual(data_bdl_1, data_bdl_2)
+
+    @test_requires('ListDataBundles')
+    def test_list_data_bundles_with_nonexist_alias(self):
+        """
+        Test to ensure that searching for data bundles with a nonexistent
+        alias returns an empty list.
+        """
+        alias = str(uuid.uuid1())  # An alias that is unlikely to exist
+        body = self.dos_request('GET', self.get_query_url('/databundles', alias=alias))
+        self.assertEqual(len(body['data_bundles']), 0)
 
     @test_requires('GetDataBundle')
     def test_get_nonexistent_data_bundle(self):
@@ -303,39 +483,6 @@ class AbstractComplianceTest(unittest.TestCase):
         _, url = self.get_random_data_object()
         self.dos_request('PUT', url, expected_status=400, body={'abc': ''})
 
-    @test_requires('ListDataObjects')
-    def test_paging(self):
-        """
-        Demonstrates basic paging features.
-        """
-        # Make a request that will return more than one data object
-        r = self.dos_request('GET', '/dataobjects')
-        self.assertTrue(len(r['data_objects']) > 1)
-
-        # Now that we have a request that we know will return more than
-        # one data object, we can test and see if we can use paging to
-        # return only one of those objects.
-        r = self.dos_request('GET', self.get_query_url('/dataobjects', page_size=1))
-        self.assertEqual(len(r['data_objects']), 1)
-        self.assertEqual(r['next_page_token'], '1')
-
-        # Test that page tokens work.
-        r = self.dos_request('GET', self.get_query_url('/dataobjects',
-                                                       page_size=1, page_token=1))
-        self.assertEqual(len(r['data_objects']), 1)
-
-    @test_requires('ListDataObjects')
-    def test_nonexist_alias(self):
-        """
-        Test to ensure that looking up a nonexistent alias returns an
-        empty list.
-        """
-        alias = str(uuid.uuid1())  # An alias that is very likely to not exist
-        body = self.dos_request('GET', self.get_query_url('/dataobjects', alias=alias))
-        self.assertEqual(len(body['data_objects']), 0)
-        body = self.dos_request('GET', self.get_query_url('/databundles', alias=alias))
-        self.assertEqual(len(body['data_bundles']), 0)
-
     @test_requires('ListDataObjects', 'UpdateDataObject', 'GetDataObject')
     def test_alias_update(self):
         """
@@ -346,8 +493,7 @@ class AbstractComplianceTest(unittest.TestCase):
         data_object, url = self.get_random_data_object()
 
         # Try and update with no changes.
-        self.dos_request('PUT', url, body={'data_object': data_object,
-                                           'data_object_id': data_object['id']})
+        self.dos_request('PUT', url, body={'data_object': data_object})
         # We specify the Content-Type since Chalice looks for it when
         # deserializing the request body server-side
 
@@ -357,8 +503,7 @@ class AbstractComplianceTest(unittest.TestCase):
 
         # Try and update, this time with a change.
         update_response = self.dos_request('PUT', url,
-                                           body={'data_object': data_object,
-                                                 'data_object_id': data_object['id']})
+                                           body={'data_object': data_object})
         self.assertEqual(data_object['id'], update_response['data_object_id'])
 
         time.sleep(2)
@@ -409,8 +554,7 @@ class AbstractComplianceTest(unittest.TestCase):
         data_object.update(attributes)
 
         # Now update the old data object with the new attributes we added
-        self.dos_request('PUT', url, body={'data_object': data_object,
-                                           'data_object_id': data_object['id']})
+        self.dos_request('PUT', url, body={'data_object': data_object})
         time.sleep(2)  # Give the server some time to catch up
 
         # Test and see if the update took place
