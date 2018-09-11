@@ -366,6 +366,62 @@ class AbstractComplianceTest(unittest.TestCase):
         self.assertEqual(first['data_objects'][0], both['data_objects'][0])
         self.assertEqual(second['data_objects'][0], both['data_objects'][1])
 
+    @test_requires('ListDataObjects')
+    def test_list_data_object_querying(self):
+        """
+        Tests if ListDataObject handles multiple query parameters correctly.
+        """
+        # ListDataObjects supports querying by checksum, URL, and alias.
+        # To test this, let us take a data object with a unique checksum,
+        # URL, and alias:
+        obj, _ = self.get_random_data_object()
+
+        def query(expected_results, expected_object=None, **kwargs):
+            """
+            Makes a ListDataObject query with parameters specifying
+            the checksum, URL, and alias of the ``obj`` data object above.
+
+            :param int expected_results: the amount of results to expect
+                                         from the ListDataObjects request
+            :param dict expected_object: if expected_results is 1, then
+                                         if only one object is returned
+                                         from the query, assert that the
+                                         returned object is this object
+            :param kwargs: query parameters for the ListDataObjects request
+            """
+            args = {
+                'url': obj['urls'][0]['url'],
+                'alias': obj['aliases'][0],
+                'checksum': obj['checksums'][0]['checksum'],
+                'checksum_type': obj['checksums'][0]['type']
+            }
+            args.update(kwargs)
+            url = self.get_query_url('/dataobjects', **args)
+            r = self.dos_request('GET', url)
+            self.assertEqual(len(r['data_objects']), expected_results)
+            if expected_object and expected_results == 1:
+                self.assertEqual(expected_object, r['data_objects'][0])
+
+        rand = str(uuid.uuid1())
+
+        # If the data object we selected has a unique checksum, alias, and URL,
+        # then when we make a ListDataObjects requesting all three of those
+        # parameters, we should receive exactly one data object back - the one
+        # we chose above.
+        query(expected_results=1, expected_object=obj)
+
+        # That said, if we query for the above checksum and alias but also
+        # query for a URL that is unlikely to exist, then we should receive
+        # no results, as the search criteria should be logically ANDed together.
+        # If `expected_results != 0`, then it is likely that the criteria are
+        # being ORed.
+        query(expected_results=0, url=rand)
+
+        # And to finish up the test, we repeat the test directly aforementioned
+        # on the other two attributes we expect to be unique.
+        query(expected_results=0, alias=rand)
+        query(expected_results=0, checksum=rand)
+
     # # GetDataObject tests
     @test_requires('ListDataObjects', 'GetDataObject')
     def test_get_data_object(self):
