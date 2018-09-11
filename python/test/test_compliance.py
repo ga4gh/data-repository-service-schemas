@@ -1,8 +1,4 @@
 # -*- coding: utf-8 -*-
-import hashlib
-import random
-import uuid
-
 import werkzeug.datastructures
 
 import ga4gh.dos.server
@@ -47,32 +43,3 @@ class TestCompliance(AbstractComplianceTest):
         r = cls.client.open(method=meth, path='/ga4gh/dos/v1' + path,
                             data=body, headers=headers)
         return r.data, r.status_code
-
-    @staticmethod
-    def generate_data_objects(amount):
-        for _ in range(amount):
-            yield {
-                'id': str(uuid.uuid1()),
-                'name': str(uuid.uuid1()),
-                'created': '2018-08-29T19:58:52.648Z',
-                'size': str(random.randint(2**0, 2**32)),
-                'aliases': [str(uuid.uuid1())],
-                'urls': [
-                    {'url': str(uuid.uuid1())},
-                    {'url': str(uuid.uuid1())}
-                ],
-                'checksums': [{
-                    'checksum': hashlib.md5(str(uuid.uuid1()).encode('utf-8')).hexdigest(),
-                    'type': 'md5'
-                }]
-            }
-
-    @staticmethod
-    def generate_data_bundles(amount):
-        for bdl in TestCompliance.generate_data_objects(amount):
-            bdl.update({
-                'data_object_ids': [str(uuid.uuid1()), str(uuid.uuid1())],
-                'updated': '2018-08-29T19:58:52.648Z',
-                'version': str(uuid.uuid1()),
-            })
-            yield bdl

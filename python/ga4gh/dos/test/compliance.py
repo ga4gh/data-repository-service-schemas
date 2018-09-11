@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import functools
+import hashlib
 import json
 import logging
 import random
@@ -213,6 +214,49 @@ class AbstractComplianceTest(unittest.TestCase):
         :rtype: str
         """
         return path + '?' + urllib.urlencode(kwargs)
+
+    @staticmethod
+    def generate_data_objects(amount):
+        """
+        Yields a specified number of data objects with random attributes.
+
+        :param int amount: the amount of data objects to generate
+        """
+        for _ in range(amount):
+            yield {
+                'id': str(uuid.uuid1()),
+                'name': str(uuid.uuid1()),
+                'size': str(random.randint(2**0, 2**32)),
+                'created': '2018-08-29T19:58:52.648Z',
+                'updated': '2018-08-29T19:58:52.648Z',
+                'version': str(uuid.uuid1()),
+                'mime_type': 'application/json',
+                'checksums': [{
+                    'checksum': hashlib.md5(str(uuid.uuid1()).encode('utf-8')).hexdigest(),
+                    'type': 'md5'
+                }],
+                'urls': [
+                    {'url': str(uuid.uuid1())},
+                    {'url': str(uuid.uuid1())}
+                ],
+                'description': str(uuid.uuid1()),
+                'aliases': [str(uuid.uuid1())],
+            }
+
+    @staticmethod
+    def generate_data_bundles(amount):
+        """
+        Yields a specified number of data bundles with random attributes.
+
+        :param int amount: the amount of data bundles to generate
+        """
+        for bdl in AbstractComplianceTest.generate_data_objects(amount):
+            del bdl['name']
+            del bdl['size']
+            del bdl['mime_type']
+            del bdl['urls']
+            bdl.update({'data_object_ids': [str(uuid.uuid1()), str(uuid.uuid1())]})
+            yield bdl
 
     def get_random_data_object(self):
         """
