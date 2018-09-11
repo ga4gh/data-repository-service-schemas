@@ -437,8 +437,7 @@ class AbstractComplianceTest(unittest.TestCase):
         data_object, url = self.get_random_data_object()
 
         # Try and update with no changes.
-        self.dos_request('PUT', url, body={'data_object': data_object,
-                                           'data_object_id': data_object['id']})
+        self.dos_request('PUT', url, body={'data_object': data_object})
         # We specify the Content-Type since Chalice looks for it when
         # deserializing the request body server-side
 
@@ -448,8 +447,7 @@ class AbstractComplianceTest(unittest.TestCase):
 
         # Try and update, this time with a change.
         update_response = self.dos_request('PUT', url,
-                                           body={'data_object': data_object,
-                                                 'data_object_id': data_object['id']})
+                                           body={'data_object': data_object})
         self.assertEqual(data_object['id'], update_response['data_object_id'])
 
         time.sleep(2)
@@ -500,8 +498,7 @@ class AbstractComplianceTest(unittest.TestCase):
         data_object.update(attributes)
 
         # Now update the old data object with the new attributes we added
-        self.dos_request('PUT', url, body={'data_object': data_object,
-                                           'data_object_id': data_object['id']})
+        self.dos_request('PUT', url, body={'data_object': data_object})
         time.sleep(2)  # Give the server some time to catch up
 
         # Test and see if the update took place
