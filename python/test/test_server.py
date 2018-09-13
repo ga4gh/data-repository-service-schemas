@@ -7,28 +7,35 @@ import uuid
 import unittest
 
 # setup connection, models and security
+import bravado.exception
 from bravado.requests_client import RequestsClient
-from bravado.exception import HTTPNotFound
-import jsonschema
+import jsonschema.exceptions
 
 import ga4gh.dos
 from ga4gh.dos.client import Client
 
 SERVER_URL = 'http://localhost:8080/ga4gh/dos/v1'
+logger = logging.getLogger()
+logger.setLevel(logging.INFO)
+logging.captureWarnings(True)
+# Make scrolling through test logs more useful
+logging.getLogger('swagger_spec_validator.ref_validators').setLevel(logging.INFO)
+logging.getLogger('bravado_core.model').setLevel(logging.INFO)
+logging.getLogger('swagger_spec_validator.validator20').setLevel(logging.INFO)
 
 
 class TestServer(unittest.TestCase):
     @classmethod
     def setUpClass(cls):
         # start a test server
-        print('setting UP!!!!!!!!!!')
+        logger.info('setting UP!!!!!!!!!!')
         p = subprocess.Popen(
             ['ga4gh_dos_server'],
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             shell=False)
         time.sleep(2)
-        # print(p.poll(), p.pid)
+
         cls._server_process = p
 
         http_client = RequestsClient()
@@ -40,10 +47,6 @@ class TestServer(unittest.TestCase):
         client = local_client.client
         models = local_client.models
 
-        # setup logging
-        root = logging.getLogger()
-        root.setLevel(logging.ERROR)
-        logging.captureWarnings(True)
         cls._models = models
 
         cls._client = client
@@ -51,8 +54,8 @@ class TestServer(unittest.TestCase):
 
     @classmethod
     def tearDownClass(cls):
-        print('tearing down')
-        print(cls._server_process.pid)
+        logger.info('tearing down')
+        logger.info(cls._server_process.pid)
         cls._server_process.kill()
         cls._server_process.terminate()
 
@@ -65,7 +68,7 @@ class TestServer(unittest.TestCase):
         checksum = str(uuid.uuid1())
         do_id = str(uuid.uuid1())
         # CreateDataObject
-        print("..........Create an object............")
+        logger.info("..........Create an object............")
         create_data_object = DataObject(
             id=do_id,
             name="abc",
@@ -89,7 +92,7 @@ class TestServer(unittest.TestCase):
         DataObject = self._models.get_model('CreateDataObjectRequest')
         checksum = str(uuid.uuid1())
         # CreateDataObject
-        print("..........Create an object............")
+        logger.info("..........Create an object............")
         create_data_object = DataObject(
             id=str(uuid.uuid1()),
             created=datetime.utcnow(),
@@ -102,8 +105,8 @@ class TestServer(unittest.TestCase):
         create_response = self._client.CreateDataObject(
             body=create_request).result()
         data_object_id = create_response['data_object_id']
-        print(data_object_id)
-        print("..........Create a 2nd  object............")
+        logger.info(data_object_id)
+        logger.info("..........Create a 2nd  object............")
         create_data_object = DataObject(
             id=str(uuid.uuid1()),
             created=datetime.utcnow(),
@@ -116,9 +119,9 @@ class TestServer(unittest.TestCase):
         create_response = self._client.CreateDataObject(
             body=create_request).result()
         data_object_id = create_response['data_object_id']
-        print(data_object_id)
+        logger.info(data_object_id)
         # ListDataObjects
-        print("..........List Data Objects...............")
+        logger.info("..........List Data Objects...............")
         ListDataObjectsRequest = self._models.get_model(
             'ListDataObjectsRequest')
         next_page_token = None
@@ -143,11 +146,11 @@ class TestServer(unittest.TestCase):
                 names.append(data_object.name)
             if not list_response.next_page_token:
                 break
-        assert count == 2, 'did not return all objects for {}'.format(checksum)
+        self.assertEqual(count, 2, 'did not return all objects for ' + checksum)
         for url in ['a', 'b', 'c']:
-            assert url in urls, 'expected {} in urls'.format(url)
+            self.assertIn(url, urls, 'expected {} in urls'.format(url))
         for name in ['abc', 'xyz']:
-            assert name in names, 'expected {} in names'.format(name)
+            self.assertIn(name, names, 'expected {} in names'.format(name))
 
     def test_create_update(self):
         Checksum = self._models.get_model('Checksum')
@@ -156,31 +159,24 @@ class TestServer(unittest.TestCase):
             'CreateDataObjectRequest')
         DataObject = self._models.get_model('CreateDataObjectRequest')
         # CreateDataObject
-        print("..........Create an object............")
-        create_data_object = DataObject(
-            id=str(uuid.uuid1()),
-            created=datetime.utcnow(),
-            name="abc",
-            size="12345",
-            checksums=[Checksum(checksum="def", type="md5")],
-            urls=[URL(url="a"), URL(url="b")],
-            version="0")
+        logger.info("..........Create an object............")
+        create_data_object = self.generate_populated_model('DataObject')
         create_request = CreateDataObjectRequest(
             data_object=create_data_object)
         create_response = self._client.CreateDataObject(
             body=create_request).result()
         data_object_id = create_response['data_object_id']
-        print(data_object_id)
+        logger.info(data_object_id)
 
         # GetDataObject
-        print("..........Get the Object we just created..............")
+        logger.info("..........Get the Object we just created..............")
         get_object_response = self._client.GetDataObject(
             data_object_id=data_object_id).result()
         data_object = get_object_response.data_object
-        print(data_object.id)
+        logger.info(data_object.id)
 
         # UpdateDataObject
-        print("..........Update that object.................")
+        logger.info("..........Update that object.................")
         UpdateDataObjectRequest = self._models.get_model(
             'UpdateDataObjectRequest')
         update_data_object = DataObject(
@@ -196,10 +192,10 @@ class TestServer(unittest.TestCase):
         updated_object = self._client.GetDataObject(
             data_object_id=update_response['data_object_id'])\
             .result().data_object
-        print(updated_object.version)
-        assert not updated_object.version == data_object.version
+        logger.info(updated_object.version)
+        self.assertNotEqual(updated_object.version, data_object.version)
 
-        print("..........Create another object w/ same checksum............")
+        logger.info("..........Create another object w/ same checksum............")
         create_data_object = DataObject(
             id=str(uuid.uuid1()),
             created=datetime.utcnow(),
@@ -212,16 +208,16 @@ class TestServer(unittest.TestCase):
         create_response = self._client.CreateDataObject(
             body=create_request).result()
         data_object_id = create_response['data_object_id']
-        print(data_object_id)
+        logger.info(data_object_id)
 
         # ListDataObjects
-        print("..........List Data Objects...............")
+        logger.info("..........List Data Objects...............")
         ListDataObjectsRequest = self._models.get_model(
             'ListDataObjectsRequest')
         next_page_token = "0"
         count = 0
         while(True):
-            print(next_page_token)
+            logger.info(next_page_token)
             list_request = ListDataObjectsRequest(
                 checksum='def',
                 page_token=next_page_token,
@@ -233,13 +229,13 @@ class TestServer(unittest.TestCase):
                 page_size=list_request.page_size,
                 page_token=list_request.page_token,
                 url=list_request.url).result()
-            print(list_response)
+            logger.info(list_response)
             next_page_token = list_response.next_page_token
             count += 1
             if not list_response.next_page_token:
-                print('done paging')
+                logger.info('done paging')
                 break
-        assert count > 1
+        self.assertGreater(count, 1)
 
     def test_data_objects(self):
         Checksum = self._models.get_model('Checksum')
@@ -249,7 +245,7 @@ class TestServer(unittest.TestCase):
         DataObject = self._models.get_model(
             'CreateDataObjectRequest')
         # CreateDataObject
-        print("..........Create an object............")
+        logger.info("..........Create an object............")
         create_data_object = DataObject(
             id=str(uuid.uuid1()),
             created=datetime.utcnow(),
@@ -265,17 +261,17 @@ class TestServer(unittest.TestCase):
         create_response = self._client.CreateDataObject(
             body=create_request).result()
         data_object_id = create_response['data_object_id']
-        print(data_object_id)
+        logger.info(data_object_id)
 
         # GetDataObject
-        print("..........Get the Object we just created..............")
+        logger.info("..........Get the Object we just created..............")
         get_object_response = self._client.GetDataObject(
             data_object_id=data_object_id).result()
         data_object = get_object_response.data_object
-        print(data_object.id)
+        logger.info(data_object.id)
 
         # UpdateDataObject
-        print("..........Update that object.................")
+        logger.info("..........Update that object.................")
         UpdateDataObjectRequest = self._models.get_model(
             'UpdateDataObjectRequest')
         update_data_object = DataObject(
@@ -292,19 +288,19 @@ class TestServer(unittest.TestCase):
         updated_object = self._client.GetDataObject(
             data_object_id=update_response['data_object_id'])\
             .result().data_object
-        print(updated_object)
-        print(data_object)
-        assert not updated_object.version == data_object.version
+        logger.info(updated_object)
+        logger.info(data_object)
+        self.assertNotEqual(updated_object.version, data_object.version)
 
         # Get the old DataObject
-        print("..........Get the old Data Object.................")
+        logger.info("..........Get the old Data Object.................")
         old_data_object = self._client.GetDataObject(
             data_object_id=update_response['data_object_id'],
             version=data_object.version).result().data_object
-        print(old_data_object.version)
+        logger.info(old_data_object.version)
 
         # ListDataObjects
-        print("..........List Data Objects...............")
+        logger.info("..........List Data Objects...............")
         ListDataObjectsRequest = self._models.get_model(
             'ListDataObjectsRequest')
         list_request = ListDataObjectsRequest()
@@ -315,28 +311,28 @@ class TestServer(unittest.TestCase):
             page_size=list_request.page_size,
             page_token=list_request.page_token,
             url=list_request.url).result()
-        print(len(list_response.data_objects))
-        assert len(list_response.data_objects) > 0
+        logger.info(len(list_response.data_objects))
+        self.assertGreater(len(list_response.data_objects), 0)
 
         # Get all versions of a DataObject
-        print("..........Get all Versions...............")
+        logger.info("..........Get all Versions...............")
         versions_response = self._client.GetDataObjectVersions(
             data_object_id=old_data_object.id).result()
-        print(len(versions_response.data_objects))
+        logger.info(len(versions_response.data_objects))
 
         # DeleteDataObject
-        print("..........Delete the Object...............")
+        logger.info("..........Delete the Object...............")
         delete_response = self._client.DeleteDataObject(
             data_object_id=data_object_id).result()
-        print(delete_response.data_object_id)
+        logger.info(delete_response.data_object_id)
         try:
             self._client.GetDataObject(
                 data_object_id=update_response['data_object_id']).result()
         except Exception as e:
-            print('The object no longer exists, 404 not found. {}'.format(e))
+            logger.info('The object no longer exists, 404 not found. {}'.format(e))
 
         # Create a Data Object specifying your own version
-        print(".......Create a Data Object with our own version..........")
+        logger.info(".......Create a Data Object with our own version..........")
         my_data_object = DataObject(
             id=str(uuid.uuid1()),
             created=datetime.utcnow(),
@@ -352,10 +348,10 @@ class TestServer(unittest.TestCase):
         data_object_id = create_response['data_object_id']
         data_object = self._client.GetDataObject(
             data_object_id=data_object_id).result().data_object
-        print(data_object.version)
+        logger.info(data_object.version)
 
         # Create a Data Object specifying your own ID
-        print("..........Create a Data Object with our own ID...........")
+        logger.info("..........Create a Data Object with our own ID...........")
         my_data_object = DataObject(
             id="myid",
             created=datetime.utcnow(),
@@ -368,10 +364,10 @@ class TestServer(unittest.TestCase):
         create_response = self._client.CreateDataObject(
             body=create_request).result()
         data_object_id = create_response['data_object_id']
-        print(data_object_id)
+        logger.info(data_object_id)
 
         # Page through a listing of data objects
-        print("..........Page through a listing of Objects..............")
+        logger.info("..........Page through a listing of Objects..............")
         for i in range(100):
             my_data_object = DataObject(
                 id=str(uuid.uuid1()),
@@ -395,8 +391,8 @@ class TestServer(unittest.TestCase):
             page_token=list_request.page_token,
             url=list_request.url).result()
         ids = [x.id for x in list_response.data_objects]
-        print(list_response.next_page_token)
-        print(ids)
+        logger.info(list_response.next_page_token)
+        logger.info(ids)
 
         list_request = ListDataObjectsRequest(
             page_size=10, page_token=list_response.next_page_token)
@@ -408,10 +404,10 @@ class TestServer(unittest.TestCase):
             page_token=list_request.page_token,
             url=list_request.url).result()
         ids = [x.id for x in list_response.data_objects]
-        print(ids)
+        logger.info(ids)
 
         # Find a DataObject by alias
-        print("..........List Objects by alias..............")
+        logger.info("..........List Objects by alias..............")
         object_list_request = ListDataObjectsRequest(alias="OBJ1")
         object_list_response = self._client.ListDataObjects(
             alias=object_list_request.alias,
@@ -420,10 +416,10 @@ class TestServer(unittest.TestCase):
             page_size=object_list_request.page_size,
             page_token=object_list_request.page_token,
             url=object_list_request.url).result()
-        print(object_list_response.data_objects[0].aliases)
+        logger.info(object_list_response.data_objects[0].aliases)
 
         # Find a DataObject by checksum
-        print("..........List Objects by checksum..............")
+        logger.info("..........List Objects by checksum..............")
         object_list_request = ListDataObjectsRequest(
             checksum="def1")
         object_list_response = self._client.ListDataObjects(
@@ -433,10 +429,10 @@ class TestServer(unittest.TestCase):
             page_size=object_list_request.page_size,
             page_token=object_list_request.page_token,
             url=object_list_request.url).result()
-        print(object_list_response.data_objects[0].checksums)
+        logger.info(object_list_response.data_objects[0].checksums)
 
         # Find a DataObject by URL
-        print("..........List Objects by url..............")
+        logger.info("..........List Objects by url..............")
         object_list_request = ListDataObjectsRequest(url="http://1")
         object_list_response = self._client.ListDataObjects(
             alias=object_list_request.alias,
@@ -445,7 +441,7 @@ class TestServer(unittest.TestCase):
             page_size=object_list_request.page_size,
             page_token=object_list_request.page_token,
             url=object_list_request.url).result()
-        print(object_list_response.data_objects[0].urls)
+        logger.info(object_list_response.data_objects[0].urls)
 
     def test_data_bundles(self):
         Checksum = self._models.get_model('Checksum')
@@ -457,7 +453,7 @@ class TestServer(unittest.TestCase):
         ListDataObjectsRequest = self._models.get_model(
             'ListDataObjectsRequest')
 
-        print("..........Create some data objects ............")
+        logger.info("..........Create some data objects ............")
         for i in range(10):
             my_data_object = DataObject(
                 id=str(uuid.uuid1()),
@@ -480,10 +476,10 @@ class TestServer(unittest.TestCase):
             page_token=list_request.page_token,
             url=list_request.url).result()
         ids = [x.id for x in list_response.data_objects]
-        print(list_response.next_page_token)
+        logger.info(list_response.next_page_token)
 
         # CreateDataBundle
-        print("..........Create a Data Bundle............")
+        logger.info("..........Create a Data Bundle............")
         Checksum = self._models.get_model('Checksum')
         URL = self._models.get_model('URL')
         CreateDataBundleRequest = self._models.get_model(
@@ -503,18 +499,18 @@ class TestServer(unittest.TestCase):
         create_response = self._client.CreateDataBundle(
             body=create_request).result()
         data_bundle_id = create_response['data_bundle_id']
-        print(data_bundle_id)
+        logger.info(data_bundle_id)
 
         # GetDataBundle
-        print("..........Get the Bundle we just created..............")
+        logger.info("..........Get the Bundle we just created..............")
         get_bundle_response = self._client.GetDataBundle(
             data_bundle_id=data_bundle_id).result()
         data_bundle = get_bundle_response.data_bundle
-        print(data_bundle)
-        print(data_bundle.id)
+        logger.info(data_bundle)
+        logger.info(data_bundle.id)
 
         # UpdateDataBundle
-        print("..........Update that Bundle.................")
+        logger.info("..........Update that Bundle.................")
         UpdateDataBundleRequest = self._models.get_model(
             'UpdateDataBundleRequest')
         update_data_bundle = DataBundle(
@@ -531,20 +527,20 @@ class TestServer(unittest.TestCase):
         update_response = self._client.UpdateDataBundle(
             data_bundle_id=data_bundle_id,
             body=update_request).result()
-        print("..........Update that Bundle.................")
+        logger.info("..........Update that Bundle.................")
         updated_bundle = self._client.GetDataBundle(
             data_bundle_id=update_response['data_bundle_id'])\
             .result().data_bundle
-        print('updated_bundle.aliases', updated_bundle.aliases)
-        print('updated_bundle.updated', updated_bundle.updated)
-        print('data_bundle.aliases', data_bundle.aliases)
-        print('data_bundle.updated', data_bundle.updated)
-        # print(updated_bundle.version)
-        # print(updated_bundle.aliases)
-        assert updated_bundle.aliases[0] == 'ghi'
+        logger.info('updated_bundle.aliases: %r', updated_bundle.aliases)
+        logger.info('updated_bundle.updated: %r', updated_bundle.updated)
+        logger.info('data_bundle.aliases: %r', data_bundle.aliases)
+        logger.info('data_bundle.updated: %r', data_bundle.updated)
+        # logger.info(updated_bundle.version)
+        # logger.info(updated_bundle.aliases)
+        self.assertEqual(updated_bundle.aliases[0], 'ghi')
 
         # ListDataBundles
-        print("..........List Data Bundles...............")
+        logger.info("..........List Data Bundles...............")
         ListDataBundlesRequest = self._models.get_model(
             'ListDataBundlesRequest')
         list_request = ListDataBundlesRequest()
@@ -554,26 +550,26 @@ class TestServer(unittest.TestCase):
             checksum_type=list_request.checksum_type,
             page_size=list_request.page_size,
             page_token=list_request.page_token).result()
-        print(len(list_response.data_bundles))
+        logger.info(len(list_response.data_bundles))
 
         # Get all versions of a DataBundle
-        print("..........Get all Versions of a Bundle...............")
+        logger.info("..........Get all Versions of a Bundle...............")
         versions_response = self._client.GetDataBundleVersions(
             data_bundle_id=data_bundle.id).result()
-        print(len(versions_response.data_bundles))
+        logger.info(len(versions_response.data_bundles))
 
         # Get a DataObject from a bundle
-        print("..........Get an Object in a Bundle..............")
+        logger.info("..........Get an Object in a Bundle..............")
         get_bundle_response = self._client.GetDataBundle(
             data_bundle_id=data_bundle_id).result()
         data_bundle = get_bundle_response.data_bundle
         data_object = self._client.GetDataObject(
             data_object_id=data_bundle.data_object_ids[0])\
             .result().data_object
-        print(data_object.urls)
+        logger.info(data_object.urls)
 
         # Get all DataObjects from a bundle
-        print("..........Get all Objects in a Bundle..............")
+        logger.info("..........Get all Objects in a Bundle..............")
         get_bundle_response = self._client.GetDataBundle(
             data_bundle_id=data_bundle_id).result()
         data_bundle = get_bundle_response.data_bundle
@@ -581,23 +577,23 @@ class TestServer(unittest.TestCase):
         for data_object_id in data_bundle.data_object_ids:
             bundle_objects.append(self._client.GetDataObject(
                 data_object_id=data_object_id).result().data_object)
-        print([x.name for x in bundle_objects])
+        logger.info([x.name for x in bundle_objects])
 
         # DeleteDataBundle
-        print("..........Delete the Bundle...............")
+        logger.info("..........Delete the Bundle...............")
         delete_response = self._client.DeleteDataBundle(
             data_bundle_id=data_bundle_id).result()
-        print(delete_response.data_bundle_id)
+        logger.info(delete_response.data_bundle_id)
         try:
             self._client.GetDataBundle(
                 data_bundle_id=update_response['data_bundle_id'])\
                 .result()
         except Exception as e:
-            print('The object no longer exists, '
+            logger.info('The object no longer exists, '
                   '404 not found. {}'.format(e))
 
         # Page through a listing of Data Bundles
-        print("..........Page through a listing of Data Bundles......")
+        logger.info("..........Page through a listing of Data Bundles......")
         for i in range(100):
             my_data_bundle = DataBundle(
                 id=str(uuid.uuid1()),
@@ -621,8 +617,8 @@ class TestServer(unittest.TestCase):
             page_size=list_request.page_size,
             page_token=list_request.page_token).result()
         ids = [x['id'] for x in list_response.data_bundles]
-        print(list_response.next_page_token)
-        print(ids)
+        logger.info(list_response.next_page_token)
+        logger.info(ids)
 
         list_request = ListDataBundlesRequest(
             page_size=10, page_token=list_response.next_page_token)
@@ -633,10 +629,10 @@ class TestServer(unittest.TestCase):
             page_size=list_request.page_size,
             page_token=list_request.page_token).result()
         ids = [x['id'] for x in list_response.data_bundles]
-        print(ids)
+        logger.info(ids)
 
         # Find a DataBundle by alias
-        print("..........List Data Bundles by alias..............")
+        logger.info("..........List Data Bundles by alias..............")
         list_request = ListDataBundlesRequest(
             alias=list_response.data_bundles[0].aliases[0])
         alias_list_response = self._client.ListDataBundles(
@@ -645,16 +641,14 @@ class TestServer(unittest.TestCase):
             checksum_type=list_request.checksum_type,
             page_size=list_request.page_size,
             page_token=list_request.page_token).result()
-        print(list_response.data_bundles[0].aliases[0])
-        print(alias_list_response.data_bundles[0].aliases[0])
+        logger.info(list_response.data_bundles[0].aliases[0])
+        logger.info(alias_list_response.data_bundles[0].aliases[0])
 
-    def test_no_find(self):
-        # this should raise an expected error
-        try:
-            self._client.GetDataBundle(
-                data_bundle_id='NON-EXISTING-KEY').result()
-        except HTTPNotFound as e:
-            self.assertEqual(e.status_code, 404)
+    def test_get_nonexistent_databundle(self):
+        """Test querying GetDataBundle with a nonexistent data bundle."""
+        with self.assertRaises(bravado.exception.HTTPNotFound) as ctx:
+            self._client.GetDataBundle(data_bundle_id='nonexistent-key').result()
+        self.assertEqual(ctx.exception.status_code, 404)
 
     def test_schema_required(self):
         """
@@ -667,10 +661,9 @@ class TestServer(unittest.TestCase):
         data_object = DataObject(name=str(uuid.uuid1()), size="1")
         create_request = CreateDataObjectRequest(data_object=data_object)
 
-        with self.assertRaises(jsonschema.exceptions.ValidationError) as context:
+        with self.assertRaises(jsonschema.exceptions.ValidationError) as ctx:
             self._client.CreateDataObject(body=create_request)
-
-        self.assertIn('required property', str(context.exception))
+        self.assertIn('required property', ctx.exception.message)
 
     def test_service_info(self):
         r = self._client.GetServiceInfo().result()
@@ -696,11 +689,6 @@ class TestServerWithLocalClient(TestServer):
         cls._server_process = p
 
         local_client = Client(SERVER_URL, local=True)
-
-        # setup logging
-        root = logging.getLogger()
-        root.setLevel(logging.ERROR)
-        logging.captureWarnings(True)
 
         cls._models = local_client.models
         cls._client = local_client.client
