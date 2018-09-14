@@ -776,7 +776,6 @@ definitions:
       page_size and page_token are provided for retrieving a large number of
       results.
     type: object
-    required: ['checksum']
     properties:
       alias:
         type: string
