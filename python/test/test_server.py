@@ -94,16 +94,15 @@ class TestServer(ga4gh.dos.test.DataObjectServiceTest):
         :rtype: bool
         :returns: True if the objects are the same
         """
+        # ctime and mtime can be touched server-side
+        ignored = ['created', 'updated']
+        if not check_version:
+            ignored.append('version')
         for k in data_obj_1.__dict__['_Model__dict'].keys():
-            # ctime and mtime can be touched server-side
-            ignored = ['created', 'updated']
-            if not check_version:
-                ignored.append('version')
             if k in ignored:
                 continue
             error = "Mismatch on '%s': %s != %s" % (k, data_obj_1[k], data_obj_2[k])
-            # For the purposes of testing, '123' == 123
-            self.assertEqual(str(data_obj_1[k]), str(data_obj_2[k]), error)
+            self.assertEqual(data_obj_1[k], data_obj_2[k], error)
         return True
 
     def assertSameDataBundle(self, *args, **kwargs):
