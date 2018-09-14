@@ -4,7 +4,6 @@ import logging
 import subprocess
 import time
 import uuid
-import unittest
 
 # setup connection, models and security
 import bravado.exception
@@ -12,6 +11,7 @@ from bravado.requests_client import RequestsClient
 import jsonschema.exceptions
 
 import ga4gh.dos
+import ga4gh.dos.test
 from ga4gh.dos.client import Client
 
 SERVER_URL = 'http://localhost:8080/ga4gh/dos/v1'
@@ -24,7 +24,7 @@ logging.getLogger('bravado_core.model').setLevel(logging.INFO)
 logging.getLogger('swagger_spec_validator.validator20').setLevel(logging.INFO)
 
 
-class TestServer(unittest.TestCase):
+class TestServer(ga4gh.dos.test.DataObjectServiceTest):
     @classmethod
     def setUpClass(cls):
         # start a test server
@@ -58,6 +58,26 @@ class TestServer(unittest.TestCase):
         logger.info(cls._server_process.pid)
         cls._server_process.kill()
         cls._server_process.terminate()
+
+    def generate_data_bundle(self, **kwargs):
+        """
+        Generates a DataBundle with bravado.
+        Same arguments as :meth:`generate_data_object`.
+        """
+        data_bdl_model = self._models.get_model('DataBundle')
+        data_bdl = next(self.generate_data_bundles(1))
+        data_bdl.update(kwargs)
+        return data_bdl_model.unmarshal(data_bdl)
+
+    def generate_data_object(self, **kwargs):
+        """
+        Generates a DataObject with bravado.
+        :param kwargs: fields to set in the generated data object
+        """
+        data_obj_model = self._models.get_model('DataObject')
+        data_obj = next(self.generate_data_objects(1))
+        data_obj.update(kwargs)
+        return data_obj_model.unmarshal(data_obj)
 
     def test_client_driven_id(self):
         """ validate server uses client's id """
