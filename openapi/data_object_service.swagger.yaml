@@ -829,7 +829,6 @@ definitions:
           results. This field will be empty if there aren't any additional results.
   ListDataObjectsRequest:
     type: object
-    required: ['checksum']
     properties:
       alias:
         type: string
