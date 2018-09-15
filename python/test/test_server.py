@@ -23,11 +23,9 @@ logging.getLogger('swagger_spec_validator.validator20').setLevel(logging.INFO)
 class TestServer(ga4gh.dos.test.DataObjectServiceTest):
     @classmethod
     def setUpClass(cls):
-        # Start a test server
         cls._server_process = subprocess.Popen(['ga4gh_dos_server'], stdout=subprocess.PIPE,
                                                stderr=subprocess.PIPE, shell=False)
         time.sleep(2)
-        # Set up the client
         local_client = ga4gh.dos.client.Client(SERVER_URL)
         cls._models = local_client.models
         cls._client = local_client.client
@@ -197,8 +195,8 @@ class TestServer(ga4gh.dos.test.DataObjectServiceTest):
         server_data_obj = response.data_object
         self.assertSameDataObject(server_data_obj, new_data_obj, check_version=False)
 
-    # DOS server currently does not support updating a data object id but
-    # should
+    # TODO: DOS server currently does not support updating a data object id but
+    # it should.
     # def test_update_data_object_id(self):
     #     """
     #     Test that updating a data object's id works correctly
@@ -248,42 +246,39 @@ class TestServer(ga4gh.dos.test.DataObjectServiceTest):
         self.assertEqual(ctx.exception.status_code, 404)
 
     def test_list_data_object_querying(self):
-        # Create a data object
         data_obj = self.generate_data_object()
         self.request('CreateDataObject', data_object=data_obj)
         # We should be able to retrieve the data object by a unique alias, ...
         results = self.request('ListDataObjects', query={'alias': data_obj.aliases[0]})
         self.assertEqual(len(results['data_objects']), 1)
-        # by a unique checksum, ...
-        results = self.request('ListDataObjects',
+        results = self.request('ListDataObjects',  # by a unique checksum...
                                query={'checksum': data_obj.checksums[0].checksum,
                                       'checksum_type': data_obj.checksums[0].type})
         self.assertEqual(len(results['data_objects']), 1)
-        # and by a unique url.
-        results = self.request('ListDataObjects', query={'url': data_obj.urls[0].url})
+        results = self.request('ListDataObjects',  # and by a unique url..
+                               query={'url': data_obj.urls[0].url})
         self.assertEqual(len(results['data_objects']), 1)
-        # The more advanced ListDataObjects testing is left to
-        # :meth:`ga4gh.dos.test.ComplianceTest.test_list_data_object_querying`.
+        # The more advanced ListDataObjects testing is left to :meth:`ComplianceTest.test_list_data_object_querying`.
 
     def test_data_object_versions(self):
-        # Create a data object
         data_obj = self.generate_data_object()
         self.request('CreateDataObject', data_object=data_obj)
-        # Get all of its versions. There should only be one - the original version
+        # Make a GetDataObjectVersions request to see retrieve all the
+        # stored versions of this data object. As we've just created it,
+        # there should onlty be one version.
         r = self.request('GetDataObjectVersions', data_object_id=data_obj.id)
         self.assertEqual(len(r['data_objects']), 1)
-        # Now make a new version and upload it
-        data_obj.version = 'great-version'
+        data_obj.version = 'great-version'  # Now make a new version and upload it
         data_obj.name = 'greatest-change'  # technically unnecessary, but just in case
         self.request('UpdateDataObject', data_object=data_obj,
                      query={'data_object_id': data_obj.id})
-        # If we check, there should now be two versions
+        # Now that we've added another version, a GetDataObjectVersions
+        # query should confirm that there are now two versions
         r = self.request('GetDataObjectVersions', data_object_id=data_obj.id)
         self.assertEqual(len(r['data_objects']), 2)
 
     def test_data_bundles(self):
-        # Create data objects to populate the data bundle with
-        ids = []
+        ids = []  # Create data objects to populate the data bundle with
         names = []
         aliases = []
         for i in range(10):
@@ -296,14 +291,13 @@ class TestServer(ga4gh.dos.test.DataObjectServiceTest):
         for id_ in ids:
             self.request('GetDataObject', data_object_id=id_)
 
-        # Mint a data bundle with the data objects we just created
+        # Mint a data bundle with the data objects we just created then
+        # check to verify its existence
         data_bundle = self.generate_data_bundle(data_object_ids=ids)
         self.request('CreateDataBundle', data_bundle=data_bundle)
-        # Does the data bundle we just created exist?
         server_bdl = self.request('GetDataBundle', data_bundle_id=data_bundle.id).data_bundle
         self.assertSameDataBundle(server_bdl, data_bundle)
 
-        # UpdateDataBundle
         logger.info("..........Update that Bundle.................")
         server_bdl.aliases = ['ghi']
         update_data_bundle = server_bdl
@@ -315,27 +309,21 @@ class TestServer(ga4gh.dos.test.DataObjectServiceTest):
         logger.info('updated_bundle.updated: %r', updated_bundle.updated)
         logger.info('data_bundle.aliases: %r', data_bundle.aliases)
         logger.info('data_bundle.updated: %r', data_bundle.updated)
-        # logger.info(updated_bundle.version)
-        # logger.info(updated_bundle.aliases)
         self.assertEqual(updated_bundle.aliases[0], 'ghi')
 
-        # ListDataBundles
         logger.info("..........List Data Bundles...............")
         list_response = self.request('ListDataBundles')
         logger.info(len(list_response.data_bundles))
 
-        # Get all versions of a DataBundle
         logger.info("..........Get all Versions of a Bundle...............")
         versions_response = self.request('GetDataBundleVersions', data_bundle_id=data_bundle.id)
         logger.info(len(versions_response.data_bundles))
 
-        # Get a DataObject from a bundle
         logger.info("..........Get an Object in a Bundle..............")
         data_bundle = self.request('GetDataBundle', data_bundle_id=data_bundle.id).data_bundle
         data_object = self.request('GetDataObject', data_object_id=data_bundle.data_object_ids[0]).data_object
         logger.info(data_object.urls)
 
-        # Get all DataObjects from a bundle
         logger.info("..........Get all Objects in a Bundle..............")
         data_bundle = self.request('GetDataBundle', data_bundle_id=data_bundle.id).data_bundle
         bundle_objects = []
@@ -344,14 +332,12 @@ class TestServer(ga4gh.dos.test.DataObjectServiceTest):
                 data_object_id=data_object_id).result().data_object)
         logger.info([x.name for x in bundle_objects])
 
-        # DeleteDataBundle
         logger.info("..........Delete the Bundle...............")
         delete_response = self.request('DeleteDataBundle', data_bundle_id=data_bundle.id)
         logger.info(delete_response.data_bundle_id)
         with self.assertRaises(bravado.exception.HTTPNotFound):
             self.request('GetDataBundle', data_bundle_id=update_response['data_bundle_id'])
 
-        # Page through a listing of Data Bundles
         logger.info("..........Page through a listing of Data Bundles......")
         for i in range(100):
             num = "BDL{}".format(i)
@@ -366,7 +352,6 @@ class TestServer(ga4gh.dos.test.DataObjectServiceTest):
         ids = [x['id'] for x in list_response.data_bundles]
         logger.info(ids)
 
-        # Find a DataBundle by alias
         logger.info("..........List Data Bundles by alias..............")
         alias_list_response = self.request('ListDataBundles', alias=list_response.data_bundles[0].aliases[0])
         logger.info(list_response.data_bundles[0].aliases[0])
@@ -385,8 +370,7 @@ class TestServer(ga4gh.dos.test.DataObjectServiceTest):
         """
         CreateDataObjectRequest = self._models.get_model('CreateDataObjectRequest')
         DataObject = self._models.get_model('CreateDataObjectRequest')
-        # Missing the `id` parameter
-        data_object = DataObject(name='random-name', size='1')
+        data_object = DataObject(name='random-name', size='1')  # Missing the `id` parameter
         create_request = CreateDataObjectRequest(data_object=data_object)
 
         with self.assertRaises(jsonschema.exceptions.ValidationError) as ctx:
@@ -409,11 +393,9 @@ class TestServerWithLocalClient(TestServer):
     """
     @classmethod
     def setUpClass(cls):
-        # Start a test server
         cls._server_process = subprocess.Popen(['ga4gh_dos_server'], stdout=subprocess.PIPE,
                                                stderr=subprocess.PIPE, shell=False)
         time.sleep(2)
-        # Set up the client
         local_client = ga4gh.dos.client.Client(SERVER_URL, local=True)
         cls._models = local_client.models
         cls._client = local_client.client
