@@ -1,660 +1,367 @@
-# With app.py running start this test
-from datetime import datetime
+# -*- coding: utf-8 -*-
 import logging
 import subprocess
 import time
-import uuid
-import unittest
 
-# setup connection, models and security
-from bravado.requests_client import RequestsClient
-from bravado.exception import HTTPNotFound
-import jsonschema
+import bravado.exception
+import jsonschema.exceptions
 
 import ga4gh.dos
-from ga4gh.dos.client import Client
+import ga4gh.dos.test
+import ga4gh.dos.client
 
 SERVER_URL = 'http://localhost:8080/ga4gh/dos/v1'
+logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
+logging.captureWarnings(True)
+# Make scrolling through test logs more useful
+logging.getLogger('swagger_spec_validator.ref_validators').setLevel(logging.INFO)
+logging.getLogger('bravado_core.model').setLevel(logging.INFO)
+logging.getLogger('swagger_spec_validator.validator20').setLevel(logging.INFO)
 
 
-class TestServer(unittest.TestCase):
+class TestServer(ga4gh.dos.test.DataObjectServiceTest):
     @classmethod
     def setUpClass(cls):
-        # start a test server
-        print('setting UP!!!!!!!!!!')
-        p = subprocess.Popen(
-            ['ga4gh_dos_server'],
-            stdout=subprocess.PIPE,
-            stderr=subprocess.PIPE,
-            shell=False)
+        cls._server_process = subprocess.Popen(['ga4gh_dos_server'], stdout=subprocess.PIPE,
+                                               stderr=subprocess.PIPE, shell=False)
         time.sleep(2)
-        # print(p.poll(), p.pid)
-        cls._server_process = p
-
-        http_client = RequestsClient()
-        # http_client.set_basic_auth(
-        #   'localhost', 'admin', 'secret')
-        # http_client.set_api_key(
-        #   'localhost', 'XXX-YYY-ZZZ', param_in='header')
-        local_client = Client(SERVER_URL, http_client=http_client)
-        client = local_client.client
-        models = local_client.models
-
-        # setup logging
-        root = logging.getLogger()
-        root.setLevel(logging.ERROR)
-        logging.captureWarnings(True)
-        cls._models = models
-
-        cls._client = client
-        cls._local_client = local_client
+        local_client = ga4gh.dos.client.Client(SERVER_URL)
+        cls._models = local_client.models
+        cls._client = local_client.client
 
     @classmethod
     def tearDownClass(cls):
-        print('tearing down')
-        print(cls._server_process.pid)
+        logger.info('Tearing down server process (PID %d)', cls._server_process.pid)
         cls._server_process.kill()
-        cls._server_process.terminate()
+        cls._server_process.wait()
 
-    def test_client_driven_id(self):
-        """ validate server uses client's id """
-        Checksum = self._models.get_model('Checksum')
-        URL = self._models.get_model('URL')
-        CreateDataObjectRequest = self._models.get_model('CreateDataObjectRequest')
-        DataObject = self._models.get_model('CreateDataObjectRequest')
-        checksum = str(uuid.uuid1())
-        do_id = str(uuid.uuid1())
-        # CreateDataObject
-        print("..........Create an object............")
-        create_data_object = DataObject(
-            id=do_id,
-            name="abc",
-            size="12345",
-            checksums=[Checksum(checksum=checksum, type="md5")],
-            created=datetime.utcnow(),
-            urls=[URL(url="a"), URL(url="b")])
-        create_request = CreateDataObjectRequest(
-            data_object=create_data_object)
-        create_response = self._client.CreateDataObject(
-            body=create_request).result()
-        data_object_id = create_response['data_object_id']
-        self.assertEqual(data_object_id, do_id, "expected server to use client's id")
+    def generate_data_bundle(self, **kwargs):
+        """
+        Generates a DataBundle with bravado.
+        Same arguments as :meth:`generate_data_object`.
+        """
+        data_bdl_model = self._models.get_model('DataBundle')
+        data_bdl = next(self.generate_data_bundles(1))
+        data_bdl.update(kwargs)
+        return data_bdl_model.unmarshal(data_bdl)
+
+    def generate_data_object(self, **kwargs):
+        """
+        Generates a DataObject with bravado.
+        :param kwargs: fields to set in the generated data object
+        """
+        data_obj_model = self._models.get_model('DataObject')
+        data_obj = next(self.generate_data_objects(1))
+        data_obj.update(kwargs)
+        return data_obj_model.unmarshal(data_obj)
+
+    def request(self, operation_id, query={}, **params):
+        """
+        Make a request to the DOS server with :class:`ga4gh.dos.client.Client`.
+        :param str operation_id: the name of the operation ID to call (e.g.
+                                 ListDataBundles, DeleteDataObject, etc.)
+        :param dict query: parameters to include in the query / path
+        :param \*\*params: parameters to include in the request body
+                           (that would normally be provided to the
+                           Request model)
+        :returns: response body of the request as a schema model (e.g.
+                  ListDataBundlesResponse)
+        """
+        request_name = operation_id + 'Request'
+        # These two in particular are special cases as they are the only
+        # models that utilize query parameters
+        if request_name in ['ListDataBundlesRequest', 'ListDataObjectsRequest']:
+            params = self._models.get_model(request_name)(**params).marshal()
+        elif request_name in self._models.swagger_spec.definitions:
+            params = {'body': self._models.get_model(request_name)(**params)}
+        params.update(query)
+        return getattr(self._client, operation_id)(**params).result()
+
+    def assertSameDataObject(self, data_obj_1, data_obj_2, check_version=True):
+        """
+        Verifies that the two provided data objects are the same by
+        comparing them key-by-key.
+
+        :param bool check_version: set to True to check if the version
+                                   key is the same, False otherwise.
+                                   This option is provided as some DOS
+                                   implementations will touch the version
+                                   key on their own, and some will not
+        :raises AssertionError: if the provided objects are not the same
+        :rtype: bool
+        :returns: True if the objects are the same
+        """
+        # ctime and mtime can be touched server-side
+        ignored = ['created', 'updated']
+        if not check_version:
+            ignored.append('version')
+        for k in data_obj_1.__dict__['_Model__dict'].keys():
+            if k in ignored:
+                continue
+            error = "Mismatch on '%s': %s != %s" % (k, data_obj_1[k], data_obj_2[k])
+            self.assertEqual(data_obj_1[k], data_obj_2[k], error)
+        return True
+
+    def assertSameDataBundle(self, *args, **kwargs):
+        """
+        Wrapper around :meth:`assertSameDataObject`. Has the exact same
+        arguments and functionality, as the method by which data objects
+        and data bundles are compared are similar.
+
+        This method is provided so that the test code can be semantically
+        correct.
+        """
+        return self.assertSameDataObject(*args, **kwargs)
+
+    def test_create_data_object(self):
+        """Smoke test to verify functionality of the CreateDataObject endpoint."""
+        # First, create a data object.
+        data_obj = self.generate_data_object()
+        response = self.request('CreateDataObject', data_object=data_obj)
+        # Then, verify that the data object id returned by the server is the
+        # same id that we sent to it.
+        self.assertEqual(response['data_object_id'], data_obj.id,
+                         "Mismatch between data object ID in request and response")
+        # Now that we know that things look fine at the surface level,
+        # verify that we can retrieve the data object by its ID.
+        response = self.request('GetDataObject', data_object_id=data_obj.id)
+        # Finally, ensure that the returned data object is the same as the
+        # one we sent.
+        self.assertSameDataObject(data_obj, response.data_object)
 
     def test_duplicate_checksums(self):
         """ validate expected behavior of multiple creates of same checksum """
-        Checksum = self._models.get_model('Checksum')
-        URL = self._models.get_model('URL')
-        CreateDataObjectRequest = self._models.get_model(
-            'CreateDataObjectRequest')
-        DataObject = self._models.get_model('CreateDataObjectRequest')
-        checksum = str(uuid.uuid1())
-        # CreateDataObject
-        print("..........Create an object............")
-        create_data_object = DataObject(
-            id=str(uuid.uuid1()),
-            created=datetime.utcnow(),
-            name="abc",
-            size="12345",
-            checksums=[Checksum(checksum=checksum, type="md5")],
-            urls=[URL(url="a"), URL(url="b")])
-        create_request = CreateDataObjectRequest(
-            data_object=create_data_object)
-        create_response = self._client.CreateDataObject(
-            body=create_request).result()
-        data_object_id = create_response['data_object_id']
-        print(data_object_id)
-        print("..........Create a 2nd  object............")
-        create_data_object = DataObject(
-            id=str(uuid.uuid1()),
-            created=datetime.utcnow(),
-            name="xyz",
-            size="12345",
-            checksums=[Checksum(checksum=checksum, type="md5")],
-            urls=[URL(url="c")])
-        create_request = CreateDataObjectRequest(
-            data_object=create_data_object)
-        create_response = self._client.CreateDataObject(
-            body=create_request).result()
-        data_object_id = create_response['data_object_id']
-        print(data_object_id)
-        # ListDataObjects
-        print("..........List Data Objects...............")
-        ListDataObjectsRequest = self._models.get_model(
-            'ListDataObjectsRequest')
-        next_page_token = None
-        count = 0
-        urls = []
-        names = []
-        while(True):
-            list_request = ListDataObjectsRequest(checksum=checksum)
-            list_request.page_size = 10
-            if next_page_token:
-                list_request.next_page_token = next_page_token
-            list_response = self._client.ListDataObjects(
-                alias=list_request.alias,
-                checksum=list_request.checksum,
-                checksum_type=list_request.checksum_type,
-                page_size=list_request.page_size,
-                page_token=list_request.page_token).result()
-            next_page_token = list_response.next_page_token
-            for data_object in list_response.data_objects:
-                count = count + 1
-                urls.extend([url.url for url in data_object.urls])
-                names.append(data_object.name)
-            if not list_response.next_page_token:
-                break
-        assert count == 2, 'did not return all objects for {}'.format(checksum)
-        for url in ['a', 'b', 'c']:
-            assert url in urls, 'expected {} in urls'.format(url)
-        for name in ['abc', 'xyz']:
-            assert name in names, 'expected {} in names'.format(name)
-
-    def test_create_update(self):
-        Checksum = self._models.get_model('Checksum')
-        URL = self._models.get_model('URL')
-        CreateDataObjectRequest = self._models.get_model(
-            'CreateDataObjectRequest')
-        DataObject = self._models.get_model('CreateDataObjectRequest')
-        # CreateDataObject
-        print("..........Create an object............")
-        create_data_object = DataObject(
-            id=str(uuid.uuid1()),
-            created=datetime.utcnow(),
-            name="abc",
-            size="12345",
-            checksums=[Checksum(checksum="def", type="md5")],
-            urls=[URL(url="a"), URL(url="b")],
-            version="0")
-        create_request = CreateDataObjectRequest(
-            data_object=create_data_object)
-        create_response = self._client.CreateDataObject(
-            body=create_request).result()
-        data_object_id = create_response['data_object_id']
-        print(data_object_id)
-
-        # GetDataObject
-        print("..........Get the Object we just created..............")
-        get_object_response = self._client.GetDataObject(
-            data_object_id=data_object_id).result()
-        data_object = get_object_response.data_object
-        print(data_object.id)
-
-        # UpdateDataObject
-        print("..........Update that object.................")
-        UpdateDataObjectRequest = self._models.get_model(
-            'UpdateDataObjectRequest')
-        update_data_object = DataObject(
-            id=str(uuid.uuid1()),
-            created=datetime.utcnow(),
-            name="abc",
-            size="12345",
-            checksums=[Checksum(checksum="def", type="md5")],
-            urls=[URL(url="a"), URL(url="b"), URL(url="c")])
-        update_request = UpdateDataObjectRequest(data_object=update_data_object)
-        update_response = self._client.UpdateDataObject(
-            data_object_id=data_object_id, body=update_request).result()
-        updated_object = self._client.GetDataObject(
-            data_object_id=update_response['data_object_id'])\
-            .result().data_object
-        print(updated_object.version)
-        assert not updated_object.version == data_object.version
-
-        print("..........Create another object w/ same checksum............")
-        create_data_object = DataObject(
-            id=str(uuid.uuid1()),
-            created=datetime.utcnow(),
-            name="fubar",
-            size="12345",
-            checksums=[Checksum(checksum="def", type="md5")],
-            urls=[URL(url="foo"), URL(url="bar")])
-        create_request = CreateDataObjectRequest(
-            data_object=create_data_object)
-        create_response = self._client.CreateDataObject(
-            body=create_request).result()
-        data_object_id = create_response['data_object_id']
-        print(data_object_id)
-
-        # ListDataObjects
-        print("..........List Data Objects...............")
-        ListDataObjectsRequest = self._models.get_model(
-            'ListDataObjectsRequest')
-        next_page_token = "0"
-        count = 0
-        while(True):
-            print(next_page_token)
-            list_request = ListDataObjectsRequest(
-                checksum='def',
-                page_token=next_page_token,
-                page_size=1)
-            list_response = self._client.ListDataObjects(
-                alias=list_request.alias,
-                checksum=list_request.checksum,
-                checksum_type=list_request.checksum_type,
-                page_size=list_request.page_size,
-                page_token=list_request.page_token,
-                url=list_request.url).result()
-            print(list_response)
-            next_page_token = list_response.next_page_token
-            count += 1
-            if not list_response.next_page_token:
-                print('done paging')
-                break
-        assert count > 1
-
-    def test_data_objects(self):
-        Checksum = self._models.get_model('Checksum')
-        URL = self._models.get_model('URL')
-        CreateDataObjectRequest = self._models.get_model(
-            'CreateDataObjectRequest')
-        DataObject = self._models.get_model(
-            'CreateDataObjectRequest')
-        # CreateDataObject
-        print("..........Create an object............")
-        create_data_object = DataObject(
-            id=str(uuid.uuid1()),
-            created=datetime.utcnow(),
-            name="abc",
-            # Specify `size` as an int greater than 2^31 - 1 (Javascript's
-            # maximum int size) but lower than 2^63 - 1 (Python's maximum int
-            # size) to test json serialization/casting (#63)
-            size=2**63 - 2,
-            checksums=[Checksum(checksum="def", type="md5")],
-            urls=[URL(url="a"), URL(url="b")])
-        create_request = CreateDataObjectRequest(
-            data_object=create_data_object)
-        create_response = self._client.CreateDataObject(
-            body=create_request).result()
-        data_object_id = create_response['data_object_id']
-        print(data_object_id)
-
-        # GetDataObject
-        print("..........Get the Object we just created..............")
-        get_object_response = self._client.GetDataObject(
-            data_object_id=data_object_id).result()
-        data_object = get_object_response.data_object
-        print(data_object.id)
-
-        # UpdateDataObject
-        print("..........Update that object.................")
-        UpdateDataObjectRequest = self._models.get_model(
-            'UpdateDataObjectRequest')
-        update_data_object = DataObject(
-            id=data_object['id'],
-            created=data_object['created'],
-            name="abc",
-            size='12345',
-            checksums=[Checksum(checksum="def", type="md5")],
-            urls=[URL(url="a"), URL(url="b"), URL(url="c")])
-        update_request = UpdateDataObjectRequest(data_object=update_data_object)
-        update_response = self._client.UpdateDataObject(
-            data_object_id=data_object.id,
-            body=update_request).result()
-        updated_object = self._client.GetDataObject(
-            data_object_id=update_response['data_object_id'])\
-            .result().data_object
-        print(updated_object)
-        print(data_object)
-        assert not updated_object.version == data_object.version
-
-        # Get the old DataObject
-        print("..........Get the old Data Object.................")
-        old_data_object = self._client.GetDataObject(
-            data_object_id=update_response['data_object_id'],
-            version=data_object.version).result().data_object
-        print(old_data_object.version)
-
-        # ListDataObjects
-        print("..........List Data Objects...............")
-        ListDataObjectsRequest = self._models.get_model(
-            'ListDataObjectsRequest')
-        list_request = ListDataObjectsRequest()
-        list_response = self._client.ListDataObjects(
-            alias=list_request.alias,
-            checksum=list_request.checksum,
-            checksum_type=list_request.checksum_type,
-            page_size=list_request.page_size,
-            page_token=list_request.page_token,
-            url=list_request.url).result()
-        print(len(list_response.data_objects))
-        assert len(list_response.data_objects) > 0
-
-        # Get all versions of a DataObject
-        print("..........Get all Versions...............")
-        versions_response = self._client.GetDataObjectVersions(
-            data_object_id=old_data_object.id).result()
-        print(len(versions_response.data_objects))
-
-        # DeleteDataObject
-        print("..........Delete the Object...............")
-        delete_response = self._client.DeleteDataObject(
-            data_object_id=data_object_id).result()
-        print(delete_response.data_object_id)
+        # Create a data object (:var:`data_obj_1`) and save its checksum
+        # for later.
+        data_obj_1 = self.generate_data_object()
+        # There's some bug that causes a RecursionError if :var:`data_obj_1_checksum`
+        # is passed to :meth:`self._client.ListDataObjects` without first being
+        # casted to a string...
+        data_obj_1_checksum = str(data_obj_1.checksums[0].checksum)
+        data_obj_1_checksum_type = str(data_obj_1.checksums[0].type)
+        self.request('CreateDataObject', data_object=data_obj_1)
+        # Create another data object (:var:`data_obj_2`) but with the
+        # same checksum as :var:`data_obj_1`.
+        data_obj_2 = self.generate_data_object()
+        data_obj_2.checksums[0].checksum = data_obj_1_checksum
+        data_obj_2.checksums[0].type = data_obj_1_checksum_type
+        self.request('CreateDataObject', data_object=data_obj_2)
+        # There are now two data objects with the same checksum on the
+        # server. We can retrieve them using a ListDataObjects request.
+        # Even though we're only expecting two data objects to be
+        # returned by this query, we specify a high page_size - that way,
+        # if we receive more than two data objects in the response, we
+        # know something is up.
+        response = self.request('ListDataObjects', page_size=100,
+                                checksum=data_obj_1_checksum,
+                                checksum_type=data_obj_1_checksum_type)
+        self.assertEqual(len(response.data_objects), 2)
+        # Finally, confirm that the server returned both data objects
+        # that we created, and that they're all intact.
         try:
-            self._client.GetDataObject(
-                data_object_id=update_response['data_object_id']).result()
-        except Exception as e:
-            print('The object no longer exists, 404 not found. {}'.format(e))
+            self.assertSameDataObject(data_obj_1, response.data_objects[0])
+        except AssertionError:
+            self.assertSameDataObject(data_obj_2, response.data_objects[0])
+        try:
+            self.assertSameDataObject(data_obj_2, response.data_objects[1])
+        except AssertionError:
+            self.assertSameDataObject(data_obj_1, response.data_objects[1])
 
-        # Create a Data Object specifying your own version
-        print(".......Create a Data Object with our own version..........")
-        my_data_object = DataObject(
-            id=str(uuid.uuid1()),
-            created=datetime.utcnow(),
-            name="abc",
-            size='12345',
-            checksums=[Checksum(checksum="def", type="md5")],
-            urls=[URL(url="a"), URL(url="b")],
-            version="great-version")
-        create_request = CreateDataObjectRequest(
-            data_object=my_data_object)
-        create_response = self._client.CreateDataObject(
-            body=create_request).result()
-        data_object_id = create_response['data_object_id']
-        data_object = self._client.GetDataObject(
-            data_object_id=data_object_id).result().data_object
-        print(data_object.version)
+    def test_update_data_object(self):
+        # Create a data object using CreateDataObject, then retrieve it
+        # using GetDataObject to make sure it exists.
+        old_data_obj = self.generate_data_object()
+        self.request('CreateDataObject', data_object=old_data_obj)
+        response = self.request('GetDataObject', data_object_id=old_data_obj.id)
+        server_data_obj = response.data_object
+        self.assertSameDataObject(old_data_obj, server_data_obj)
+        # Now that we have a shiny new data object, let's update all of
+        # its attributes - we can do this quickly by generating a new
+        # data object and updating all of the attributes of the old object
+        # with that of the new one. (All the attributes except the id: we
+        # need to be careful that the id of the data object we send in the
+        # request body is the same as the original data object, or the data
+        # object's id will be changed, rendering this exercise moot.)
+        new_data_obj = self.generate_data_object(id=old_data_obj.id)
+        self.request('UpdateDataObject', data_object=new_data_obj,
+                     query={'data_object_id': old_data_obj.id})
+        response = self.request('GetDataObject', data_object_id=old_data_obj.id)
+        server_data_obj = response.data_object
+        # The data object should now be updated. If we use the GetDataObject
+        # endpoint to retrieve the updated data object from the server,
+        # it should be the same as the one we have in memory.
+        response = self.request('GetDataObject', data_object_id=old_data_obj.id)
+        server_data_obj = response.data_object
+        self.assertSameDataObject(server_data_obj, new_data_obj, check_version=False)
 
-        # Create a Data Object specifying your own ID
-        print("..........Create a Data Object with our own ID...........")
-        my_data_object = DataObject(
-            id="myid",
-            created=datetime.utcnow(),
-            file_name="abc",
-            checksums=[Checksum(checksum="def", type="md5")],
-            urls=[URL(url="a"), URL(url="b")],
-            size=0)
-        create_request = CreateDataObjectRequest(
-            data_object=my_data_object)
-        create_response = self._client.CreateDataObject(
-            body=create_request).result()
-        data_object_id = create_response['data_object_id']
-        print(data_object_id)
+    # TODO: DOS server currently does not support updating a data object id but
+    # it should.
+    # def test_update_data_object_id(self):
+    #     """
+    #     Test that updating a data object's id works correctly
+    #     """
+    #     # Create a data object
+    #     data_obj_1 = self.generate_data_object()
+    #     self.request('CreateDataObject', data_object=data_obj_1)
+    #     # Confirm that the data object we just created exists server-side
+    #     response = self.request('GetDataObject', data_object_id=data_obj_1.id)
+    #     self.assertSameDataObject(data_obj_1, response.data_object)
+    #     # Update the id of the data object we created to something different
+    #     data_obj_2 = response.data_object
+    #     data_obj_2.id = 'new-data-object-id'
+    #     self.request('UpdateDataObject', data_object=data_obj_2,
+    #                  query={'data_object_id': data_obj_1.id})
+    #     # Try to retrieve the data object by its new id and its old id
+    #     # The former should succeed:
+    #     response = self.request('GetDataObject', data_object_id=data_obj_2.id)
+    #     self.assertSameDataObject(response.data_object, data_obj_2)
+    #     # And the latter should fail:
+    #     with self.assertRaises(bravado.exception.HTTPNotFound) as ctx:
+    #         self.request('GetDataObject', data_object_id=data_obj_1.id)
+    #     self.assertEqual(ctx.exception.status_code, 404)
 
-        # Page through a listing of data objects
-        print("..........Page through a listing of Objects..............")
-        for i in range(100):
-            my_data_object = DataObject(
-                id=str(uuid.uuid1()),
-                created=datetime.utcnow(),
-                name="OBJ{}".format(i),
-                aliases=["OBJ{}".format(i)],
-                size=str(10 * i),
-                checksums=[Checksum(
-                    checksum="def{}".format(i), type="md5")],
-                urls=[URL(url="http://{}".format(i))])
-            create_request = CreateDataObjectRequest(
-                data_object=my_data_object)
-            self._client.CreateDataObject(
-                body=create_request).result()
-        list_request = ListDataObjectsRequest(page_size=10)
-        list_response = self._client.ListDataObjects(
-            alias=list_request.alias,
-            checksum=list_request.checksum,
-            checksum_type=list_request.checksum_type,
-            page_size=list_request.page_size,
-            page_token=list_request.page_token,
-            url=list_request.url).result()
-        ids = [x.id for x in list_response.data_objects]
-        print(list_response.next_page_token)
-        print(ids)
+    def test_data_object_long_serialization(self):
+        # Specify `size` as an int gte 2^31 - 1 (int32 / Javascript's
+        # maximum int size) but lte 2^63 - 1 (int64 / maximum int size
+        # in schema) to test json serialization/casting (see #63)
+        data_obj = self.generate_data_object(size=2**63 - 1)
+        self.request('CreateDataObject', data_object=data_obj)
+        # Now check to make sure that nothing was lost in transit
+        retrieved_obj = self.request('GetDataObject', data_object_id=data_obj.id).data_object
+        self.assertEqual(data_obj.size, retrieved_obj.size)
 
-        list_request = ListDataObjectsRequest(
-            page_size=10, page_token=list_response.next_page_token)
-        list_response = self._client.ListDataObjects(
-            alias=list_request.alias,
-            checksum=list_request.checksum,
-            checksum_type=list_request.checksum_type,
-            page_size=list_request.page_size,
-            page_token=list_request.page_token,
-            url=list_request.url).result()
-        ids = [x.id for x in list_response.data_objects]
-        print(ids)
+    def test_delete_data_object(self):
+        # Create a data object
+        data_obj = self.generate_data_object()
+        self.request('CreateDataObject', data_object=data_obj)
+        # Make sure it exists!
+        response = self.request('GetDataObject', data_object_id=data_obj.id)
+        self.assertSameDataObject(data_obj, response.data_object)
+        # Begone foul data object
+        self.request('DeleteDataObject', data_object_id=data_obj.id)
+        # Make sure it's gone
+        with self.assertRaises(bravado.exception.HTTPNotFound) as ctx:
+            self.request('GetDataObject', data_object_id=data_obj.id)
+        self.assertEqual(ctx.exception.status_code, 404)
 
-        # Find a DataObject by alias
-        print("..........List Objects by alias..............")
-        object_list_request = ListDataObjectsRequest(alias="OBJ1")
-        object_list_response = self._client.ListDataObjects(
-            alias=object_list_request.alias,
-            checksum=object_list_request.checksum,
-            checksum_type=object_list_request.checksum_type,
-            page_size=object_list_request.page_size,
-            page_token=object_list_request.page_token,
-            url=object_list_request.url).result()
-        print(object_list_response.data_objects[0].aliases)
+    def test_list_data_object_querying(self):
+        data_obj = self.generate_data_object()
+        self.request('CreateDataObject', data_object=data_obj)
+        # We should be able to retrieve the data object by a unique alias, ...
+        results = self.request('ListDataObjects', query={'alias': data_obj.aliases[0]})
+        self.assertEqual(len(results['data_objects']), 1)
+        results = self.request('ListDataObjects',  # by a unique checksum...
+                               query={'checksum': data_obj.checksums[0].checksum,
+                                      'checksum_type': data_obj.checksums[0].type})
+        self.assertEqual(len(results['data_objects']), 1)
+        results = self.request('ListDataObjects',  # and by a unique url..
+                               query={'url': data_obj.urls[0].url})
+        self.assertEqual(len(results['data_objects']), 1)
+        # The more advanced ListDataObjects testing is left to :meth:`ComplianceTest.test_list_data_object_querying`.
 
-        # Find a DataObject by checksum
-        print("..........List Objects by checksum..............")
-        object_list_request = ListDataObjectsRequest(
-            checksum="def1")
-        object_list_response = self._client.ListDataObjects(
-            alias=object_list_request.alias,
-            checksum=object_list_request.checksum,
-            checksum_type=object_list_request.checksum_type,
-            page_size=object_list_request.page_size,
-            page_token=object_list_request.page_token,
-            url=object_list_request.url).result()
-        print(object_list_response.data_objects[0].checksums)
-
-        # Find a DataObject by URL
-        print("..........List Objects by url..............")
-        object_list_request = ListDataObjectsRequest(url="http://1")
-        object_list_response = self._client.ListDataObjects(
-            alias=object_list_request.alias,
-            checksum=object_list_request.checksum,
-            checksum_type=object_list_request.checksum_type,
-            page_size=object_list_request.page_size,
-            page_token=object_list_request.page_token,
-            url=object_list_request.url).result()
-        print(object_list_response.data_objects[0].urls)
+    def test_data_object_versions(self):
+        data_obj = self.generate_data_object()
+        self.request('CreateDataObject', data_object=data_obj)
+        # Make a GetDataObjectVersions request to see retrieve all the
+        # stored versions of this data object. As we've just created it,
+        # there should onlty be one version.
+        r = self.request('GetDataObjectVersions', data_object_id=data_obj.id)
+        self.assertEqual(len(r['data_objects']), 1)
+        data_obj.version = 'great-version'  # Now make a new version and upload it
+        data_obj.name = 'greatest-change'  # technically unnecessary, but just in case
+        self.request('UpdateDataObject', data_object=data_obj,
+                     query={'data_object_id': data_obj.id})
+        # Now that we've added another version, a GetDataObjectVersions
+        # query should confirm that there are now two versions
+        r = self.request('GetDataObjectVersions', data_object_id=data_obj.id)
+        self.assertEqual(len(r['data_objects']), 2)
 
     def test_data_bundles(self):
-        Checksum = self._models.get_model('Checksum')
-        URL = self._models.get_model('URL')
-        CreateDataObjectRequest = self._models.get_model(
-            'CreateDataObjectRequest')
-        DataObject = self._models.get_model(
-            'CreateDataObjectRequest')
-        ListDataObjectsRequest = self._models.get_model(
-            'ListDataObjectsRequest')
-
-        print("..........Create some data objects ............")
+        ids = []  # Create data objects to populate the data bundle with
+        names = []
+        aliases = []
         for i in range(10):
-            my_data_object = DataObject(
-                id=str(uuid.uuid1()),
-                created=datetime.utcnow(),
-                name="OBJ{}".format(i),
-                aliases=["OBJ{}".format(i)],
-                size=str(10 * i),
-                checksums=[Checksum(
-                    checksum="def{}".format(i), type="md5")],
-                urls=[URL(url="http://{}".format(i))])
-            create_request = CreateDataObjectRequest(
-                data_object=my_data_object)
-            self._client.CreateDataObject(body=create_request).result()
-        list_request = ListDataObjectsRequest(page_size=10)
-        list_response = self._client.ListDataObjects(
-            alias=list_request.alias,
-            checksum=list_request.checksum,
-            checksum_type=list_request.checksum_type,
-            page_size=list_request.page_size,
-            page_token=list_request.page_token,
-            url=list_request.url).result()
-        ids = [x.id for x in list_response.data_objects]
-        print(list_response.next_page_token)
+            data_obj = self.generate_data_object()
+            ids.append(data_obj.id)
+            names.append(data_obj.name)
+            aliases.append(data_obj.aliases[0])
+            self.request('CreateDataObject', data_object=data_obj)
+        # Make sure that the data objects we just created exist
+        for id_ in ids:
+            self.request('GetDataObject', data_object_id=id_)
 
-        # CreateDataBundle
-        print("..........Create a Data Bundle............")
-        Checksum = self._models.get_model('Checksum')
-        URL = self._models.get_model('URL')
-        CreateDataBundleRequest = self._models.get_model(
-            'CreateDataBundleRequest')
-        DataBundle = self._models.get_model('DataBundle')
-        create_data_bundle = DataBundle(
-            id=str(uuid.uuid1()),
-            name="abc",
-            created=datetime.utcnow(),
-            updated=datetime.utcnow(),
-            version=str(datetime.utcnow()),
-            size="12345",
-            checksums=[Checksum(checksum="def", type="md5")],
-            data_object_ids=[x.id for x in list_response.data_objects])
-        create_request = CreateDataBundleRequest(
-            data_bundle=create_data_bundle)
-        create_response = self._client.CreateDataBundle(
-            body=create_request).result()
-        data_bundle_id = create_response['data_bundle_id']
-        print(data_bundle_id)
+        # Mint a data bundle with the data objects we just created then
+        # check to verify its existence
+        data_bundle = self.generate_data_bundle(data_object_ids=ids)
+        self.request('CreateDataBundle', data_bundle=data_bundle)
+        server_bdl = self.request('GetDataBundle', data_bundle_id=data_bundle.id).data_bundle
+        self.assertSameDataBundle(server_bdl, data_bundle)
 
-        # GetDataBundle
-        print("..........Get the Bundle we just created..............")
-        get_bundle_response = self._client.GetDataBundle(
-            data_bundle_id=data_bundle_id).result()
-        data_bundle = get_bundle_response.data_bundle
-        print(data_bundle)
-        print(data_bundle.id)
+        logger.info("..........Update that Bundle.................")
+        server_bdl.aliases = ['ghi']
+        update_data_bundle = server_bdl
+        update_response = self.request('UpdateDataBundle', data_bundle=update_data_bundle,
+                                       query={'data_bundle_id': data_bundle.id})
+        logger.info("..........Get that Bundle.................")
+        updated_bundle = self.request('GetDataBundle', data_bundle_id=update_response['data_bundle_id']).data_bundle
+        logger.info('updated_bundle.aliases: %r', updated_bundle.aliases)
+        logger.info('updated_bundle.updated: %r', updated_bundle.updated)
+        logger.info('data_bundle.aliases: %r', data_bundle.aliases)
+        logger.info('data_bundle.updated: %r', data_bundle.updated)
+        self.assertEqual(updated_bundle.aliases[0], 'ghi')
 
-        # UpdateDataBundle
-        print("..........Update that Bundle.................")
-        UpdateDataBundleRequest = self._models.get_model(
-            'UpdateDataBundleRequest')
-        update_data_bundle = DataBundle(
-            id=str(uuid.uuid1()),
-            name="abc",
-            size="12345",
-            created=datetime.utcnow(),
-            updated=datetime.utcnow(),
-            version=str(datetime.utcnow()),
-            data_object_ids=[x.id for x in list_response.data_objects],
-            checksums=[Checksum(checksum="def", type="md5")],
-            aliases=["ghi"])
-        update_request = UpdateDataBundleRequest(data_bundle=update_data_bundle)
-        update_response = self._client.UpdateDataBundle(
-            data_bundle_id=data_bundle_id,
-            body=update_request).result()
-        print("..........Update that Bundle.................")
-        updated_bundle = self._client.GetDataBundle(
-            data_bundle_id=update_response['data_bundle_id'])\
-            .result().data_bundle
-        print('updated_bundle.aliases', updated_bundle.aliases)
-        print('updated_bundle.updated', updated_bundle.updated)
-        print('data_bundle.aliases', data_bundle.aliases)
-        print('data_bundle.updated', data_bundle.updated)
-        # print(updated_bundle.version)
-        # print(updated_bundle.aliases)
-        assert updated_bundle.aliases[0] == 'ghi'
+        logger.info("..........List Data Bundles...............")
+        list_response = self.request('ListDataBundles')
+        logger.info(len(list_response.data_bundles))
 
-        # ListDataBundles
-        print("..........List Data Bundles...............")
-        ListDataBundlesRequest = self._models.get_model(
-            'ListDataBundlesRequest')
-        list_request = ListDataBundlesRequest()
-        list_response = self._client.ListDataBundles(
-            alias=list_request.alias,
-            checksum=list_request.checksum,
-            checksum_type=list_request.checksum_type,
-            page_size=list_request.page_size,
-            page_token=list_request.page_token).result()
-        print(len(list_response.data_bundles))
+        logger.info("..........Get all Versions of a Bundle...............")
+        versions_response = self.request('GetDataBundleVersions', data_bundle_id=data_bundle.id)
+        logger.info(len(versions_response.data_bundles))
 
-        # Get all versions of a DataBundle
-        print("..........Get all Versions of a Bundle...............")
-        versions_response = self._client.GetDataBundleVersions(
-            data_bundle_id=data_bundle.id).result()
-        print(len(versions_response.data_bundles))
+        logger.info("..........Get an Object in a Bundle..............")
+        data_bundle = self.request('GetDataBundle', data_bundle_id=data_bundle.id).data_bundle
+        data_object = self.request('GetDataObject', data_object_id=data_bundle.data_object_ids[0]).data_object
+        logger.info(data_object.urls)
 
-        # Get a DataObject from a bundle
-        print("..........Get an Object in a Bundle..............")
-        get_bundle_response = self._client.GetDataBundle(
-            data_bundle_id=data_bundle_id).result()
-        data_bundle = get_bundle_response.data_bundle
-        data_object = self._client.GetDataObject(
-            data_object_id=data_bundle.data_object_ids[0])\
-            .result().data_object
-        print(data_object.urls)
-
-        # Get all DataObjects from a bundle
-        print("..........Get all Objects in a Bundle..............")
-        get_bundle_response = self._client.GetDataBundle(
-            data_bundle_id=data_bundle_id).result()
-        data_bundle = get_bundle_response.data_bundle
+        logger.info("..........Get all Objects in a Bundle..............")
+        data_bundle = self.request('GetDataBundle', data_bundle_id=data_bundle.id).data_bundle
         bundle_objects = []
         for data_object_id in data_bundle.data_object_ids:
             bundle_objects.append(self._client.GetDataObject(
                 data_object_id=data_object_id).result().data_object)
-        print([x.name for x in bundle_objects])
+        logger.info([x.name for x in bundle_objects])
 
-        # DeleteDataBundle
-        print("..........Delete the Bundle...............")
-        delete_response = self._client.DeleteDataBundle(
-            data_bundle_id=data_bundle_id).result()
-        print(delete_response.data_bundle_id)
-        try:
-            self._client.GetDataBundle(
-                data_bundle_id=update_response['data_bundle_id'])\
-                .result()
-        except Exception as e:
-            print('The object no longer exists, '
-                  '404 not found. {}'.format(e))
+        logger.info("..........Delete the Bundle...............")
+        delete_response = self.request('DeleteDataBundle', data_bundle_id=data_bundle.id)
+        logger.info(delete_response.data_bundle_id)
+        with self.assertRaises(bravado.exception.HTTPNotFound):
+            self.request('GetDataBundle', data_bundle_id=update_response['data_bundle_id'])
 
-        # Page through a listing of Data Bundles
-        print("..........Page through a listing of Data Bundles......")
+        logger.info("..........Page through a listing of Data Bundles......")
         for i in range(100):
-            my_data_bundle = DataBundle(
-                id=str(uuid.uuid1()),
-                created=datetime.utcnow(),
-                updated=datetime.utcnow(),
-                version=str(datetime.utcnow()),
-                name="BDL{}".format(i),
-                aliases=["BDL{}".format(i)],
-                size=str(10 * i),
-                data_object_ids=data_bundle.data_object_ids,
-                checksums=[Checksum(
-                    checksum="def", type="md5")],)
-            create_request = CreateDataBundleRequest(
-                data_bundle=my_data_bundle)
-            self._client.CreateDataBundle(body=create_request).result()
-        list_request = ListDataBundlesRequest(page_size=10)
-        list_response = self._client.ListDataBundles(
-            alias=list_request.alias,
-            checksum=list_request.checksum,
-            checksum_type=list_request.checksum_type,
-            page_size=list_request.page_size,
-            page_token=list_request.page_token).result()
+            num = "BDL{}".format(i)
+            my_data_bundle = self.generate_data_bundle(name=num, aliases=[num], data_object_ids=data_bundle.data_object_ids)
+            self.request('CreateDataBundle', data_bundle=my_data_bundle)
+        list_response = self.request('ListDataBundles', page_size=10)
         ids = [x['id'] for x in list_response.data_bundles]
-        print(list_response.next_page_token)
-        print(ids)
+        logger.info(list_response.next_page_token)
+        logger.info(ids)
 
-        list_request = ListDataBundlesRequest(
-            page_size=10, page_token=list_response.next_page_token)
-        list_response = self._client.ListDataBundles(
-            alias=list_request.alias,
-            checksum=list_request.checksum,
-            checksum_type=list_request.checksum_type,
-            page_size=list_request.page_size,
-            page_token=list_request.page_token).result()
+        list_response = self.request('ListDataBundles', page_size=10, page_token=list_response.next_page_token)
         ids = [x['id'] for x in list_response.data_bundles]
-        print(ids)
+        logger.info(ids)
 
-        # Find a DataBundle by alias
-        print("..........List Data Bundles by alias..............")
-        list_request = ListDataBundlesRequest(
-            alias=list_response.data_bundles[0].aliases[0])
-        alias_list_response = self._client.ListDataBundles(
-            alias=list_request.alias,
-            checksum=list_request.checksum,
-            checksum_type=list_request.checksum_type,
-            page_size=list_request.page_size,
-            page_token=list_request.page_token).result()
-        print(list_response.data_bundles[0].aliases[0])
-        print(alias_list_response.data_bundles[0].aliases[0])
+        logger.info("..........List Data Bundles by alias..............")
+        alias_list_response = self.request('ListDataBundles', alias=list_response.data_bundles[0].aliases[0])
+        logger.info(list_response.data_bundles[0].aliases[0])
+        logger.info(alias_list_response.data_bundles[0].aliases[0])
 
-    def test_no_find(self):
-        # this should raise an expected error
-        try:
-            self._client.GetDataBundle(
-                data_bundle_id='NON-EXISTING-KEY').result()
-        except HTTPNotFound as e:
-            self.assertEqual(e.status_code, 404)
+    def test_get_nonexistent_databundle(self):
+        """Test querying GetDataBundle with a nonexistent data bundle."""
+        with self.assertRaises(bravado.exception.HTTPNotFound) as ctx:
+            self._client.GetDataBundle(data_bundle_id='nonexistent-key').result()
+        self.assertEqual(ctx.exception.status_code, 404)
 
     def test_schema_required(self):
         """
@@ -663,14 +370,12 @@ class TestServer(unittest.TestCase):
         """
         CreateDataObjectRequest = self._models.get_model('CreateDataObjectRequest')
         DataObject = self._models.get_model('CreateDataObjectRequest')
-        # Missing the `id` parameter
-        data_object = DataObject(name=str(uuid.uuid1()), size="1")
+        data_object = DataObject(name='random-name', size='1')  # Missing the `id` parameter
         create_request = CreateDataObjectRequest(data_object=data_object)
 
-        with self.assertRaises(jsonschema.exceptions.ValidationError) as context:
+        with self.assertRaises(jsonschema.exceptions.ValidationError) as ctx:
             self._client.CreateDataObject(body=create_request)
-
-        self.assertIn('required property', str(context.exception))
+        self.assertIn('required property', ctx.exception.message)
 
     def test_service_info(self):
         r = self._client.GetServiceInfo().result()
@@ -686,22 +391,11 @@ class TestServerWithLocalClient(TestServer):
     the same tests is a little overkill but they're fast enough that it
     really doesn't make a difference at all.
     """
-
     @classmethod
     def setUpClass(cls):
-        # Start a test server
-        p = subprocess.Popen(['ga4gh_dos_server'], stdout=subprocess.PIPE,
-                             stderr=subprocess.PIPE, shell=False)
+        cls._server_process = subprocess.Popen(['ga4gh_dos_server'], stdout=subprocess.PIPE,
+                                               stderr=subprocess.PIPE, shell=False)
         time.sleep(2)
-        cls._server_process = p
-
-        local_client = Client(SERVER_URL, local=True)
-
-        # setup logging
-        root = logging.getLogger()
-        root.setLevel(logging.ERROR)
-        logging.captureWarnings(True)
-
+        local_client = ga4gh.dos.client.Client(SERVER_URL, local=True)
         cls._models = local_client.models
         cls._client = local_client.client
-        cls._local_client = local_client

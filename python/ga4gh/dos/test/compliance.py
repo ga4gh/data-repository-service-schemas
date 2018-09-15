@@ -1,11 +1,8 @@
 # -*- coding: utf-8 -*-
-import functools
-import hashlib
 import json
 import logging
 import random
 import time
-import unittest
 try:
     import urllib.parse as urllib  # For Python 3 compat
 except ImportError:
@@ -13,51 +10,13 @@ except ImportError:
 import uuid
 
 import ga4gh.dos.schema
+from ga4gh.dos.test import DataObjectServiceTest, test_requires
 
 logging.basicConfig(level=logging.DEBUG)
 logger = logging.getLogger(__name__)
 
 
-def test_requires(*operations):
-    """
-    This is a decorator that identifies what DOS operations a given test
-    case uses (where each DOS operation is named by its `operationId` in
-    the schema, e.g. ListDataBundles, UpdateDataObject, GetServiceInfo,
-    etc.) and skips them if the operation is not supported by the
-    implementation under test.
-
-    For example, given this test setup::
-
-        class Test(AbstractComplianceTest):
-            supports = ['UpdateDataBundles']
-
-            @test_requires('UpdateDataBundles')
-            def test_update_data_bundles(self):
-                self.dos_request('PUT', '/databundles/1234')
-
-            @test_requires('ListDataBundles', 'UpdateDataBundles')
-            def test_list_and_update_data_bundles(self):
-                self.dos_request('GET', '/databundles')
-                self.dos_request('PUT', '/databundles/1234')
-
-    ``test_update_data_bundles`` would run and ``test_list_and_update_data_bundles``
-    would be skipped.
-
-    :param str \*operations: the operations supported by the decorated
-                             test case
-    """
-    def decorator(func):
-        @functools.wraps(func)
-        def wrapper(self):
-            unsupported = [op for op in operations if op not in self.supports]
-            if unsupported:
-                raise unittest.SkipTest("not supported: " + ", ".join(unsupported))
-            return func(self)
-        return wrapper
-    return decorator
-
-
-class AbstractComplianceTest(unittest.TestCase):
+class AbstractComplianceTest(DataObjectServiceTest):
     """
     This class implements a number of compliance tests for Data Object Service
     implementations. It is meant to provide a single, standardized test
@@ -214,49 +173,6 @@ class AbstractComplianceTest(unittest.TestCase):
         :rtype: str
         """
         return path + '?' + urllib.urlencode(kwargs)
-
-    @staticmethod
-    def generate_data_objects(amount):
-        """
-        Yields a specified number of data objects with random attributes.
-
-        :param int amount: the amount of data objects to generate
-        """
-        for _ in range(amount):
-            yield {
-                'id': str(uuid.uuid1()),
-                'name': str(uuid.uuid1()),
-                'size': str(random.randint(2**0, 2**32)),
-                'created': '2018-08-29T19:58:52.648Z',
-                'updated': '2018-08-29T19:58:52.648Z',
-                'version': str(uuid.uuid1()),
-                'mime_type': 'application/json',
-                'checksums': [{
-                    'checksum': hashlib.md5(str(uuid.uuid1()).encode('utf-8')).hexdigest(),
-                    'type': 'md5'
-                }],
-                'urls': [
-                    {'url': str(uuid.uuid1())},
-                    {'url': str(uuid.uuid1())}
-                ],
-                'description': str(uuid.uuid1()),
-                'aliases': [str(uuid.uuid1())],
-            }
-
-    @staticmethod
-    def generate_data_bundles(amount):
-        """
-        Yields a specified number of data bundles with random attributes.
-
-        :param int amount: the amount of data bundles to generate
-        """
-        for bdl in AbstractComplianceTest.generate_data_objects(amount):
-            del bdl['name']
-            del bdl['size']
-            del bdl['mime_type']
-            del bdl['urls']
-            bdl.update({'data_object_ids': [str(uuid.uuid1()), str(uuid.uuid1())]})
-            yield bdl
 
     def get_random_data_object(self):
         """
