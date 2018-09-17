@@ -41,7 +41,8 @@ setup(
         'connexion==1.4.2',
         'Flask-Cors==3.0.4',
         'bravado-core==4.13.4',
-        'bravado==9.2.2'
+        'bravado==9.2.2',
+        'jsonschema==2.6.0'
     ],
     license='Apache License 2.0',
     package_data={
