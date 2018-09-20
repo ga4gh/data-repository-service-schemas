@@ -562,6 +562,20 @@ definitions:
             A set of key-value pairs that represent metadata provided by the uploader.
   AuthorizationMetadata:
     type: object
+    properties:
+        provider:
+          type: string
+          description: |-
+            The auth provider, e.g. auth0, google, etc.
+        auth_type:
+          type: string
+          description: |-
+            The auth standard being used to make data available. For example, 'OAuth2.0'.
+        auth_url:
+          type: string
+          description: |- 
+            The URL where the auth service is located, for example, a URL to get an OAuth
+            token.
     additionalProperties: true
     description: |-
             OPTIONAL
