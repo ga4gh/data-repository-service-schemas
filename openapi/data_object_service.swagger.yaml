@@ -563,10 +563,6 @@ definitions:
   AuthorizationMetadata:
     type: object
     properties:
-        provider:
-          type: string
-          description: |-
-            The auth provider, e.g. auth0, google, etc.
         auth_type:
           type: string
           description: |-
@@ -580,7 +576,8 @@ definitions:
     description: |-
             OPTIONAL
             A set of key-value pairs that represent sufficient metadata to be granted 
-            access to a resource.
+            access to a resource. It may be helpful to provide details about a specific
+            provider, for example.
   Checksum:
     type: object
     required: ['checksum']
