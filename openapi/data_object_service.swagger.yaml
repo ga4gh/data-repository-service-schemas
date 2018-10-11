@@ -227,11 +227,11 @@ paths:
           in: path
           required: true
           type: string
-          description: The ID of the data bundle to update
+          description: The ID of the Data Bundle to update
         - name: body
           in: body
           required: true
-          description: The new content for the Data Bundle identified by the given data_bundle_id. If the ID specified in the request body is different than that specified in the path, the data bundle's ID will be replaced with the one in the request body.
+          description: The new content for the Data Bundle identified by the given data_bundle_id. If the ID specified in the request body is different than that specified in the path, the Data Bundle's ID will be replaced with the one in the request body.
           schema:
             $ref: '#/definitions/UpdateDataBundleRequest'
       tags:
@@ -304,7 +304,7 @@ paths:
           in: body
           required: true
           description: |-
-            The data object to be created. The ID scheme is left up to the
+            The Data Object to be created. The ID scheme is left up to the
             implementor but should be unique to the server instance.
           schema:
             $ref: '#/definitions/CreateDataObjectRequest'
@@ -499,11 +499,11 @@ paths:
           in: path
           required: true
           type: string
-          description: The ID of the data object to update
+          description: The ID of the Data Object to update
         - name: body
           in: body
           required: true
-          description: The new Data Object for the given data_object_id. If the ID specified in the request body is different than that specified in the path, the data object's ID will be replaced with the one in the request body.
+          description: The new Data Object for the given data_object_id. If the ID specified in the request body is different than that specified in the path, the Data Object's ID will be replaced with the one in the request body.
           schema:
             $ref: '#/definitions/UpdateDataObjectRequest'
       tags:
@@ -646,7 +646,7 @@ definitions:
           $ref: '#/definitions/Checksum'
         description: |-
           At least one checksum must be provided.
-          The data bundle checksum is computed over all the checksums of the
+          The Data Bundle checksum is computed over all the checksums of the
           Data Objects that bundle contains.
       description:
         type: string
