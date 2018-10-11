@@ -15,9 +15,9 @@ stored. It's maintained by the [GA4GH Cloud Workstream](https://github.com/ga4gh
 
 The API is split into two sections:
 
-* **data object management**, which enables the creation, updating, deletion, versioning,
+* **Data Object management**, which enables the creation, updating, deletion, versioning,
   and unique identification of files and data bundles (flat collections of files); and
-* **data object querying**, which can locate data objects across different cloud environments
+* **Data Object querying**, which can locate data objects across different cloud environments
   and DOS implementations.
 
 ## Getting started
