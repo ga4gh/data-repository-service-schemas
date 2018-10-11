@@ -54,7 +54,7 @@ Data Object management
 
 This section of the API focuses on how to read and write Data Objects to
 cloud environments and how to join them together as Data Bundles. Data
-bundles are simply a flat collection of one or more files. This section
+Bundles are simply a flat collection of one or more files. This section
 of the API enables:
 
 -  create/update/delete a file
