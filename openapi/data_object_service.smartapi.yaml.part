@@ -19,3 +19,5 @@ servers:
 info:
   x-implementationLanguage: en
   termsOfService: https://www.ga4gh.org/policies/termsandconditions.html
+tags:
+ - name: NIHdatacommons
