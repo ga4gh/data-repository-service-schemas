@@ -6,7 +6,8 @@ info:
   description: https://github.com/ga4gh/data-object-service-schemas
   contact:
     name: David Steinberg
-    email: david@resium.com
+    email: davidcs@ucsc.edu
+    x-role: responsible developer
   license:
     name: Apache 2.0
     url: https://raw.githubusercontent.com/ga4gh/data-object-service-schemas/master/LICENSE
