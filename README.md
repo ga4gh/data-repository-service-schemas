@@ -7,7 +7,7 @@
 
 [View the schemas in Swagger UI](http://ga4gh.github.io/data-object-service-schemas)
 
-The goal of DOS is to create a generic API on top of existing object storage systems
+The goal of DRS is to create a generic API on top of existing object storage systems
 so workflow systems can access data in a single, standard way regardless of where it's
 stored. It's maintained by the [GA4GH Cloud Workstream](https://github.com/ga4gh/wiki/wiki).
 
@@ -18,7 +18,7 @@ The API is split into two sections:
 * **Data Object management**, which enables the creation, updating, deletion, versioning,
   and unique identification of files and data bundles (flat collections of files); and
 * **Data Object querying**, which can locate data objects across different cloud environments
-  and DOS implementations.
+  and DRS implementations.
 
 ## Getting started
 
