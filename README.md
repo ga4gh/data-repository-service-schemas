@@ -1,4 +1,4 @@
-# Schemas for the Data Object Service (DOS) API
+# Schemas for the Data Repository Service (DRS) API
 <a href="https://ga4gh.org"><img src="https://www.ga4gh.org/gfx/GA-logo-horizontal-tag-RGB.svg" width="200" /></a><br />
 [![Build Status](https://travis-ci.org/ga4gh/data-object-service-schemas.svg?branch=master)](https://travis-ci.org/ga4gh/data-object-service-schemas)
 [![Swagger Validator](https://img.shields.io/swagger/valid/2.0/https/raw.githubusercontent.com/OAI/OpenAPI-Specification/master/examples/v2.0/json/petstore-expanded.json.svg)](https://raw.githubusercontent.com/ga4gh/data-object-service-schemas/master/openapi/data_object_service.swagger.yaml)
@@ -30,7 +30,7 @@ $ pip install ga4gh-dos-schemas
 
 This will install both a demonstration server and a Python client that will allow you to
 manage Data Objects in a local server. You can start the demo server using `ga4gh_dos_server`.
-This starts a Data Object Service at http://localhost:8080.
+This starts a Data Repository Service at http://localhost:8080.
 
 ```
 wget http://hgdownload.cse.ucsc.edu/goldenPath/hg38/chromosomes/chr22.fa.gz
@@ -55,6 +55,6 @@ or the rest of the documentation at [ReadtheDocs](https://data-object-service.re
 
 ## Getting involved!
 
-The Data Object Service Schemas are Apache 2 Licensed Open Source software. Please join us
+The Data Repository Service Schemas are Apache 2 Licensed Open Source software. Please join us
 in the [issues](https://github.com/ga4gh/data-object-service-schemas/issues) or check out the
 contributing docs!
