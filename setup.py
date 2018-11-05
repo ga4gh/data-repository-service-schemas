@@ -42,7 +42,17 @@ setup(
         'Flask-Cors==3.0.4',
         'bravado-core==4.13.4',
         'bravado==9.2.2',
-        'jsonschema==2.6.0'
+        'jsonschema>=2.6.0,<3'
+        # These dependencies listed below are dependencies of jsonschema[format].
+        # We specify them here manually because of pypa/pip#4957. In summary,
+        # between the dependencies listed above, both jsonschema and
+        # jsonschema[format] are identified as sub-dependencies. Due to a bug in
+        # pip, only the former is installed, and not the latter, causing
+        # installation to fail silently on some setups. (Related to #137.)
+        'jsonpointer>1.33',
+        'rfc3987',
+        'strict-rfc3339',
+        'webcolors'
     ],
     license='Apache License 2.0',
     package_data={
