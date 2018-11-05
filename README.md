@@ -5,7 +5,7 @@
 [![Read the Docs badge](https://readthedocs.org/projects/data-object-service/badge/)](https://data-object-service.readthedocs.io/en/latest)
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/ga4gh-dos-schemas.svg)
 
-[View the schemas in Swagger UI](http://ga4gh.github.io/data-object-service-schemas)
+[View the schemas in Swagger UI](http://ga4gh.github.io/data-repository-service-schemas/)
 
 The goal of DRS is to create a generic API on top of existing object storage systems
 so workflow systems can access data in a single, standard way regardless of where it's
