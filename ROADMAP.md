@@ -1,91 +1,108 @@
 Roadmap
 -------
 
+The Data Object Service has been implemented in multiple workflow execution engines 
+and has helped to allow cloud agnostic data access. A small network of DOS servers 
+is available from a resolver at dataguids.org.
+
+Software for presenting Human Cell Atlas, NCI GDC, GTEx, and TOPMed data are all made 
+available. Making it easier to discover, interact with, access, and publish new data 
+using supporting software, documentation, and possible schema changes make up the 
+bulk of this roadmap.
+
 ## Goal
 
-Create an interoperability layer that allows metadata about resources to be interchanged using a common client.
+### Short term - 6 months
+
+Release version 1 and improve ease of use and adoption through supporting software. 
+Provide a model for cloud agnostic data management and a network of resolving services.
+
+### Long term
+
+Interoperate with most major scientific data providers to enable a decentralized 
+network of Data Object Services.
 
 ## Metrics of success
 
-What data are available by DOS? GDC? TOPMed? HCA? How many files/bundles/PB?
+What data are available by DOS?
 
-How many workflows have been converted to use DOS downloader?
+How easy is it to publish new data using a Data Object Service?
 
-How many applications or services offer a DOS interop layer?
+What supporting software uses the Data Object Service?
+
+What is the support status of the various public DOS endpoints?
 
 ## Milestones
 
-### Stable schematization
+### Compliance Testing and Documentation
 
-* Bring the schemas repository to a stable state.
-* Demonstrate usage of the schemas in clients and servers.
-* Make the schematization easily available to other software.
+Develop a unified and extensible testing framework for evaluating the behavior of a DOS
+instance. Develop a plan for extending and making it more useful. Document the various 
+levels of compliance and what application use cases are served by each.
 
-### Lambda Interoperability Layer
+### Workflow Output and Provisioning
 
-* Create an interop layer for:
-	* DSS
-	* indexd
-* Demonstrate authentication/authorization handling.
+Develop solutions for handling the registration and management of workflow outputs into 
+a DOS.
 
-### Supporting software
+### Authentication Metadata
 
-* Create a DOS downloader that can handle resources in third party APIs.
-* Demonstrate usage with Kafka/ES for DOS-connect.
-* Create a "best practices" description of creating an HTTP-signing DOS endpoint.
-* Demonstrate a DOS endpoint indexer, which will provide more flexible metadata queries.
+Add authentication metadata to DOS schemas as needed. Present practical solutions for
+private and access controlled data.
 
-### Workflows and Visualization
+### Visualization Components and Browser
 
-* Extend a workflow to use the DOS downloader (as opposed to a single URL).
-* Create a basic workflow stage that can be reused to extend other workflows to use DOS downloader.
-* Create a basic single page app  for viewing the contents of a DOS registry.
+Develop reusable components that interact with a DOS that can be assembled into a browser. 
+Create examples of integating DOS into existing frontend software by presenting a minimal 
+JavaScript library.
+
+### Network Level Operations
+
+Develop network level metadata entries into DOS schemas as needed. Present identifier 
+resolution provenance in responses and improve error responses to support decentralized 
+resolution. Develop plan for automating peer discovery.
 
 ## Timeline
 
-### December 2017
+### September 2018
 
-We are currently most of the way through *Stabilizing Schemas* and headed into *Lambda Interoperability Layer*.
+Use existing compliance tests to improve testing status on existing DOS installations. Add test 
+coverage to compliance tests to cover existing features. Add authentication metadata and tests 
+in the demo server using HTTP basic auth for downloading a URL.
 
-### January 2017
+### October 2018
 
-We are deep into *Lambda Interoperability Layer* demonstrating working tests against real data served by GDC.
+Document compliance tests and expose test results for public endpoints in a public place. Document
+compliance levels. Integrate latest schemas/client work into DOS connect. Bring existing DOS 
+installations to latest schemas.
 
-Some work towards demonstrating authentication will be offered for this lambda.
+Add network level metadata to responses.
 
-### February 2017
+### November 2018
 
-The lambda for signpost should have fleshed out all interop concerns. Work should focus on DSS lambda.
+Improve testing of dos_connect and demonstrate URL signing feature. Release DOS connect for 
+workflow output handling. Create tests that demonstrate network resolution.
 
-Some work has been shown on the DOS downloader.
+### December 2018
 
-Some software for syndication/replication is demonstrated (DOS-connect).
+Maintain dos_connect release, improve supporting apps for indexing various cloud stores.
 
-### March 2017
+### January 2019
 
-DOS lambdas are available for use for accessing data as a beta. Lambda deployment follows common SDLC practices (alpha, beta). Some metrics are added. 
+Develop basic components for rendering DOS responses. Begin integrating components into a frontend
+webapp.
 
-Data in DOS endpoints has been indexed and made available for more complicated queries as a demonstration.
+### February 2019
 
-### April 2017
+Wireframe frontend app for browsing DOS network. Develop a filterable table interface for 
+objects and bundles.
 
-Practical authentication systems are combined with URL signing features in alpha.
+### March 2019
 
-A demonstration workflow uses DOS to download data.
+Add documentation to schemas for creating namespaced resolution. Create dos_connect configuration 
+for using namespaces. Create a demonstration network.
 
-### May 2017
+### April 2019
 
-The DOS downloader is extended to support other resources types. Published to PyPi.
-
-Authentication schemes that require exchanging of third party API keys are demonstrated.
-
-### June 2017
-
-Publish a workflow stage that can be easily reused to access data using the DOS downloader.
-
-Demonstrate API integration with metadata indexes to analyze "findability" of data.
-
-### July 2017
-
-Integration with a single page webapp allows for DOS manifests to be realized as files by the DOS downloader.
-
+Integrate dos_connect and browser components to improve usability of network services and 
+data management operations. Demonstrate replication and federated resolution.

@@ -6,10 +6,11 @@ from ga4gh.dos.client import Client
 
 config = {
     'validate_requests': False,
-    'validate_responses': False
+    'validate_responses': False,
+    'use_models': False
 }
 
-local_client = Client('http://localhost:8080/', config=config)
+local_client = Client('http://localhost:8080/ga4gh/dos/v1/', config=config)
 client = local_client.client
 models = local_client.models
 
@@ -52,11 +53,11 @@ def gdc_to_ga4gh(gdc):
     Accepts a gdc dictionary and returns a CreateDataObjectRequest
     :return:
     """
-    DataObject = models.get_model('ga4ghDataObject')
-    CreateDataObjectRequest = models.get_model('ga4ghCreateDataObjectRequest')
-    URL = models.get_model('ga4ghURL')
-    Checksum = models.get_model('ga4ghChecksum')
-    print(str(gdc.get('file_size')))
+    DataObject = models.get_model('DataObject')
+    CreateDataObjectRequest = models.get_model('CreateDataObjectRequest')
+    URL = models.get_model('URL')
+    Checksum = models.get_model('Checksum')
+    print((str(gdc.get('file_size'))))
     create_data_object = DataObject(
         checksums=[Checksum(checksum=gdc.get('md5sum'), type='md5')],
         name=gdc.get('file_name'),
@@ -96,7 +97,7 @@ def load_gdc():
     pagination['page'] = 0
     page_length = 10000
     while int(pagination.get('page')) < int(pagination.get('pages')):
-        map(post_dos, hits)
+        list(map(post_dos, hits))
         next_record = pagination.get('page') * page_length
         response = requests.post(
             '{}/files?size=10000&related_files=true&from={}'.format(

@@ -1,13 +1,9 @@
-# Don't import __future__ packages here; they make setup fail
-import shutil
-import os
+# -*- coding: utf-8 -*-
+import sys
 
-# We need to copy the generated swagger to the Python package
-SWAGGER_JSON_PATH = os.path.abspath(
-    os.path.join('swagger', 'data_objects_service.swagger.json'))
-SWAGGER_DEST_PATH = os.path.abspath(os.path.join(
-    'python', 'ga4gh', 'dos', 'data_objects_service.swagger.json'))
-shutil.copyfile(SWAGGER_JSON_PATH, SWAGGER_DEST_PATH)
+# Get version
+sys.path.insert(0, 'python/')
+from ga4gh.dos import __version__  # noqa
 
 # First, we try to use setuptools. If it's not available locally,
 # we fall back on ez_setup.
@@ -18,44 +14,20 @@ except ImportError:
     use_setuptools()
     from setuptools import setup
 
-with open("python/README.pypi.rst") as readmeFile:
+with open("README.md") as readmeFile:
     long_description = readmeFile.read()
 
-install_requires = []
-with open("python/requirements.txt") as requirementsFile:
-    for line in requirementsFile:
-        line = line.strip()
-        if len(line) == 0:
-            continue
-        if line[0] == '#':
-            continue
-        pinnedVersion = line.split()[0]
-        install_requires.append(pinnedVersion)
-
-dependency_links = []
-try:
-    with open("python/constraints.txt") as constraintsFile:
-        for line in constraintsFile:
-            line = line.strip()
-            if len(line) == 0:
-                continue
-            if line[0] == '#':
-                continue
-            dependency_links.append(line)
-except EnvironmentError:
-    print('No constraints file found, proceeding without '
-          'creating dependency links.')
-print(dependency_links)
 
 setup(
     name="ga4gh_dos_schemas",
     description="GA4GH Data Object Service Schemas",
     packages=[
         "ga4gh",
-        "ga4gh.dos"
+        "ga4gh.dos",
+        'ga4gh.dos.test'
     ],
     namespace_packages=["ga4gh"],
-    url="https://github.com/ga4gh/data-object-schemas",
+    url="https://github.com/ga4gh/data-object-service-schemas",
     entry_points={
         'console_scripts': [
             'ga4gh_dos_server=ga4gh.dos.server:main',
@@ -64,24 +36,40 @@ setup(
     },
     package_dir={'': 'python'},
     long_description=long_description,
-    install_requires=install_requires,
-    dependency_links=dependency_links,
+    long_description_content_type='text/markdown',
+    install_requires=[
+        'connexion==1.4.2',
+        'Flask-Cors==3.0.4',
+        'bravado-core==4.13.4',
+        'bravado==9.2.2',
+        'jsonschema>=2.6.0,<3'
+        # These dependencies listed below are dependencies of jsonschema[format].
+        # We specify them here manually because of pypa/pip#4957. In summary,
+        # between the dependencies listed above, both jsonschema and
+        # jsonschema[format] are identified as sub-dependencies. Due to a bug in
+        # pip, only the former is installed, and not the latter, causing
+        # installation to fail silently on some setups. (Related to #137.)
+        'jsonpointer>1.33',
+        'rfc3987',
+        'strict-rfc3339',
+        'webcolors'
+    ],
     license='Apache License 2.0',
-    package_data={'ga4gh.dos': ['data_objects_service.swagger.json'],},
-    include_package_data=True,
-    zip_safe=True,
+    package_data={
+        'ga4gh.dos': ['data_object_service.swagger.yaml'],
+        '': ['openapi/data_object_service.swagger.yaml']
+    },
+    zip_safe=False,
     author="Global Alliance for Genomics and Health",
     author_email="theglobalalliance@genomicsandhealth.org",
     classifiers=[
         'Development Status :: 3 - Alpha',
         'Intended Audience :: Science/Research',
         'License :: OSI Approved :: Apache Software License',
-        'Natural Language :: English',
         'Programming Language :: Python :: 2.7',
+        'Programming Language :: Python :: 3.6',
         'Topic :: Scientific/Engineering :: Bio-Informatics',
     ],
-    version='0.1.0',
+    version=__version__,
     keywords=['genomics'],
-    # Use setuptools_scm to set the version number automatically from Git
-    setup_requires=['setuptools_scm'],
 )

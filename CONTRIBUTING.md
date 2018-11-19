@@ -120,7 +120,7 @@ Documentation
 =============
 
 The goal of GA4GH is to define an interoperable API specification. To
-achieve this, the intent, rationale, and semantics of all data objects
+achieve this, the intent, rationale, and semantics of all Data Objects
 and operations need to be clearly and precisely defined. Decisions that
 are not captured in documentation are lost.
 
