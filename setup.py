@@ -42,7 +42,7 @@ setup(
         'Flask-Cors==3.0.4',
         'bravado-core==4.13.4',
         'bravado==9.2.2',
-        'jsonschema>=2.6.0,<3'
+        'jsonschema>=2.6.0,<3',
         # These dependencies listed below are dependencies of jsonschema[format].
         # We specify them here manually because of pypa/pip#4957. In summary,
         # between the dependencies listed above, both jsonschema and
