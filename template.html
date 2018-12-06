@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32" />
+    <link rel="icon" type="image/png" href="/favicon-16x16.png" sizes="16x16" />
+    <title>Swagger UI - Preview</title>
+    <style>
+      iframe {
+        position: fixed;
+        top: 0px;
+        bottom: 0px;
+        right: 0px;
+        width: 100%;
+        border: none;
+        margin: 0;
+        padding: 0;
+        overflow: hidden;
+        z-index: 999999;
+        height: 100%;
+      }
+    </style>
+  </head>
+  <body>
+    <script>
+      // http://planetozh.com/blog/2008/04/javascript-basename-and-dirname/
+      function dirname(path) {
+        return path.replace(/\\/g,'/').replace(/\/[^\/]*$/, '');;
+      }
+      // We want to load the Swagger UI for master as a frame, but
+      // replace the path to the specification.
+      var swagger_path = dirname(location.pathname) + '/data_object_service.swagger.yaml';
+    </script>
+    <iframe src="/"></iframe>
+  </body>
+</html>

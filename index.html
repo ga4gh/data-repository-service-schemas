@@ -37,10 +37,15 @@
     <script src="./swagger-ui-bundle.js"> </script>
     <script src="./swagger-ui-standalone-preset.js"> </script>
     <script>
+    if ("swagger_path" in parent) {
+      var url = parent.swagger_path;
+    } else {
+      var url = "data_object_service.swagger.yaml";
+    }
     window.onload = function() {
       // Build a system
       const ui = SwaggerUIBundle({
-        url: "https://raw.githubusercontent.com/ga4gh/data-object-service-schemas/master/openapi/data_object_service.swagger.yaml",
+        url: url,
         dom_id: '#swagger-ui',
         deepLinking: true,
         presets: [
