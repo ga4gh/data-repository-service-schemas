@@ -52,8 +52,8 @@ jobs:
 
 before_install:
 - python setup.py sdist
-- pip install dist/ga4gh_dos_schemas-*.tar.gz
+- pip install dist/ga4gh_drs_schemas-*.tar.gz
 
 script:
 - nosetests python/
-- ga4gh_dos_client
+- ga4gh_drs_client
