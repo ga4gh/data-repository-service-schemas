@@ -4,7 +4,7 @@ import os.path
 import swagger_spec_validator.common
 
 cd = os.path.dirname(os.path.realpath(__file__))
-SWAGGER_PATH = os.path.join(cd, 'data_object_service.swagger.yaml')
+SWAGGER_PATH = os.path.join(cd, 'data_repository_service.swagger.yaml')
 
 
 def present_schema():
