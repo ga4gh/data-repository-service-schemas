@@ -27,7 +27,7 @@ setup(
         'ga4gh.drs.test'
     ],
     namespace_packages=["ga4gh"],
-    url="https://github.com/ga4gh/data-object-service-schemas",
+    url="https://github.com/ga4gh/data-repository-service-schemas",
     entry_points={
         'console_scripts': [
             'ga4gh_drs_server=ga4gh.drs.server:main',
