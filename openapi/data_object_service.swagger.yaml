@@ -1,5 +1,5 @@
 swagger: '2.0'
-basePath: '/ga4gh/drs/v1'
+basePath: '/ga4gh/dos/v1'
 info:
   title: Data Repository Service
   version: 0.6.0
@@ -30,7 +30,7 @@ paths:
             $ref: '#/definitions/ServiceInfoResponse'
       tags:
         - DataRepositoryService
-      x-swagger-router-controller: ga4gh.drs.server
+      x-swagger-router-controller: ga4gh.dos.server
   /bundles:
     post:
       summary: Create a new Data Bundle
@@ -64,7 +64,7 @@ paths:
             $ref: '#/definitions/CreateBundleRequest'
       tags:
         - DataRepositoryService
-      x-swagger-router-controller: ga4gh.drs.server
+      x-swagger-router-controller: ga4gh.dos.server
     get:
       summary: List the Data Bundles
       operationId: ListBundles
@@ -134,7 +134,7 @@ paths:
             `next_page_token` from the previous response.
       tags:
         - DataRepositoryService
-      x-swagger-router-controller: ga4gh.drs.server
+      x-swagger-router-controller: ga4gh.dos.server
   '/bundles/{bundle_id}':
     get:
       summary: Retrieve a Data Bundle
@@ -178,7 +178,7 @@ paths:
           type: string
       tags:
         - DataRepositoryService
-      x-swagger-router-controller: ga4gh.drs.server
+      x-swagger-router-controller: ga4gh.dos.server
     delete:
       summary: Delete a Data Bundle
       operationId: DeleteBundle
@@ -194,7 +194,7 @@ paths:
           type: string
       tags:
         - DataRepositoryService
-      x-swagger-router-controller: ga4gh.drs.server
+      x-swagger-router-controller: ga4gh.dos.server
     put:
       summary: Update a Data Bundle
       operationId: UpdateBundle
@@ -237,7 +237,7 @@ paths:
             $ref: '#/definitions/UpdateBundleRequest'
       tags:
         - DataRepositoryService
-      x-swagger-router-controller: ga4gh.drs.server
+      x-swagger-router-controller: ga4gh.dos.server
   '/bundles/{bundle_id}/versions':
     get:
       operationId: GetBundleVersions
@@ -274,7 +274,7 @@ paths:
           type: string
       tags:
         - DataRepositoryService
-      x-swagger-router-controller: ga4gh.drs.server
+      x-swagger-router-controller: ga4gh.dos.server
   /objects:
     post:
       summary: Make a new Data Object
@@ -311,7 +311,7 @@ paths:
             $ref: '#/definitions/CreateObjectRequest'
       tags:
         - DataRepositoryService
-      x-swagger-router-controller: ga4gh.drs.server
+      x-swagger-router-controller: ga4gh.dos.server
     get:
       summary: List the Data Objects
       operationId: ListObjects
@@ -387,7 +387,7 @@ paths:
             `next_page_token` from the previous response.
       tags:
         - DataRepositoryService
-      x-swagger-router-controller: ga4gh.drs.server
+      x-swagger-router-controller: ga4gh.dos.server
   '/objects/{object_id}':
     get:
       summary: Retrieve a Data Object
@@ -430,7 +430,7 @@ paths:
           type: string
       tags:
         - DataRepositoryService
-      x-swagger-router-controller: ga4gh.drs.server
+      x-swagger-router-controller: ga4gh.dos.server
     delete:
       summary: Delete a Data Object index entry
       operationId: DeleteObject
@@ -466,7 +466,7 @@ paths:
           type: string
       tags:
         - DataRepositoryService
-      x-swagger-router-controller: ga4gh.drs.server
+      x-swagger-router-controller: ga4gh.dos.server
     put:
       summary: Update a Data Object
       operationId: UpdateObject
@@ -509,7 +509,7 @@ paths:
             $ref: '#/definitions/UpdateObjectRequest'
       tags:
         - DataRepositoryService
-      x-swagger-router-controller: ga4gh.drs.server
+      x-swagger-router-controller: ga4gh.dos.server
   '/objects/{object_id}/versions':
     get:
       summary: Retrieve all versions of a Data Object
@@ -546,7 +546,7 @@ paths:
           type: string
       tags:
         - DataRepositoryService
-      x-swagger-router-controller: ga4gh.drs.server
+      x-swagger-router-controller: ga4gh.dos.server
 definitions:
   SystemMetadata:
     type: object
