@@ -12,6 +12,7 @@ branches:
   only:
     - master
     - /^\d+\.\d+(\.\d+)?(-\S*)?$/
+    - /^feature\/issue-\d+$/
 
 stages:
   - linting
