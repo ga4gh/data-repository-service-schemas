@@ -1,7 +1,7 @@
 # Schemas for the Data Repository Service (DRS) API
 <a href="https://ga4gh.org"><img src="https://www.ga4gh.org/gfx/GA-logo-horizontal-tag-RGB.svg" width="200" /></a><br />
 [![Build Status](https://travis-ci.org/ga4gh/data-object-service-schemas.svg?branch=master)](https://travis-ci.org/ga4gh/data-object-service-schemas)
-[![Swagger Validator](https://img.shields.io/swagger/valid/2.0/https/raw.githubusercontent.com/OAI/OpenAPI-Specification/master/examples/v2.0/json/petstore-expanded.json.svg)](https://raw.githubusercontent.com/ga4gh/data-object-service-schemas/master/openapi/data_object_service.swagger.yaml)
+[![Swagger Validator](https://img.shields.io/swagger/valid/2.0/https/raw.githubusercontent.com/OAI/OpenAPI-Specification/master/examples/v2.0/json/petstore-expanded.json.svg)](https://raw.githubusercontent.com/ga4gh/data-object-service-schemas/master/openapi/data_repository_service.swagger.yaml)
 [![Read the Docs badge](https://readthedocs.org/projects/data-object-service/badge/)](https://data-object-service.readthedocs.io/en/latest)
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/ga4gh-dos-schemas.svg)
 

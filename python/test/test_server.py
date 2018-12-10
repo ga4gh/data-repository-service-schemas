@@ -6,11 +6,11 @@ import time
 import bravado.exception
 import jsonschema.exceptions
 
-import ga4gh.dos
-import ga4gh.dos.test
-import ga4gh.dos.client
+import ga4gh.drs
+import ga4gh.drs.test
+import ga4gh.drs.client
 
-SERVER_URL = 'http://localhost:8080/ga4gh/dos/v1'
+SERVER_URL = 'http://localhost:8080/ga4gh/drs/v1'
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 logging.captureWarnings(True)
@@ -20,13 +20,13 @@ logging.getLogger('bravado_core.model').setLevel(logging.INFO)
 logging.getLogger('swagger_spec_validator.validator20').setLevel(logging.INFO)
 
 
-class TestServer(ga4gh.dos.test.DataObjectServiceTest):
+class TestServer(ga4gh.drs.test.DataObjectServiceTest):
     @classmethod
     def setUpClass(cls):
-        cls._server_process = subprocess.Popen(['ga4gh_dos_server'], stdout=subprocess.PIPE,
+        cls._server_process = subprocess.Popen(['ga4gh_drs_server'], stdout=subprocess.PIPE,
                                                stderr=subprocess.PIPE, shell=False)
         time.sleep(2)
-        local_client = ga4gh.dos.client.Client(SERVER_URL)
+        local_client = ga4gh.drs.client.Client(SERVER_URL)
         cls._models = local_client.models
         cls._client = local_client.client
 
@@ -58,7 +58,7 @@ class TestServer(ga4gh.dos.test.DataObjectServiceTest):
 
     def request(self, operation_id, query={}, **params):
         """
-        Make a request to the DOS server with :class:`ga4gh.dos.client.Client`.
+        Make a request to the DOS server with :class:`ga4gh.drs.client.Client`.
         :param str operation_id: the name of the operation ID to call (e.g.
                                  ListDataBundles, DeleteDataObject, etc.)
         :param dict query: parameters to include in the query / path
@@ -379,13 +379,13 @@ class TestServer(ga4gh.dos.test.DataObjectServiceTest):
 
     def test_service_info(self):
         r = self._client.GetServiceInfo().result()
-        self.assertEqual(ga4gh.dos.__version__, r.version)
+        self.assertEqual(ga4gh.drs.__version__, r.version)
 
 
 class TestServerWithLocalClient(TestServer):
     """
     Runs all of the test cases in the :class:`TestServer` test suite but
-    using :class:`ga4gh.dos.client.Client` when loaded locally. (In fact,
+    using :class:`ga4gh.drs.client.Client` when loaded locally. (In fact,
     this suite is exactly the same as :class:`TestServer` except with
     :meth:`setUpClass` modified to load the client locally.) Running all
     the same tests is a little overkill but they're fast enough that it
@@ -393,9 +393,9 @@ class TestServerWithLocalClient(TestServer):
     """
     @classmethod
     def setUpClass(cls):
-        cls._server_process = subprocess.Popen(['ga4gh_dos_server'], stdout=subprocess.PIPE,
+        cls._server_process = subprocess.Popen(['ga4gh_drs_server'], stdout=subprocess.PIPE,
                                                stderr=subprocess.PIPE, shell=False)
         time.sleep(2)
-        local_client = ga4gh.dos.client.Client(SERVER_URL, local=True)
+        local_client = ga4gh.drs.client.Client(SERVER_URL, local=True)
         cls._models = local_client.models
         cls._client = local_client.client

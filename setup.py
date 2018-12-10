@@ -3,7 +3,7 @@ import sys
 
 # Get version
 sys.path.insert(0, 'python/')
-from ga4gh.dos import __version__  # noqa
+from ga4gh.drs import __version__  # noqa
 
 # First, we try to use setuptools. If it's not available locally,
 # we fall back on ez_setup.
@@ -19,19 +19,19 @@ with open("README.md") as readmeFile:
 
 
 setup(
-    name="ga4gh_dos_schemas",
+    name="ga4gh_drs_schemas",
     description="GA4GH Data Object Service Schemas",
     packages=[
         "ga4gh",
-        "ga4gh.dos",
-        'ga4gh.dos.test'
+        "ga4gh.drs",
+        'ga4gh.drs.test'
     ],
     namespace_packages=["ga4gh"],
     url="https://github.com/ga4gh/data-object-service-schemas",
     entry_points={
         'console_scripts': [
-            'ga4gh_dos_server=ga4gh.dos.server:main',
-            'ga4gh_dos_client=ga4gh.dos.client:main',
+            'ga4gh_drs_server=ga4gh.drs.server:main',
+            'ga4gh_drs_client=ga4gh.drs.client:main',
         ]
     },
     package_dir={'': 'python'},
@@ -56,8 +56,8 @@ setup(
     ],
     license='Apache License 2.0',
     package_data={
-        'ga4gh.dos': ['data_object_service.swagger.yaml'],
-        '': ['openapi/data_object_service.swagger.yaml']
+        'ga4gh.drs': ['data_repository_service.swagger.yaml'],
+        '': ['openapi/data_repository_service.swagger.yaml']
     },
     zip_safe=False,
     author="Global Alliance for Genomics and Health",
