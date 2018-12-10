@@ -97,7 +97,7 @@ class AbstractComplianceTest(ObjectServiceTest):
         :param str meth: the HTTP method to use in the request (i.e. GET,
                          PUT, etc.)
         :param str path: path to make a request to, sans hostname (e.g.
-                         `/databundles`)
+                         `/bundles`)
         :param dict headers: headers to include with the request
         :param dict body: data to be included in the request body (serialized
                           as JSON)
@@ -123,7 +123,7 @@ class AbstractComplianceTest(ObjectServiceTest):
         :param str meth: the HTTP method to use in the request (i.e. GET,
                          PUT, etc.)
         :param str path: path to make a request to, sans hostname (e.g.
-                         `/databundles`)
+                         `/bundles`)
         :param dict headers: headers to include with the request
         :param dict body: data to be included in the request body
                           (**not** serialized as JSON)
@@ -202,9 +202,9 @@ class AbstractComplianceTest(ObjectServiceTest):
         Retrieves a 'random' data bundle. Similar to :meth:`get_random_object`
         but retrieves a data bundle instead.
         """
-        r = self.drs_request('GET', self.get_query_url('/databundles', page_size=100))
+        r = self.drs_request('GET', self.get_query_url('/bundles', page_size=100))
         bdl = random.choice(r['bundles'])
-        url = '/databundles/' + bdl['id']
+        url = '/bundles/' + bdl['id']
         return bdl, url
 
     # # ListObject tests
@@ -357,8 +357,8 @@ class AbstractComplianceTest(ObjectServiceTest):
         """
         bdl_1, url = self.get_random_bundle()
         bdl_2 = self.drs_request('GET', url)['bundle']
-        # Test that the data object randomly chosen via `/databundles`
-        # can be retrieved via `/databundles/{bundle_id}`
+        # Test that the data object randomly chosen via `/bundles`
+        # can be retrieved via `/bundles/{bundle_id}`
         self.assertEqual(bdl_1, bdl_2)
 
     @test_requires('ListBundles')
@@ -368,7 +368,7 @@ class AbstractComplianceTest(ObjectServiceTest):
         alias returns an empty list.
         """
         alias = str(uuid.uuid1())  # An alias that is unlikely to exist
-        body = self.drs_request('GET', self.get_query_url('/databundles', alias=alias))
+        body = self.drs_request('GET', self.get_query_url('/bundles', alias=alias))
         self.assertEqual(len(body['bundles']), 0)
 
     @test_requires('GetBundle')
@@ -377,7 +377,7 @@ class AbstractComplianceTest(ObjectServiceTest):
         Verifies that requesting a data bundle that doesn't exist results in HTTP 404
         """
         bdl, url = self.get_random_bundle()
-        self.drs_request('GET', '/databundles/NonexistentBundle',
+        self.drs_request('GET', '/bundles/NonexistentBundle',
                          body={'bundle': bdl}, expected_status=404)
 
     @test_requires('UpdateObject')

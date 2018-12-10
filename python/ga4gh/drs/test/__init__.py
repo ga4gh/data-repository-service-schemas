@@ -48,7 +48,7 @@ def test_requires(*operations):
 
 class ObjectServiceTest(unittest.TestCase):
     @staticmethod
-    def generate_data_objects(amount):
+    def generate_objects(amount):
         """
         Yields a specified number of data objects with random attributes.
 
@@ -101,17 +101,17 @@ class ObjectServiceTest(unittest.TestCase):
             }
 
     @staticmethod
-    def generate_data_bundles(amount):
+    def generate_bundles(amount):
         """
         Yields a specified number of data bundles with random attributes.
 
         :param int amount: the amount of data bundles to generate
         """
-        for bdl in ObjectServiceTest.generate_data_objects(amount):
+        for bdl in ObjectServiceTest.generate_objects(amount):
             del bdl['name']
             del bdl['size']
             del bdl['mime_type']
             del bdl['urls']
             # See :var:`generate_data_objects.types` above
-            bdl['data_object_ids'] = [str(uuid.uuid4()), str(uuid.uuid4())]
+            bdl['object_ids'] = [str(uuid.uuid4()), str(uuid.uuid4())]
             yield bdl
