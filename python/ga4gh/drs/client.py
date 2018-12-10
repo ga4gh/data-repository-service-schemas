@@ -140,7 +140,7 @@ class Client:
                                                  config=config,
                                                  http_client=http_client,
                                                  request_headers=request_headers)
-        self.client = self.models.DataObjectService
+        self.client = self.models.DataRepositoryService
 
     @classmethod
     def config(cls, url, http_client=None, request_headers=None):
