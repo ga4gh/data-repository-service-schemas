@@ -11,20 +11,20 @@ def test_requires(*operations):
     """
     This is a decorator that identifies what DOS operations a given test
     case uses (where each DOS operation is named by its `operationId` in
-    the schema, e.g. ListDataBundles, UpdateDataObject, GetServiceInfo,
+    the schema, e.g. ListBundles, UpdateObject, GetServiceInfo,
     etc.) and skips them if the operation is not supported by the
     implementation under test.
 
     For example, given this test setup::
 
         class Test(AbstractComplianceTest):
-            supports = ['UpdateDataBundles']
+            supports = ['UpdateBundles']
 
-            @test_requires('UpdateDataBundles')
+            @test_requires('UpdateBundles')
             def test_update_data_bundles(self):
                 self.drs_request('PUT', '/databundles/1234')
 
-            @test_requires('ListDataBundles', 'UpdateDataBundles')
+            @test_requires('ListBundles', 'UpdateBundles')
             def test_list_and_update_data_bundles(self):
                 self.drs_request('GET', '/databundles')
                 self.drs_request('PUT', '/databundles/1234')
@@ -46,7 +46,7 @@ def test_requires(*operations):
     return decorator
 
 
-class DataObjectServiceTest(unittest.TestCase):
+class ObjectServiceTest(unittest.TestCase):
     @staticmethod
     def generate_data_objects(amount):
         """
@@ -107,7 +107,7 @@ class DataObjectServiceTest(unittest.TestCase):
 
         :param int amount: the amount of data bundles to generate
         """
-        for bdl in DataObjectServiceTest.generate_data_objects(amount):
+        for bdl in ObjectServiceTest.generate_data_objects(amount):
             del bdl['name']
             del bdl['size']
             del bdl['mime_type']
