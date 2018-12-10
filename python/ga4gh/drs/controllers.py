@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
 """
-Data Object Service Controller Functions
+Data Repository Service Controller Functions
 
 These controller functions for the demo server implement an opinionated version
-of DOS by providing uuid's to newly create objects, and using timestamp
+of DRS by providing uuid's to newly create objects, and using timestamp
 versions.
 
-Initializes an in-memory dictionary for storing Data Objects.
+Initializes an in-memory dictionary for storing Objects.
 """
 import uuid
 import datetime
@@ -16,8 +16,8 @@ from dateutil.parser import parse
 DEFAULT_PAGE_SIZE = 100
 
 # Our in memory registry
-data_objects = {}
-data_bundles = {}
+objects = {}
+bundles = {}
 
 # Application logic
 
@@ -32,17 +32,17 @@ def now():
 
 def get_most_recent(key):
     """
-    Gets the most recent Data Object for a key.
+    Gets the most recent Object for a key.
     :param key:
     :return:
     """
     max = {'updated': '01-01-1965 00:00:00Z'}
-    if key not in data_objects:
-        raise KeyError("Data object not found!")
-    for version in data_objects[key].keys():
-        data_object = data_objects[key][version]
-        if parse(data_object['updated']) > parse(max['updated']):
-            max = data_object
+    if key not in objects:
+        raise KeyError("object not found!")
+    for version in objects[key].keys():
+        object = objects[key][version]
+        if parse(object['updated']) > parse(max['updated']):
+            max = object
     return max
 
 
@@ -55,22 +55,22 @@ def get_most_recent_bundle(key):
     :return:
     """
     max = {'updated': '01-01-1965 00:00:00Z'}
-    for version in data_bundles[key].keys():
-        data_bundle = data_bundles[key][version]
-        if parse(data_bundle['updated']) > parse(max['updated']):
-            max = data_bundle
+    for version in bundles[key].keys():
+        bundle = bundles[key][version]
+        if parse(bundle['updated']) > parse(max['updated']):
+            max = bundle
     return max
 
 
-def filter_data_objects(predicate):
+def filter_objects(predicate):
     """
     Filters data objects according to a function that acts on each item
     returning either True or False per item.
     """
-    return [get_most_recent(x[0]) for x in filter(predicate, data_objects.items())]
+    return [get_most_recent(x[0]) for x in filter(predicate, objects.items())]
 
 
-def filter_data_bundles(predicate):
+def filter_bundles(predicate):
     """
     Filters data bundles according to a function that acts on each item
     returning either True or False per item.
@@ -79,7 +79,7 @@ def filter_data_bundles(predicate):
     """
     return [
         get_most_recent_bundle(x[0]) for x in filter(
-            predicate, data_bundles.items())]
+            predicate, bundles.items())]
 
 
 def add_created_timestamps(doc):
@@ -102,8 +102,8 @@ def add_updated_timestamps(doc):
 
 
 stores = {
-    'data_objects': data_objects,
-    'data_bundles': data_bundles
+    'objects': objects,
+    'bundles': bundles
 }
 
 
@@ -135,7 +135,7 @@ def create(body, key):
 # Data Object Controllers
 
 
-def CreateDataObject(**kwargs):
+def CreateObject(**kwargs):
     """
     Creates a new Data Object by issuing an identifier if it is not
     provided.
@@ -144,94 +144,94 @@ def CreateDataObject(**kwargs):
     :return:
     """
     # TODO Safely create
-    body = kwargs['body']['data_object']
-    doc = create(body, 'data_objects')
-    return({"data_object_id": doc['id']}, 200)
+    body = kwargs['body']['object']
+    doc = create(body, 'objects')
+    return({"object_id": doc['id']}, 200)
 
 
-def GetDataObject(**kwargs):
+def GetObject(**kwargs):
     """
-    Get a Data Object by data_object_id.
+    Get a Data Object by object_id.
     :param kwargs:
     :return:
     """
-    data_object_id = kwargs['data_object_id']
+    object_id = kwargs['object_id']
     version = kwargs.get('version', None)
     # Implementation detail, this server uses integer version numbers.
     # Get the Data Object from our dictionary
-    data_object_key = data_objects.get(data_object_id, None)
-    if data_object_key and not version:
-        data_object = get_most_recent(data_object_id)
-        return({"data_object": data_object}, 200)
-    elif data_object_key and data_objects[data_object_id].get(version, None):
-        data_object = data_objects[data_object_id][version]
-        return ({"data_object": data_object}, 200)
+    object_key = objects.get(object_id, None)
+    if object_key and not version:
+        object = get_most_recent(object_id)
+        return({"object": object}, 200)
+    elif object_key and objects[object_id].get(version, None):
+        object = objects[object_id][version]
+        return ({"object": object}, 200)
     else:
         return({'msg': "The requested Data "
                        "Object wasn't found", 'status_code': 404}, 404)
 
 
-def GetDataObjectVersions(**kwargs):
+def GetObjectVersions(**kwargs):
     """
     Returns all versions of a Data Object.
     :param kwargs:
     :return:
     """
-    data_object_id = kwargs['data_object_id']
+    object_id = kwargs['object_id']
     # Implementation detail, this server uses integer version numbers.
     # Get the Data Object from our dictionary
-    data_object_versions_dict = data_objects.get(data_object_id, None)
-    data_object_versions = [x[1] for x in data_object_versions_dict.items()]
-    if data_object_versions:
-        return({"data_objects": data_object_versions}, 200)
+    object_versions_dict = objects.get(object_id, None)
+    object_versions = [x[1] for x in object_versions_dict.items()]
+    if object_versions:
+        return({"objects": object_versions}, 200)
     else:
         return({'msg': "The requested Data "
                        "Object wasn't found", 'status_code': 404}, 404)
 
 
-def UpdateDataObject(**kwargs):
+def UpdateObject(**kwargs):
     """
     Update a Data Object by creating a new version.
 
     :param kwargs:
     :return:
     """
-    data_object_id = kwargs['data_object_id']
-    body = kwargs['body']['data_object']
+    object_id = kwargs['object_id']
+    body = kwargs['body']['object']
     # Check to make sure we are updating an existing document.
     try:
-        old_data_object = get_most_recent(data_object_id)
+        old_object = get_most_recent(object_id)
     except KeyError:
         return "Data object not found", 404
     # Upsert the new body in place of the old document
     doc = add_updated_timestamps(body)
-    doc['created'] = old_data_object['created']
+    doc['created'] = old_object['created']
     # We need to safely set the version if they provided one that
     # collides we'll pad it. If they provided a good one, we will
     # accept it. If they don't provide one, we'll give one.
     new_version = doc.get('version', None)
-    if not new_version or new_version in data_objects[data_object_id].keys():
+    if not new_version or new_version in objects[object_id].keys():
         doc['version'] = now()
-    doc['id'] = old_data_object['id']
-    data_objects[data_object_id][doc['version']] = doc
-    return({"data_object_id": data_object_id}, 200)
+    doc['id'] = old_object['id']
+    objects[object_id][doc['version']] = doc
+    return({"object_id": object_id}, 200)
 
 
-def DeleteDataObject(**kwargs):
+def DeleteObject(**kwargs):
     """
-    Delete a Data Object by data_object_id.
+    Delete a Data Object by object_id.
 
     :param kwargs:
     :return:
     """
-    data_object_id = kwargs['data_object_id']
-    del data_objects[data_object_id]
-    return({"data_object_id": data_object_id}, 200)
+    object_id = kwargs['object_id']
+    del objects[object_id]
+    return({"object_id": object_id}, 200)
 
 
-def ListDataObjects(**kwargs):
+def ListObjects(**kwargs):
     """
-    Returns a list of Data Objects matching a ListDataObjectsRequest.
+    Returns a list of Data Objects matching a ListObjectsRequest.
 
     :param kwargs: alias, url, checksum, checksum_type, page_size, page_token
     :return:
@@ -262,7 +262,7 @@ def ListDataObjects(**kwargs):
         return True
 
     # Lazy since we're in memory
-    filtered = filter_data_objects(filterer)
+    filtered = filter_objects(filterer)
     page_size = int(kwargs.get('page_size', DEFAULT_PAGE_SIZE))
     # We'll page if there's a provided token or if we have too many
     # objects.
@@ -275,54 +275,54 @@ def ListDataObjects(**kwargs):
             # If there is more than one page left of results
             next_page_token = int(kwargs.get('page_token', 0)) + 1
             return (
-                {"data_objects": page,
+                {"objects": page,
                  "next_page_token": str(next_page_token)}, 200)
         else:
-            return ({"data_objects": page}, 200)
+            return ({"objects": page}, 200)
     else:
         page = filtered
-    return({"data_objects": page}, 200)
+    return({"objects": page}, 200)
 
 
 # Data Bundle Controllers
 
 
-def CreateDataBundle(**kwargs):
+def CreateBundle(**kwargs):
     """
     Create a Data Bundle, issuing a new identifier if one is not provided.
 
     :param kwargs:
     :return:
     """
-    body = kwargs['body']['data_bundle']
-    doc = create(body, 'data_bundles')
-    return({"data_bundle_id": doc['id']}, 200)
+    body = kwargs['body']['bundle']
+    doc = create(body, 'bundles')
+    return({"bundle_id": doc['id']}, 200)
 
 
-def GetDataBundle(**kwargs):
+def GetBundle(**kwargs):
     """
     Get a Data Bundle by identifier.
 
     :param kwargs:
     :return:
     """
-    data_bundle_id = kwargs['data_bundle_id']
+    bundle_id = kwargs['bundle_id']
     version = kwargs.get('version', None)
     # Implementation detail, this server uses integer version numbers.
     # Get the Data Object from our dictionary
-    data_bundle_key = data_bundles.get(data_bundle_id, None)
-    if data_bundle_key and not version:
-        data_bundle = get_most_recent_bundle(data_bundle_id)
-        return({"data_bundle": data_bundle}, 200)
-    elif data_bundle_key and data_objects[data_bundle_id].get(version, None):
-        data_bundle = data_bundles[data_bundle_id][version]
-        return ({"data_bundle": data_bundle}, 200)
+    bundle_key = bundles.get(bundle_id, None)
+    if bundle_key and not version:
+        bundle = get_most_recent_bundle(bundle_id)
+        return({"bundle": bundle}, 200)
+    elif bundle_key and objects[bundle_id].get(version, None):
+        bundle = bundles[bundle_id][version]
+        return ({"bundle": bundle}, 200)
     else:
         return({'msg': "The requested Data "
                        "Bundle wasn't found", 'status_code': 404}, 404)
 
 
-def UpdateDataBundle(**kwargs):
+def UpdateBundle(**kwargs):
     """
     Updates a Data Bundle to include new metadata by upserting the new
     bundle.
@@ -330,59 +330,59 @@ def UpdateDataBundle(**kwargs):
     :param kwargs:
     :return:
     """
-    data_bundle_id = kwargs['data_bundle_id']
-    body = kwargs['body']['data_bundle']
+    bundle_id = kwargs['bundle_id']
+    body = kwargs['body']['bundle']
     # Check to make sure we are updating an existing document.
-    old_data_bundle = get_most_recent_bundle(data_bundle_id)
+    old_bundle = get_most_recent_bundle(bundle_id)
     # Upsert the new body in place of the old document
     doc = add_updated_timestamps(body)
-    doc['created'] = old_data_bundle['created']
+    doc['created'] = old_bundle['created']
     # We need to safely set the version if they provided one that
     # collides we'll pad it. If they provided a good one, we will
     # accept it. If they don't provide one, we'll give one.
     new_version = doc.get('version', None)
-    if not new_version or new_version in data_bundles[data_bundle_id].keys():
+    if not new_version or new_version in bundles[bundle_id].keys():
         doc['version'] = now()
-    doc['id'] = old_data_bundle['id']
-    data_bundles[data_bundle_id][doc['version']] = doc
-    return({"data_bundle_id": data_bundle_id}, 200)
+    doc['id'] = old_bundle['id']
+    bundles[bundle_id][doc['version']] = doc
+    return({"bundle_id": bundle_id}, 200)
 
 
-def GetDataBundleVersions(**kwargs):
+def GetBundleVersions(**kwargs):
     """
     Get all versions of a Data Bundle.
 
     :param kwargs:
     :return:
     """
-    data_bundle_id = kwargs['data_bundle_id']
-    data_bundle_versions_dict = data_bundles.get(data_bundle_id, None)
-    data_bundle_versions = [x[1] for x in data_bundle_versions_dict.items()]
-    if data_bundle_versions:
-        return({"data_bundles": data_bundle_versions}, 200)
+    bundle_id = kwargs['bundle_id']
+    bundle_versions_dict = bundles.get(bundle_id, None)
+    bundle_versions = [x[1] for x in bundle_versions_dict.items()]
+    if bundle_versions:
+        return({"bundles": bundle_versions}, 200)
     else:
         return({'msg': "The requested Data "
                        "Bundle wasn't found", 'status_code': 404}, 404)
 
 
-def DeleteDataBundle(**kwargs):
+def DeleteBundle(**kwargs):
     """
     Deletes a Data Bundle by ID.
 
     :param kwargs:
     :return:
     """
-    data_bundle_id = kwargs['data_bundle_id']
-    del data_bundles[data_bundle_id]
+    bundle_id = kwargs['bundle_id']
+    del bundles[bundle_id]
     return(kwargs, 200)
 
 
-def ListDataBundles(**kwargs):
+def ListBundles(**kwargs):
     """
-    Takes a ListDataBundles request and returns the bundles that match
+    Takes a ListBundles request and returns the bundles that match
     that request. Possible kwargs: alias, url, checksum, checksum_type, page_size, page_token
 
-    :param kwargs: ListDataBundles request.
+    :param kwargs: ListBundles request.
     :return:
     """
     def filterer(item):
@@ -406,7 +406,7 @@ def ListDataBundles(**kwargs):
                 return False
         return True
     # Lazy since we're in memory
-    filtered = filter_data_bundles(filterer)
+    filtered = filter_bundles(filterer)
     page_size = int(kwargs.get('page_size', DEFAULT_PAGE_SIZE))
     # We'll page if there's a provided token or if we have too many
     # objects.
@@ -419,13 +419,13 @@ def ListDataBundles(**kwargs):
             # If there is more than one page left of results
             next_page_token = int(kwargs.get('page_token', 0)) + 1
             return (
-                {"data_bundles": page,
+                {"bundles": page,
                  "next_page_token": str(next_page_token)}, 200)
         else:
-            return ({"data_bundles": page}, 200)
+            return ({"bundles": page}, 200)
     else:
         page = filtered
-    return({"data_bundles": page}, 200)
+    return({"bundles": page}, 200)
 
 
 def GetServiceInfo(**kwargs):

@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 """
-DOS Demonstration Server
+DRS Demonstration Server
 
-Running this server will start an ephemeral Data Object Service (its registry
+Running this server will start an ephemeral Data Repository Service (its registry
 contents won't be saved after exiting). It uses the connexion module
 to translate the OpenAPI schema into named controller functions.
 
