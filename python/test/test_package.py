@@ -11,7 +11,7 @@ class TestPackage(unittest.TestCase):
     def setUpClass(cls):
         cwd = os.path.dirname(os.path.realpath(__file__))
         spec_dir = os.path.join(cwd, '../../openapi')
-        cls.swagger_path = os.path.join(spec_dir, 'data_object_service.swagger.yaml')
+        cls.swagger_path = os.path.join(spec_dir, 'data_repository_service.swagger.yaml')
 
     def test_version_consensus(self):
         from ga4gh.drs import __version__
@@ -34,11 +34,11 @@ class TestPackage(unittest.TestCase):
             # Test a path that does not exist in the schema
             '/PathThatDoesNotExist': {'GET': None},
             # Test a valid path with a nonexistent method
-            '/ga4gh/drs/v1/databundles': {'MethodThatDoesNotExist': None},
+            '/ga4gh/drs/v1/bundles': {'MethodThatDoesNotExist': None},
             # Test a path with a different case than what is defined in the schema
-            '/GA4GH/DOS/V1/DATABUNDLES/{data_bundle_id}': {'GET': None},
+            '/GA4GH/DOS/V1/DATABUNDLES/{bundle_id}': {'GET': None},
             # Test multiple methods
-            '/ga4gh/drs/v1/dataobjects/{data_object_id}': {'GET': None,
+            '/ga4gh/drs/v1/objects/{object_id}': {'GET': None,
                                                            'PUT': None}
         }
         schema = from_chalice_routes(routes, base_path='/ga4gh/drs/v1')
@@ -46,11 +46,11 @@ class TestPackage(unittest.TestCase):
 
         self.assertNotIn('/PathThatDoesNotExist', paths.keys())
         # Test that base path is correctly stripped
-        self.assertNotIn('/ga4gh/drs/v1/databundles', paths.keys())
-        self.assertIn('/databundles/{data_bundle_id}', paths.keys())
-        self.assertNotIn('MethodThatDoesNotExist', paths['/databundles'].keys())
-        self.assertIn('get', paths['/dataobjects/{data_object_id}'].keys())
-        self.assertIn('put', paths['/dataobjects/{data_object_id}'].keys())
-        self.assertNotIn('/dataobjects', paths.keys())
+        self.assertNotIn('/ga4gh/drs/v1/bundles', paths.keys())
+        self.assertIn('/bundles/{bundle_id}', paths.keys())
+        self.assertNotIn('MethodThatDoesNotExist', paths['/bundles'].keys())
+        self.assertIn('get', paths['/objects/{object_id}'].keys())
+        self.assertIn('put', paths['/objects/{object_id}'].keys())
+        self.assertNotIn('/objects', paths.keys())
         # Make sure that the schema is intact
-        self.assertIn('200', paths['/dataobjects/{data_object_id}']['get']['responses'].keys())
+        self.assertIn('200', paths['/objects/{object_id}']['get']['responses'].keys())
