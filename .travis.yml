@@ -50,6 +50,7 @@ jobs:
       deploy:
         provider: pages
         skip-cleanup: true
+        local_dir: node_modules
         github-token: $GITHUB_TOKEN
         on:
           all_branches: true
