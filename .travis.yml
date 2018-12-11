@@ -35,6 +35,24 @@ jobs:
         # Travis will install requirements.txt by default
         - flake8 --select=E121,E123,E126,E226,E24,E704,W503,W504 --ignore=E501 app.py tests
 
+    - stage: build_pages
+      language: java
+      jdk: oraclejdk8
+      before_install:
+      - chmod +x gradlew
+      - chmod +x scripts/fetchpages.sh
+      - chmod +x scripts/stagepages.sh
+      script:
+      - "./scripts/fetchpages.sh"
+      - "./gradlew installSwagger buildSwagger asciidoctor"
+      - "./scripts/stagepages.sh"
+      deploy:
+        provider: pages
+        skip-cleanup: true
+        github-token: $GITHUB_TOKEN
+        on:
+          all_branches: true
+
     # Deploy to PyPI on every tagged commit
     - stage: deploy
       python: '3.6'
