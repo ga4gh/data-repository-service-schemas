@@ -1,6 +1,9 @@
 # With app.py running start this demo, it will load data from GDC public API
 # into the service.
 import requests
+import pytz
+from datetime import datetime
+import dateutil
 
 from ga4gh.dos.client import Client
 
@@ -59,14 +62,20 @@ def gdc_to_ga4gh(gdc):
     Checksum = models.get_model('Checksum')
     print((str(gdc.get('file_size'))))
     create_data_object = DataObject(
-        checksums=[Checksum(checksum=gdc.get('md5sum'), type='md5')],
+        id=gdc.get('file_id'),
         name=gdc.get('file_name'),
         size=str(gdc.get('file_size')),
-        aliases=[gdc['file_id'], gdc['file_name']],
+        created=dateutil.parser.parse(gdc['created_datetime']),
+        updated=dateutil.parser.parse(gdc['updated_datetime']),
+        version=gdc.get('version'),
+        mime_type=gdc.get('file_mime_type'),
+        checksums=[Checksum(checksum=gdc.get('md5sum'), type='md5')],
         urls=[
             URL(
                 url="{}/data/{}".format(GDC_URL, gdc.get('file_id')),
-                system_metadata=gdc)])
+                system_metadata=gdc)],
+        description=gdc.get('file_description'),
+        aliases=[gdc['file_id'], gdc['file_name']])
     create_request = CreateDataObjectRequest(data_object=create_data_object)
     return create_request
 
@@ -88,7 +97,7 @@ def load_gdc():
     :return:
     """
     response = requests.post(
-        '{}/files?size=10000&related_files=true'.format(
+        '{}/files?size=100&related_files=true'.format(
             GDC_URL), json={}).json()
     hits = response['data']['hits']
     # Initialize to kick off paging
@@ -100,7 +109,7 @@ def load_gdc():
         list(map(post_dos, hits))
         next_record = pagination.get('page') * page_length
         response = requests.post(
-            '{}/files?size=10000&related_files=true&from={}'.format(
+            '{}/files?size=100&related_files=true&from={}'.format(
                 GDC_URL, next_record), json={}).json()
         hits = response['data']['hits']
         pagination = response['data']['pagination']
