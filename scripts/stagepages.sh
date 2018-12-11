@@ -15,3 +15,6 @@ elif [ "$TRAVIS_BRANCH" != "gh-pages" ]; then
   cp openapi/data_repository_service.swagger.yaml "$branchpath/swagger.yaml"
   cp -R web_deploy/* "$branchpath/"
 fi
+
+# do some cleanup 
+rm -rf node_modules
