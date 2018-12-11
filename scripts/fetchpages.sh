@@ -11,9 +11,9 @@ git clone --depth=1 --branch=gh-pages $REPO_URL .
 if [ "$TRAVIS_BRANCH" == "master" ]; then
 cp -Rn . ../
 else
+# in case it doesn't exist
+mkdir -p preview
 cp -Rn preview ../preview/
 fi
 cd ..
 rm -rf .ghpages-tmp
-
-
