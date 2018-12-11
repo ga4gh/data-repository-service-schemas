@@ -35,6 +35,7 @@ jobs:
         # Travis will install requirements.txt by default
         - flake8 --select=E121,E123,E126,E226,E24,E704,W503,W504 --ignore=E501 app.py tests
 
+    # the build process from James Eddy adapted from the WES repo
     - stage: build_pages
       language: java
       jdk: oraclejdk8
