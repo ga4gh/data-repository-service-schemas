@@ -7,11 +7,11 @@
 [![Read the Docs badge](https://readthedocs.org/projects/data-repository-service/badge/)](https://data-repository-service.readthedocs.io/en/latest)
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/ga4gh-drs-schemas.svg)
 
-The [Global Alliance for Genomics and Health](http://genomicsandhealth.org/) is an international coalition, formed to enable the sharing of genomic and clinical data.
+The [Global Alliance for Genomics and Health](http://genomicsandhealth.org/) (GA4GH) is an international coalition, formed to enable the sharing of genomic and clinical data.
 
-# Cloud Work Stream
+# About the GA4GH Cloud Work Stream
 
-The [Cloud Work Stream](https://ga4gh.cloud) helps the genomics and health communities take full advantage of modern cloud environments.
+The GA4GH [Cloud Work Stream](https://ga4gh.cloud) helps the genomics and health communities take full advantage of modern cloud environments.
 Our initial focus is on “bringing the algorithms to the data”, by creating standards for defining, sharing, and executing portable workflows.
 
 We work with platform development partners and industry leaders to develop standards that will facilitate interoperability.
@@ -33,10 +33,10 @@ The API is split into two sections:
 
 # API Definition
 
-See the human-readable [Reference Documentation](https://ga4gh.github.io/data-repository-service-schemas/docs/)
-and the [OpenAPI YAML description](openapi/data_repository_service.swagger.yaml). You can also explore the specification in the [Swagger UI](https://ga4gh.github.io/data-repository-service-schemas/swagger-ui/).
+See the human-readable **Reference Documentation**  ([Released](https://ga4gh.github.io/data-repository-service-schemas/docs/) and [Stable Development](https://ga4gh.github.io/data-repository-service-schemas/preview/develop/docs/))
+and the **[OpenAPI YAML description](openapi/data_repository_service.swagger.yaml)**. You can also explore the specification in the Swagger UI ([Released](https://ga4gh.github.io/data-repository-service-schemas/swagger-ui/) and [Stable Development](https://ga4gh.github.io/data-repository-service-schemas/preview/develop/swagger-ui/)).
 
-> All documentation and pages hosted at 'ga4gh.github.io/data-repository-service-schemas' reflect the latest API release from the `master` branch. To monitor the latest development work, add 'preview/\<branch\>' to the URLs above (e.g., 'https://ga4gh.github.io/workflow-execution-service/preview/\<branch\>/docs'). To view the latest *stable* development API specification, refer to the `develop` branch.
+> All documentation and pages hosted at 'ga4gh.github.io/data-repository-service-schemas' reflect the latest API release from the `master` branch. To monitor the latest development work on various branches, add 'preview/\<branch\>' to the URLs above (e.g., 'https://ga4gh.github.io/workflow-execution-service/preview/\<branch\>/docs'). To view the latest *stable* development API specification, refer to the `develop` branch.
 
 # Use Cases
 
@@ -54,7 +54,11 @@ $ pip install ga4gh-dos-schemas
 ```
 
 This will install both a demonstration server and a Python client that will allow you to
-manage Data Objects in a local server. You can start the demo server using `ga4gh_dos_server`.
+manage Data Objects in a local server.
+
+## Sample Service
+
+You can start the demo server using `ga4gh_dos_server`.
 This starts a Data Repository Service at http://localhost:8080.
 
 ```
@@ -73,6 +77,8 @@ curl http://localhost:8080/ga4gh/dos/v1/dataobjects/hg38-chr22
 # Or by checksum!
 curl -X GET http://localhost:8080/ga4gh/dos/v1/dataobjects -d checksum=41b47ce1cc21b558409c19b892e1c0d1
 ```
+
+## For More Information on the Sample Service and Client
 
 For more on getting started, check out the
 [quickstart guide](https://data-repository-service.readthedocs.io/en/latest/quickstart.html)
