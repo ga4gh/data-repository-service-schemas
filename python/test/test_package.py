@@ -2,6 +2,8 @@
 import os.path
 import unittest
 
+import openapi_spec_validator
+import requests
 import swagger_spec_validator
 import yaml
 
@@ -12,6 +14,16 @@ class TestPackage(unittest.TestCase):
         cwd = os.path.dirname(os.path.realpath(__file__))
         spec_dir = os.path.join(cwd, '../../openapi')
         cls.swagger_path = os.path.join(spec_dir, 'data_object_service.swagger.yaml')
+        cls.smartapi_path = os.path.join(spec_dir, 'data_object_service.smartapi.yaml')
+        cls.openapi_path = os.path.join(spec_dir, 'data_object_service.openapi.yaml')
+
+        # The :func:`unittest.skipUnless` calls depend on class variables,
+        # which means that we can't decorate the test cases conventionally
+        # and have to do so after the class variables we need are instantiated.
+        openapi_dec = unittest.skipUnless(os.path.exists(cls.openapi_path), "Generated schema not found.")
+        cls.test_openapi_schema_validity = openapi_dec(cls.test_openapi_schema_validity)
+        smartapi_dec = unittest.skipUnless(os.path.exists(cls.smartapi_path), "Generated schema not found.")
+        cls.test_smartapi_schema_validity = smartapi_dec(cls.test_smartapi_schema_validity)
 
     def test_version_consensus(self):
         from ga4gh.dos import __version__
@@ -19,10 +31,48 @@ class TestPackage(unittest.TestCase):
             spec_version = yaml.safe_load(f)['info']['version']
         assert __version__ == spec_version
 
-    def test_schema_validity(self):
-        """Validate the schema using swagger_spec_validator."""
+    def test_swagger_schema_validity(self):
+        """Validate the Swagger schema using swagger_spec_validator."""
+        # We always expect the Swagger schema to exist since it's the
+        # reference implementation from which the OpenAPI (3.0) and SmartAPI
+        # schemas are generated, so we won't include a silent skip condition
+        # like we would for :meth:`test_openapi_schema_validity` or
+        # :meth:`test_smartapi_schema_validity`.
         path = os.path.abspath(self.swagger_path)
         swagger_spec_validator.validate_spec_url('file://' + path)
+
+    def test_openapi_schema_validity(self):
+        """
+        Validate the generated OpenAPI schema. Will be skipped if the
+        generated schema file is not present.
+        """
+        # p1c2u/openapi-spec-validator supports validation of both Swagger
+        # and OpenAPI schemas, but since Yelp/swagger_spec_validator is
+        # installed with the other dependencies anyway, it's easier to just
+        # leave it in place.
+        path = os.path.abspath(self.openapi_path)
+        openapi_spec_validator.validate_v3_spec_url('file://' + path)
+
+    def test_smartapi_schema_validity(self):
+        """
+        Validates the generated SmartAPI schema by temporarily uploading
+        it to a third-party pastebin then using the SmartAPI API to
+        validate the schema. Will be skipped if the generated schema
+        file is not present.
+        """
+        schema = {'file': open(self.smartapi_path, 'rb')}
+        post = requests.post('https://file.io/', files=schema)
+        self.assertTrue(post.json()['success'], post.json())
+        validate = requests.get('https://smart-api.info/api/validate?url=' + post.json()['link'])
+        # A couple notes on the /validate endpoint, since it appears to be
+        # mostly undocumented:
+        # * The endpoint will always return HTTP 200 regardless of whether
+        #   or not the schema is valid
+        # * If the schema is invalid, the endpoint will return something
+        #   like {'success': false}
+        # * If the schema is valid, the endpoint will return something
+        #   like {'valid': true}
+        self.assertTrue(validate.json()['valid'], validate.json())
 
     def test_chalice_schema_generation(self):
         """
