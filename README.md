@@ -58,7 +58,7 @@ manage Data Objects in a local server.
 
 ## Sample Service
 
-You can start the demo server using `ga4gh_dos_server`.
+You can start the demo server using `ga4gh_drs_server`.
 This starts a Data Repository Service at http://localhost:8080.
 
 ```
