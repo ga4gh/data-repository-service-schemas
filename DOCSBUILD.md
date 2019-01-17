@@ -22,7 +22,6 @@ These instructions are based on the current configuration for the [**Workflow Ex
 
 + `README.md` badges indicating Travis CI build status and Swagger/OpenAPI validation status
 
-**Note:** This set up was the result of substantial trial and error. It includes tools/solutions based in languages I don't normally use (Gradle, Node). There should be plenty of room for improvement and cleanup — so suggestions are welcome!
 
 ---
 
