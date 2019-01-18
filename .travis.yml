@@ -7,11 +7,13 @@ python:
 # Specifying `branches.only = ['master']` can cause tagged builds to
 # not deploy. See travis-ci/travis-ci#2498 and travis-ci/travis-ci#1675.
 # We can fix this by only build master and branches/tags that follow the
-# format x.y.z.
+# format x.y.z. and also feature/issue-<num>, the latter is the style
+# used by HubFlow
 branches:
   only:
     - master
     - /^\d+\.\d+(\.\d+)?(-\S*)?$/
+    - /^feature\/issue-\d+$/
 
 stages:
   - linting

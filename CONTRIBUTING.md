@@ -41,12 +41,16 @@ repositories each with the same name is a branch set, e.g. the master
 branch in each repository forms the master branch set.
 
 Some general rules to follow:
-
+-   We follow [HubFlow](https://datasift.github.io/gitflow/) which means we use
+    a feature branch strategy with pull requests always going to `develop`
+    and releases happening from `master`.
 -   [Fork](https://help.github.com/articles/fork-a-repo) the main
-    project into your personal GitHub space to work on.
+    project into your personal GitHub space to work on (unless you are
+      a core developer with access to the repo, in which case make a feature
+      branch in the repo).
 -   Create a branch for each update that you're working on. These
-    branches are often called "feature" or "topic" branches. Any changes
-    that you push to your feature branch will automatically be shown in
+    branches should start with "feature/issue-<number>" or "topic" branches.
+    Any changes that you push to your feature branch will automatically be shown in
     the pull request.
 -   If necessary, replicate the last two steps' fork-and-branch process
     for each of the compliance and server repositories to create a
@@ -67,6 +71,14 @@ When you submit or change your pull request, the Travis build system
 will automatically run tests to ensure valid schema syntax. If your pull
 request fails to pass tests, review the test log, make changes and then
 push them to your feature branch to be tested again.
+
+Builds with Travis-CI
+=====================
+
+We use Travis for CI testing.  If you create a fork and feature branch
+this will not automatically be built from our Travis.  However, if you
+are a developer and have created a feature branch following the naming
+convention above, you should see automated builds.
 
 Issue Resolution
 ================
