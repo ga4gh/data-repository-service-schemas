@@ -1,0 +1,33 @@
+== Executive Summary
+
+The Data Repository Service (DRS) API provides a generic API on top of existing object storage systems so workflow systems can access data in a single, standard way regardless of where it's stored.
+
+Key features of the API:
+
+* **Data Object management**, which enables the creation, updating, deletion, versioning, and unique identification of files and data bundles (flat collections of files)
+* **Data Object querying**, which can locate data objects across different cloud environments and DRS implementations.
+
+== Introduction
+
+This document describes the DRS API and provides details on the specific endpoints, request formats, and response.  It is intended to provide key information for developers of DRS-compatible services as well as clients that will call these DRS services.
+
+Use cases include:
+
+* GET of resource ID and return JSON metadata describing object
+* GET of resource ID and return JSON with URLs for data read access.
+* GET of resources by alias
+* Bundles of multiple objects
+* Versioning of objects (and bundles if supported)
+
+== Standards
+
+The DRS API specification is written in OpenAPI and embodies a RESTful service philosophy.  It uses JSON in requests and responses and standard HTTP/HTTPS for information transport.
+
+== Authorization & Authentication
+
+Users must supply credentials that establish their identity and authorization in order to use a DRS endpoint. We recommend that DRS implementations use an OAuth2 https://oauth.net/2/bearer-tokens/[bearer token], although they can choose other mechanisms if appropriate. DRS callers can use the `auth_instructions_url` from the https://ga4gh.github.io/workflow-execution-service-schemas/#/WorkflowExecutionService/GetServiceInfo[service-info endpoint] to learn how to obtain and use a bearer token for a particular implementation.
+
+The DRS implementation is responsible for checking that a user is authorized to submit workflow run requests. The particular authorization policy is up to the DRS implementer.
+
+Systems like DRS need to also address the ability to pass credentials with jobs for input and output access.  In the current
+version of DRS, the passing of credentials to authenticate and authorize access to inputs and outputs, as well as mandates about necessary file transfer protocols to support, are out of scope.  However, parallel work on the Data Object Service is addressing ways to pass around access credentials with data object references, opening up the possibility that a future version of DRS will provide concrete mechanisms for workflow runs to access data using credentials different than those used for DRS.  This is a work in progress and support of DOS in DRS will be added in a future release of DRS.

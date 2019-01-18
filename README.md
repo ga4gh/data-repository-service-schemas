@@ -31,6 +31,13 @@ The API is split into two sections:
 * **Data Object querying**, which can locate data objects across different cloud environments
   and DRS implementations.
 
+# API Definition
+
+See the human-readable **Reference Documentation**  ([Released](https://ga4gh.github.io/data-repository-service-schemas/docs/) and [Stable Development](https://ga4gh.github.io/data-repository-service-schemas/preview/develop/docs/))
+and the **[OpenAPI YAML description](openapi/data_repository_service.swagger.yaml)**. You can also explore the specification in the Swagger UI ([Released](https://ga4gh.github.io/data-repository-service-schemas/swagger-ui/) and [Stable Development](https://ga4gh.github.io/data-repository-service-schemas/preview/develop/swagger-ui/)).
+
+> All documentation and pages hosted at 'ga4gh.github.io/data-repository-service-schemas' reflect the latest API release from the `master` branch. To monitor the latest development work on various branches, add 'preview/\<branch\>' to the URLs above (e.g., 'https://ga4gh.github.io/workflow-execution-service/preview/\<branch\>/docs'). To view the latest *stable* development API specification, refer to the `develop` branch.
+
 # Use Cases
 
 See the [Use Cases](USECASES.md) document for DRS use cases and possible
