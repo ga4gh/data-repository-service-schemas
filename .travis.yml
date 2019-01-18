@@ -52,7 +52,9 @@ jobs:
 before_install:
 - python setup.py sdist
 - pip install dist/ga4gh_dos_schemas-*.tar.gz
+- npm install -g swagger2openapi
 
 script:
+- make schemas
 - nosetests python/
 - ga4gh_dos_client
