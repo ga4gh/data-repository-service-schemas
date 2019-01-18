@@ -25,7 +25,7 @@ stages:
   # set up. If we skip the deploy stage for pull requests at the stage level, we can
   # shave off a couple minutes of runtime.
   - name: deploy
-    if: type != pull_request && branch != "develop"
+    if: type != pull_request && branch = "master"
 
 jobs:
   include:
