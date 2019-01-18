@@ -12,6 +12,7 @@ python:
 branches:
   only:
     - master
+    - develop
     - /^\d+\.\d+(\.\d+)?(-\S*)?$/
     - /^feature\/issue-\d+$/
 
@@ -24,7 +25,7 @@ stages:
   # set up. If we skip the deploy stage for pull requests at the stage level, we can
   # shave off a couple minutes of runtime.
   - name: deploy
-    if: type != pull_request
+    if: type != pull_request && branch != "develop"
 
 jobs:
   include:
