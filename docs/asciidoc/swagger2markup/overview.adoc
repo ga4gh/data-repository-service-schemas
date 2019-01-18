@@ -1,0 +1,43 @@
+= Data Repository Service
+
+
+[[_overview]]
+== Overview
+https://github.com/ga4gh/data-repository-service-schemas
+
+
+=== Version information
+[%hardbreaks]
+__Version__ : 0.6.0
+
+
+=== Contact information
+[%hardbreaks]
+__Contact__ : GA4GH Cloud Work Stream
+__Contact Email__ : ga4gh-cloud@ga4gh.org
+
+
+=== License information
+[%hardbreaks]
+__License__ : Apache 2.0
+__License URL__ : https://raw.githubusercontent.com/ga4gh/data-repository-service-schemas/master/LICENSE
+__Terms of service__ : null
+
+
+=== URI scheme
+[%hardbreaks]
+__BasePath__ : /ga4gh/drs/v1
+__Schemes__ : HTTPS, HTTP
+
+
+=== Consumes
+
+* `application/json`
+
+
+=== Produces
+
+* `application/json`
+
+
+

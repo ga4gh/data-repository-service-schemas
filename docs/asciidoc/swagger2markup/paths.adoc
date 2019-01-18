@@ -1,0 +1,499 @@
+
+[[_paths]]
+== Paths
+
+[[_createbundle]]
+=== Create a new Data Bundle
+....
+POST /bundles
+....
+
+
+==== Parameters
+
+[options="header", cols=".^2,.^3,.^4"]
+|===
+|Type|Name|Schema
+|**Body**|**body** +
+__required__|<<_createbundlerequest,CreateBundleRequest>>
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2,.^14,.^4"]
+|===
+|HTTP Code|Description|Schema
+|**200**|The Data Bundle was successfully created.|<<_createbundleresponse,CreateBundleResponse>>
+|**400**|The request is malformed.|<<_errorresponse,ErrorResponse>>
+|**401**|The request is unauthorized.|<<_errorresponse,ErrorResponse>>
+|**403**|The requester is not authorized to perform this action.|<<_errorresponse,ErrorResponse>>
+|**500**|An unexpected error occurred.|<<_errorresponse,ErrorResponse>>
+|===
+
+
+==== Tags
+
+* DataRepositoryService
+
+
+[[_listbundles]]
+=== List the Data Bundles
+....
+GET /bundles
+....
+
+
+==== Parameters
+
+[options="header", cols=".^2,.^3,.^9,.^4"]
+|===
+|Type|Name|Description|Schema
+|**Query**|**alias** +
+__optional__|If provided returns Data Bundles that have any alias that matches the
+request.|string
+|**Query**|**checksum** +
+__optional__|The hexlified checksum that one would like to match on.|string
+|**Query**|**checksum_type** +
+__optional__|If provided will restrict responses to those that match the provided
+type.
+
+possible values:
+md5 # most blob stores provide a checksum using this
+multipart-md5 # multipart uploads provide a specialized tag in S3
+sha256
+sha512|string
+|**Query**|**page_size** +
+__optional__|Specifies the maximum number of results to return in a single page.
+If unspecified, a system default will be used.|integer (int32)
+|**Query**|**page_token** +
+__optional__|The continuation token, which is used to page through large result sets.
+To get the next page of results, set this parameter to the value of
+`next_page_token` from the previous response.|string
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2,.^14,.^4"]
+|===
+|HTTP Code|Description|Schema
+|**200**|Successfully listed Data Bundles.|<<_listbundlesresponse,ListBundlesResponse>>
+|**400**|The request is malformed.|<<_errorresponse,ErrorResponse>>
+|**401**|The request is unauthorized.|<<_errorresponse,ErrorResponse>>
+|**403**|The requester is not authorized to perform this action.|<<_errorresponse,ErrorResponse>>
+|**500**|An unexpected error occurred.|<<_errorresponse,ErrorResponse>>
+|===
+
+
+==== Tags
+
+* DataRepositoryService
+
+
+[[_getbundle]]
+=== Retrieve a Data Bundle
+....
+GET /bundles/{bundle_id}
+....
+
+
+==== Parameters
+
+[options="header", cols=".^2,.^3,.^9,.^4"]
+|===
+|Type|Name|Description|Schema
+|**Path**|**bundle_id** +
+__required__||string
+|**Query**|**version** +
+__optional__|If provided will return the requested version of the selected Data Bundle.
+Otherwise, only the latest version is returned.|string
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2,.^14,.^4"]
+|===
+|HTTP Code|Description|Schema
+|**200**|Successfully found the Data Bundle.|<<_getbundleresponse,GetBundleResponse>>
+|**400**|The request is malformed.|<<_errorresponse,ErrorResponse>>
+|**401**|The request is unauthorized.|<<_errorresponse,ErrorResponse>>
+|**403**|The requester is not authorized to perform this action.|<<_errorresponse,ErrorResponse>>
+|**404**|The requested Data Bundle wasn't found.|<<_errorresponse,ErrorResponse>>
+|**500**|An unexpected error occurred.|<<_errorresponse,ErrorResponse>>
+|===
+
+
+==== Tags
+
+* DataRepositoryService
+
+
+[[_updatebundle]]
+=== Update a Data Bundle
+....
+PUT /bundles/{bundle_id}
+....
+
+
+==== Parameters
+
+[options="header", cols=".^2,.^3,.^9,.^4"]
+|===
+|Type|Name|Description|Schema
+|**Path**|**bundle_id** +
+__required__|The ID of the Data Bundle to update|string
+|**Body**|**body** +
+__required__|The new content for the Data Bundle identified by the given bundle_id. If the ID specified in the request body is different than that specified in the path, the Data Bundle's ID will be replaced with the one in the request body.|<<_updatebundlerequest,UpdateBundleRequest>>
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2,.^14,.^4"]
+|===
+|HTTP Code|Description|Schema
+|**200**|The Data Bundle was updated successfully.|<<_updatebundleresponse,UpdateBundleResponse>>
+|**400**|The request is malformed.|<<_errorresponse,ErrorResponse>>
+|**401**|The request is unauthorized.|<<_errorresponse,ErrorResponse>>
+|**403**|The requester is not authorized to perform this action.|<<_errorresponse,ErrorResponse>>
+|**404**|The requested Data Bundle wasn't found.|<<_errorresponse,ErrorResponse>>
+|**500**|An unexpected error occurred.|<<_errorresponse,ErrorResponse>>
+|===
+
+
+==== Tags
+
+* DataRepositoryService
+
+
+[[_deletebundle]]
+=== Delete a Data Bundle
+....
+DELETE /bundles/{bundle_id}
+....
+
+
+==== Parameters
+
+[options="header", cols=".^2,.^3,.^4"]
+|===
+|Type|Name|Schema
+|**Path**|**bundle_id** +
+__required__|string
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2,.^4"]
+|===
+|HTTP Code|Schema
+|**200**|<<_deletebundleresponse,DeleteBundleResponse>>
+|===
+
+
+==== Tags
+
+* DataRepositoryService
+
+
+[[_getbundleversions]]
+=== Retrieve all versions of a Data Bundle
+....
+GET /bundles/{bundle_id}/versions
+....
+
+
+==== Parameters
+
+[options="header", cols=".^2,.^3,.^4"]
+|===
+|Type|Name|Schema
+|**Path**|**bundle_id** +
+__required__|string
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2,.^14,.^4"]
+|===
+|HTTP Code|Description|Schema
+|**200**|The versions for the Data Bundle were found successfully.|<<_getbundleversionsresponse,GetBundleVersionsResponse>>
+|**400**|The request is malformed.|<<_errorresponse,ErrorResponse>>
+|**401**|The request is unauthorized.|<<_errorresponse,ErrorResponse>>
+|**403**|The requester is not authorized to perform this action.|<<_errorresponse,ErrorResponse>>
+|**404**|The requested Data Bundle wasn't found.|<<_errorresponse,ErrorResponse>>
+|**500**|An unexpected error occurred.|<<_errorresponse,ErrorResponse>>
+|===
+
+
+==== Tags
+
+* DataRepositoryService
+
+
+[[_createobject]]
+=== Make a new Data Object
+....
+POST /objects
+....
+
+
+==== Parameters
+
+[options="header", cols=".^2,.^3,.^9,.^4"]
+|===
+|Type|Name|Description|Schema
+|**Body**|**body** +
+__required__|The Data Object to be created. The ID scheme is left up to the
+implementor but should be unique to the server instance.|<<_createobjectrequest,CreateObjectRequest>>
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2,.^14,.^4"]
+|===
+|HTTP Code|Description|Schema
+|**200**|Successfully created the Data Object.|<<_createobjectresponse,CreateObjectResponse>>
+|**400**|The request is malformed.|<<_errorresponse,ErrorResponse>>
+|**401**|The request is unauthorized.|<<_errorresponse,ErrorResponse>>
+|**403**|The requester is not authorized to perform this action.|<<_errorresponse,ErrorResponse>>
+|**500**|An unexpected error occurred.|<<_errorresponse,ErrorResponse>>
+|===
+
+
+==== Tags
+
+* DataRepositoryService
+
+
+[[_listobjects]]
+=== List the Data Objects
+....
+GET /objects
+....
+
+
+==== Parameters
+
+[options="header", cols=".^2,.^3,.^9,.^4"]
+|===
+|Type|Name|Description|Schema
+|**Query**|**alias** +
+__optional__|If provided will only return Data Objects with the given alias.|string
+|**Query**|**checksum** +
+__optional__|The hexlified checksum that one would like to match on.|string
+|**Query**|**checksum_type** +
+__optional__|If provided will restrict responses to those that match the provided
+type.
+
+possible values:
+md5 # most blob stores provide a checksum using this
+multipart-md5 # multipart uploads provide a specialized tag in S3
+sha256
+sha512|string
+|**Query**|**page_size** +
+__optional__|Specifies the maximum number of results to return in a single page.
+If unspecified, a system default will be used.|integer (int32)
+|**Query**|**page_token** +
+__optional__|The continuation token, which is used to page through large result sets.
+To get the next page of results, set this parameter to the value of
+`next_page_token` from the previous response.|string
+|**Query**|**url** +
+__optional__|If provided will return only Data Objects with a that URL matches
+this string.|string
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2,.^14,.^4"]
+|===
+|HTTP Code|Description|Schema
+|**200**|The Data Objects were listed successfully.|<<_listobjectsresponse,ListObjectsResponse>>
+|**400**|The request is malformed.|<<_errorresponse,ErrorResponse>>
+|**401**|The request is unauthorized.|<<_errorresponse,ErrorResponse>>
+|**403**|The requester is not authorized to perform this action.|<<_errorresponse,ErrorResponse>>
+|**500**|An unexpected error occurred.|<<_errorresponse,ErrorResponse>>
+|===
+
+
+==== Tags
+
+* DataRepositoryService
+
+
+[[_getobject]]
+=== Retrieve a Data Object
+....
+GET /objects/{object_id}
+....
+
+
+==== Parameters
+
+[options="header", cols=".^2,.^3,.^9,.^4"]
+|===
+|Type|Name|Description|Schema
+|**Path**|**object_id** +
+__required__||string
+|**Query**|**version** +
+__optional__|If provided will return the requested version of the selected Data Object.|string
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2,.^14,.^4"]
+|===
+|HTTP Code|Description|Schema
+|**200**|The Data Object was found successfully.|<<_getobjectresponse,GetObjectResponse>>
+|**400**|The request is malformed.|<<_errorresponse,ErrorResponse>>
+|**401**|The request is unauthorized.|<<_errorresponse,ErrorResponse>>
+|**403**|The requester is not authorized to perform this action.|<<_errorresponse,ErrorResponse>>
+|**404**|The requested Data Object wasn't found|<<_errorresponse,ErrorResponse>>
+|**500**|An unexpected error occurred.|<<_errorresponse,ErrorResponse>>
+|===
+
+
+==== Tags
+
+* DataRepositoryService
+
+
+[[_updateobject]]
+=== Update a Data Object
+....
+PUT /objects/{object_id}
+....
+
+
+==== Parameters
+
+[options="header", cols=".^2,.^3,.^9,.^4"]
+|===
+|Type|Name|Description|Schema
+|**Path**|**object_id** +
+__required__|The ID of the Data Object to update|string
+|**Body**|**body** +
+__required__|The new Data Object for the given object_id. If the ID specified in the request body is different than that specified in the path, the Data Object's ID will be replaced with the one in the request body.|<<_updateobjectrequest,UpdateObjectRequest>>
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2,.^14,.^4"]
+|===
+|HTTP Code|Description|Schema
+|**200**|The Data Object was successfully updated.|<<_updateobjectresponse,UpdateObjectResponse>>
+|**400**|The request is malformed.|<<_errorresponse,ErrorResponse>>
+|**401**|The request is unauthorized.|<<_errorresponse,ErrorResponse>>
+|**403**|The requester is not authorized to perform this action.|<<_errorresponse,ErrorResponse>>
+|**404**|The requested Data Object wasn't found.|<<_errorresponse,ErrorResponse>>
+|**500**|An unexpected error occurred.|<<_errorresponse,ErrorResponse>>
+|===
+
+
+==== Tags
+
+* DataRepositoryService
+
+
+[[_deleteobject]]
+=== Delete a Data Object index entry
+....
+DELETE /objects/{object_id}
+....
+
+
+==== Parameters
+
+[options="header", cols=".^2,.^3,.^4"]
+|===
+|Type|Name|Schema
+|**Path**|**object_id** +
+__required__|string
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2,.^14,.^4"]
+|===
+|HTTP Code|Description|Schema
+|**200**|The Data Object was deleted successfully.|<<_deleteobjectresponse,DeleteObjectResponse>>
+|**400**|The request is malformed.|<<_errorresponse,ErrorResponse>>
+|**401**|The request is unauthorized.|<<_errorresponse,ErrorResponse>>
+|**403**|The requester is not authorized to perform this action.|<<_errorresponse,ErrorResponse>>
+|**404**|The requested Data Object wasn't found.|<<_errorresponse,ErrorResponse>>
+|**500**|An unexpected error occurred.|<<_errorresponse,ErrorResponse>>
+|===
+
+
+==== Tags
+
+* DataRepositoryService
+
+
+[[_getobjectversions]]
+=== Retrieve all versions of a Data Object
+....
+GET /objects/{object_id}/versions
+....
+
+
+==== Parameters
+
+[options="header", cols=".^2,.^3,.^4"]
+|===
+|Type|Name|Schema
+|**Path**|**object_id** +
+__required__|string
+|===
+
+
+==== Responses
+
+[options="header", cols=".^2,.^14,.^4"]
+|===
+|HTTP Code|Description|Schema
+|**200**|The versions for the Data Object were returned successfully.|<<_getobjectversionsresponse,GetObjectVersionsResponse>>
+|**400**|The request is malformed.|<<_errorresponse,ErrorResponse>>
+|**401**|The request is unauthorized.|<<_errorresponse,ErrorResponse>>
+|**403**|The requester is not authorized to perform this action.|<<_errorresponse,ErrorResponse>>
+|**404**|The requested Data Object wasn't found.|<<_errorresponse,ErrorResponse>>
+|**500**|An unexpected error occurred.|<<_errorresponse,ErrorResponse>>
+|===
+
+
+==== Tags
+
+* DataRepositoryService
+
+
+[[_getserviceinfo]]
+=== Returns service version and other information
+....
+GET /service-info
+....
+
+
+==== Responses
+
+[options="header", cols=".^2,.^14,.^4"]
+|===
+|HTTP Code|Description|Schema
+|**200**|Service information returned successfully|<<_serviceinforesponse,ServiceInfoResponse>>
+|===
+
+
+==== Tags
+
+* DataRepositoryService
+
+
+

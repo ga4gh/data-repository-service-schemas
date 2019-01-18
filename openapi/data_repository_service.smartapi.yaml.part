@@ -1,0 +1,23 @@
+# To generate the SmartAPI file, we use swagger2openapi to generate
+# data_repository_service.openapi.yaml, then merge that file with this file
+# to create data_repository_service.smartapi.yaml.
+# (data_repository_service.smartapi.yaml should not be edited directly.)
+servers:
+  - url: https://{host}:{port}/{basePath}
+    description: The production API server
+    variables:
+      host:
+        default: drs.example.org
+        description: The host the service is serving from.
+      port:
+        enum:
+          - '443'
+        default: '443'
+      basePath:
+        # The default base includes a version in the path.
+        default: ga4gh/drs/v1
+info:
+  x-implementationLanguage: en
+  termsOfService: https://www.ga4gh.org/policies/termsandconditions.html
+tags:
+ - name: NIHdatacommons
