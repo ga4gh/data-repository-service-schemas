@@ -4,7 +4,7 @@ import os.path
 import swagger_spec_validator.common
 
 cd = os.path.dirname(os.path.realpath(__file__))
-SWAGGER_PATH = os.path.join(cd, 'data_object_service.swagger.yaml')
+SWAGGER_PATH = os.path.join(cd, 'data_repository_service.swagger.yaml')
 
 
 def present_schema():
@@ -25,7 +25,7 @@ def from_chalice_routes(routes, base_path=''):
     :param str base_path: the base path of the endpoints listed in `routes`.
                           This is only necessary if a base path is manually
                           prepended to each endpoint your service exposes,
-                          e.g. ``@app.route('/ga4gh/dos/v1/dataobjects')``.
+                          e.g. ``@app.route('/ga4gh/drs/v1/dataobjects')``.
                           This string will be stripped from the beginning of
                           each path in the `routes` object if it is present.
                           The schema will be updated with this value.
