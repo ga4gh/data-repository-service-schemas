@@ -357,6 +357,31 @@ class TestServer(ga4gh.drs.test.DataRepositoryServiceTest):
         logger.info(list_response.bundles[0].aliases[0])
         logger.info(alias_list_response.bundles[0].aliases[0])
 
+    def test_list_bundle_querying(self):
+        ids = []  # Create data objects to populate the data bundle with
+        names = []
+        aliases = []
+        for i in range(10):
+            obj = self.generate_object()
+            ids.append(obj.id)
+            names.append(obj.name)
+            aliases.append(obj.aliases[0])
+            self.request('CreateObject', object=obj)
+        # Make sure that the data objects we just created exist
+        for id_ in ids:
+            self.request('GetObject', object_id=id_)
+
+        # Mint a data bundle with the data objects we just created then
+        # check to verify its existence
+        bundle = self.generate_bundle(object_ids=ids)
+        self.request('CreateBundle', bundle=bundle)
+        results = self.request('ListBundles', query={'alias': bundle.aliases[0]})
+        self.assertEqual(len(results['bundles']), 1)
+        results = self.request('ListBundles',  # by a unique checksum...
+                               query={'checksum': bundle.checksums[0].checksum,
+                                      'checksum_type': bundle.checksums[0].type})
+        self.assertEqual(len(results['bundles']), 1)
+
     def test_get_nonexistent_bundle(self):
         """Test querying GetBundle with a nonexistent data bundle."""
         with self.assertRaises(bravado.exception.HTTPNotFound) as ctx:
