@@ -37,17 +37,14 @@ jobs:
         - flake8 --select=E121,E123,E126,E226,E24,E704,W503,W504 --ignore=E501 app.py tests
 
     # the build process from James Eddy adapted from the WES repo
-    - stage: build_pages
+    - stage: documentation
       language: java
       jdk: oraclejdk8
-      before_install:
-      - chmod +x gradlew
-      - chmod +x scripts/fetchpages.sh
-      - chmod +x scripts/stagepages.sh
+      before_install: ignore
       script:
-      - "./scripts/fetchpages.sh"
-      - "./gradlew installSwagger buildSwagger asciidoctor"
-      - "./scripts/stagepages.sh"
+      - "bash ./scripts/fetchpages.sh"
+      - "sh ./gradlew installSwagger buildSwagger asciidoctor"
+      - "bash ./scripts/stagepages.sh"
       deploy:
         provider: pages
         skip-cleanup: true

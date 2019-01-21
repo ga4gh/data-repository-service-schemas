@@ -280,7 +280,7 @@ jobs:
       deploy:
       ...
 
-    - stage: build_pages
+    - stage: documentation
       ...
 ```
 
@@ -294,7 +294,7 @@ jobs:
     - stage: test
       ...
 
-    - stage: build_pages
+    - stage: documentation
       language: java
       jdk: oraclejdk8
       before_install:
@@ -317,7 +317,7 @@ jobs:
     - stage: test
       ...
 
-    - stage: build_pages
+    - stage: documentation
       language: java
       jdk: oraclejdk8
       before_install:
