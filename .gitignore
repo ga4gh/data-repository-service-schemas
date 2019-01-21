@@ -15,8 +15,7 @@ dist/
 downloads/
 eggs/
 .eggs/
-# need to comment out otherwise the swagger js libs don't get copied in the gh-pages deploy
-#lib/
+lib/
 lib64/
 parts/
 sdist/
