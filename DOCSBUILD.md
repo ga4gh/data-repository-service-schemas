@@ -199,8 +199,7 @@ Also, with help from @coverbeck, I updated the gradle plugin to install and prov
 ### Set up directory
 
 ```terminal
-.
-├── gulpfile.js  # deprecated; need to remove
+
 ├── package.json
 └── scripts
     ├── buildui.js  # deprecated; need to remove
