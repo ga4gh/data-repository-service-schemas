@@ -43,7 +43,7 @@ jobs:
       before_install: ignore
       script:
       - "bash ./scripts/fetchpages.sh"
-      - "sh ./gradlew installSwagger buildSwagger asciidoctor"
+      - "sh ./gradlew installSwagger asciidoctor"
       - "bash ./scripts/stagepages.sh"
       deploy:
         provider: pages
