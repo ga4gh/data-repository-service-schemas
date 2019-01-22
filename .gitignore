@@ -15,8 +15,7 @@ dist/
 downloads/
 eggs/
 .eggs/
-# need to comment out otherwise the swagger js libs don't get copied in the gh-pages deploy
-#lib/
+lib/
 lib64/
 parts/
 sdist/
@@ -91,3 +90,10 @@ ENV/
 
 # swagger in the python directory
 python/ga4gh/dos/data_objects_service.swagger.json
+
+# Documentation build system artifacts
+.gradle/
+docs/html5/
+docs/pdf/
+docs/asciidoc/swagger2markup/
+spec/
