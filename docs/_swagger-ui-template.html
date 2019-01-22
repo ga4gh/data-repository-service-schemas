@@ -1,0 +1,33 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta http-equiv="x-ua-compatible" content="IE=edge">
+  <title>Swagger UI</title>
+  <style>body { margin: 0; }</style>
+  <style>
+    iframe {
+      position: fixed;
+      top: 0px;
+      left: 0px;
+      bottom: 0px;
+      right: 0px;
+      width: 100%;
+      height: 100%;
+      border: none;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      z-index: 999999;
+    }
+  </style>
+</head>
+<body>
+  <iframe id="ui"></iframe>
+  <script>
+    var f = document.getElementById('ui');
+    var url = new URL('../swagger.yaml', window.location.href).href;
+    f.src = '/_swagger-ui/?url=' + url;
+  </script>
+</body>
+</html>
