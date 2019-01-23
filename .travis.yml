@@ -42,13 +42,13 @@ jobs:
       jdk: oraclejdk8
       before_install: ignore
       script:
-      - "bash ./scripts/fetchpages.sh"
       - "sh ./gradlew installSwagger asciidoctor"
-      - "bash ./scripts/stagepages.sh"
+      - "make stage_docs"
       deploy:
         provider: pages
         skip-cleanup: true
         github-token: $GITHUB_TOKEN
+        local-dir: deploy
         on:
           all_branches: true
 
