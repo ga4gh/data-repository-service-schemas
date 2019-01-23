@@ -1,1 +1,0 @@
-Questions? Check out the [Contributor's Guide](https://data-object-service.readthedocs.io/en/latest/contributors.html).
