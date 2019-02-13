@@ -14,7 +14,7 @@ branches:
     - master
     - develop
     - /^\d+\.\d+(\.\d+)?(-\S*)?$/
-    - /^feature\/issue-\d+$/
+    - /^feature\/issue-\d+(-\S*)?$/
 
 stages:
   - linting
