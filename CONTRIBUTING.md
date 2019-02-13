@@ -52,7 +52,8 @@ Some general rules to follow:
     [fork](https://help.github.com/articles/fork-a-repo) the repo into your personal GitHub space to work on.
 -   Create a "feature" branch for each update that you're working on (either in the main repo or your fork depending
     on the previous step). These branches should start with "feature/issue-[number]-[some-description]". For example
-    "feature/issue-123-improving-the-docs".  
+    "feature/issue-123-improving-the-docs".  Most devs will use the HubFlow command line tools to do this however, if you
+    make a feature branch in GitHub's UI, then please make sure you follow this naming convention.
 -   If you are creating a feature branch in the main repo and you follow this
     convention nice things will happen e.g. TravisCI will check your branch and the documentation and swagger will be built 
     for you, see the [README.md](README.md) for how to construct a URL to view these for your feature branch.
