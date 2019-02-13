@@ -55,7 +55,7 @@ Some general rules to follow:
     "feature/issue-123-improving-the-docs".  
 -   If you are creating a feature branch in the main repo and you follow this
     convention nice things will happen e.g. TravisCI will check your branch and the documentation and swagger will be built 
-    for you, see the [README.md] for how to construct a URL to view these for your feature branch.
+    for you, see the [README.md](README.md) for how to construct a URL to view these for your feature branch.
 -   When you're happy with your feature branch, make a [Pull Request](https://help.github.com/articles/about-pull-requests/)
     in GitHub from your feature branch (or fork with a feature branch) to develop.  Pick at least one other person to review 
     and write up a good message that links back to the issue you started this whole process with.
