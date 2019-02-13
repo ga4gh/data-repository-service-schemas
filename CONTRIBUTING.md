@@ -41,22 +41,25 @@ repositories each with the same name is a branch set, e.g. the master
 branch in each repository forms the master branch set.
 
 Some general rules to follow:
+-   Create an issue in Github to track your work and start a conversation. Make a note of the number, you'll 
+    need it when naming your feature branch below.
 -   We follow [HubFlow](https://datasift.github.io/gitflow/) which means we use
     a feature branch strategy with pull requests always going to `develop`
-    and releases happening from `master`.
--   [Fork](https://help.github.com/articles/fork-a-repo) the main
-    project into your personal GitHub space to work on (unless you are
-      a core developer with access to the repo, in which case make a feature
-      branch in the repo).
--   Create a branch for each update that you're working on. These
-    branches should start with "feature/issue-<number>" or "topic" branches.
-    Any changes that you push to your feature branch will automatically be shown in
-    the pull request.
--   If necessary, replicate the last two steps' fork-and-branch process
-    for each of the compliance and server repositories to create a
-    branch set - each constituent repository branch will be
-    identically named.
--   Coordinate pull requests across the branch set by making them as
+    and releases happening from `master`. Please read the HubFlow guide linked above, it's a quick
+    read and will give you a really good idea of how our branches work. Do not make pull requests to `master`!
+-   If you are a core developer with write access to the repo, make a feature
+    branch following HubFlow conventions in the repo (see next step).  Otherwise
+    [fork](https://help.github.com/articles/fork-a-repo) the repo into your personal GitHub space to work on.
+-   Create a "feature" branch for each update that you're working on (either in the main repo or your fork depending
+    on the previous step). These branches should start with "feature/issue-<number>-<some-description>". For example
+    "feature/issue-123-improving-the-docs".  
+-   If you are creating a feature branch in the main repo and you follow this
+    convention nice things will happen e.g. TravisCI will check your branch and the documentation and swagger will be built 
+    for you, see the [README.md] for how to construct a URL to view these for your feature branch.
+-   When you're happy with your feature branch, make a [Pull Request](https://help.github.com/articles/about-pull-requests/)
+    in GitHub from your feature branch (or fork with a feature branch) to develop.  Pick at least one other person to review 
+    and write up a good message that links back to the issue you started this whole process with.
+-   If you have multiple related pull requests, coordinate pull requests across the branch set by making them as
     simultaneously as possible, and [cross referencing
     them](http://stackoverflow.com/questions/23019608/github-commit-syntax-to-link-a-pull-request-issue).
 -   Keep your pull requests as small as possible. Large pull requests
