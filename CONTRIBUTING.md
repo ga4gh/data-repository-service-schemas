@@ -84,6 +84,8 @@ this will not automatically be built from our Travis.  However, if you
 are a developer and have created a feature branch following the naming
 convention above, you should see automated builds.
 
+Check https://travis-ci.org/ga4gh/data-repository-service-schemas/builds to see the status of the builds.
+
 Issue Resolution
 ================
 
