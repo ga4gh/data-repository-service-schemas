@@ -12,6 +12,7 @@ elif [ "$TRAVIS_BRANCH" != "gh-pages" ]; then
   branchpath="preview/$branch"
   mkdir -p "$branchpath/docs"
   cp docs/html5/index.html "$branchpath/docs/"
+  cp docs/html5/*.{png,jpg} "$branchpath/docs/"
   cp docs/pdf/index.pdf "$branchpath/docs/"
   cp openapi/data_repository_service.swagger.yaml "$branchpath/swagger.yaml"
   cp -R web_deploy/* "$branchpath/"
