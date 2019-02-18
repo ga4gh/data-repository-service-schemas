@@ -2,18 +2,17 @@
 
 The Data Repository Service (DRS) API provides a generic interface to data repositories so data consumers, including workflow systems, can access data in a single, standard way regardless of where it's stored and how it's managed. This document describes the DRS API and provides details on the specific endpoints, request formats, and response.  It is intended for developers of DRS-compatible services and of clients that will call these DRS services.
 
-The primary functionality of DRS is to map a logical ID to a means for physically retrieving the data represented by the id. The sections below describe the characteristics of those IDs, the types of data supported, and how the mapping works.
+The primary functionality of DRS is to map a logical ID to a means for physically retrieving the data represented by the ID. The sections below describe the characteristics of those IDs, the types of data supported, and how the mapping works.
 
 == DRS API Principles
-
 
 === DRS IDs
 
 Each implementation of DRS can choose its own id scheme, as long as it follows these guidelines:
 
-* DRS Ids are URL-safe text strings made up of alphanumeric characters and any of [.-_/]
-* One DRS ID MUST always return same bytes (or, in the case of a collection, the same contents). This constraint aids with reproducibility.
-( DRS does NOT support semantics around multiple versions of an object. For example, there’s no notion of “get latest version” or “list all versions” in DRS v1. Individual implementation MAY choose an ID scheme that includes version hints.
+* DRS IDs are URL-safe text strings made up of alphanumeric characters and any of [.-_/]
+* One DRS ID MUST always return the same object data (or, in the case of a collection, the same set of objects). This constraint aids with reproducibility.
+* DRS does NOT support semantics around multiple versions of an object. (For example, there’s no notion of “get latest version” or “list all versions” in DRS v1.) Individual implementation MAY choose an ID scheme that includes version hints.
 * DRS implementations MAY have more than one ID that maps to the same object.
 
 === DRS Datatypes
@@ -37,9 +36,6 @@ The DRS API specification is written in OpenAPI and embodies a RESTful service p
 
 == Authorization & Authentication (WORK IN PROGRESS)
 
-Users must supply credentials that establish their identity and authorization in order to use a DRS endpoint. We recommend that DRS implementations use an OAuth2 https://oauth.net/2/bearer-tokens/[bearer token], although they can choose other mechanisms if appropriate. DRS callers can use the `auth_instructions_url` from the https://ga4gh.github.io/workflow-execution-service-schemas/#/WorkflowExecutionService/GetServiceInfo[service-info endpoint] to learn how to obtain and use a bearer token for a particular implementation.
+Users must supply credentials that establish their identity and authorization in order to use a DRS endpoint. We recommend that DRS implementations use an OAuth2 https://oauth.net/2/bearer-tokens/[bearer token], although they can choose other mechanisms if appropriate. DRS callers can use the `auth_instructions_url` from the https://ga4gh.github.io/data-repository-service-schemas/#/DataRepositoryService/GetServiceInfo[service-info endpoint] to learn how to obtain and use a bearer token for a particular implementation.
 
-The DRS implementation is responsible for checking that a user is authorized to submit workflow run requests. The particular authorization policy is up to the DRS implementer.
-
-Systems like DRS need to also address the ability to pass credentials with jobs for input and output access.  In the current
-version of DRS, the passing of credentials to authenticate and authorize access to inputs and outputs, as well as mandates about necessary file transfer protocols to support, are out of scope.  However, parallel work on the Data Object Service is addressing ways to pass around access credentials with data object references, opening up the possibility that a future version of DRS will provide concrete mechanisms for workflow runs to access data using credentials different than those used for DRS.  This is a work in progress and support of DOS in DRS will be added in a future release of DRS.
+The DRS implementation is responsible for checking that a user is authorized to submit requests. The particular authorization policy is up to the DRS implementer.
