@@ -95,9 +95,7 @@ so this voting process is focused on their needs.
 
 2) Someone is assigned the ticket, they bring together one (or more) pull requests... they might do it themselves or ask for help.  Multiple pull requests could be used if there are different approaches that need to be explored
 
-3) David, Brian, and Rishi review the PRs every week on the call (and also ping the mailing list), set a deadline by which drivers (and a few key non-drivers) need to respond with a +1, 0, or -1 by.  A non-vote means 0 so neutral
-
-3b) we try for no "-1". Strive to reach consensus with our drivers. We ask that a -1 give us details why.
+3) David, Brian, and Rishi review the PRs every week on the call (and also ping the mailing list), set a deadline by which drivers (and a few key non-drivers) need to respond with a +1, 0, or -1 by.  A non-vote means 0 so neutral. We try for no "-1"s. Strive to reach consensus with our drivers. We ask that a -1 give us details why.
 
 4) David and Brian as Work Stream leads retain a veto if something goes off the rails
 
