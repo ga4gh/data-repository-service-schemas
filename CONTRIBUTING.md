@@ -89,37 +89,23 @@ Check https://travis-ci.org/ga4gh/data-repository-service-schemas/builds to see 
 Issue Resolution
 ================
 
-Once a pull request or issue have been submitted, anyone can comment or
-vote on to express their opinion following the Apache voting system.
-Quick summary:
+Once a pull request or issue have been submitted, anyone can comment on the PR or the Issue.
 
--   **+1** something you agree with
--   **-1** if you have a strong objection to an issue, which will be
-    taken very seriously. A -1 vote should provide an
-    alternative solution.
--   **+0** or **-0** for neutral comments or weak opinions.
--   It's okay to have input without voting
--   Silence gives assent
+A user will be assigned during a review by the Cloud Work Stream leads (@dglazer or @briandoconnor). 
 
-A pull request with at least two **+1** votes, no **-1** votes, that has
-been open for at least 3 days, and whose cross-referenced pull requests
-to server and compliance have similarly been upvoted is ready to be
-merged. The merge should be done by someone from a different
-organization than the submitter. (We sometimes waive the 3 days for
-cosmetic-only changes -- use good judgment.) A pull request to either
-the schemas, servers or compliance repository that involves changes to
-the others should not be merged without coordinating, mergable pull
-requests to the other repositories. Conversely, when merging a pull
-request the other pull requests in the branch set must be merged at the
-same time (In practise, when merging a branch set including the schemas
-repository, merge the pull request to schemas first to avoid the
-continuous integration build issues). If an issue gets any **-1** votes,
-the comments on the issue need to reach consensus before the issue can
-be resolved one way or the other. There isn't any strict time limit on a
-contentious issue.
+Voting will take place with named Driver Project representatives, with one vote for each Driver Project, and key named implementors. 'Driver Project' here also encompasses representatives from Strategic Partners, such as ELIXIR. 
 
-The project will strive for full consensus on everything until it runs
-into a problem with this model.
+Votes will be taken into account, but an ultimate decision will be made by the Cloud Work Stream leads, Brian O Connor and David Glazer, whether or not to merge a PR or close an Issue. 
+
+Each voter can vote in one of three ways:
+-   **+1** for something they agree with
+-   **-1** if they have a strong objection to an issue, which will be taken very seriously. A -1 vote must provide an alternative solution or explaination for their -1 vote.
+-   **+0** or **-0** for neutral comments or weak opinions. No vote will imply a 0 vote being cast.
+
+The named key voting implementors are: 
+- @ddietterich from Verily Data Repo
+- @sarpera from Seven Bridges Genomics
+- @delagoya from Illumina
 
 Syntax Style and Conventions
 ============================
