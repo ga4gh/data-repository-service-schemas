@@ -60,9 +60,9 @@ class AbstractComplianceTest(DataRepositoryServiceTest):
                    the list of all DOS operations, named by the `operationId`
                    key in the schema::
 
-                      supports = ['GetServiceInfo', 'GetBundleVersions',
-                                  'CreateBundle', 'ListBundles',
-                                  'UpdateObject', 'GetObject', ...]
+                      supports = ['GetServiceInfo',
+                                  'ListBundles',
+                                  'GetObject', ...]
 
                    Adding / removing operations from this list will adjust
                    which tests are run. So, doing something like::
