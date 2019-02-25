@@ -32,39 +32,6 @@ paths:
         - DataRepositoryService
       x-swagger-router-controller: ga4gh.drs.server
   /bundles:
-    post:
-      summary: Create a new Data Bundle
-      operationId: CreateBundle
-      responses:
-        '200':
-          description: The Data Bundle was successfully created.
-          schema:
-            $ref: '#/definitions/CreateBundleResponse'
-        '400':
-          description: The request is malformed.
-          schema:
-            $ref: '#/definitions/ErrorResponse'
-        '401':
-          description: The request is unauthorized.
-          schema:
-            $ref: '#/definitions/ErrorResponse'
-        '403':
-          description: The requester is not authorized to perform this action.
-          schema:
-            $ref: '#/definitions/ErrorResponse'
-        '500':
-          description: An unexpected error occurred.
-          schema:
-            $ref: '#/definitions/ErrorResponse'
-      parameters:
-        - name: body
-          in: body
-          required: true
-          schema:
-            $ref: '#/definitions/CreateBundleRequest'
-      tags:
-        - DataRepositoryService
-      x-swagger-router-controller: ga4gh.drs.server
     get:
       summary: List the Data Bundles
       operationId: ListBundles
@@ -169,149 +136,10 @@ paths:
           in: path
           required: true
           type: string
-        - name: version
-          required: false
-          description: |-
-            If provided will return the requested version of the selected Data Bundle.
-            Otherwise, only the latest version is returned.
-          in: query
-          type: string
-      tags:
-        - DataRepositoryService
-      x-swagger-router-controller: ga4gh.drs.server
-    delete:
-      summary: Delete a Data Bundle
-      operationId: DeleteBundle
-      responses:
-        '200':
-          description: ''
-          schema:
-            $ref: '#/definitions/DeleteBundleResponse'
-      parameters:
-        - name: bundle_id
-          in: path
-          required: true
-          type: string
-      tags:
-        - DataRepositoryService
-      x-swagger-router-controller: ga4gh.drs.server
-    put:
-      summary: Update a Data Bundle
-      operationId: UpdateBundle
-      responses:
-        '200':
-          description: The Data Bundle was updated successfully.
-          schema:
-            $ref: '#/definitions/UpdateBundleResponse'
-        '400':
-          description: The request is malformed.
-          schema:
-            $ref: '#/definitions/ErrorResponse'
-        '401':
-          description: The request is unauthorized.
-          schema:
-            $ref: '#/definitions/ErrorResponse'
-        '404':
-          description: The requested Data Bundle wasn't found.
-          schema:
-            $ref: '#/definitions/ErrorResponse'
-        '403':
-          description: The requester is not authorized to perform this action.
-          schema:
-            $ref: '#/definitions/ErrorResponse'
-        '500':
-          description: An unexpected error occurred.
-          schema:
-            $ref: '#/definitions/ErrorResponse'
-      parameters:
-        - name: bundle_id
-          in: path
-          required: true
-          type: string
-          description: The ID of the Data Bundle to update
-        - name: body
-          in: body
-          required: true
-          description: The new content for the Data Bundle identified by the given bundle_id. If the ID specified in the request body is different than that specified in the path, the Data Bundle's ID will be replaced with the one in the request body.
-          schema:
-            $ref: '#/definitions/UpdateBundleRequest'
-      tags:
-        - DataRepositoryService
-      x-swagger-router-controller: ga4gh.drs.server
-  '/bundles/{bundle_id}/versions':
-    get:
-      operationId: GetBundleVersions
-      summary: Retrieve all versions of a Data Bundle
-      responses:
-        '200':
-          description: The versions for the Data Bundle were found successfully.
-          schema:
-            $ref: '#/definitions/GetBundleVersionsResponse'
-        '400':
-          description: The request is malformed.
-          schema:
-            $ref: '#/definitions/ErrorResponse'
-        '401':
-          description: The request is unauthorized.
-          schema:
-            $ref: '#/definitions/ErrorResponse'
-        '404':
-          description: The requested Data Bundle wasn't found.
-          schema:
-            $ref: '#/definitions/ErrorResponse'
-        '403':
-          description: The requester is not authorized to perform this action.
-          schema:
-            $ref: '#/definitions/ErrorResponse'
-        '500':
-          description: An unexpected error occurred.
-          schema:
-            $ref: '#/definitions/ErrorResponse'
-      parameters:
-        - name: bundle_id
-          in: path
-          required: true
-          type: string
       tags:
         - DataRepositoryService
       x-swagger-router-controller: ga4gh.drs.server
   /objects:
-    post:
-      summary: Make a new Data Object
-      operationId: CreateObject
-      responses:
-        '200':
-          description: Successfully created the Data Object.
-          schema:
-            $ref: '#/definitions/CreateObjectResponse'
-        '400':
-          description: The request is malformed.
-          schema:
-            $ref: '#/definitions/ErrorResponse'
-        '401':
-          description: The request is unauthorized.
-          schema:
-            $ref: '#/definitions/ErrorResponse'
-        '403':
-          description: The requester is not authorized to perform this action.
-          schema:
-            $ref: '#/definitions/ErrorResponse'
-        '500':
-          description: An unexpected error occurred.
-          schema:
-            $ref: '#/definitions/ErrorResponse'
-      parameters:
-        - name: body
-          in: body
-          required: true
-          description: |-
-            The Data Object to be created. The ID scheme is left up to the
-            implementor but should be unique to the server instance.
-          schema:
-            $ref: '#/definitions/CreateObjectRequest'
-      tags:
-        - DataRepositoryService
-      x-swagger-router-controller: ga4gh.drs.server
     get:
       summary: List the Data Objects
       operationId: ListObjects
@@ -422,128 +250,6 @@ paths:
           in: path
           required: true
           type: string
-        - name: version
-          required: false
-          description: |-
-            If provided will return the requested version of the selected Data Object.
-          in: query
-          type: string
-      tags:
-        - DataRepositoryService
-      x-swagger-router-controller: ga4gh.drs.server
-    delete:
-      summary: Delete a Data Object index entry
-      operationId: DeleteObject
-      responses:
-        '200':
-          description: 'The Data Object was deleted successfully.'
-          schema:
-            $ref: '#/definitions/DeleteObjectResponse'
-        '400':
-          description: The request is malformed.
-          schema:
-            $ref: '#/definitions/ErrorResponse'
-        '401':
-          description: The request is unauthorized.
-          schema:
-            $ref: '#/definitions/ErrorResponse'
-        '404':
-          description: The requested Data Object wasn't found.
-          schema:
-            $ref: '#/definitions/ErrorResponse'
-        '403':
-          description: The requester is not authorized to perform this action.
-          schema:
-            $ref: '#/definitions/ErrorResponse'
-        '500':
-          description: An unexpected error occurred.
-          schema:
-            $ref: '#/definitions/ErrorResponse'
-      parameters:
-        - name: object_id
-          in: path
-          required: true
-          type: string
-      tags:
-        - DataRepositoryService
-      x-swagger-router-controller: ga4gh.drs.server
-    put:
-      summary: Update a Data Object
-      operationId: UpdateObject
-      responses:
-        '200':
-          description: The Data Object was successfully updated.
-          schema:
-            $ref: '#/definitions/UpdateObjectResponse'
-        '400':
-          description: The request is malformed.
-          schema:
-            $ref: '#/definitions/ErrorResponse'
-        '401':
-          description: The request is unauthorized.
-          schema:
-            $ref: '#/definitions/ErrorResponse'
-        '404':
-          description: The requested Data Object wasn't found.
-          schema:
-            $ref: '#/definitions/ErrorResponse'
-        '403':
-          description: The requester is not authorized to perform this action.
-          schema:
-            $ref: '#/definitions/ErrorResponse'
-        '500':
-          description: An unexpected error occurred.
-          schema:
-            $ref: '#/definitions/ErrorResponse'
-      parameters:
-        - name: object_id
-          in: path
-          required: true
-          type: string
-          description: The ID of the Data Object to update
-        - name: body
-          in: body
-          required: true
-          description: The new Data Object for the given object_id. If the ID specified in the request body is different than that specified in the path, the Data Object's ID will be replaced with the one in the request body.
-          schema:
-            $ref: '#/definitions/UpdateObjectRequest'
-      tags:
-        - DataRepositoryService
-      x-swagger-router-controller: ga4gh.drs.server
-  '/objects/{object_id}/versions':
-    get:
-      summary: Retrieve all versions of a Data Object
-      operationId: GetObjectVersions
-      responses:
-        '200':
-          description: The versions for the Data Object were returned successfully.
-          schema:
-            $ref: '#/definitions/GetObjectVersionsResponse'
-        '400':
-          description: The request is malformed.
-          schema:
-            $ref: '#/definitions/ErrorResponse'
-        '401':
-          description: The request is unauthorized.
-          schema:
-            $ref: '#/definitions/ErrorResponse'
-        '404':
-          description: The requested Data Object wasn't found.
-          schema:
-            $ref: '#/definitions/ErrorResponse'
-        '403':
-          description: The requester is not authorized to perform this action.
-          schema:
-            $ref: '#/definitions/ErrorResponse'
-        '500':
-          description: An unexpected error occurred.
-          schema:
-            $ref: '#/definitions/ErrorResponse'
-      parameters:
-        - name: object_id
-          in: path
-          required: true
-          type: string
       tags:
         - DataRepositoryService
       x-swagger-router-controller: ga4gh.drs.server
@@ -598,36 +304,6 @@ definitions:
           multipart-md5      # multipart uploads provide a specialized tag in S3
           sha256
           sha512
-  CreateBundleRequest:
-    type: object
-    properties:
-      bundle:
-        $ref: '#/definitions/Bundle'
-  CreateBundleResponse:
-    type: object
-    required: ['bundle_id']
-    properties:
-      bundle_id:
-        type: string
-        description: |-
-          The identifier of the Data Bundle created.
-  CreateObjectRequest:
-    type: object
-    required: ['object']
-    properties:
-      object:
-        $ref: '#/definitions/Object'
-    description: |-
-      The Data Object one would like to index. One must provide any aliases
-      and URLs to this file when sending the CreateObjectRequest. It is up
-      to implementations to validate that the Data Object is available from
-      the provided URLs.
-  CreateObjectResponse:
-    type: object
-    properties:
-      object_id:
-        type: string
-        description: The ID of the created Data Object.
   Bundle:
     type: object
     required: ['id', 'object_ids', 'created', 'updated', 'version', 'checksums']
@@ -743,52 +419,17 @@ definitions:
           These aliases can be used to represent the Data Object's location in
           a directory (e.g. "bucket/folder/file.name") to make Data Objects
           more discoverable. They might also be used to represent
-  DeleteBundleResponse:
-    type: object
-    properties:
-      bundle_id:
-        type: string
-  DeleteObjectResponse:
-    type: object
-    required: ['object_id']
-    properties:
-      object_id:
-        type: string
-        description: |-
-          The identifier of the Data Object deleted.
   GetBundleResponse:
     type: object
     properties:
       bundle:
         $ref: '#/definitions/Bundle'
-  GetBundleVersionsResponse:
-    type: object
-    required: ['bundles']
-    properties:
-      bundles:
-        type: array
-        items:
-          $ref: '#/definitions/Bundle'
-        description: |-
-          All versions of the Data Bundles that match the GetBundleVersions
-          request.
   GetObjectResponse:
     type: object
     required: ['object']
     properties:
       object:
         $ref: '#/definitions/Object'
-  GetObjectVersionsResponse:
-    type: object
-    required: ['objects']
-    properties:
-      objects:
-        type: array
-        items:
-          $ref: '#/definitions/Object'
-        description: |-
-          All versions of the Data Objects that match the GetObjectVersions
-          request.
   ListBundlesRequest:
     description: |-
       Only return Data Bundles that match all of the request parameters. A
@@ -918,34 +559,6 @@ definitions:
         $ref: '#/definitions/UserMetadata'
       authorization_metadata:
         $ref: '#/definitions/AuthorizationMetadata'
-  UpdateBundleRequest:
-    type: object
-    required: ['bundle']
-    properties:
-      bundle:
-        $ref: '#/definitions/Bundle'
-  UpdateBundleResponse:
-    type: object
-    required: ['bundle_id']
-    properties:
-      bundle_id:
-        type: string
-        description: |-
-          The identifier of the Data Bundle updated.
-  UpdateObjectRequest:
-    type: object
-    required: ['object']
-    properties:
-      object:
-        $ref: '#/definitions/Object'
-  UpdateObjectResponse:
-    type: object
-    required: ['object_id']
-    properties:
-      object_id:
-        type: string
-        description: |-
-          The identifier of the Data Object updated.
   ErrorResponse:
     description:
       An object that can optionally include information about the error.
