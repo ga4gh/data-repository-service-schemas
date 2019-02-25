@@ -204,12 +204,12 @@ resolution](#issue%20resolution).
 Release Branches
 ================
 
-From time to time the group will make a release. This is achieved by
-creating a branch set including all the repositories named
-"release-foo", where foo is the release name. Only bug fixes are allowed
-to release branch sets. To refer to a specific version of a release
-branch set either the commit id can be used, or alternatively (better),
-a tag can be created (which should be replicated across repositories).
+From time to time the group will make a release, this is done with the HubFlow 
+release process which generally involves creating a branch 
+"release-foo", where foo is the release name.  And following the HubFlow 
+tooling for pushing this to master/develop and taggging in GitHub.
+Only bug fixes are allowed
+to the release branch and the release branch is removed after a successful HubFlow release. 
 
 Retired Task Teams
 ==================
