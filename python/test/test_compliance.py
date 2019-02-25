@@ -29,12 +29,6 @@ class TestCompliance(AbstractComplianceTest):
         app = ga4gh.drs.server.configure_app().app
         cls.client = app.test_client()
 
-        # Populate our new server with some test data objects and bundles
-        for data_obj in cls.generate_objects(250):
-            cls.drs_request('POST', '/objects', body={'object': data_obj})
-        for data_bdl in cls.generate_bundles(250):
-            cls.drs_request('POST', '/bundles', body={'bundle': data_bdl})
-
     @classmethod
     def _make_request(cls, meth, path, headers=None, body=None):
         # For documentation on this function call, see
