@@ -18,7 +18,7 @@ branches:
 
 stages:
   - linting
-  - test
+#  - test
   # The deploy stage only has `deploy` actions which will only run on commits to master
   # (and not pull requests). That said, we still explicitly skip this stage because
   # if we don't, Travis will only stop execution once the build stage has already been
@@ -78,5 +78,5 @@ before_install:
 
 script:
 - make schemas
-- nosetests python/
+#- nosetests python/
 - ga4gh_drs_client
