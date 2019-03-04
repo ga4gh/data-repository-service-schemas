@@ -18,6 +18,9 @@ consumes:
   - application/json
 produces:
   - application/json
+security:
+  - {}
+  - authToken: []
 paths:
   '/service-info':
     get:
@@ -109,8 +112,6 @@ paths:
     get:
       summary: Returns a fully resolvable URL that can be used to fetch the actual object bytes.
       operationId: GetAccessURL
-      security:
-        - authToken: []
       responses:
         '200':
           description: The access URL was found successfully.
@@ -172,24 +173,6 @@ definitions:
     description: |-
             OPTIONAL
             A set of key-value pairs that represent metadata provided by the uploader.
-  AuthorizationMetadata:
-    type: object
-    properties:
-        auth_type:
-          type: string
-          description: |-
-            The auth standard being used to make data available. For example, 'OAuth2.0'.
-        auth_url:
-          type: string
-          description: |-
-            The URL where the auth service is located, for example, a URL to get an OAuth
-            token.
-    additionalProperties: true
-    description: |-
-            OPTIONAL
-            A set of key-value pairs that represent sufficient metadata to be granted
-            access to a resource. It may be helpful to provide details about a specific
-            provider, for example.
   Checksum:
     type: object
     required: ['checksum']
