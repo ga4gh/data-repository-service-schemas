@@ -101,6 +101,11 @@ so this voting process is focused on their needs.
 
 5) We merge or discard depending on the vote/veto by the date we set when the PR was shared with the group
 
+The named key voting implementors are: 
+- @ddietterich from Verily Data Repo
+- @sarpera from Seven Bridges Genomics
+- @delagoya from Illumina
+
 
 Syntax Style and Conventions
 ============================
