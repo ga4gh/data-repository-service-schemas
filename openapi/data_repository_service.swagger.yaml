@@ -344,7 +344,6 @@ definitions:
         - globus
         - aspera
         - gsiftp
-        - nfs
         - local
         description: >-
           Type of the access method.
