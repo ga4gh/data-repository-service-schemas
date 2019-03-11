@@ -101,6 +101,23 @@ so this voting process is focused on their needs.
 
 5) We merge or discard depending on the vote/veto by the date we set when the PR was shared with the group
 
+Driver Projects who we will ask to vote on PRs:
+
+Pressing Need:
+- AGHA
+- ELIXIR
+- Genomics England
+- HCA
+- TOPMed
+
+Fast Follow:
+- CanDIG
+- ClinGen 
+- ENA/EGA/EVA
+- ICGC ARGO
+- NCI DCF
+- NIH All of Us
+
 The named key voting implementors are: 
 - @ddietterich from Verily Data Repo
 - @sarpera from Seven Bridges Genomics
