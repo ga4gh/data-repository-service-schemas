@@ -5,9 +5,9 @@ set -v
 
 if [ "$TRAVIS_BRANCH" != "gh-pages" ]; then
   if [ "$TRAVIS_BRANCH" == "master" ]; then
-    if [ "$TRAVIS_PULL_REQUEST" == "false"]; then
+    if [ "$TRAVIS_PULL_REQUEST" == "false" ]; then
       branchpath="."
-    else 
+    else
       branch=$(echo "$TRAVIS_PULL_REQUEST_BRANCH" | awk '{print tolower($0)}')
       branchpath="preview/$branch"
     fi
