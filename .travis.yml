@@ -8,6 +8,7 @@ branches:
   - develop
   - "/^\\d+\\.\\d+(\\.\\d+)?(-\\S*)?$/"
   - "/^feature\\/issue-\\d+(-\\S*)?$/"
+  - "/^release\\/\\d+\\.\\d+(\\.\\d+)?$/"
 stages:
 - linting
 - test
