@@ -7,7 +7,6 @@ info:
   contact:
     name: GA4GH Cloud Work Stream
     email: ga4gh-cloud@ga4gh.org
-    x-role: responsible developer
   license:
     name: Apache 2.0
     url: https://raw.githubusercontent.com/ga4gh/data-repository-service-schemas/master/LICENSE
