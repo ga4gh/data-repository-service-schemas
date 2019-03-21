@@ -2,10 +2,10 @@
 
 # Data Repository Service (DRS) API
 
-<sup>`develop` branch status: </sup>[![Build Status](https://travis-ci.org/ga4gh/data-repository-service-schemas.svg?branch=master)](https://travis-ci.org/ga4gh/data-repository-service-schemas?branch=master)
+<sup>`master` branch status: </sup>[![Build Status](https://travis-ci.org/ga4gh/data-repository-service-schemas.svg?branch=master)](https://travis-ci.org/ga4gh/data-repository-service-schemas?branch=master)
 <a href="https://ga4gh.github.io/data-repository-service-schemas/preview/develop/swagger.yaml"><img src="http://online.swagger.io/validator?url=https://ga4gh.github.io/data-repository-service-schemas/swagger.yaml" alt="Swagger Validator" height="20em" width="72em"></A>
-[![Read the Docs badge](https://readthedocs.org/projects/data-repository-service/badge/)](https://data-repository-service.readthedocs.io/en/latest)
-![PyPI - Python Version](https://img.shields.io/pypi/pyversions/ga4gh-drs-schemas.svg)
+<!-- [![Read the Docs badge](https://readthedocs.org/projects/data-repository-service/badge/)](https://data-repository-service.readthedocs.io/en/latest)
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/ga4gh-drs-schemas.svg) -->
 
 The [Global Alliance for Genomics and Health](http://genomicsandhealth.org/) (GA4GH) is an international coalition, formed to enable the sharing of genomic and clinical data.
 
@@ -28,15 +28,24 @@ The API is split into two sections:
 
 * **Data Object management**, which enables the creation, updating, deletion, versioning,
   and unique identification of files and data bundles (flat collections of files); and
-* **Data Object querying**, which can locate data objects across different cloud environments
-  and DRS implementations.
+* **Data Object access**, which can locate data objects across different cloud
+  and other environments.
 
 # API Definition
 
-See the human-readable **Reference Documentation**  ([Released (master)](https://ga4gh.github.io/data-repository-service-schemas/docs/) and [Stable Development (develop)](https://ga4gh.github.io/data-repository-service-schemas/preview/develop/docs/))
-and the **[OpenAPI YAML description](openapi/data_repository_service.swagger.yaml)**. You can also explore the specification in the Swagger UI ([Released (master)](https://ga4gh.github.io/data-repository-service-schemas/swagger-ui/) and [Stable Development (develop)](https://ga4gh.github.io/data-repository-service-schemas/preview/develop/swagger-ui/)).
+See the human-readable **Reference Documentation**  
 
-> All documentation and pages hosted at 'ga4gh.github.io/data-repository-service-schemas' reflect the latest API release from the `master` branch. To monitor the latest development work on various branches, add 'preview/\<branch\>' to the URLs above (e.g., 'https://ga4gh.github.io/workflow-execution-service/preview/\<branch\>/docs'). To view the latest *stable* development API specification, refer to the `develop` branch.
+* [Released (master)](https://ga4gh.github.io/data-repository-service-schemas/docs/): the current release
+* [Release 0.0.1](https://ga4gh.github.io/data-repository-service-schemas/preview/release/0.0.1/docs/): the initial DRS after the rename from DOS.
+* [Stable Development (develop)](https://ga4gh.github.io/data-repository-service-schemas/preview/develop/docs/): This is where feature branches are merged into, it is our stable development branch.
+
+See the **[OpenAPI YAML description](openapi/data_repository_service.swagger.yaml)**. You can also explore the specification in the Swagger UI:
+
+* [Released (master)](https://ga4gh.github.io/data-repository-service-schemas/swagger-ui/)
+* [Release 0.0.1](https://ga4gh.github.io/data-repository-service-schemas/preview/release/0.0.1/swagger-ui/)
+* [Stable Development (develop)](https://ga4gh.github.io/data-repository-service-schemas/preview/develop/swagger-ui/)
+
+> All documentation and pages hosted at 'ga4gh.github.io/data-repository-service-schemas' reflect the latest API release from the `master` branch. To monitor the latest development work on various branches, add 'preview/\<branch\>' to the URLs above (e.g., 'https://ga4gh.github.io/workflow-execution-service/preview/\<branch\>/docs'). 
 
 # Use Cases
 
