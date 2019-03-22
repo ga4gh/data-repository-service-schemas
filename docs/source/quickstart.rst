@@ -14,7 +14,7 @@ work in a virtualenv::
 
 Then, install from PyPI::
 
-    $ pip install ga4gh-dos-schemas
+    $ pip install ga4gh-drs-schemas
 
 Or, to install from source::
 
@@ -27,11 +27,11 @@ Running the client and server
 
 There's a handy command line hook for the server::
 
-    $ ga4gh_dos_server
+    $ ga4gh_drs_server
 
 and for the client::
 
-    $ ga4gh_dos_demo
+    $ ga4gh_drs_demo
 
 (The client doesn't do anything yet but will soon.)
 
