@@ -18,6 +18,9 @@ consumes:
   - application/json
 produces:
   - application/json
+security:
+  - {}
+  - authToken: []
 paths:
   '/service-info':
     get:
@@ -105,6 +108,57 @@ paths:
       tags:
         - DataRepositoryService
       x-swagger-router-controller: ga4gh.drs.server
+  '/objects/{object_id}/access/{access_id}':
+    get:
+      summary: Returns a fully resolvable URL that can be used to fetch the actual object bytes.
+      operationId: GetAccessURL
+      responses:
+        '200':
+          description: The access URL was found successfully.
+          schema:
+            $ref: '#/definitions/GetAccessURLResponse'
+        '400':
+          description: The request is malformed.
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '401':
+          description: The request is unauthorized.
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '404':
+          description: The requested access URL wasn't found
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '403':
+          description: The requester is not authorized to perform this action.
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '500':
+          description: An unexpected error occurred.
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+      parameters:
+        - name: object_id
+          in: path
+          required: true
+          type: string
+        - name: access_id
+          in: path
+          required: true
+          type: string
+          description: An 'access_id' from 'access_methods' list of a Data Object
+      tags:
+        - DataRepositoryService
+      x-swagger-router-controller: ga4gh.drs.server
+securityDefinitions:
+  authToken:
+    description: |
+      A valid authorization token must be passed in the 'Authorization' header.
+      Example syntax for using 'Authorization' header :
+        Bearer: token_string
+    type: apiKey
+    name: Authorization
+    in: header
 definitions:
   SystemMetadata:
     type: object
@@ -119,24 +173,6 @@ definitions:
     description: |-
             OPTIONAL
             A set of key-value pairs that represent metadata provided by the uploader.
-  AuthorizationMetadata:
-    type: object
-    properties:
-        auth_type:
-          type: string
-          description: |-
-            The auth standard being used to make data available. For example, 'OAuth2.0'.
-        auth_url:
-          type: string
-          description: |-
-            The URL where the auth service is located, for example, a URL to get an OAuth
-            token.
-    additionalProperties: true
-    description: |-
-            OPTIONAL
-            A set of key-value pairs that represent sufficient metadata to be granted
-            access to a resource. It may be helpful to provide details about a specific
-            provider, for example.
   Checksum:
     type: object
     required: ['checksum']
@@ -211,7 +247,7 @@ definitions:
         $ref: '#/definitions/UserMetadata'
   Object:
     type: object
-    required: ['id', 'size', 'created', 'checksums']
+    required: ['id', 'size', 'created', 'checksums', 'access_methods']
     properties:
       id:
         type: string
@@ -252,12 +288,13 @@ definitions:
           $ref: '#/definitions/Checksum'
         description: |-
           The checksum of the Data Object. At least one checksum must be provided.
-      urls:
+      access_methods:
         type: array
+        minItems: 1
         items:
-          $ref: '#/definitions/URL'
+          $ref: '#/definitions/AccessMethod'
         description: |-
-          The list of URLs that can be used to access the Data Object.
+          The list of access methods that can be used to access the Data Object.
       description:
         type: string
         description: |-
@@ -282,20 +319,52 @@ definitions:
     properties:
       object:
         $ref: '#/definitions/Object'
-  URL:
+  GetAccessURLResponse:
     type: object
-    required: ['url']
+    required: ['object']
     properties:
-      url:
+      access_url:
         type: string
-        description: |-
-          A URL that can be used to access the file.
-      system_metadata:
-        $ref: '#/definitions/SystemMetadata'
-      user_metadata:
-        $ref: '#/definitions/UserMetadata'
-      authorization_metadata:
-        $ref: '#/definitions/AuthorizationMetadata'
+        description: A fully resolvable access_url that can be used to fetch the actual object bytes.
+  AccessMethod:
+    type: object
+    required:
+      - type
+    properties:
+      type:
+        type: string
+        enum:
+        - s3
+        - gs
+        - ftp
+        - sftp
+        - http
+        - https
+        - nfs
+        - globus
+        - aspera
+        - gsiftp
+        - local
+        description: >-
+          Type of the access method.
+      access_url:
+        type: string
+        description: >-
+          A fully resolvable URL string that can be used to fetch the actual object bytes.
+          Note that at least one of access_url and access_id must be provided.
+      access_id:
+        type: string
+        description: >-
+          An arbitrary string to be passed to the /access path to fetch an access_url.
+          This must be unique per object.
+          Note that at least one of access_url and access_id must be provided.
+      region:
+        type: string
+        description: >-
+          OPTIONAL
+          Name of the region in the cloud service provider that the object belongs to.
+        example:
+          us-east-1
   ErrorResponse:
     description:
       An object that can optionally include information about the error.
