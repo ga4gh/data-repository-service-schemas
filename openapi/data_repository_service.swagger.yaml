@@ -24,7 +24,9 @@ security:
 paths:
   '/service-info':
     get:
-      summary: Returns service version and other information
+      summary: Get information about this implementation.
+      description: >-
+        May return service version and other information.
       operationId: GetServiceInfo
       responses:
         '200':
@@ -73,7 +75,9 @@ paths:
       x-swagger-router-controller: ga4gh.drs.server
   '/objects/{object_id}':
     get:
-      summary: Retrieve a Data Object
+      summary: Get info about a Data Object.
+      description: >-
+        Returns object metadata, and a list of access methods that can be used to fetch object bytes.
       operationId: GetObject
       responses:
         '200':
@@ -110,7 +114,9 @@ paths:
       x-swagger-router-controller: ga4gh.drs.server
   '/objects/{object_id}/access/{access_id}':
     get:
-      summary: Returns a fully resolvable URL that can be used to fetch the actual object bytes.
+      summary: Get a URL for fetching bytes. 
+      description: >-
+        Returns a fully resolvable URL that can be used to fetch the actual object bytes.
       operationId: GetAccessURL
       responses:
         '200':
