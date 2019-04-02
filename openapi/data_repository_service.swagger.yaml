@@ -188,8 +188,8 @@ definitions:
           will be assumed.
 
           possible values:
-          md5                # most blob stores provide a checksum using this
-          multipart-md5      # multipart uploads provide a specialized tag in S3
+          md5               # most blob stores provide a checksum using this
+          etag              # multipart uploads to blob stores
           sha256
           sha512
   Bundle:
