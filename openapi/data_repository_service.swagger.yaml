@@ -159,19 +159,6 @@ securityDefinitions:
     name: Authorization
     in: header
 definitions:
-  SystemMetadata:
-    type: object
-    additionalProperties: true
-    description: |-
-            OPTIONAL
-            These values are reported by the underlying object store.
-            A set of key-value pairs that represent system metadata about the object.
-  UserMetadata:
-    type: object
-    additionalProperties: true
-    description: |-
-            OPTIONAL
-            A set of key-value pairs that represent metadata provided by the uploader.
   Checksum:
     type: object
     required: ['checksum']
