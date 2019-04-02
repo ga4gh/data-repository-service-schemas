@@ -330,8 +330,21 @@ definitions:
     required: ['object']
     properties:
       access_url:
+        $ref: '#/definitions/AccessURL'
+  AccessURL:
+    type: object
+    required: ['url']
+    properties:
+      url:
         type: string
         description: A fully resolvable access_url that can be used to fetch the actual object bytes.
+      headers:
+        type: object
+        additionalProperties:
+          type: string
+        description: >-
+          An optional list of header name:value pairs to be passed in the HTTP request to `url`
+          These headers can be used to provide auth tokens required to fetch the object bytes.
   AccessMethod:
     type: object
     required:
@@ -354,9 +367,8 @@ definitions:
         description: >-
           Type of the access method.
       access_url:
-        type: string
+        $ref: '#/definitions/AccessURL'
         description: >-
-          A fully resolvable URL string that can be used to fetch the actual object bytes.
           Note that at least one of access_url and access_id must be provided.
       access_id:
         type: string
