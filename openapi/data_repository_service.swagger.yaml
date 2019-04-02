@@ -161,12 +161,12 @@ securityDefinitions:
 definitions:
   Checksum:
     type: object
-    required: ['checksum']
+    required:
+      - checksum
     properties:
       checksum:
         type: string
-        description: |-
-          The hex-string encoded checksum for the Data.
+        description: 'The hex-string encoded checksum for the data'
       type:
         type: string
         description: |-
@@ -364,7 +364,8 @@ definitions:
         description: The integer representing the HTTP status code (e.g. 200, 404).
   ServiceInfoResponse:
     type: object
-    required: ['version']
+    required:
+      - version
     description: Placeholder for the Info Object
     properties:
       version:
