@@ -50,12 +50,12 @@ paths:
           description: The request is unauthorized.
           schema:
             $ref: '#/definitions/ErrorResponse'
-        '404':
-          description: The requested Data Bundle wasn't found.
-          schema:
-            $ref: '#/definitions/ErrorResponse'
         '403':
           description: The requester is not authorized to perform this action.
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '404':
+          description: The requested Data Bundle wasn't found.
           schema:
             $ref: '#/definitions/ErrorResponse'
         '500':
@@ -87,12 +87,12 @@ paths:
           description: The request is unauthorized.
           schema:
             $ref: '#/definitions/ErrorResponse'
-        '404':
-          description: The requested Data Object wasn't found
-          schema:
-            $ref: '#/definitions/ErrorResponse'
         '403':
           description: The requester is not authorized to perform this action.
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '404':
+          description: The requested Data Object wasn't found
           schema:
             $ref: '#/definitions/ErrorResponse'
         '500':
