@@ -71,6 +71,49 @@ paths:
       tags:
         - DataRepositoryService
       x-swagger-router-controller: ga4gh.drs.server
+  '/bundles/{bundle_id}/access/{access_id}':
+    get:
+      summary: >-
+        Returns a fully resolvable URL that can be used to fetch the actual
+        bundle bytes.
+      operationId: GetBundleAccessURL
+      responses:
+        '200':
+          description: The access URL was found successfully.
+          schema:
+            $ref: '#/definitions/GetAccessURLResponse'
+        '400':
+          description: The request is malformed.
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '401':
+          description: The request is unauthorized.
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '403':
+          description: The requester is not authorized to perform this action.
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '404':
+          description: The requested access URL wasn't found
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+        '500':
+          description: An unexpected error occurred.
+          schema:
+            $ref: '#/definitions/ErrorResponse'
+      tags:
+        - DataRepositoryService
+      parameters:
+        - in: path
+          name: bundle_id
+          type: string
+          required: true
+        - in: path
+          name: access_id
+          type: string
+          required: true
+          description: An 'access_id' from 'access_methods' list of a Data Bundle
   '/objects/{object_id}':
     get:
       summary: Retrieve a Data Object
