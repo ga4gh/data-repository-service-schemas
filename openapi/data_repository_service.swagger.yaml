@@ -122,7 +122,7 @@ paths:
         '200':
           description: The access URL was found successfully.
           schema:
-            $ref: '#/definitions/GetAccessURLResponse'
+            $ref: '#/definitions/AccessURL'
         '400':
           description: The request is malformed.
           schema:
@@ -325,12 +325,6 @@ definitions:
     properties:
       object:
         $ref: '#/definitions/Object'
-  GetAccessURLResponse:
-    type: object
-    required: ['object']
-    properties:
-      access_url:
-        $ref: '#/definitions/AccessURL'
   AccessURL:
     type: object
     required: ['url']
