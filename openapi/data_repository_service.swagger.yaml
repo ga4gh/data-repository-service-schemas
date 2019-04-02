@@ -258,6 +258,7 @@ definitions:
       - updated
       - version
       - checksums
+      - contents
   Object:
     type: object
     required: ['id', 'size', 'created', 'checksums', 'access_methods']
