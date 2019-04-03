@@ -152,7 +152,7 @@ paths:
           in: path
           required: true
           type: string
-          description: An 'access_id' from 'access_methods' list of a Data Object
+          description: An `access_id` from the `access_methods` list of a Data Object
       tags:
         - DataRepositoryService
       x-swagger-router-controller: ga4gh.drs.server
@@ -333,12 +333,14 @@ definitions:
         type: string
         description: A fully resolvable access_url that can be used to fetch the actual object bytes.
       headers:
-        type: object
-        additionalProperties:
+        type: array
+        items:
           type: string
         description: >-
-          An optional list of header name:value pairs to be passed in the HTTP request to `url`
+          An optional list of headers to include in the HTTP request to `url`.
           These headers can be used to provide auth tokens required to fetch the object bytes.
+        example:
+          Authorization: Basic Z2E0Z2g6ZHJz
   AccessMethod:
     type: object
     required:
@@ -373,7 +375,6 @@ definitions:
       region:
         type: string
         description: >-
-          OPTIONAL
           Name of the region in the cloud service provider that the object belongs to.
         example:
           us-east-1
