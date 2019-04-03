@@ -227,10 +227,6 @@ definitions:
           type: string
         description: |-
           A list of strings that can be used to identify this Data Bundle.
-      system_metadata:
-        $ref: '#/definitions/SystemMetadata'
-      user_metadata:
-        $ref: '#/definitions/UserMetadata'
   Object:
     type: object
     required: ['id', 'size', 'created', 'checksums', 'access_methods']
