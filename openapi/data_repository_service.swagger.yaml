@@ -258,7 +258,6 @@ definitions:
       - id
       - size
       - created
-      - updated
       - version
       - checksums
       - contents
