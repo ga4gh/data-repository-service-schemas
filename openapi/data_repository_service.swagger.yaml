@@ -409,6 +409,11 @@ definitions:
     properties:
       name:
         type: string
+        description: >-
+          This represents the Bundle author declared name that must be
+          used when materialising the associated data object and will 
+          override any name directly associated with the object itself.
+          This string MUST NOT contain any slashes.
       id:
         type: string
     required:
