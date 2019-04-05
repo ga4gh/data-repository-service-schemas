@@ -186,6 +186,11 @@ definitions:
         type: string
         description: >-
           An identifier, unique to this Data Bundle
+      size:
+        type: string
+        format: int64
+        description: |-
+          The computed cumulated size of all Data Objects in bytes.
       created:
         type: string
         format: date-time
