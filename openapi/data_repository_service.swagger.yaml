@@ -419,8 +419,18 @@ definitions:
         description: >-
           This represents the DRS identifier that may point to a Data Object
           or another Data Bundle that will need to be recursed.
+      type:
+        type: string
+        enum:
+          - object
+          - bundle
+        description: >-
+          This represents the type of DRS object referenced within this
+          Data Bundle. BundleObject of type bundle will need to be recursed
+          further.
     required:
       - name
       - id
+      - type
 tags:
   - name: DataRepositoryService
