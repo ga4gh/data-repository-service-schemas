@@ -186,6 +186,10 @@ definitions:
         type: string
         description: >-
           An identifier, unique to this Data Bundle
+      name:
+        type: string
+        description: |-
+          A string that can be optionally used to name a Data Bundle.
       size:
         type: string
         format: int64
