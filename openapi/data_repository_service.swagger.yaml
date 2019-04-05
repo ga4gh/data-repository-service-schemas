@@ -416,6 +416,9 @@ definitions:
           This string MUST NOT contain any slashes.
       id:
         type: string
+        description: >-
+          This represents the DRS identifier that may point to a Data Object
+          or another Data Bundle that will need to be recursed.
     required:
       - name
       - id
