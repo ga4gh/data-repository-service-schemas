@@ -336,15 +336,9 @@ definitions:
         enum:
         - s3
         - gs
-        - ftp
-        - sftp
-        - http
         - https
-        - nfs
-        - globus
-        - aspera
-        - gsiftp
         - local
+        - htsget
         description: >-
           Type of the access method.
       access_url:
