@@ -341,7 +341,7 @@ definitions:
         - globus
         - htsget
         - https
-        - local
+        - file
         description: >-
           Type of the access method.
       access_url:
