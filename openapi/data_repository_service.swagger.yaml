@@ -253,7 +253,7 @@ definitions:
         description: >-
           The list of Data Objects that this Data Bundle contains.
         items:
-          $ref: '#/definitions/BundleObjects'
+          $ref: '#/definitions/BundleObject'
     required:
       - id
       - size
@@ -406,7 +406,7 @@ definitions:
       license:
         type: object
         description: License information for the exposed API
-  BundleObjects:
+  BundleObject:
     type: object
     properties:
       name:
