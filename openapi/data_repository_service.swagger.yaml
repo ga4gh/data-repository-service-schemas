@@ -418,8 +418,8 @@ definitions:
       id:
         type: string
         description: >-
-          This represents the DRS identifier that may point to a Data Object
-          or another Data Bundle that will need to be recursed.
+          This represents the DRS identifier URI that may point to a Data
+          Object or another Data Bundle that will need to be recursed.
       type:
         type: string
         enum:
