@@ -216,7 +216,7 @@ definitions:
         type: string
         description: >-
           A string providing the mime-type of the Data Bundle.
-          For example, "application/json".
+        example: 'application/json'
       checksums:
         type: array
         description: >-
