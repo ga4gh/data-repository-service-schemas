@@ -194,7 +194,7 @@ definitions:
         type: string
         format: int64
         description: |-
-          The computed cumulated size of all Data Objects in bytes.
+          The cumulative size of all (recursive) Data Objects in bytes.
       created:
         type: string
         format: date-time
