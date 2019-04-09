@@ -222,7 +222,7 @@ definitions:
         description: >-
           At least one checksum must be provided.
           The Data Bundle checksum is computed over a sorted concatenation of all the 
-          checksums of the Data Objects that bundle contains. The list of Data
+          checksums within the top-level 'contents' of the Bundle (not recursive). The list of Data
           Object checksums are sorted alphabetically (hex-code) before concatenation and a further
           checksum performed on the concated binary value. Example below:
           Data Ojects:
