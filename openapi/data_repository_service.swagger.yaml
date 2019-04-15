@@ -226,7 +226,10 @@ definitions:
         items:
           type: string
         description: |-
-          A list of strings that can be used to identify this Data Bundle.
+          A list of strings that can be used to find this Data Bundle.
+          These aliases can be used to represent the Data Bundle's 
+          secondary accession numbers or external GUIDs that may help
+          with the discovery of the Data Bundle.
   Object:
     type: object
     required: ['id', 'size', 'created', 'checksums', 'access_methods']
