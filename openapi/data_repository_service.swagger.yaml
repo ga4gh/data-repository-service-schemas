@@ -418,8 +418,15 @@ definitions:
       id:
         type: string
         description: >-
-          This represents the DRS identifier URI that may point to a Data
+          This represents the DRS identifier that may point to a Data
           Object or another Data Bundle that will need to be recursed.
+      drs_uri:
+        type: array
+        description: >-
+          This represents a list of suggested full DRS identifier URI paths
+          that may used obtain the Data Object or Data Bundle that will need
+          to be recursed. These URIs may be external to this DRS.
+        example: 'drs://example.com/ga4gh/drs/v1/objects/{object_id}'
       type:
         type: string
         enum:
