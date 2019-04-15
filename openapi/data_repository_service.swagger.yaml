@@ -211,11 +211,6 @@ definitions:
         description: >-
           A string representing a version, some systems may use checksum, a
           RFC3339 timestamp, or incrementing version number.
-      mime-type:
-        type: string
-        description: >-
-          A string providing the mime-type of the Data Bundle.
-        example: 'application/json'
       checksums:
         type: array
         description: >-
