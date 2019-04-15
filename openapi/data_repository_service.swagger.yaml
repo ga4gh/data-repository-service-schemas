@@ -1,16 +1,15 @@
 swagger: '2.0'
-basePath: '/ga4gh/dos/v1'
+basePath: '/ga4gh/drs/v1'
 info:
-  title: Data Object Service
-  version: 0.5.0
-  description: https://github.com/ga4gh/data-object-service-schemas
+  title: Data Repository Service
+  version: 0.0.1
+  description: https://github.com/ga4gh/data-repository-service-schemas
   contact:
-    name: David Steinberg
-    email: davidcs@ucsc.edu
-    x-role: responsible developer
+    name: GA4GH Cloud Work Stream
+    email: ga4gh-cloud@ga4gh.org
   license:
     name: Apache 2.0
-    url: https://raw.githubusercontent.com/ga4gh/data-object-service-schemas/master/LICENSE
+    url: https://raw.githubusercontent.com/ga4gh/data-repository-service-schemas/master/LICENSE
 schemes:
   - https
   - http
@@ -29,17 +28,17 @@ paths:
           schema:
             $ref: '#/definitions/ServiceInfoResponse'
       tags:
-        - DataObjectService
-      x-swagger-router-controller: ga4gh.dos.server
-  /databundles:
+        - DataRepositoryService
+      x-swagger-router-controller: ga4gh.drs.server
+  /bundles:
     post:
       summary: Create a new Data Bundle
-      operationId: CreateDataBundle
+      operationId: CreateBundle
       responses:
         '200':
           description: The Data Bundle was successfully created.
           schema:
-            $ref: '#/definitions/CreateDataBundleResponse'
+            $ref: '#/definitions/CreateBundleResponse'
         '400':
           description: The request is malformed.
           schema:
@@ -61,18 +60,18 @@ paths:
           in: body
           required: true
           schema:
-            $ref: '#/definitions/CreateDataBundleRequest'
+            $ref: '#/definitions/CreateBundleRequest'
       tags:
-        - DataObjectService
-      x-swagger-router-controller: ga4gh.dos.server
+        - DataRepositoryService
+      x-swagger-router-controller: ga4gh.drs.server
     get:
       summary: List the Data Bundles
-      operationId: ListDataBundles
+      operationId: ListBundles
       responses:
         '200':
           description: 'Successfully listed Data Bundles.'
           schema:
-            $ref: '#/definitions/ListDataBundlesResponse'
+            $ref: '#/definitions/ListBundlesResponse'
         '400':
           description: The request is malformed.
           schema:
@@ -133,17 +132,17 @@ paths:
             To get the next page of results, set this parameter to the value of
             `next_page_token` from the previous response.
       tags:
-        - DataObjectService
-      x-swagger-router-controller: ga4gh.dos.server
-  '/databundles/{data_bundle_id}':
+        - DataRepositoryService
+      x-swagger-router-controller: ga4gh.drs.server
+  '/bundles/{bundle_id}':
     get:
       summary: Retrieve a Data Bundle
-      operationId: GetDataBundle
+      operationId: GetBundle
       responses:
         '200':
           description: Successfully found the Data Bundle.
           schema:
-            $ref: '#/definitions/GetDataBundleResponse'
+            $ref: '#/definitions/GetBundleResponse'
         '400':
           description: The request is malformed.
           schema:
@@ -165,7 +164,7 @@ paths:
           schema:
             $ref: '#/definitions/ErrorResponse'
       parameters:
-        - name: data_bundle_id
+        - name: bundle_id
           in: path
           required: true
           type: string
@@ -177,32 +176,32 @@ paths:
           in: query
           type: string
       tags:
-        - DataObjectService
-      x-swagger-router-controller: ga4gh.dos.server
+        - DataRepositoryService
+      x-swagger-router-controller: ga4gh.drs.server
     delete:
       summary: Delete a Data Bundle
-      operationId: DeleteDataBundle
+      operationId: DeleteBundle
       responses:
         '200':
           description: ''
           schema:
-            $ref: '#/definitions/DeleteDataBundleResponse'
+            $ref: '#/definitions/DeleteBundleResponse'
       parameters:
-        - name: data_bundle_id
+        - name: bundle_id
           in: path
           required: true
           type: string
       tags:
-        - DataObjectService
-      x-swagger-router-controller: ga4gh.dos.server
+        - DataRepositoryService
+      x-swagger-router-controller: ga4gh.drs.server
     put:
       summary: Update a Data Bundle
-      operationId: UpdateDataBundle
+      operationId: UpdateBundle
       responses:
         '200':
           description: The Data Bundle was updated successfully.
           schema:
-            $ref: '#/definitions/UpdateDataBundleResponse'
+            $ref: '#/definitions/UpdateBundleResponse'
         '400':
           description: The request is malformed.
           schema:
@@ -224,7 +223,7 @@ paths:
           schema:
             $ref: '#/definitions/ErrorResponse'
       parameters:
-        - name: data_bundle_id
+        - name: bundle_id
           in: path
           required: true
           type: string
@@ -232,21 +231,21 @@ paths:
         - name: body
           in: body
           required: true
-          description: The new content for the Data Bundle identified by the given data_bundle_id. If the ID specified in the request body is different than that specified in the path, the Data Bundle's ID will be replaced with the one in the request body.
+          description: The new content for the Data Bundle identified by the given bundle_id. If the ID specified in the request body is different than that specified in the path, the Data Bundle's ID will be replaced with the one in the request body.
           schema:
-            $ref: '#/definitions/UpdateDataBundleRequest'
+            $ref: '#/definitions/UpdateBundleRequest'
       tags:
-        - DataObjectService
-      x-swagger-router-controller: ga4gh.dos.server
-  '/databundles/{data_bundle_id}/versions':
+        - DataRepositoryService
+      x-swagger-router-controller: ga4gh.drs.server
+  '/bundles/{bundle_id}/versions':
     get:
-      operationId: GetDataBundleVersions
+      operationId: GetBundleVersions
       summary: Retrieve all versions of a Data Bundle
       responses:
         '200':
           description: The versions for the Data Bundle were found successfully.
           schema:
-            $ref: '#/definitions/GetDataBundleVersionsResponse'
+            $ref: '#/definitions/GetBundleVersionsResponse'
         '400':
           description: The request is malformed.
           schema:
@@ -268,22 +267,22 @@ paths:
           schema:
             $ref: '#/definitions/ErrorResponse'
       parameters:
-        - name: data_bundle_id
+        - name: bundle_id
           in: path
           required: true
           type: string
       tags:
-        - DataObjectService
-      x-swagger-router-controller: ga4gh.dos.server
-  /dataobjects:
+        - DataRepositoryService
+      x-swagger-router-controller: ga4gh.drs.server
+  /objects:
     post:
       summary: Make a new Data Object
-      operationId: CreateDataObject
+      operationId: CreateObject
       responses:
         '200':
           description: Successfully created the Data Object.
           schema:
-            $ref: '#/definitions/CreateDataObjectResponse'
+            $ref: '#/definitions/CreateObjectResponse'
         '400':
           description: The request is malformed.
           schema:
@@ -308,18 +307,18 @@ paths:
             The Data Object to be created. The ID scheme is left up to the
             implementor but should be unique to the server instance.
           schema:
-            $ref: '#/definitions/CreateDataObjectRequest'
+            $ref: '#/definitions/CreateObjectRequest'
       tags:
-        - DataObjectService
-      x-swagger-router-controller: ga4gh.dos.server
+        - DataRepositoryService
+      x-swagger-router-controller: ga4gh.drs.server
     get:
       summary: List the Data Objects
-      operationId: ListDataObjects
+      operationId: ListObjects
       responses:
         '200':
           description: The Data Objects were listed successfully.
           schema:
-            $ref: '#/definitions/ListDataObjectsResponse'
+            $ref: '#/definitions/ListObjectsResponse'
         '400':
           description: The request is malformed.
           schema:
@@ -386,17 +385,17 @@ paths:
             To get the next page of results, set this parameter to the value of
             `next_page_token` from the previous response.
       tags:
-        - DataObjectService
-      x-swagger-router-controller: ga4gh.dos.server
-  '/dataobjects/{data_object_id}':
+        - DataRepositoryService
+      x-swagger-router-controller: ga4gh.drs.server
+  '/objects/{object_id}':
     get:
       summary: Retrieve a Data Object
-      operationId: GetDataObject
+      operationId: GetObject
       responses:
         '200':
           description: The Data Object was found successfully.
           schema:
-            $ref: '#/definitions/GetDataObjectResponse'
+            $ref: '#/definitions/GetObjectResponse'
         '400':
           description: The request is malformed.
           schema:
@@ -418,7 +417,7 @@ paths:
           schema:
             $ref: '#/definitions/ErrorResponse'
       parameters:
-        - name: data_object_id
+        - name: object_id
           in: path
           required: true
           type: string
@@ -429,16 +428,16 @@ paths:
           in: query
           type: string
       tags:
-        - DataObjectService
-      x-swagger-router-controller: ga4gh.dos.server
+        - DataRepositoryService
+      x-swagger-router-controller: ga4gh.drs.server
     delete:
       summary: Delete a Data Object index entry
-      operationId: DeleteDataObject
+      operationId: DeleteObject
       responses:
         '200':
           description: 'The Data Object was deleted successfully.'
           schema:
-            $ref: '#/definitions/DeleteDataObjectResponse'
+            $ref: '#/definitions/DeleteObjectResponse'
         '400':
           description: The request is malformed.
           schema:
@@ -460,21 +459,21 @@ paths:
           schema:
             $ref: '#/definitions/ErrorResponse'
       parameters:
-        - name: data_object_id
+        - name: object_id
           in: path
           required: true
           type: string
       tags:
-        - DataObjectService
-      x-swagger-router-controller: ga4gh.dos.server
+        - DataRepositoryService
+      x-swagger-router-controller: ga4gh.drs.server
     put:
       summary: Update a Data Object
-      operationId: UpdateDataObject
+      operationId: UpdateObject
       responses:
         '200':
           description: The Data Object was successfully updated.
           schema:
-            $ref: '#/definitions/UpdateDataObjectResponse'
+            $ref: '#/definitions/UpdateObjectResponse'
         '400':
           description: The request is malformed.
           schema:
@@ -496,7 +495,7 @@ paths:
           schema:
             $ref: '#/definitions/ErrorResponse'
       parameters:
-        - name: data_object_id
+        - name: object_id
           in: path
           required: true
           type: string
@@ -504,21 +503,21 @@ paths:
         - name: body
           in: body
           required: true
-          description: The new Data Object for the given data_object_id. If the ID specified in the request body is different than that specified in the path, the Data Object's ID will be replaced with the one in the request body.
+          description: The new Data Object for the given object_id. If the ID specified in the request body is different than that specified in the path, the Data Object's ID will be replaced with the one in the request body.
           schema:
-            $ref: '#/definitions/UpdateDataObjectRequest'
+            $ref: '#/definitions/UpdateObjectRequest'
       tags:
-        - DataObjectService
-      x-swagger-router-controller: ga4gh.dos.server
-  '/dataobjects/{data_object_id}/versions':
+        - DataRepositoryService
+      x-swagger-router-controller: ga4gh.drs.server
+  '/objects/{object_id}/versions':
     get:
       summary: Retrieve all versions of a Data Object
-      operationId: GetDataObjectVersions
+      operationId: GetObjectVersions
       responses:
         '200':
           description: The versions for the Data Object were returned successfully.
           schema:
-            $ref: '#/definitions/GetDataObjectVersionsResponse'
+            $ref: '#/definitions/GetObjectVersionsResponse'
         '400':
           description: The request is malformed.
           schema:
@@ -540,13 +539,13 @@ paths:
           schema:
             $ref: '#/definitions/ErrorResponse'
       parameters:
-        - name: data_object_id
+        - name: object_id
           in: path
           required: true
           type: string
       tags:
-        - DataObjectService
-      x-swagger-router-controller: ga4gh.dos.server
+        - DataRepositoryService
+      x-swagger-router-controller: ga4gh.drs.server
 definitions:
   SystemMetadata:
     type: object
@@ -570,13 +569,13 @@ definitions:
             The auth standard being used to make data available. For example, 'OAuth2.0'.
         auth_url:
           type: string
-          description: |- 
+          description: |-
             The URL where the auth service is located, for example, a URL to get an OAuth
             token.
     additionalProperties: true
     description: |-
             OPTIONAL
-            A set of key-value pairs that represent sufficient metadata to be granted 
+            A set of key-value pairs that represent sufficient metadata to be granted
             access to a resource. It may be helpful to provide details about a specific
             provider, for example.
   Checksum:
@@ -598,45 +597,45 @@ definitions:
           multipart-md5      # multipart uploads provide a specialized tag in S3
           sha256
           sha512
-  CreateDataBundleRequest:
+  CreateBundleRequest:
     type: object
     properties:
-      data_bundle:
-        $ref: '#/definitions/DataBundle'
-  CreateDataBundleResponse:
+      bundle:
+        $ref: '#/definitions/Bundle'
+  CreateBundleResponse:
     type: object
-    required: ['data_bundle_id']
+    required: ['bundle_id']
     properties:
-      data_bundle_id:
+      bundle_id:
         type: string
         description: |-
           The identifier of the Data Bundle created.
-  CreateDataObjectRequest:
+  CreateObjectRequest:
     type: object
-    required: ['data_object']
+    required: ['object']
     properties:
-      data_object:
-        $ref: '#/definitions/DataObject'
+      object:
+        $ref: '#/definitions/Object'
     description: |-
       The Data Object one would like to index. One must provide any aliases
-      and URLs to this file when sending the CreateDataObjectRequest. It is up
+      and URLs to this file when sending the CreateObjectRequest. It is up
       to implementations to validate that the Data Object is available from
       the provided URLs.
-  CreateDataObjectResponse:
+  CreateObjectResponse:
     type: object
     properties:
-      data_object_id:
+      object_id:
         type: string
         description: The ID of the created Data Object.
-  DataBundle:
+  Bundle:
     type: object
-    required: ['id', 'data_object_ids', 'created', 'updated', 'version', 'checksums']
+    required: ['id', 'object_ids', 'created', 'updated', 'version', 'checksums']
     properties:
       id:
         type: string
         description: |-
           An identifier, unique to this Data Bundle
-      data_object_ids:
+      object_ids:
         type: array
         items:
           type: string
@@ -681,7 +680,7 @@ definitions:
         $ref: '#/definitions/SystemMetadata'
       user_metadata:
         $ref: '#/definitions/UserMetadata'
-  DataObject:
+  Object:
     type: object
     required: ['id', 'size', 'created', 'checksums']
     properties:
@@ -743,53 +742,53 @@ definitions:
           These aliases can be used to represent the Data Object's location in
           a directory (e.g. "bucket/folder/file.name") to make Data Objects
           more discoverable. They might also be used to represent
-  DeleteDataBundleResponse:
+  DeleteBundleResponse:
     type: object
     properties:
-      data_bundle_id:
+      bundle_id:
         type: string
-  DeleteDataObjectResponse:
+  DeleteObjectResponse:
     type: object
-    required: ['data_object_id']
+    required: ['object_id']
     properties:
-      data_object_id:
+      object_id:
         type: string
         description: |-
           The identifier of the Data Object deleted.
-  GetDataBundleResponse:
+  GetBundleResponse:
     type: object
     properties:
-      data_bundle:
-        $ref: '#/definitions/DataBundle'
-  GetDataBundleVersionsResponse:
+      bundle:
+        $ref: '#/definitions/Bundle'
+  GetBundleVersionsResponse:
     type: object
-    required: ['data_bundles']
+    required: ['bundles']
     properties:
-      data_bundles:
+      bundles:
         type: array
         items:
-          $ref: '#/definitions/DataBundle'
+          $ref: '#/definitions/Bundle'
         description: |-
-          All versions of the Data Bundles that match the GetDataBundleVersions
+          All versions of the Data Bundles that match the GetBundleVersions
           request.
-  GetDataObjectResponse:
+  GetObjectResponse:
     type: object
-    required: ['data_object']
+    required: ['object']
     properties:
-      data_object:
-        $ref: '#/definitions/DataObject'
-  GetDataObjectVersionsResponse:
+      object:
+        $ref: '#/definitions/Object'
+  GetObjectVersionsResponse:
     type: object
-    required: ['data_objects']
+    required: ['objects']
     properties:
-      data_objects:
+      objects:
         type: array
         items:
-          $ref: '#/definitions/DataObject'
+          $ref: '#/definitions/Object'
         description: |-
-          All versions of the Data Objects that match the GetDataObjectVersions
+          All versions of the Data Objects that match the GetObjectVersions
           request.
-  ListDataBundlesRequest:
+  ListBundlesRequest:
     description: |-
       Only return Data Bundles that match all of the request parameters. A
       page_size and page_token are provided for retrieving a large number of
@@ -828,16 +827,16 @@ definitions:
           The continuation token, which is used to page through large result sets.
           To get the next page of results, set this parameter to the value of
           `next_page_token` from the previous response.
-  ListDataBundlesResponse:
+  ListBundlesResponse:
     type: object
     description: |-
       A list of Data Bundles matching the request parameters and a continuation
       token that can be used to retrieve more results.
     properties:
-      data_bundles:
+      bundles:
         type: array
         items:
-          $ref: '#/definitions/DataBundle'
+          $ref: '#/definitions/Bundle'
         description: The list of Data Bundles.
       next_page_token:
         type: string
@@ -845,7 +844,7 @@ definitions:
           The continuation token, which is used to page through large result sets.
           Provide this value in a subsequent request to return the next page of
           results. This field will be empty if there aren't any additional results.
-  ListDataObjectsRequest:
+  ListObjectsRequest:
     type: object
     properties:
       alias:
@@ -887,13 +886,13 @@ definitions:
     description: |-
       Allows a requester to list and filter Data Objects. Only Data Objects
       matching all of the requested parameters will be returned.
-  ListDataObjectsResponse:
+  ListObjectsResponse:
     type: object
     properties:
-      data_objects:
+      objects:
         type: array
         items:
-          $ref: '#/definitions/DataObject'
+          $ref: '#/definitions/Object'
         description: The list of Data Objects.
       next_page_token:
         type: string
@@ -918,31 +917,31 @@ definitions:
         $ref: '#/definitions/UserMetadata'
       authorization_metadata:
         $ref: '#/definitions/AuthorizationMetadata'
-  UpdateDataBundleRequest:
+  UpdateBundleRequest:
     type: object
-    required: ['data_bundle']
+    required: ['bundle']
     properties:
-      data_bundle:
-        $ref: '#/definitions/DataBundle'
-  UpdateDataBundleResponse:
+      bundle:
+        $ref: '#/definitions/Bundle'
+  UpdateBundleResponse:
     type: object
-    required: ['data_bundle_id']
+    required: ['bundle_id']
     properties:
-      data_bundle_id:
+      bundle_id:
         type: string
         description: |-
           The identifier of the Data Bundle updated.
-  UpdateDataObjectRequest:
+  UpdateObjectRequest:
     type: object
-    required: ['data_object']
+    required: ['object']
     properties:
-      data_object:
-        $ref: '#/definitions/DataObject'
-  UpdateDataObjectResponse:
+      object:
+        $ref: '#/definitions/Object'
+  UpdateObjectResponse:
     type: object
-    required: ['data_object_id']
+    required: ['object_id']
     properties:
-      data_object_id:
+      object_id:
         type: string
         description: |-
           The identifier of the Data Object updated.

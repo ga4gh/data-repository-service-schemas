@@ -1,11 +1,22 @@
-# Schemas for the Data Repository Service (DRS) API
-<a href="https://ga4gh.org"><img src="https://www.ga4gh.org/gfx/GA-logo-horizontal-tag-RGB.svg" width="200" /></a><br />
-[![Build Status](https://travis-ci.org/ga4gh/data-object-service-schemas.svg?branch=master)](https://travis-ci.org/ga4gh/data-object-service-schemas)
-[![Swagger Validator](https://img.shields.io/swagger/valid/2.0/https/raw.githubusercontent.com/OAI/OpenAPI-Specification/master/examples/v2.0/json/petstore-expanded.json.svg)](https://raw.githubusercontent.com/ga4gh/data-object-service-schemas/master/openapi/data_object_service.swagger.yaml)
-[![Read the Docs badge](https://readthedocs.org/projects/data-object-service/badge/)](https://data-object-service.readthedocs.io/en/latest)
-![PyPI - Python Version](https://img.shields.io/pypi/pyversions/ga4gh-dos-schemas.svg)
+<img src="https://www.ga4gh.org/wp-content/themes/ga4gh-theme/gfx/GA-logo-horizontal-tag-RGB.svg" alt="GA4GH Logo" style="width: 400px;"/>
 
-[View the schemas in Swagger UI](http://ga4gh.github.io/data-repository-service-schemas/)
+# Data Repository Service (DRS) API
+
+<sup>`master` branch status: </sup>[![Build Status](https://travis-ci.org/ga4gh/data-repository-service-schemas.svg?branch=master)](https://travis-ci.org/ga4gh/data-repository-service-schemas?branch=master)
+<a href="https://ga4gh.github.io/data-repository-service-schemas/preview/develop/swagger.yaml"><img src="http://online.swagger.io/validator?url=https://ga4gh.github.io/data-repository-service-schemas/swagger.yaml" alt="Swagger Validator" height="20em" width="72em"></A>
+<!-- [![Read the Docs badge](https://readthedocs.org/projects/data-repository-service/badge/)](https://data-repository-service.readthedocs.io/en/latest)
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/ga4gh-drs-schemas.svg) -->
+
+The [Global Alliance for Genomics and Health](http://genomicsandhealth.org/) (GA4GH) is an international coalition, formed to enable the sharing of genomic and clinical data.
+
+# About the GA4GH Cloud Work Stream
+
+The GA4GH [Cloud Work Stream](https://ga4gh.cloud) helps the genomics and health communities take full advantage of modern cloud environments.
+Our initial focus is on “bringing the algorithms to the data”, by creating standards for defining, sharing, and executing portable workflows.
+
+We work with platform development partners and industry leaders to develop standards that will facilitate interoperability.
+
+# What is DRS?
 
 The goal of DRS is to create a generic API on top of existing object storage systems
 so workflow systems can access data in a single, standard way regardless of where it's
@@ -17,19 +28,46 @@ The API is split into two sections:
 
 * **Data Object management**, which enables the creation, updating, deletion, versioning,
   and unique identification of files and data bundles (flat collections of files); and
-* **Data Object querying**, which can locate data objects across different cloud environments
-  and DRS implementations.
+* **Data Object access**, which can locate data objects across different cloud
+  and other environments.
+
+# API Definition
+
+See the human-readable **Reference Documentation**  
+
+* [Released (master)](https://ga4gh.github.io/data-repository-service-schemas/docs/): the current release
+* [Release 0.0.1](https://ga4gh.github.io/data-repository-service-schemas/preview/release/0.0.1/docs/): the initial DRS after the rename from DOS.
+* [Stable Development (develop)](https://ga4gh.github.io/data-repository-service-schemas/preview/develop/docs/): This is where feature branches are merged into, it is our stable development branch.
+
+See the **[OpenAPI YAML description](openapi/data_repository_service.swagger.yaml)**. You can also explore the specification in the Swagger UI:
+
+* [Released (master)](https://ga4gh.github.io/data-repository-service-schemas/swagger-ui/)
+* [Release 0.0.1](https://ga4gh.github.io/data-repository-service-schemas/preview/release/0.0.1/swagger-ui/)
+* [Stable Development (develop)](https://ga4gh.github.io/data-repository-service-schemas/preview/develop/swagger-ui/)
+
+> All documentation and pages hosted at 'ga4gh.github.io/data-repository-service-schemas' reflect the latest API release from the `master` branch. To monitor the latest development work on various branches, add 'preview/\<branch\>' to the URLs above (e.g., 'https://ga4gh.github.io/workflow-execution-service/preview/\<branch\>/docs'). 
+
+# Use Cases
+
+See the [Use Cases](USECASES.md) document for DRS use cases and possible
+future directions.
+
+# Example DRS Server and Client
 
 ## Getting started
 
 Installing is as easy as:
 
 ```
-$ pip install ga4gh-dos-schemas
+$ pip install ga4gh-drs-schemas
 ```
 
 This will install both a demonstration server and a Python client that will allow you to
-manage Data Objects in a local server. You can start the demo server using `ga4gh_dos_server`.
+manage Data Objects in a local server.
+
+## Sample Service
+
+You can start the demo server using `ga4gh_drs_server`.
 This starts a Data Repository Service at http://localhost:8080.
 
 ```
@@ -49,12 +87,23 @@ curl http://localhost:8080/ga4gh/dos/v1/dataobjects/hg38-chr22
 curl -X GET http://localhost:8080/ga4gh/dos/v1/dataobjects -d checksum=41b47ce1cc21b558409c19b892e1c0d1
 ```
 
+## For More Information on the Sample Service and Client
+
 For more on getting started, check out the
-[quickstart guide](https://data-object-service.readthedocs.io/en/latest/quickstart.html)
-or the rest of the documentation at [ReadtheDocs](https://data-object-service.readthedocs.io/en/latest/)!
+[quickstart guide](https://data-repository-service.readthedocs.io/en/latest/quickstart.html)
+or the rest of the documentation at [ReadtheDocs](https://data-repository-service.readthedocs.io/en/latest/)!
 
-## Getting involved!
+# How to Contribute Changes
 
-The Data Repository Service Schemas are Apache 2 Licensed Open Source software. Please join us
-in the [issues](https://github.com/ga4gh/data-object-service-schemas/issues) or check out the
-contributing docs!
+See [CONTRIBUTING.md](CONTRIBUTING.md).
+
+If a security issue is identified with the specification, please send an email to security-notification@ga4gh.org detailing your concerns.
+
+# License
+
+See the [LICENSE](LICENSE).
+
+# More Information
+
+* [Global Alliance for Genomics and Health](http://genomicsandhealth.org)
+* [GA4GH Cloud Work Stream](https://ga4gh.cloud)

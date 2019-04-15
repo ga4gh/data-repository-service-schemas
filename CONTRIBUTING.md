@@ -1,9 +1,9 @@
-How to contribute to the GA4GH Schemas
+How to contribute to the DRS GA4GH Schema
 ======================================
 
 Thank you for taking the time to contribute. We appreciate it!
 
-The GA4GH schemas define an API for sharing genomic and phenotypic data.
+The GA4GH DRS schema defines an API for sharing data.
 
 There are two ways to contribute to the effort - via issues, which are
 used for discussion, and pull requests, which are concrete proposals of
@@ -41,18 +41,25 @@ repositories each with the same name is a branch set, e.g. the master
 branch in each repository forms the master branch set.
 
 Some general rules to follow:
-
--   [Fork](https://help.github.com/articles/fork-a-repo) the main
-    project into your personal GitHub space to work on.
--   Create a branch for each update that you're working on. These
-    branches are often called "feature" or "topic" branches. Any changes
-    that you push to your feature branch will automatically be shown in
-    the pull request.
--   If necessary, replicate the last two steps' fork-and-branch process
-    for each of the compliance and server repositories to create a
-    branch set - each constituent repository branch will be
-    identically named.
--   Coordinate pull requests across the branch set by making them as
+-   Create an issue in Github to track your work and start a conversation. Make a note of the number, you'll 
+    need it when naming your feature branch below.
+-   We follow [HubFlow](https://datasift.github.io/gitflow/) which means we use
+    a feature branch strategy with pull requests always going to `develop`
+    and releases happening from `master`. **Please read the HubFlow guide linked above, it's a quick read and will give you a really good idea of how our branches work. Do not make pull requests to `master`!**
+-   If you are a core developer with write access to the repo, make a feature
+    branch following HubFlow conventions in the repo (see next step).  Otherwise
+    [fork](https://help.github.com/articles/fork-a-repo) the repo into your personal GitHub space to work on.
+-   Create a "feature" branch for each update that you're working on (either in the main repo or your fork depending
+    on the previous step). These branches should start with "feature/issue-[number]-[some-description]". For example
+    "feature/issue-123-improving-the-docs".  Most devs will use the HubFlow command line tools to do this however, if you
+    make a feature branch in GitHub's UI, then please make sure you follow this naming convention.
+-   If you are creating a feature branch in the main repo and you follow this
+    convention nice things will happen e.g. TravisCI will check your branch and the documentation and swagger will be built 
+    for you, see the [README.md](README.md) for how to construct a URL to view these for your feature branch.
+-   When you're happy with your feature branch, make a [Pull Request](https://help.github.com/articles/about-pull-requests/)
+    in GitHub from your feature branch (or fork with a feature branch) to develop.  Pick at least one other person to review 
+    and write up a good message that links back to the issue you started this whole process with.
+-   If you have multiple related pull requests, coordinate pull requests across the branch set by making them as
     simultaneously as possible, and [cross referencing
     them](http://stackoverflow.com/questions/23019608/github-commit-syntax-to-link-a-pull-request-issue).
 -   Keep your pull requests as small as possible. Large pull requests
@@ -68,40 +75,32 @@ will automatically run tests to ensure valid schema syntax. If your pull
 request fails to pass tests, review the test log, make changes and then
 push them to your feature branch to be tested again.
 
-Issue Resolution
-================
+Builds with Travis-CI
+=====================
 
-Once a pull request or issue have been submitted, anyone can comment or
-vote on to express their opinion following the Apache voting system.
-Quick summary:
+We use Travis for CI testing.  If you create a fork and feature branch
+this will not automatically be built from our Travis.  However, if you
+are a developer and have created a feature branch following the naming
+convention above, you should see automated builds.
 
--   **+1** something you agree with
--   **-1** if you have a strong objection to an issue, which will be
-    taken very seriously. A -1 vote should provide an
-    alternative solution.
--   **+0** or **-0** for neutral comments or weak opinions.
--   It's okay to have input without voting
--   Silence gives assent
+Check https://travis-ci.org/ga4gh/data-repository-service-schemas/builds to see the status of the builds.
 
-A pull request with at least two **+1** votes, no **-1** votes, that has
-been open for at least 3 days, and whose cross-referenced pull requests
-to server and compliance have similarly been upvoted is ready to be
-merged. The merge should be done by someone from a different
-organization than the submitter. (We sometimes waive the 3 days for
-cosmetic-only changes -- use good judgment.) A pull request to either
-the schemas, servers or compliance repository that involves changes to
-the others should not be merged without coordinating, mergable pull
-requests to the other repositories. Conversely, when merging a pull
-request the other pull requests in the branch set must be merged at the
-same time (In practise, when merging a branch set including the schemas
-repository, merge the pull request to schemas first to avoid the
-continuous integration build issues). If an issue gets any **-1** votes,
-the comments on the issue need to reach consensus before the issue can
-be resolved one way or the other. There isn't any strict time limit on a
-contentious issue.
+Pull Request Voting Process
+===========================
 
-The project will strive for full consensus on everything until it runs
-into a problem with this model.
+DRS is very much focused on meeting the needs of our Driver Projects 
+so this voting process is focused on their needs. 
+
+1) We always have an issue created before a PR, this is where a description and initial conversation takes place 
+
+2) Someone is assigned the ticket, they bring together one (or more) pull requests... they might do it themselves or ask for help.  Multiple pull requests could be used if there are different approaches that need to be explored
+
+3) David, Brian, and Rishi review the PRs every week on the call (and also ping the mailing list), set a deadline by which drivers (and a few key non-drivers) need to respond with a +1, 0, or -1 by.  A non-vote means 0 so neutral. We try for no "-1"s. Strive to reach consensus with our drivers. We ask that a -1 give us details why.
+
+4) David and Brian as Work Stream leads retain a veto if something goes off the rails
+
+5) We merge or discard depending on the vote/veto by the date we set when the PR was shared with the group
+
 
 Syntax Style and Conventions
 ============================
@@ -186,12 +185,12 @@ resolution](#issue%20resolution).
 Release Branches
 ================
 
-From time to time the group will make a release. This is achieved by
-creating a branch set including all the repositories named
-"release-foo", where foo is the release name. Only bug fixes are allowed
-to release branch sets. To refer to a specific version of a release
-branch set either the commit id can be used, or alternatively (better),
-a tag can be created (which should be replicated across repositories).
+From time to time the group will make a release, this is done with the HubFlow 
+release process which generally involves creating a branch 
+"release-foo", where foo is the release name.  And following the HubFlow 
+tooling for pushing this to master/develop and taggging in GitHub.
+Only bug fixes are allowed
+to the release branch and the release branch is removed after a successful HubFlow release. 
 
 Retired Task Teams
 ==================

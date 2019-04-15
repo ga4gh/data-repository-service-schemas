@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 """
-This module exposes a single class :class:`ga4gh.dos.client.Client`, which
+This module exposes a single class :class:`ga4gh.drs.client.Client`, which
 exposes the HTTP methods of the Data Object Service as named Python functions.
 
 This makes it easy to access resources that are described following these
@@ -8,7 +8,7 @@ schemas, and uses bravado to dynamically generate the client functions
 following the OpenAPI schema.
 
 It currently assumes that the service also hosts the swagger.json, in a style
-similar to the demonstration server, :mod:`ga4gh.dos.server`.
+similar to the demonstration server, :mod:`ga4gh.drs.server`.
 """
 try:  # for python3 compat
     import urlparse
@@ -21,7 +21,7 @@ from bravado.requests_client import RequestsClient
 from bravado_core.exception import SwaggerValidationError
 from bravado_core.formatter import SwaggerFormat
 
-import ga4gh.dos.schema
+import ga4gh.drs.schema
 
 DEFAULT_CONFIG = {
     'validate_requests': True,
@@ -59,8 +59,8 @@ class Client:
     connects to the service to download the swagger.json and returns a client
     in the DataObjectService namespace::
 
-        from ga4gh.dos.client import Client
-        client = Client(url='http://localhost:8000/ga4gh/dos/v1')
+        from ga4gh.drs.client import Client
+        client = Client(url='http://localhost:8000/ga4gh/drs/v1')
 
         models = client.models
         c = client.client
@@ -80,7 +80,7 @@ class Client:
     If you want to use the client against a DOS implementation that does
     not present a ``swagger.json``, then you can use the local schema::
 
-        client = Client(url='http://example.com/dos-base-path/', local=True)
+        client = Client(url='http://example.com/drs-base-path/', local=True)
 
     Note that since this uses the local schema, some operations that are
     not implemented by the implementation under test may fail.
@@ -111,7 +111,7 @@ class Client:
                            point to the host and base path of the
                            implementation under test::
 
-                              Client(url='https://example.com/ga4gh/dos/v1/', local=True)
+                              Client(url='https://example.com/ga4gh/drs/v1/', local=True)
 
                            If False, the ``url`` parameter should point to a
                            Swagger specification (``swagger.json``).
@@ -121,8 +121,8 @@ class Client:
         if local:
             # :meth:`bravado.client.SwaggerClient.from_spec` takes a schema
             # as a Python dictionary, which we can conveniently expose
-            # via :func:`ga4gh.dos.schema.present_schema`.
-            schema = ga4gh.dos.schema.present_schema()
+            # via :func:`ga4gh.drs.schema.present_schema`.
+            schema = ga4gh.drs.schema.present_schema()
 
             # Set schema['host'] and schema['basePath'] to the provided
             # values if specified, otherwise leave them as they are
@@ -140,7 +140,7 @@ class Client:
                                                  config=config,
                                                  http_client=http_client,
                                                  request_headers=request_headers)
-        self.client = self.models.DataObjectService
+        self.client = self.models.DataRepositoryService
 
     @classmethod
     def config(cls, url, http_client=None, request_headers=None):
