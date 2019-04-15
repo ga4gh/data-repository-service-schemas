@@ -230,10 +230,6 @@ definitions:
               = f7a29a0422e7d870b10839ad6c985079
         items:
           $ref: '#/definitions/Checksum'
-      access_methods:
-        type: array
-        items:
-          $ref: '#/definitions/AccessMethod'
       description:
         type: string
         description: A human readable description.
