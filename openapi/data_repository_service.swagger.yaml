@@ -289,10 +289,10 @@ definitions:
         items:
           type: string
         description: |-
-          A list of strings that can be used to find this Data Object.
-          These aliases can be used to represent the Data Object's location in
-          a directory (e.g. "bucket/folder/file.name") to make Data Objects
-          more discoverable.
+          A list of strings that can be used to find other metadata 
+          about this Data Object from external metadata sources. These
+          aliases can be used to represent the Data Object's secondary
+          accession numbers or external GUIDs.
   GetBundleResponse:
     type: object
     properties:
