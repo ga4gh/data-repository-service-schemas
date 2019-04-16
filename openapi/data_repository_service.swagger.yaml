@@ -238,7 +238,11 @@ definitions:
         description: A human readable description.
       aliases:
         type: array
-        description: A list of strings that can be used to identify this Data Bundle.
+        description: |-
+          A list of strings that can be used to find other metadata 
+          about this Data Bundle from external metadata sources. These
+          aliases can be used to represent the Data Bundle's secondary
+          accession numbers or external GUIDs.
         items:
           type: string
       contents:
