@@ -217,9 +217,10 @@ definitions:
         description: >-
           At least one checksum must be provided.
           The Data Bundle checksum is computed over a sorted concatenation of all 
-          the checksums within the top-level 'contents' of the Bundle (not recursive).
-          The list of Data Object or Bundle checksums are sorted alphabetically (hex-code)
-          before concatenation and a further checksum performed on the concatenated value.
+          the checksums (names not included) within the top-level 'contents' of the
+          Bundle (not recursive). The list of Data Object or Bundle checksums are 
+          sorted alphabetically (hex-code) before concatenation and a further checksum
+          is performed on the concatenated checksum value.
           Example below:
           Data Ojects:
             md5(DO1) = 72794b6d30bc86d92e40a1aa65c880b8
