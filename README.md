@@ -18,71 +18,23 @@ We work with platform development partners and industry leaders to develop stand
 
 # What is DRS?
 
-The goal of DRS is to create a generic API on top of existing object storage systems
-so workflow systems can access data in a single, standard way regardless of where it's
-stored. It's maintained by the [GA4GH Cloud Workstream](https://github.com/ga4gh/wiki/wiki).
-
-## Key features
-
-The API is split into two sections:
-
-* **Data Object management**, which enables the creation, updating, deletion, versioning,
-  and unique identification of files and data bundles (flat collections of files); and
-* **Data Object querying**, which can locate data objects across different cloud environments
-  and DRS implementations.
+The Data Repository Service (DRS) API provides a generic interface to data repositories so data consumers, including workflow systems, can access data in a single, standard way regardless of where it’s stored and how it’s managed.
+The primary functionality of DRS is to map a logical ID to a means for physically retrieving the data represented by the ID.
 
 # API Definition
 
-See the human-readable **Reference Documentation**  ([Released (master)](https://ga4gh.github.io/data-repository-service-schemas/docs/) and [Stable Development (develop)](https://ga4gh.github.io/data-repository-service-schemas/preview/develop/docs/))
-and the **[OpenAPI YAML description](openapi/data_repository_service.swagger.yaml)**. You can also explore the specification in the Swagger UI ([Released (master)](https://ga4gh.github.io/data-repository-service-schemas/swagger-ui/) and [Stable Development (develop)](https://ga4gh.github.io/data-repository-service-schemas/preview/develop/swagger-ui/)).
+|  **Branch** | **Reference Documentation** | **[OpenAPI YAML description](openapi/data_repository_service.swagger.yaml)** |
+| --- | --- | --- |
+| **master**: the current release | [HTML](https://ga4gh.github.io/data-repository-service-schemas/docs/) | [Swagger](https://ga4gh.github.io/data-repository-service-schemas/swagger-ui/) |
+| **develop**: the stable development branch, into which feature branches are merged | [HTML](https://ga4gh.github.io/data-repository-service-schemas/preview/develop/docs/) | [Swagger](https://ga4gh.github.io/data-repository-service-schemas/preview/develop/swagger-ui/) |
+| **release 0.0.1**: the initial DRS after the rename from DOS | [HTML](https://ga4gh.github.io/data-repository-service-schemas/preview/release/0.0.1/docs/) | [Swagger](https://ga4gh.github.io/data-repository-service-schemas/preview/release/0.0.1/swagger-ui/) |
 
-> All documentation and pages hosted at 'ga4gh.github.io/data-repository-service-schemas' reflect the latest API release from the `master` branch. To monitor the latest development work on various branches, add 'preview/\<branch\>' to the URLs above (e.g., 'https://ga4gh.github.io/workflow-execution-service/preview/\<branch\>/docs'). To view the latest *stable* development API specification, refer to the `develop` branch.
+To monitor the latest development work on various branches, add 'preview/\<branch\>' to the master URLs above (e.g., 'https://ga4gh.github.io/workflow-execution-service/preview/\<branch\>/docs'). 
 
 # Use Cases
 
 See the [Use Cases](USECASES.md) document for DRS use cases and possible
 future directions.
-
-# Example DRS Server and Client
-
-## Getting started
-
-Installing is as easy as:
-
-```
-$ pip install ga4gh-dos-schemas
-```
-
-This will install both a demonstration server and a Python client that will allow you to
-manage Data Objects in a local server.
-
-## Sample Service
-
-You can start the demo server using `ga4gh_drs_server`.
-This starts a Data Repository Service at http://localhost:8080.
-
-```
-wget http://hgdownload.cse.ucsc.edu/goldenPath/hg38/chromosomes/chr22.fa.gz
-md5sum chr22.fa.gz
-# 41b47ce1cc21b558409c19b892e1c0d1  chr22.fa.gz
-curl -X POST -H 'Content-Type: application/json' \
-    --data '{"data_object":
-              {"id": "hg38-chr22",
-               "name": "Human Reference Chromosome 22",
-               "checksums": [{"checksum": "41b47ce1cc21b558409c19b892e1c0d1", "type": "md5"}],
-               "urls": [{"url": "http://hgdownload.cse.ucsc.edu/goldenPath/hg38/chromosomes/chr22.fa.gz"}],
-               "size": "12255678"}}' http://localhost:8080/ga4gh/dos/v1/dataobjects
-# We can then get the newly created Data Object by id
-curl http://localhost:8080/ga4gh/dos/v1/dataobjects/hg38-chr22
-# Or by checksum!
-curl -X GET http://localhost:8080/ga4gh/dos/v1/dataobjects -d checksum=41b47ce1cc21b558409c19b892e1c0d1
-```
-
-## For More Information on the Sample Service and Client
-
-For more on getting started, check out the
-[quickstart guide](https://data-repository-service.readthedocs.io/en/latest/quickstart.html)
-or the rest of the documentation at [ReadtheDocs](https://data-repository-service.readthedocs.io/en/latest/)!
 
 # How to Contribute Changes
 
