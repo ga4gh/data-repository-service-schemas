@@ -425,6 +425,8 @@ definitions:
           that may used obtain the Data Object or Data Bundle that will need
           to be recursed. These URIs may be external to this DRS.
         example: 'drs://example.com/ga4gh/drs/v1/objects/{object_id}'
+        items:
+          type: string
       type:
         type: string
         enum:
