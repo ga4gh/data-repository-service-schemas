@@ -34,8 +34,27 @@ For convenience, we define a recommended syntax for fully referencing DRS-access
 
 The DRS API specification is written in OpenAPI and embodies a RESTful service philosophy.  It uses JSON in requests and responses and standard HTTP/HTTPS for information transport.
 
-== Authorization & Authentication (WORK IN PROGRESS)
+== Authorization & Authentication
 
-Users must supply credentials that establish their identity and authorization in order to use a DRS endpoint. We recommend that DRS implementations use an OAuth2 https://oauth.net/2/bearer-tokens/[bearer token], although they can choose other mechanisms if appropriate. DRS callers can use the `auth_instructions_url` from the https://ga4gh.github.io/data-repository-service-schemas/#/DataRepositoryService/GetServiceInfo[service-info endpoint] to learn how to obtain and use a bearer token for a particular implementation.
+=== Making DRS Requests 
 
-The DRS implementation is responsible for checking that a user is authorized to submit requests. The particular authorization policy is up to the DRS implementer.
+The DRS implementation is responsible for defining and enforcing an authorization policy that determines which users are allowed to make which requests. We recommend that DRS implementations use an OAuth2 https://oauth.net/2/bearer-tokens/[bearer token], although they can choose other mechanisms if appropriate. DRS callers can use the `auth_instructions_url` from the https://ga4gh.github.io/data-repository-service-schemas/#/DataRepositoryService/GetServiceInfo[service-info endpoint] to learn how to obtain and use a bearer token for a particular implementation.
+
+=== Fetching DRS Objects
+
+The DRS API allows implementers to support a variety of different content access policies, depending on what `AccessMethod` s they return:
+
+* public content:
+** server provides an `access_url` with a `url` and no `headers`
+** caller fetches the object bytes without providing any auth info
+* private content that requires the caller to have out-of-band auth knowledge (e.g. service account credentials):
+** server provides an `access_url` with a `url` and no `headers`
+** caller fetches the object bytes, passing the auth info they obtained out-of-band
+* private content that requires the caller to pass an Authorization token:
+** server provides an `access_url` with a `url` and `headers`
+** caller fetches the object bytes, passing auth info via the specified header(s)
+* private content that uses an expensive-to-generate auth mechanism (e.g. a signed URL):
+** server provides an `access_id`
+** caller passes the `access_id` to the `/access` endpoint
+** server provides an `access_url` with the generated mechanism (e.g. a signed URL in the `url` field)
+** caller fetches the object bytes from the `url` (passing auth info from the specified headers, if any)
