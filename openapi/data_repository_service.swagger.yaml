@@ -32,7 +32,7 @@ paths:
         '200':
           description: Service information returned successfully
           schema:
-            $ref: '#/definitions/ServiceInfoResponse'
+            $ref: '#/definitions/ServiceInfo'
       tags:
         - DataRepositoryService
       x-swagger-router-controller: ga4gh.drs.server
@@ -44,27 +44,27 @@ paths:
         '200':
           description: Successfully found the Data Bundle.
           schema:
-            $ref: '#/definitions/GetBundleResponse'
+            $ref: '#/definitions/Bundle'
         '400':
           description: The request is malformed.
           schema:
-            $ref: '#/definitions/ErrorResponse'
+            $ref: '#/definitions/Error'
         '401':
           description: The request is unauthorized.
           schema:
-            $ref: '#/definitions/ErrorResponse'
+            $ref: '#/definitions/Error'
         '404':
           description: The requested Data Bundle wasn't found.
           schema:
-            $ref: '#/definitions/ErrorResponse'
+            $ref: '#/definitions/Error'
         '403':
           description: The requester is not authorized to perform this action.
           schema:
-            $ref: '#/definitions/ErrorResponse'
+            $ref: '#/definitions/Error'
         '500':
           description: An unexpected error occurred.
           schema:
-            $ref: '#/definitions/ErrorResponse'
+            $ref: '#/definitions/Error'
       parameters:
         - name: bundle_id
           in: path
@@ -83,27 +83,27 @@ paths:
         '200':
           description: The Data Object was found successfully.
           schema:
-            $ref: '#/definitions/GetObjectResponse'
+            $ref: '#/definitions/Object'
         '400':
           description: The request is malformed.
           schema:
-            $ref: '#/definitions/ErrorResponse'
+            $ref: '#/definitions/Error'
         '401':
           description: The request is unauthorized.
           schema:
-            $ref: '#/definitions/ErrorResponse'
+            $ref: '#/definitions/Error'
         '404':
           description: The requested Data Object wasn't found
           schema:
-            $ref: '#/definitions/ErrorResponse'
+            $ref: '#/definitions/Error'
         '403':
           description: The requester is not authorized to perform this action.
           schema:
-            $ref: '#/definitions/ErrorResponse'
+            $ref: '#/definitions/Error'
         '500':
           description: An unexpected error occurred.
           schema:
-            $ref: '#/definitions/ErrorResponse'
+            $ref: '#/definitions/Error'
       parameters:
         - name: object_id
           in: path
@@ -126,23 +126,23 @@ paths:
         '400':
           description: The request is malformed.
           schema:
-            $ref: '#/definitions/ErrorResponse'
+            $ref: '#/definitions/Error'
         '401':
           description: The request is unauthorized.
           schema:
-            $ref: '#/definitions/ErrorResponse'
+            $ref: '#/definitions/Error'
         '404':
           description: The requested access URL wasn't found
           schema:
-            $ref: '#/definitions/ErrorResponse'
+            $ref: '#/definitions/Error'
         '403':
           description: The requester is not authorized to perform this action.
           schema:
-            $ref: '#/definitions/ErrorResponse'
+            $ref: '#/definitions/Error'
         '500':
           description: An unexpected error occurred.
           schema:
-            $ref: '#/definitions/ErrorResponse'
+            $ref: '#/definitions/Error'
       parameters:
         - name: object_id
           in: path
@@ -314,17 +314,6 @@ definitions:
           These aliases can be used to represent the Data Object's location in
           a directory (e.g. "bucket/folder/file.name") to make Data Objects
           more discoverable. They might also be used to represent
-  GetBundleResponse:
-    type: object
-    properties:
-      bundle:
-        $ref: '#/definitions/Bundle'
-  GetObjectResponse:
-    type: object
-    required: ['object']
-    properties:
-      object:
-        $ref: '#/definitions/Object'
   AccessURL:
     type: object
     required: ['url']
@@ -379,7 +368,7 @@ definitions:
           Name of the region in the cloud service provider that the object belongs to.
         example:
           us-east-1
-  ErrorResponse:
+  Error:
     description:
       An object that can optionally include information about the error.
     type: object
@@ -390,7 +379,7 @@ definitions:
       status_code:
         type: integer
         description: The integer representing the HTTP status code (e.g. 200, 404).
-  ServiceInfoResponse:
+  ServiceInfo:
     type: object
     required: ['version']
     description: Placeholder for the Info Object
