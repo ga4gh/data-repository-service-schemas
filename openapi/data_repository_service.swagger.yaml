@@ -3,14 +3,13 @@ basePath: '/ga4gh/drs/v1'
 info:
   title: Data Repository Service
   version: 0.1.0
-  description: https://github.com/ga4gh/data-repository-service-schemas
+  description: 'https://github.com/ga4gh/data-repository-service-schemas'
   contact:
     name: GA4GH Cloud Work Stream
     email: ga4gh-cloud@ga4gh.org
-    x-role: responsible developer
   license:
     name: Apache 2.0
-    url: https://raw.githubusercontent.com/ga4gh/data-repository-service-schemas/master/LICENSE
+    url: 'https://raw.githubusercontent.com/ga4gh/data-repository-service-schemas/master/LICENSE'
 schemes:
   - https
   - http
@@ -53,12 +52,12 @@ paths:
           description: The request is unauthorized.
           schema:
             $ref: '#/definitions/Error'
-        '404':
-          description: The requested Data Bundle wasn't found.
-          schema:
-            $ref: '#/definitions/Error'
         '403':
           description: The requester is not authorized to perform this action.
+          schema:
+            $ref: '#/definitions/Error'
+        '404':
+          description: The requested Data Bundle wasn't found.
           schema:
             $ref: '#/definitions/Error'
         '500':
@@ -92,14 +91,15 @@ paths:
           description: The request is unauthorized.
           schema:
             $ref: '#/definitions/Error'
-        '404':
-          description: The requested Data Object wasn't found
-          schema:
-            $ref: '#/definitions/Error'
         '403':
           description: The requester is not authorized to perform this action.
           schema:
             $ref: '#/definitions/Error'
+        '404':
+          description: The requested Data Object wasn't found
+          schema:
+            $ref: '#/definitions/Error'
+
         '500':
           description: An unexpected error occurred.
           schema:
@@ -166,27 +166,14 @@ securityDefinitions:
     name: Authorization
     in: header
 definitions:
-  SystemMetadata:
-    type: object
-    additionalProperties: true
-    description: |-
-            OPTIONAL
-            These values are reported by the underlying object store.
-            A set of key-value pairs that represent system metadata about the object.
-  UserMetadata:
-    type: object
-    additionalProperties: true
-    description: |-
-            OPTIONAL
-            A set of key-value pairs that represent metadata provided by the uploader.
   Checksum:
     type: object
-    required: ['checksum']
+    required:
+      - checksum
     properties:
       checksum:
         type: string
-        description: |-
-          The hex-string encoded checksum for the Data.
+        description: 'The hex-string encoded checksum for the data'
       type:
         type: string
         description: |-
@@ -194,8 +181,8 @@ definitions:
           will be assumed.
 
           possible values:
-          md5                # most blob stores provide a checksum using this
-          multipart-md5      # multipart uploads provide a specialized tag in S3
+          md5               # most blob stores provide a checksum using this
+          etag              # multipart uploads to blob stores
           sha256
           sha512
   Bundle:
@@ -246,11 +233,10 @@ definitions:
         items:
           type: string
         description: |-
-          A list of strings that can be used to identify this Data Bundle.
-      system_metadata:
-        $ref: '#/definitions/SystemMetadata'
-      user_metadata:
-        $ref: '#/definitions/UserMetadata'
+          A list of strings that can be used to find other metadata 
+          about this Data Bundle from external metadata sources. These
+          aliases can be used to represent the Data Bundle's secondary
+          accession numbers or external GUIDs.
   Object:
     type: object
     required: ['id', 'size', 'created', 'checksums', 'access_methods']
@@ -264,7 +250,7 @@ definitions:
         description: |-
           A string that can be optionally used to name a Data Object.
       size:
-        type: string
+        type: integer
         format: int64
         description: |-
           The computed size in bytes.
@@ -310,10 +296,10 @@ definitions:
         items:
           type: string
         description: |-
-          A list of strings that can be used to find this Data Object.
-          These aliases can be used to represent the Data Object's location in
-          a directory (e.g. "bucket/folder/file.name") to make Data Objects
-          more discoverable. They might also be used to represent
+          A list of strings that can be used to find other metadata 
+          about this Data Object from external metadata sources. These
+          aliases can be used to represent the Data Object's secondary
+          accession numbers or external GUIDs.
   AccessURL:
     type: object
     required: ['url']
@@ -378,7 +364,8 @@ definitions:
         description: The integer representing the HTTP status code (e.g. 200, 404).
   ServiceInfo:
     type: object
-    required: ['version']
+    required:
+      - version
     description: Placeholder for the Info Object
     properties:
       version:
