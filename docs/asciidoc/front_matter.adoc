@@ -17,10 +17,10 @@ Each implementation of DRS can choose its own id scheme, as long as it follows t
 
 === DRS Datatypes
 
-DRS v1 supports two datatypes:
+DRS v1 supports two types of content:
 
-* Blobs -- these are file-like objects
-* Collections -- these are sets of other DRS objects (either Blobs or Collections)
+* an `Object` is like a file -- it's a single blob of bytes
+* a `Bundle` is like a folder -- it's collection of other DRS content (either objects or bundles)
 
 === Read-only
 
