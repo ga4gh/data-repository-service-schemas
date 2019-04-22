@@ -119,7 +119,8 @@ paths:
       summary: Get a URL for fetching bytes. 
       description: >-
         Returns a URL that can be used to fetch the object bytes.
-        
+
+
         This method only needs to be called when using an `AccessMethod` that contains an `access_id`
         (e.g., for servers that use signed URLs for fetching object bytes).
       operationId: GetAccessURL
@@ -153,7 +154,7 @@ paths:
           in: path
           required: true
           type: string
-          description: An 'id' of a Data Object
+          description: An `id` of a Data Object
         - name: access_id
           in: path
           required: true
@@ -262,7 +263,7 @@ definitions:
       contents:
         type: array
         description: >-
-          The list of Data Objects and Data BUndles contained by this Data Bundle.
+          The list of Data Objects and Data Bundles contained by this Data Bundle.
         items:
           $ref: '#/definitions/BundleObject'
   Object:
@@ -371,8 +372,8 @@ definitions:
       access_id:
         type: string
         description: >-
-          An arbitrary string to be passed to the /access path to get an `AccessURL`.
-          This must be unique per object.
+          An arbitrary string to be passed to the `/access` method to get an `AccessURL`.
+          This string must be unique per object.
           Note that at least one of `access_url` and `access_id` must be provided.
       region:
         type: string
