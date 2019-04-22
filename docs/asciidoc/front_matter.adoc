@@ -1,6 +1,6 @@
 == Introduction
 
-The Data Repository Service (DRS) API provides a generic interface to data repositories so data consumers, including workflow systems, can access data in a single, standard way regardless of where it's stored and how it's managed. This document describes the DRS API and provides details on the specific endpoints, request formats, and response.  It is intended for developers of DRS-compatible services and of clients that will call these DRS services.
+The Data Repository Service (DRS) API provides a generic interface to data repositories so data consumers, including workflow systems, can access data in a single, standard way regardless of where it's stored and how it's managed. This document describes the DRS API and provides details on the specific endpoints, request formats, and responses. It is intended for developers of DRS-compatible services and of clients that will call these DRS services.
 
 The primary functionality of DRS is to map a logical ID to a means for physically retrieving the data represented by the ID. The sections below describe the characteristics of those IDs, the types of data supported, and how the mapping works.
 
@@ -28,7 +28,7 @@ DRS v1 is a read-only API. We expect that each implementation will define its ow
 
 === URI convention (WORK IN PROGRESS)
 
-For convenience, we define a recommended syntax for fully referencing DRS-accessible objects. Strings of the form drs://<server>/<id> mean “make a DRS call to the HTTP address at <server>, passing in the DRS id <id>, to retrieve the object”. For example, these strings are useful when passing objects to a WES server for processing. 
+For convenience, we define a recommended syntax for fully referencing DRS-accessible objects. Strings of the form drs://<server>/<id> mean “make a DRS call to the HTTP address at <server>, passing in the DRS id <id>, to retrieve the object”. For example, these strings may be useful when passing objects to a WES server for processing. 
 
 === Standards
 
