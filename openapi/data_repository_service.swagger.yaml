@@ -205,7 +205,7 @@ definitions:
         description: >-
           A string that can be used to name a Data Bundle.
       size:
-        type: string
+        type: integer
         format: int64
         description: >-
           The cumulative size, in bytes, of all Data Objects and Bundles listed in
