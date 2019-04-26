@@ -28,8 +28,9 @@ The primary functionality of DRS is to map a logical ID to a means for physicall
 | **master**: the current release | [HTML](https://ga4gh.github.io/data-repository-service-schemas/docs/) | [Swagger](https://ga4gh.github.io/data-repository-service-schemas/swagger-ui/) |
 | **develop**: the stable development branch, into which feature branches are merged | [HTML](https://ga4gh.github.io/data-repository-service-schemas/preview/develop/docs/) | [Swagger](https://ga4gh.github.io/data-repository-service-schemas/preview/develop/swagger-ui/) |
 | **release 0.0.1**: the initial DRS after the rename from DOS | [HTML](https://ga4gh.github.io/data-repository-service-schemas/preview/release/0.0.1/docs/) | [Swagger](https://ga4gh.github.io/data-repository-service-schemas/preview/release/0.0.1/swagger-ui/) |
+| **release 0.1**: the initial DRS after the rename from DOS | [HTML](https://ga4gh.github.io/data-repository-service-schemas/preview/release/0.1/docs/) | [Swagger](https://ga4gh.github.io/data-repository-service-schemas/preview/release/0.1/swagger-ui/) |
 
-To monitor the latest development work on various branches, add 'preview/\<branch\>' to the master URLs above (e.g., 'https://ga4gh.github.io/workflow-execution-service/preview/\<branch\>/docs'). 
+To monitor the latest development work on various branches, add 'preview/\<branch\>' to the master URLs above (e.g., 'https://ga4gh.github.io/workflow-execution-service/preview/\<branch\>/docs').
 
 # Use Cases
 

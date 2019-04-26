@@ -12,7 +12,6 @@ info:
     url: 'https://raw.githubusercontent.com/ga4gh/data-repository-service-schemas/master/LICENSE'
 schemes:
   - https
-  - http
 consumes:
   - application/json
 produces:
