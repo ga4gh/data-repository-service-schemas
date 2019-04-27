@@ -1,4 +1,4 @@
-== Appendix: Motivation
+== Motivation
 
 [cols="40a,60a"]
 |===
