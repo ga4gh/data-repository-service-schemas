@@ -28,13 +28,18 @@ DRS v1 is a read-only API. We expect that each implementation will define its ow
 
 === URI convention
 
-For convenience, we define a recommended syntax for fully referencing DRS-accessible objects. Strings of the form drs://<server>/<path>/<[bundle|object]>/<endpoint>/<id> mean “make a DRS call to the HTTPS address at <server>, passing in the DRS id <id> to the appropriate <endpoint>, to retrieve the object”. For example:
+For convenience, we define a recommended syntax for fully referencing DRS-accessible objects. Strings of the form drs://<server>/<path>/<[bundle|object]>/<endpoint>/<id> mean “make a DRS
+GET to the HTTPS address at <server>, passing in the DRS id <id> at the end of the appropriate <path>/<[bundle|object]>/<endpoint>, to retrieve the DRS JSON response”.
+The <endpoint> is optional depending on what you are doing e.g. the <endpoint> is /access when retrieving a particular access method.  This is all just
+a complicated way of just saying "replace drs:// with https:// and GET on the URL that results."
+
+For example:
 
 * drs://test.drs.org/ga4gh/drs/v1/bundles/5007fc21-6430-4fb9-82b3-520c60e26751 -> maps to a GET request to https://test.drs.org/ga4gh/drs/v1/bundles/5007fc21-6430-4fb9-82b3-520c60e26751
 * drs://test.drs.org/ga4gh/drs/v1/objects/65a3e501-7448-4887-aada-b52de5c8db31 -> maps to a GET request to https://test.drs.org/ga4gh/drs/v1/objects/65a3e501-7448-4887-aada-b52de5c8db31
 * drs://test.drs.org/ga4gh/drs/v1/objects/65a3e501-7448-4887-aada-b52de5c8db31/access/1 -> maps to a GET request to https://test.drs.org/ga4gh/drs/v1/objects/65a3e501-7448-4887-aada-b52de5c8db31/access/1
 
-The service-info endpoint can be queried to retrieve information about the version of DRS supported by this server.
+The service-info endpoint can be queried to retrieve information about the version of DRS supported by this server e.g. https://<server>/<path>/service-info
 
 These URIs will be useful when passing objects to a WES server for processing since they provide a way to understand how to successfully make an HTTPS request and process the JSON response.
 
