@@ -13,7 +13,11 @@ cp -Rn . ../
 else
 # in case it doesn't exist
 mkdir -p preview
+mkdir -p docs
+mkdir -p swagger-ui
 cp -Rn preview ../preview/
+cp -Rn docs ../docs/
+cp -Rn swagger-ui ../swagger-ui/
 fi
 cd ..
 rm -rf .ghpages-tmp
