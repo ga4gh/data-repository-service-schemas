@@ -1,19 +1,14 @@
 == Introduction
 
-The Data Repository Service (DRS) API provides a generic interface to data repositories so data consumers, including workflow systems, can access data in a single, standard way regardless of where it's stored and how it's managed. This document describes the DRS API and provides details on the specific endpoints, request formats, and response.  It is intended for developers of DRS-compatible services and of clients that will call these DRS services.
+The Data Repository Service (DRS) API provides a generic interface to data repositories so data consumers, including workflow systems, can access data in a single, standard way regardless of where it's stored and how it's managed. This document describes the DRS API and provides details on the specific endpoints, request formats, and responses. It is intended for developers of DRS-compatible services and of clients that will call these DRS services.
 
 The primary functionality of DRS is to map a logical ID to a means for physically retrieving the data represented by the ID. The sections below describe the characteristics of those IDs, the types of data supported, and how the mapping works.
-
-**NOTE**: this document represents a work in progress towards DRS 1.0.0.  It may not be fully in sync
-with the OpenAPI schema since both are being worked on.  The 0.0.1 release represents the
-schema as it existed at the time of the transition from the DOS to DRS name and is subject to
-change as we evolve it to a DRS 1.0.0.
 
 == DRS API Principles
 
 === DRS IDs
 
-Each implementation of DRS can choose its own id scheme, as long as it follows these guidelines:
+Each implementation of DRS v1 can choose its own id scheme, as long as it follows these guidelines:
 
 * DRS IDs are URL-safe text strings made up of alphanumeric characters and any of [.-_/]
 * One DRS ID MUST always return the same object data (or, in the case of a collection, the same set of objects). This constraint aids with reproducibility.
@@ -22,25 +17,57 @@ Each implementation of DRS can choose its own id scheme, as long as it follows t
 
 === DRS Datatypes
 
-DRS v1 supports two datatypes:
+DRS v1 supports two types of content:
 
-* Blobs -- these are file-like objects
-* Collections -- these are sets of other DRS objects (either Blobs or Collections)
+* an `Object` is like a file -- it's a single blob of bytes
+* a `Bundle` is like a folder -- it's a collection of other DRS content (either objects or bundles)
 
 === Read-only
 
 DRS v1 is a read-only API. We expect that each implementation will define its own mechanisms and interfaces (graphical and/or programmatic) for adding and updating data.
 
-=== URI convention (WORK IN PROGRESS)
+=== URI convention
 
-For convenience, we define a recommended syntax for fully referencing DRS-accessible objects. Strings of the form drs://<server>/<id> mean “make a DRS call to the HTTP address at <server>, passing in the DRS id <id>, to retrieve the object”. For example, these strings are useful when passing objects to a WES server for processing.
+For convenience, we define a recommended syntax for fully referencing DRS-accessible objects. Strings of the form drs://<server>/<path>/<[bundle|object]>/<endpoint>/<id> mean “make a DRS
+GET to the HTTPS address at <server>, passing in the DRS id <id> at the end of the appropriate <path>/<[bundle|object]>/<endpoint>, to retrieve the DRS JSON response”.
+The <endpoint> is optional depending on what you are doing e.g. the <endpoint> is /access when retrieving a particular access method.  This is all just
+a complicated way of just saying "replace drs:// with https:// and GET on the URL that results."
+
+For example:
+
+* drs://test.drs.org/ga4gh/drs/v1/bundles/5007fc21-6430-4fb9-82b3-520c60e26751 -> maps to a GET request to https://test.drs.org/ga4gh/drs/v1/bundles/5007fc21-6430-4fb9-82b3-520c60e26751
+* drs://test.drs.org/ga4gh/drs/v1/objects/65a3e501-7448-4887-aada-b52de5c8db31 -> maps to a GET request to https://test.drs.org/ga4gh/drs/v1/objects/65a3e501-7448-4887-aada-b52de5c8db31
+* drs://test.drs.org/ga4gh/drs/v1/objects/65a3e501-7448-4887-aada-b52de5c8db31/access/1 -> maps to a GET request to https://test.drs.org/ga4gh/drs/v1/objects/65a3e501-7448-4887-aada-b52de5c8db31/access/1
+
+The service-info endpoint can be queried to retrieve information about the version of DRS supported by this server e.g. https://<server>/<path>/service-info
+
+These URIs will be useful when passing objects to a WES server for processing since they provide a way to understand how to successfully make an HTTPS request and process the JSON response.
 
 === Standards
 
-The DRS API specification is written in OpenAPI and embodies a RESTful service philosophy.  It uses JSON in requests and responses and standard HTTP/HTTPS for information transport.
+The DRS API specification is written in OpenAPI and embodies a RESTful service philosophy.  It uses JSON in requests and responses and standard HTTPS for information transport.
 
-== Authorization & Authentication (WORK IN PROGRESS)
+== Authorization & Authentication
 
-Users must supply credentials that establish their identity and authorization in order to use a DRS endpoint. We recommend that DRS implementations use an OAuth2 https://oauth.net/2/bearer-tokens/[bearer token], although they can choose other mechanisms if appropriate. DRS callers can use the `auth_instructions_url` from the https://ga4gh.github.io/data-repository-service-schemas/#/DataRepositoryService/GetServiceInfo[service-info endpoint] to learn how to obtain and use a bearer token for a particular implementation.
+=== Making DRS Requests
 
-The DRS implementation is responsible for checking that a user is authorized to submit requests. The particular authorization policy is up to the DRS implementer.
+The DRS implementation is responsible for defining and enforcing an authorization policy that determines which users are allowed to make which requests. We recommend that DRS implementations use an OAuth2 https://oauth.net/2/bearer-tokens/[bearer token], although they can choose other mechanisms if appropriate.  The `service-info` endpoint should provide sufficient information for a user to figure out how to authenticate with a DRS implementation.
+
+=== Fetching DRS Objects
+
+The DRS API allows implementers to support a variety of different content access policies, depending on what `AccessMethod` s they return:
+
+* public content:
+** server provides an `access_url` with a `url` and no `headers`
+** caller fetches the object bytes without providing any auth info
+* private content that requires the caller to have out-of-band auth knowledge (e.g. service account credentials):
+** server provides an `access_url` with a `url` and no `headers`
+** caller fetches the object bytes, passing the auth info they obtained out-of-band
+* private content that requires the caller to pass an Authorization token:
+** server provides an `access_url` with a `url` and `headers`
+** caller fetches the object bytes, passing auth info via the specified header(s)
+* private content that uses an expensive-to-generate auth mechanism (e.g. a signed URL):
+** server provides an `access_id`
+** caller passes the `access_id` to the `/access` endpoint
+** server provides an `access_url` with the generated mechanism (e.g. a signed URL in the `url` field)
+** caller fetches the object bytes from the `url` (passing auth info from the specified headers, if any)
