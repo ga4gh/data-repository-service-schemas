@@ -1,9 +1,11 @@
+
+
 == Motivation
 
 [cols="40a,60a"]
 |===
 |Data sharing requires portable data, consistent with the FAIR data principles (findable, accessible, interoperable, reusable). Today’s researchers and clinicians are surrounded by potentially useful data, but often need bespoke tools and processes to work with each dataset. Today’s data publishers don’t have a reliable way to make their data useful to all (and only) the people they choose. And today’s data controllers are tasked with implementing standard controls of non-standard mechanisms for data access.
-|image::figure1.png[] 
+|image::figure1.png[]
 _Figure 1: there’s an ocean of data, with many different tools to drink from it, but no guarantee that any tool will work with any subset of the data_
 |===
 
@@ -22,11 +24,11 @@ _Figure 2: by defining a standard Data Repository API, and adapting tools to use
 
 * there are many many **data consumers**, working in research and in care, who can use the tools of their choice to access any and all data that they have permission to see
 * there are many **data access tools** and platforms, supporting discovery, visualization, analysis, and collaboration
-* there are many **data repositories**, each with their own policies and characteristics, which can be accessed by a variety of tools 
+* there are many **data repositories**, each with their own policies and characteristics, which can be accessed by a variety of tools
 * there are many **data publishing tools** and platforms, supporting a variety of data lifecycles and formats
 * there are many many **data producers**, generating data of all types, who can use the tools of their choice to make their data as widely available as is appropriate
 
-|image::figure3.png[]  
+|image::figure3.png[]
 _Figure 3: a standard Data Repository API enables an ecosystem of data producers and consumers_
 |===
 
