@@ -1,5 +1,4 @@
 language: python
-
 python:
 - '2.7'
 - '3.6'
@@ -15,6 +14,7 @@ branches:
     - develop
     - /^\d+\.\d+(\.\d+)?(-\S*)?$/
     - /^feature\/issue-\d+(-\S*)?$/
+    - "/^release\\/\\d+\\.\\d+(\\.\\d+)?$/"
 
 stages:
   - linting
@@ -75,7 +75,6 @@ before_install:
 - python setup.py sdist
 - pip install dist/ga4gh_drs_schemas-*.tar.gz
 - npm install -g swagger2openapi
-
 script:
 - make schemas
 #- nosetests python/
