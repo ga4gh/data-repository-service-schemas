@@ -5,7 +5,7 @@ set -v
 
 if [ "$TRAVIS_BRANCH" != "gh-pages" ]; then
   if [ "$TRAVIS_BRANCH" == "master" ]; then
-    branchpath = "."
+    branchpath="."
   else
     branch=$(echo "$TRAVIS_BRANCH" | awk '{print tolower($0)}')
     branchpath="preview/$branch"
