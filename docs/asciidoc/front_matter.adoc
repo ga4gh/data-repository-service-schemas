@@ -8,11 +8,11 @@ The primary functionality of DRS is to map a logical ID to a means for physicall
 
 === DRS IDs
 
-Each implementation of DRS v1 can choose its own id scheme, as long as it follows these guidelines:
+Each implementation of DRS can choose its own id scheme, as long as it follows these guidelines:
 
 * DRS IDs are URL-safe text strings made up of alphanumeric characters and any of [.-_/]
 * One DRS ID MUST always return the same object data (or, in the case of a collection, the same set of objects). This constraint aids with reproducibility.
-* DRS does NOT support semantics around multiple versions of an object. (For example, there’s no notion of “get latest version” or “list all versions” in DRS v1.) Individual implementation MAY choose an ID scheme that includes version hints.
+* DRS v1 does NOT support semantics around multiple versions of an object. (For example, there’s no notion of “get latest version” or “list all versions”.) Individual implementation MAY choose an ID scheme that includes version hints.
 * DRS implementations MAY have more than one ID that maps to the same object.
 
 === DRS Datatypes
