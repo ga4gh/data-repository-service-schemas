@@ -28,8 +28,7 @@ DRS v1 is a read-only API. We expect that each implementation will define its ow
 
 === URI convention
 
-For convenience, including when passing content references to a WES server, we intend to define a recommended URI syntax.
-The syntax will probably use URI strings beginning with `drs://` -- details are being discussed in https://github.com/ga4gh/data-repository-service-schemas/issues/252[DRS#252].
+For convenience, including when passing content references to a WES server, we intend to define a recommended URI syntax. The syntax will probably use URI strings beginning with `drs://` -- details are being discussed in https://github.com/ga4gh/data-repository-service-schemas/issues/252[DRS#252].
 
 === Standards
 
