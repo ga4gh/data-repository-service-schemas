@@ -37,13 +37,13 @@ paths:
       x-swagger-router-controller: ga4gh.drs.server
   '/objects/{object_id}':
     get:
-      summary: Get info about a Data Object.
+      summary: Get info about an `Object`.
       description: >-
         Returns object metadata, and a list of access methods that can be used to fetch object bytes.
       operationId: GetObject
       responses:
         '200':
-          description: The Data Object was found successfully.
+          description: The `Object` was found successfully.
           schema:
             $ref: '#/definitions/Object'
         '400':
@@ -59,7 +59,7 @@ paths:
           schema:
             $ref: '#/definitions/Error'
         '404':
-          description: The requested Data Object wasn't found
+          description: The requested `Object` wasn't found
           schema:
             $ref: '#/definitions/Error'
         '500':
@@ -159,16 +159,16 @@ definitions:
       id:
         type: string
         description: |-
-          An identifier unique to this Data Object.
+          An identifier unique to this `Object`.
       name:
         type: string
         description: |-
-          A string that can be used to name a Data Object.
+          A string that can be used to name an `Object`.
       size:
         type: integer
         format: int64
         description: |-
-          For single items, the object size in bytes.
+          For blobs, the blob size in bytes.
           For bundles, the cumulative size, in bytes, of everything listed in the `contents` field.
       created:
         type: string
@@ -179,7 +179,7 @@ definitions:
         type: string
         format: date-time
         description: >-
-          Timestamp of object update in RFC3339, identical to create timestamp in systems
+          Timestamp of `Object` update in RFC3339, identical to create timestamp in systems
           that do not support updates.
       version:
         type: string
@@ -188,59 +188,63 @@ definitions:
       mime_type:
         type: string
         description: |-
-          A string providing the mime-type of the Data Object.
+          A string providing the mime-type of the `Object`.
         example:
           application/json
       checksums:
         type: array
         items:
           $ref: '#/definitions/Checksum'
-        description: |-
-          The checksum of the Data Object. At least one checksum must be provided.
+        description: >-
+          The checksum of the `Object`. At least one checksum must be provided.
 
-          For single items, the checksum is computed over the bytes in the item.
+
+          For blobs, the checksum is computed over the bytes in the blob.
+          
           For bundles, the checksum is computed over a sorted concatenation of all 
-          the checksums (names not included) within the top-level `contents` field
+          the checksums (names not included) of objects in the `contents` field
           (not recursive). The list of checksums are
           sorted alphabetically (hex-code) before concatenation and a further checksum
           is performed on the concatenated checksum value.
           Example below:
+          ```
           Data Objects:
             md5(DO1) = 72794b6d30bc86d92e40a1aa65c880b8
-            md5(DO2) = 5e089d29a18954e68a78ee6a3c6edabd
+            md5(DO2) = 5e089d29a18954e68a78ee6a3c6edabd       
           Data Bundle:
           DB1 = md5( concat( sort( md5(DO1), md5(DO2) ) ) )
               = md5( concat( sort( 72794b6d30bc86d92e40a1aa65c880b8, 5e089d29a18954e68a78ee6a3c6edabd ) ) )
               = md5( concat( 5e089d29a18954e68a78ee6a3c6edabd, 72794b6d30bc86d92e40a1aa65c880b8 ) )
               = md5( 5e089d29a18954e68a78ee6a3c6edabd72794b6d30bc86d92e40a1aa65c880b8 )
               = f7a29a0422e7d870b10839ad6c985079
+          ```
       access_methods:
         type: array
         minItems: 1
         items:
           $ref: '#/definitions/AccessMethod'
         description: |-
-          The list of access methods that can be used to fetch the Data Object.
-          Required for single items; optional for bundles.
+          The list of access methods that can be used to fetch the `Object`.
+          Required for single blobs; optional for bundles.
       contents:
         type: array
         description: >-
-          If not set, this Object is a single item.
-          If set, this Object is a bundle containing the listed Objects (some of which may be further nested).
+          If not set, this `Object` is a single blob.
+          If set, this `Object` is a bundle containing the listed Objects (some of which may be further nested).
         items:
           $ref: '#/definitions/BundleObject'
       description:
         type: string
         description: |-
-          A human readable description of the Data Object.
+          A human readable description of the `Object`.
       aliases:
         type: array
         items:
           type: string
         description: >-
           A list of strings that can be used to find other metadata 
-          about this Data Object from external metadata sources. These
-          aliases can be used to represent the Data Object's secondary
+          about this `Object` from external metadata sources. These
+          aliases can be used to represent the `Object`'s secondary
           accession numbers or external GUIDs.
   AccessURL:
     type: object
