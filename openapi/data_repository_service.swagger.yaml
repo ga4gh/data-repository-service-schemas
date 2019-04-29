@@ -35,45 +35,6 @@ paths:
       tags:
         - DataRepositoryService
       x-swagger-router-controller: ga4gh.drs.server
-  '/bundles/{bundle_id}':
-    get:
-      summary: Get info about a Data Bundle.
-      description: >-
-        Returns bundle metadata, and a list of ids that can be used to fetch bundle contents.
-      operationId: GetBundle
-      responses:
-        '200':
-          description: The Data Bundle was found successfully.
-          schema:
-            $ref: '#/definitions/Bundle'
-        '400':
-          description: The request is malformed.
-          schema:
-            $ref: '#/definitions/Error'
-        '401':
-          description: The request is unauthorized.
-          schema:
-            $ref: '#/definitions/Error'
-        '403':
-          description: The requester is not authorized to perform this action.
-          schema:
-            $ref: '#/definitions/Error'
-        '404':
-          description: The requested Data Bundle wasn't found.
-          schema:
-            $ref: '#/definitions/Error'
-        '500':
-          description: An unexpected error occurred.
-          schema:
-            $ref: '#/definitions/Error'
-      parameters:
-        - name: bundle_id
-          in: path
-          required: true
-          type: string
-      tags:
-        - DataRepositoryService
-      x-swagger-router-controller: ga4gh.drs.server
   '/objects/{object_id}':
     get:
       summary: Get info about a Data Object.
@@ -101,7 +62,6 @@ paths:
           description: The requested Data Object wasn't found
           schema:
             $ref: '#/definitions/Error'
-
         '500':
           description: An unexpected error occurred.
           schema:
@@ -192,83 +152,9 @@ definitions:
           etag              # multipart uploads to blob stores
           sha256
           sha512
-  Bundle:
-    type: object
-    required: ['id', 'size', 'created', 'checksums', 'contents']
-    properties:
-      id:
-        type: string
-        description: >-
-          An identifier unique to this Data Bundle.
-      name:
-        type: string
-        description: >-
-          A string that can be used to name a Data Bundle.
-      size:
-        type: string
-        format: int64
-        description: >-
-          The cumulative size, in bytes, of all Data Objects and Bundles listed in
-          the `contents` field.
-      created:
-        type: string
-        format: date-time
-        description: >-
-          Timestamp of Bundle creation in RFC3339.
-      updated:
-        type: string
-        format: date-time
-        description: >-
-          Timestamp of Bundle update in RFC3339, identical to create timestamp in
-          systems that do not support updates.
-      version:
-        type: string
-        description: >-
-          A string representing a version. (Some systems may use checksum, a
-          RFC3339 timestamp, or an incrementing version number.)
-      checksums:
-        type: array
-        description: |-
-          The checksum of the Data Bundle. At least one checksum must be provided.
-          
-          The Data Bundle checksum is computed over a sorted concatenation of all 
-          the checksums (names not included) within the top-level 'contents' of the
-          Bundle (not recursive). The list of Data Object or Bundle checksums are 
-          sorted alphabetically (hex-code) before concatenation and a further checksum
-          is performed on the concatenated checksum value.
-          Example below:
-          Data Ojects:
-            md5(DO1) = 72794b6d30bc86d92e40a1aa65c880b8
-            md5(DO2) = 5e089d29a18954e68a78ee6a3c6edabd
-          Data Bundle:
-          DB1 = md5( concat( sort( md5(DO1), md5(DO2) ) ) )
-              = md5( concat( sort( 72794b6d30bc86d92e40a1aa65c880b8, 5e089d29a18954e68a78ee6a3c6edabd ) ) )
-              = md5( concat( 5e089d29a18954e68a78ee6a3c6edabd, 72794b6d30bc86d92e40a1aa65c880b8 ) )
-              = md5( 5e089d29a18954e68a78ee6a3c6edabd72794b6d30bc86d92e40a1aa65c880b8 )
-              = f7a29a0422e7d870b10839ad6c985079
-        items:
-          $ref: '#/definitions/Checksum'
-      description:
-        type: string
-        description: A human readable description of the Data Bundle.
-      aliases:
-        type: array
-        description: >-
-          A list of strings that can be used to find other metadata 
-          about this Data Bundle from external metadata sources. These
-          aliases can be used to represent the Data Bundle's secondary
-          accession numbers or external GUIDs.
-        items:
-          type: string
-      contents:
-        type: array
-        description: >-
-          The list of Data Objects and Data Bundles contained by this Data Bundle.
-        items:
-          $ref: '#/definitions/BundleObject'
   Object:
     type: object
-    required: ['id', 'size', 'created', 'checksums', 'access_methods']
+    required: ['id', 'size', 'created', 'checksums']
     properties:
       id:
         type: string
@@ -282,7 +168,8 @@ definitions:
         type: integer
         format: int64
         description: |-
-          The object size in bytes.
+          For single items, the object size in bytes.
+          For bundles, the cumulative size, in bytes, of everything listed in the `contents` field.
       created:
         type: string
         format: date-time
@@ -292,7 +179,7 @@ definitions:
         type: string
         format: date-time
         description: >-
-          Timestamp of Object update in RFC3339, identical to create timestamp in systems
+          Timestamp of object update in RFC3339, identical to create timestamp in systems
           that do not support updates.
       version:
         type: string
@@ -310,6 +197,23 @@ definitions:
           $ref: '#/definitions/Checksum'
         description: |-
           The checksum of the Data Object. At least one checksum must be provided.
+
+          For single items, the checksum is computed over the bytes in the item.
+          For bundles, the checksum is computed over a sorted concatenation of all 
+          the checksums (names not included) within the top-level `contents` field
+          (not recursive). The list of checksums are
+          sorted alphabetically (hex-code) before concatenation and a further checksum
+          is performed on the concatenated checksum value.
+          Example below:
+          Data Objects:
+            md5(DO1) = 72794b6d30bc86d92e40a1aa65c880b8
+            md5(DO2) = 5e089d29a18954e68a78ee6a3c6edabd
+          Data Bundle:
+          DB1 = md5( concat( sort( md5(DO1), md5(DO2) ) ) )
+              = md5( concat( sort( 72794b6d30bc86d92e40a1aa65c880b8, 5e089d29a18954e68a78ee6a3c6edabd ) ) )
+              = md5( concat( 5e089d29a18954e68a78ee6a3c6edabd, 72794b6d30bc86d92e40a1aa65c880b8 ) )
+              = md5( 5e089d29a18954e68a78ee6a3c6edabd72794b6d30bc86d92e40a1aa65c880b8 )
+              = f7a29a0422e7d870b10839ad6c985079
       access_methods:
         type: array
         minItems: 1
@@ -317,6 +221,14 @@ definitions:
           $ref: '#/definitions/AccessMethod'
         description: |-
           The list of access methods that can be used to fetch the Data Object.
+          Required for single items; optional for bundles.
+      contents:
+        type: array
+        description: >-
+          If not set, this Object is a single item.
+          If set, this Object is a bundle containing the listed Objects (some of which may be further nested).
+        items:
+          $ref: '#/definitions/BundleObject'
       description:
         type: string
         description: |-
@@ -420,35 +332,26 @@ definitions:
       name:
         type: string
         description: >-
-          A name declared by the Bundle author that must be
+          A name declared by the bundle author that must be
           used when materialising the associated data object, 
           overriding any name directly associated with the object itself.
           This string MUST NOT contain any slashes.
       id:
         type: string
         description: >-
-          A DRS identifier of a Data Object or a nested Data Bundle.
+          A DRS identifier of a Data Object (either a single item or a nested bundle).
       drs_uri:
         type: array
         description: >-
           A list of full DRS identifier URI paths
-          that may be used obtain the Data Object or Data Bundle.
+          that may be used to obtain the Data Object.
           These URIs may be external to this DRS instance.
         example:
           drs://example.com/ga4gh/drs/v1/objects/{object_id}
         items:
           type: string
-      type:
-        type: string
-        enum:
-          - object
-          - bundle
-        description: >-
-          The type of content being referenced.
-          BundleObject of type bundle will need to be recursed further.
     required:
       - name
       - id
-      - type
 tags:
   - name: DataRepositoryService
