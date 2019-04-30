@@ -198,7 +198,7 @@ definitions:
         minItems: 1
         items:
           $ref: '#/definitions/Checksum'
-        description: ]-
+        description: |-
           The checksum of the `Object`. At least one checksum must be provided.
           For blobs, the checksum is computed over the bytes in the blob.
           
