@@ -169,7 +169,7 @@ definitions:
         format: int64
         description: |-
           For blobs, the blob size in bytes.
-          For bundles, the cumulative size, in bytes, of everything listed in the `contents` field.
+          For bundles, the cumulative size, in bytes, of items in the `contents` field.
       created:
         type: string
         format: date-time
@@ -183,8 +183,10 @@ definitions:
           that do not support updates.
       version:
         type: string
-        description: |-
+        description: >-
           A string representing a version.
+
+          (Some systems may use checksum, a RFC3339 timestamp, or an incrementing version number.)
       mime_type:
         type: string
         description: |-
@@ -193,31 +195,27 @@ definitions:
           application/json
       checksums:
         type: array
+        minItems: 1
         items:
           $ref: '#/definitions/Checksum'
-        description: >-
+        description: ]-
           The checksum of the `Object`. At least one checksum must be provided.
-
-
           For blobs, the checksum is computed over the bytes in the blob.
-          
-          For bundles, the checksum is computed over a sorted concatenation of all 
-          the checksums (names not included) of objects in the `contents` field
-          (not recursive). The list of checksums are
-          sorted alphabetically (hex-code) before concatenation and a further checksum
-          is performed on the concatenated checksum value.
-          Example below:
-          ```
-          Data Objects:
-            md5(DO1) = 72794b6d30bc86d92e40a1aa65c880b8
-            md5(DO2) = 5e089d29a18954e68a78ee6a3c6edabd       
-          Data Bundle:
-          DB1 = md5( concat( sort( md5(DO1), md5(DO2) ) ) )
+
+          For bundles, the checksum is computed over a sorted concatenation of the 
+          checksums of its top-level contained objects (not recursive, names not included).
+          The list of checksums is sorted alphabetically (hex-code) before concatenation
+          and a further checksum is performed on the concatenated checksum value.
+
+          For example, if a bundle contains blobs with the following checksums:
+            md5(blob1) = 72794b6d30bc86d92e40a1aa65c880b8
+            md5(blob2) = 5e089d29a18954e68a78ee6a3c6edabd       
+          Then the checksum of the bundle is:
+            md5( concat( sort( md5(blob1), md5(blob2) ) ) )
               = md5( concat( sort( 72794b6d30bc86d92e40a1aa65c880b8, 5e089d29a18954e68a78ee6a3c6edabd ) ) )
               = md5( concat( 5e089d29a18954e68a78ee6a3c6edabd, 72794b6d30bc86d92e40a1aa65c880b8 ) )
               = md5( 5e089d29a18954e68a78ee6a3c6edabd72794b6d30bc86d92e40a1aa65c880b8 )
               = f7a29a0422e7d870b10839ad6c985079
-          ```
       access_methods:
         type: array
         minItems: 1
@@ -230,7 +228,8 @@ definitions:
         type: array
         description: >-
           If not set, this `Object` is a single blob.
-          If set, this `Object` is a bundle containing the listed Objects (some of which may be further nested).
+          
+          If set, this `Object` is a bundle containing the `BundleObject`s in the array (some of which may be further nested).
         items:
           $ref: '#/definitions/BundleObject'
       description:
@@ -244,7 +243,7 @@ definitions:
         description: >-
           A list of strings that can be used to find other metadata 
           about this `Object` from external metadata sources. These
-          aliases can be used to represent the `Object`'s secondary
+          aliases can be used to represent secondary
           accession numbers or external GUIDs.
   AccessURL:
     type: object
