@@ -78,7 +78,7 @@ paths:
     get:
       summary: Get a URL for fetching bytes. 
       description: >-
-        Returns a URL that can be used to fetch the object bytes.
+        Returns a URL that can be used to fetch the bytes of an `Object`.
 
 
         This method only needs to be called when using an `AccessMethod` that contains an `access_id`
@@ -229,7 +229,7 @@ definitions:
         description: >-
           If not set, this `Object` is a single blob.
           
-          If set, this `Object` is a bundle containing the `BundleObject`s in the array (some of which may be further nested).
+          If set, this `Object` is a bundle containing the listed `BundleObject` s (some of which may be further nested).
         items:
           $ref: '#/definitions/BundleObject'
       description:
