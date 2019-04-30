@@ -195,18 +195,18 @@ definitions:
           application/json
       checksums:
         type: array
-        minitems: 1
+        minItems: 1
         items:
           $ref: '#/definitions/Checksum'
         description: ]-
           The checksum of the `Object`. At least one checksum must be provided.
           For blobs, the checksum is computed over the bytes in the blob.
-
+          
           For bundles, the checksum is computed over a sorted concatenation of the 
           checksums of its top-level contained objects (not recursive, names not included).
           The list of checksums is sorted alphabetically (hex-code) before concatenation
           and a further checksum is performed on the concatenated checksum value.
-
+          
           For example, if a bundle contains blobs with the following checksums:
             md5(blob1) = 72794b6d30bc86d92e40a1aa65c880b8
             md5(blob2) = 5e089d29a18954e68a78ee6a3c6edabd       
