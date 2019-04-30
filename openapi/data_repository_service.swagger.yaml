@@ -114,12 +114,12 @@ paths:
           in: path
           required: true
           type: string
-          description: An `id` of a Data Object
+          description: An `id` of an `Object`
         - name: access_id
           in: path
           required: true
           type: string
-          description: An `access_id` from the `access_methods` list of a Data Object
+          description: An `access_id` from the `access_methods` list of an `Object`
       tags:
         - DataRepositoryService
       x-swagger-router-controller: ga4gh.drs.server
@@ -195,7 +195,7 @@ definitions:
           application/json
       checksums:
         type: array
-        minItems: 1
+        minitems: 1
         items:
           $ref: '#/definitions/Checksum'
         description: ]-
@@ -336,18 +336,18 @@ definitions:
         type: string
         description: >-
           A name declared by the bundle author that must be
-          used when materialising the associated data object, 
+          used when materialising this object, 
           overriding any name directly associated with the object itself.
           This string MUST NOT contain any slashes.
       id:
         type: string
         description: >-
-          A DRS identifier of a Data Object (either a single item or a nested bundle).
+          A DRS identifier of an `Object` (either a single blob or a nested bundle).
       drs_uri:
         type: array
         description: >-
           A list of full DRS identifier URI paths
-          that may be used to obtain the Data Object.
+          that may be used to obtain the object.
           These URIs may be external to this DRS instance.
         example:
           drs://example.com/ga4gh/drs/v1/objects/{object_id}
