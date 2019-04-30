@@ -28,7 +28,9 @@ DRS v1 is a read-only API. We expect that each implementation will define its ow
 
 === URI convention
 
-For convenience, including when passing content references to a WES server, we intend to define a recommended URI syntax. The syntax will probably use URI strings beginning with `drs://` -- details are being discussed in https://github.com/ga4gh/data-repository-service-schemas/issues/252[DRS#252].
+For convenience, including when passing content references to a WES server, we define a recommended URI syntax for DRS-accessible content. Strings of the form `drs://<server>/<id>` mean “_you can fetch the DRS content with id `<id>` from the DRS server at `<server>`_ ".
+
+For example, if a WES server was asked to process `drs://drs.example.org/314159`, it would know that it could issue a GET request to `http://drs.example.org/ga4gh/drs/v1/objects/314159` to learn how to fetch that object.
 
 === Standards
 
