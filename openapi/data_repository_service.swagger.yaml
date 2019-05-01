@@ -198,23 +198,34 @@ definitions:
         minItems: 1
         items:
           $ref: '#/definitions/Checksum'
-        description: |-
+        description: >-
           The checksum of the `Object`. At least one checksum must be provided.
+          
           For blobs, the checksum is computed over the bytes in the blob.
+          
           
           For bundles, the checksum is computed over a sorted concatenation of the 
           checksums of its top-level contained objects (not recursive, names not included).
           The list of checksums is sorted alphabetically (hex-code) before concatenation
           and a further checksum is performed on the concatenated checksum value.
           
+          
           For example, if a bundle contains blobs with the following checksums:
+          
             md5(blob1) = 72794b6d30bc86d92e40a1aa65c880b8
-            md5(blob2) = 5e089d29a18954e68a78ee6a3c6edabd       
+            
+            md5(blob2) = 5e089d29a18954e68a78ee6a3c6edabd   
+            
           Then the checksum of the bundle is:
+          
             md5( concat( sort( md5(blob1), md5(blob2) ) ) )
+            
               = md5( concat( sort( 72794b6d30bc86d92e40a1aa65c880b8, 5e089d29a18954e68a78ee6a3c6edabd ) ) )
+              
               = md5( concat( 5e089d29a18954e68a78ee6a3c6edabd, 72794b6d30bc86d92e40a1aa65c880b8 ) )
+              
               = md5( 5e089d29a18954e68a78ee6a3c6edabd72794b6d30bc86d92e40a1aa65c880b8 )
+              
               = f7a29a0422e7d870b10839ad6c985079
       access_methods:
         type: array
