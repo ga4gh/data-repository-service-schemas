@@ -17,7 +17,7 @@ Each implementation of DRS can choose its own id scheme, as long as it follows t
 
 === DRS URIs
 
-For convenience, including when passing content references to a WES server, we define a URI syntax for DRS-accessible content. Strings of the form `drs://<server>/<id>` mean _“you can fetch the DRS content with id `<id>` from the DRS server at `<server>` "_.
+For convenience, including when passing content references to a WES server, we define a URI syntax for DRS-accessible content. Strings of the form `drs://<server>/<id>` mean _“you can fetch the content with DRS id `<id>` from the DRS server at `<server>` "_.
 
 For example, if a WES server was asked to process `drs://drs.example.org/314159`, it would know that it could issue a GET request to `http://drs.example.org/ga4gh/drs/v1/objects/314159` to learn how to fetch that object.
 
