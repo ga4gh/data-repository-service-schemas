@@ -241,9 +241,9 @@ definitions:
         description: >-
           If not set, this `Object` is a single blob.
           
-          If set, this `Object` is a bundle containing the listed `BundleObject` s (some of which may be further nested).
+          If set, this `Object` is a bundle containing the listed `ContentsObject` s (some of which may be further nested).
         items:
-          $ref: '#/definitions/BundleObject'
+          $ref: '#/definitions/ContentsObject'
       description:
         type: string
         description: |-
@@ -341,7 +341,7 @@ definitions:
       license:
         type: object
         description: License information for the exposed API
-  BundleObject:
+  ContentsObject:
     type: object
     properties:
       name:
