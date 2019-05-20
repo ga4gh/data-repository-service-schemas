@@ -154,7 +154,7 @@ definitions:
           sha512
   Object:
     type: object
-    required: ['id', 'size', 'created', 'checksums']
+    required: ['id']
     properties:
       id:
         type: string
@@ -164,12 +164,23 @@ definitions:
         type: string
         description: |-
           A string that can be used to name an `Object`.
-      size:
-        type: integer
-        format: int64
+      type:
+        type: string
+        enum:
+        - blob
+        - bundle
+      blob:
+        $ref: '#/definitions/BlobDescription'
         description: |-
-          For blobs, the blob size in bytes.
-          For bundles, the cumulative size, in bytes, of items in the `contents` field.
+          If `type` is blob, then this property must be present and the `bundle` property must be absent or null
+      bundle:
+        $ref: '#/definitions/BundleDescription'
+        description: |-
+          If `type` is bundle, then this property must be present and the `blob` property must be absent or null
+  CommonDescription:
+    type: object
+    required: ['created']
+    properties:
       created:
         type: string
         format: date-time
@@ -187,6 +198,31 @@ definitions:
           A string representing a version.
 
           (Some systems may use checksum, a RFC3339 timestamp, or an incrementing version number.)
+      description:
+        type: string
+        description: |-
+          A human readable description of the `Object`.
+      aliases:
+        type: array
+        items:
+          type: string
+        description: >-
+          A list of strings that can be used to find other metadata 
+          about this `Object` from external metadata sources. These
+          aliases can be used to represent secondary
+          accession numbers or external GUIDs.
+  BlobDescription:
+    type: object
+    required: ['common', 'size', 'checksums', 'access_methods']
+    properties:
+      common:
+        $ref: '#/definitions/CommonDescription'
+      size:
+        type: integer
+        format: int64
+        description: |-
+          For blobs, the blob size in bytes.
+          For bundles, the cumulative size, in bytes, of items in the `contents` field.
       mime_type:
         type: string
         description: |-
@@ -200,15 +236,38 @@ definitions:
           $ref: '#/definitions/Checksum'
         description: >-
           The checksum of the `Object`. At least one checksum must be provided.
-          
           For blobs, the checksum is computed over the bytes in the blob.
-          
-          
+      access_methods:
+        type: array
+        minItems: 1
+        items:
+          $ref: '#/definitions/AccessMethod'
+        description: |-
+          The list of access methods that can be used to fetch the `Object`.
+  BundleDescription:
+    type: object
+    required: ['common', 'size', 'checksums', 'contents']
+    properties:
+      common:
+        $ref: '#/definitions/CommonDescription'
+      size:
+        type: integer
+        format: int64
+        description: |-
+          For bundles, the cumulative size, in bytes, of items in the `contents` field.
+      checksums:
+        type: array
+        minItems: 1
+        items:
+          $ref: '#/definitions/Checksum'
+        description: >-
+          The checksum of the `Object`. At least one checksum must be provided.
+
           For bundles, the checksum is computed over a sorted concatenation of the 
           checksums of its top-level contained objects (not recursive, names not included).
           The list of checksums is sorted alphabetically (hex-code) before concatenation
           and a further checksum is performed on the concatenated checksum value.
-          
+
           
           For example, if a bundle contains blobs with the following checksums:
           
@@ -228,6 +287,7 @@ definitions:
           = md5( 5e089d2972794b6d )
           
           = f7a29a04
+
       access_methods:
         type: array
         minItems: 1
@@ -235,28 +295,13 @@ definitions:
           $ref: '#/definitions/AccessMethod'
         description: |-
           The list of access methods that can be used to fetch the `Object`.
-          Required for single blobs; optional for bundles.
       contents:
         type: array
         description: >-
-          If not set, this `Object` is a single blob.
-          
-          If set, this `Object` is a bundle containing the listed `ContentsObject` s (some of which may be further nested).
+          Array of `ContentsObject` s (some of which may be further nested).
         items:
           $ref: '#/definitions/ContentsObject'
-      description:
-        type: string
-        description: |-
-          A human readable description of the `Object`.
-      aliases:
-        type: array
-        items:
-          type: string
-        description: >-
-          A list of strings that can be used to find other metadata 
-          about this `Object` from external metadata sources. These
-          aliases can be used to represent secondary
-          accession numbers or external GUIDs.
+
   AccessURL:
     type: object
     required: ['url']
