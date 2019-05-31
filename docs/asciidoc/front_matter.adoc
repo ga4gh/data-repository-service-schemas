@@ -19,8 +19,8 @@ Each implementation of DRS can choose its own id scheme, as long as it follows t
 
 DRS v1 supports two types of content:
 
-* an `Object` is like a file -- it's a single blob of bytes
-* a `Bundle` is like a folder -- it's a collection of other DRS content (either objects or bundles)
+* a _blob_ is like a file -- it's a single blob of bytes, represented by an `Object` without a `contents` array
+* a _bundle_ is like a folder -- it's a collection of other DRS content (either blobs or bundles), represented by an `Object` with a `contents` array
 
 === Read-only
 
