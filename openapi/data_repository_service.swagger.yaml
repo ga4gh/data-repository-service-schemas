@@ -164,6 +164,8 @@ definitions:
         type: string
         description: |-
           A string that can be used to name an `Object`.
+          This string is made up of uppercase and lowercase letters, decimal digits, hypen, period, and underscore [A-Za-z0-9.-_]. See https://tools.ietf.org/html/rfc3986#section-2.3[RFC 3986 § 2.3].
+          All RFC 3986 § 3986 reserved characters including whitespace in DRS IDs must be url-encoded [!*'();:@&=+$,/?#[] ]. See https://tools.ietf.org/html/rfc3986#section-2.2[RFC 3986 § 2.2].
       size:
         type: integer
         format: int64
@@ -350,7 +352,9 @@ definitions:
           A name declared by the bundle author that must be
           used when materialising this object, 
           overriding any name directly associated with the object itself.
-          This string MUST NOT contain any slashes.
+          If this is a content object inside of a bundle then the name must be unique within that bundle. 
+          This string is made up of uppercase and lowercase letters, decimal digits, hypen, period, and underscore [A-Za-z0-9.-_]. See https://tools.ietf.org/html/rfc3986#section-2.3[RFC 3986 § 2.3].
+          All RFC 3986 § 3986 reserved characters including whitespace in DRS IDs must be url-encoded [!*'();:@&=+$,/?#[] ]. See https://tools.ietf.org/html/rfc3986#section-2.2[RFC 3986 § 2.2].
       id:
         type: string
         description: >-
