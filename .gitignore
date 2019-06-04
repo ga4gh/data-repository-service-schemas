@@ -97,3 +97,5 @@ docs/html5/
 docs/pdf/
 docs/asciidoc/swagger2markup/
 spec/
+web_deploy/
+node_modules/
