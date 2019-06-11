@@ -71,6 +71,22 @@ paths:
           in: path
           required: true
           type: string
+        - in: query
+          name: expand
+          type: boolean
+          default: false
+          description: >-
+            If false and the object_id refers to a bundle, then the ObjectContents array
+            contains only those objects directly contained in the bundle. That is, if the
+            bundle contains other bundles, those other bundles are not recursively
+            included in the result.
+            
+            If true and the object_id refers to a bundle, then the entire set of objects
+            in the bundle is expanded. That is, if the bundle contains aother bundles,
+            then those other bundles are recursively expanded and included in the result.
+            Recursion continues through the entire sub-tree of the bundle.
+
+            If the object_id refers to a blob, then the query parameter is ignored.
       tags:
         - DataRepositoryService
       x-swagger-router-controller: ga4gh.drs.server
@@ -361,10 +377,22 @@ definitions:
           A list of full DRS identifier URI paths
           that may be used to obtain the object.
           These URIs may be external to this DRS instance.
+
+          If this ContentsObject describes a nested bundle, the drs_uri array may be
+          empty. A DRS server need not provide an object id or DRS URI for a nested bundle.
         example:
           drs://example.com/ga4gh/drs/v1/objects/{object_id}
         items:
           type: string
+      contents:
+        type: array
+        description: >-
+          If this ObjectContents describes a nested bundle and the caller specified
+          "?expand=true" on the request, then this contents array must be present and
+          describe the objects within the nested bundle.
+        items:
+          $ref: '#/definitions/ContentsObject'
+        
     required:
       - name
       - id
