@@ -76,7 +76,7 @@ paths:
           type: boolean
           default: false
           description: >-
-            If false and the object_id refers to a bundle, then the ObjectContents array
+            If false and the object_id refers to a bundle, then the ObjectsContent array
             contains only those objects directly contained in the bundle. That is, if the
             bundle contains other bundles, those other bundles are not recursively
             included in the result.
@@ -371,15 +371,14 @@ definitions:
         type: string
         description: >-
           A DRS identifier of an `Object` (either a single blob or a nested bundle).
+          If this ContentsObject is an object within a nested bundle, then the id is
+          optional. Otherwise, the id is required.
       drs_uri:
         type: array
         description: >-
           A list of full DRS identifier URI paths
           that may be used to obtain the object.
           These URIs may be external to this DRS instance.
-
-          If this ContentsObject describes a nested bundle, the drs_uri array may be
-          empty. A DRS server need not provide an object id or DRS URI for a nested bundle.
         example:
           drs://example.com/ga4gh/drs/v1/objects/{object_id}
         items:
@@ -395,6 +394,5 @@ definitions:
         
     required:
       - name
-      - id
 tags:
   - name: DataRepositoryService
