@@ -595,7 +595,10 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="ulist">
 <ul>
 <li>
-<p>DRS IDs are URL-safe text strings made up of alphanumeric characters and any of [.-_/]</p>
+<p>DRS IDs are strings made up of uppercase and lowercase letters, decimal digits, hypen, period, underscore and tilde [A-Za-z0-9.-_~]. See <a href="https://tools.ietf.org/html/rfc3986#section-2.3">RFC 3986 § 2.3</a>.</p>
+</li>
+<li>
+<p>Note to server implementors: internal IDs can contain other characters, but they MUST be encoded into valid DRS IDs whenever exposed by the API.</p>
 </li>
 <li>
 <p>One DRS ID MUST always return the same object data (or, in the case of a collection, the same set of objects). This constraint aids with reproducibility.</p>
@@ -1621,7 +1624,7 @@ sha512</p></td>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-06-17 17:07:36 UTC
+Last updated 2019-06-17 17:09:52 UTC
 </div>
 </div>
 </body>

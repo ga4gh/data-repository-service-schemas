@@ -44,6 +44,15 @@ paths:
           description: The `Object` was found successfully.
           schema:
             $ref: '#/definitions/Object'
+        '202':
+          description: |
+            The operation is delayed and will continue asynchronously. The client should retry this same request after the delay specified by Retry-After header.
+          headers:
+            Retry-After:
+              description: |
+                Delay in seconds. The client should retry this same request after waiting for this duration. To simplify client response processing, this must be an integral relative time in seconds. This value SHOULD represent the minimum duration the client should wait before attempting the operation again with a reasonable expectation of success. When it is not feasible for the server to determine the actual expected delay, the server may return a brief, fixed value instead.
+              type: integer
+              format: int64
         '400':
           description: The request is malformed.
           schema:
@@ -85,6 +94,15 @@ paths:
           description: The access URL was found successfully.
           schema:
             $ref: '#/definitions/AccessURL'
+        '202':
+          description: |
+            The operation is delayed and will continue asynchronously. The client should retry this same request after the delay specified by Retry-After header.
+          headers:
+            Retry-After:
+              description: |
+                Delay in seconds. The client should retry this same request after waiting for this duration. To simplify client response processing, this must be an integral relative time in seconds. This value SHOULD represent the minimum duration the client should wait before attempting the operation again with a reasonable expectation of success. When it is not feasible for the server to determine the actual expected delay, the server may return a brief, fixed value instead.
+              type: integer
+              format: int64
         '400':
           description: The request is malformed.
           schema:
