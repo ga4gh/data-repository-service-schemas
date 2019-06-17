@@ -10,7 +10,8 @@ The primary functionality of DRS is to map a logical ID to a means for physicall
 
 Each implementation of DRS can choose its own id scheme, as long as it follows these guidelines:
 
-* DRS IDs are URL-safe text strings made up of alphanumeric characters and any of [.-_/]
+* DRS IDs are strings made up of uppercase and lowercase letters, decimal digits, hypen, period, underscore and tilde [A-Za-z0-9.-_~]. See https://tools.ietf.org/html/rfc3986#section-2.3[RFC 3986 § 2.3].
+* Note to server implementors: internal IDs can contain other characters, but they MUST be encoded into valid DRS IDs whenever exposed by the API.   
 * One DRS ID MUST always return the same object data (or, in the case of a collection, the same set of objects). This constraint aids with reproducibility.
 * DRS v1 does NOT support semantics around multiple versions of an object. (For example, there’s no notion of “get latest version” or “list all versions”.) Individual implementation MAY choose an ID scheme that includes version hints.
 * DRS implementations MAY have more than one ID that maps to the same object.
