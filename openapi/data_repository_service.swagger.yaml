@@ -76,7 +76,7 @@ paths:
           type: boolean
           default: false
           description: >-
-            If false and the object_id refers to a bundle, then the ObjectsContent array
+            If false and the object_id refers to a bundle, then the ContentsObject array
             contains only those objects directly contained in the bundle. That is, if the
             bundle contains other bundles, those other bundles are not recursively
             included in the result.
