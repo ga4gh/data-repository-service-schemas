@@ -161,7 +161,9 @@ definitions:
         description: An identifier unique to this `Object`.
       name:
         type: string
-        description: A string that can be used to name an `Object`.
+        description: |-
+          A string that can be used to name an `Object`.
+          This string is made up of uppercase and lowercase letters, decimal digits, hypen, period, and underscore [A-Za-z0-9.-_]. See http://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap03.html#tag_03_282[portable filenames].
       size:
         type: integer
         format: int64
@@ -307,7 +309,7 @@ definitions:
     properties:
       name:
         type: string
-        description: 'A name declared by the bundle author that must be used when materialising this object,  overriding any name directly associated with the object itself. This string MUST NOT contain any slashes.'
+        description: 'A name declared by the bundle author that must be used when materialising this object,  overriding any name directly associated with the object itself. The name must be unique with the containing bundle.  This string is made up of uppercase and lowercase letters, decimal digits, hypen, period, and underscore [A-Za-z0-9.-_]. See http://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap03.html#tag_03_282[portable filenames].'
       id:
         type: string
         description: A DRS identifier of an `Object` (either a single blob or a nested bundle).

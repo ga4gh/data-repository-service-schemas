@@ -439,9 +439,9 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_drs_api_principles">3. DRS API Principles</a>
 <ul class="sectlevel2">
 <li><a href="#_drs_ids">3.1. DRS IDs</a></li>
-<li><a href="#_drs_datatypes">3.2. DRS Datatypes</a></li>
-<li><a href="#_read_only">3.3. Read-only</a></li>
-<li><a href="#_uri_convention">3.4. URI convention</a></li>
+<li><a href="#_drs_uris">3.2. DRS URIs</a></li>
+<li><a href="#_drs_datatypes">3.3. DRS Datatypes</a></li>
+<li><a href="#_read_only">3.4. Read-only</a></li>
 <li><a href="#_standards">3.5. Standards</a></li>
 </ul>
 </li>
@@ -610,7 +610,16 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 </div>
 <div class="sect2">
-<h3 id="_drs_datatypes"><a class="anchor" href="#_drs_datatypes"></a><a class="link" href="#_drs_datatypes">3.2. DRS Datatypes</a></h3>
+<h3 id="_drs_uris"><a class="anchor" href="#_drs_uris"></a><a class="link" href="#_drs_uris">3.2. DRS URIs</a></h3>
+<div class="paragraph">
+<p>For convenience, including when passing content references to a WES server, we define a URI syntax for DRS-accessible content. Strings of the form <code>drs://&lt;server&gt;/&lt;id&gt;</code> mean <em>“you can fetch the content with DRS id <code>&lt;id&gt;</code> from the DRS server at <code>&lt;server&gt;</code> "</em>.</p>
+</div>
+<div class="paragraph">
+<p>For example, if a WES server was asked to process <code>drs://drs.example.org/314159</code>, it would know that it could issue a GET request to <code><a href="http://drs.example.org/ga4gh/drs/v1/objects/314159" class="bare">http://drs.example.org/ga4gh/drs/v1/objects/314159</a></code> to learn how to fetch that object.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_drs_datatypes"><a class="anchor" href="#_drs_datatypes"></a><a class="link" href="#_drs_datatypes">3.3. DRS Datatypes</a></h3>
 <div class="paragraph">
 <p>DRS v1 supports two types of content:</p>
 </div>
@@ -626,15 +635,9 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 </div>
 <div class="sect2">
-<h3 id="_read_only"><a class="anchor" href="#_read_only"></a><a class="link" href="#_read_only">3.3. Read-only</a></h3>
+<h3 id="_read_only"><a class="anchor" href="#_read_only"></a><a class="link" href="#_read_only">3.4. Read-only</a></h3>
 <div class="paragraph">
 <p>DRS v1 is a read-only API. We expect that each implementation will define its own mechanisms and interfaces (graphical and/or programmatic) for adding and updating data.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_uri_convention"><a class="anchor" href="#_uri_convention"></a><a class="link" href="#_uri_convention">3.4. URI convention</a></h3>
-<div class="paragraph">
-<p>For convenience, including when passing content references to a WES server, we intend to define a recommended URI syntax. The syntax will probably use URI strings beginning with <code>drs://</code>&#8201;&#8212;&#8201;details are being discussed in <a href="https://github.com/ga4gh/data-repository-service-schemas/issues/252">DRS#252</a>.</p>
 </div>
 </div>
 <div class="sect2">
@@ -1618,7 +1621,7 @@ sha512</p></td>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-06-17 03:44:05 UTC
+Last updated 2019-06-17 17:07:36 UTC
 </div>
 </div>
 </body>
