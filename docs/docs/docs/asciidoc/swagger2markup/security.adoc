@@ -1,0 +1,13 @@
+
+[[_securityscheme]]
+== Security
+
+[[_authtoken]]
+=== authToken
+[%hardbreaks]
+__Type__ : apiKey
+__Name__ : Authorization
+__In__ : HEADER
+
+
+

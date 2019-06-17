@@ -1,0 +1,454 @@
+swagger: '2.0'
+basePath: '/ga4gh/drs/v1'
+info:
+  title: Data Repository Service
+  version: 0.1.0
+  description: 'https://github.com/ga4gh/data-repository-service-schemas'
+  termsOfService: 'https://www.ga4gh.org/terms-and-conditions/'
+  contact:
+    name: GA4GH Cloud Work Stream
+    email: ga4gh-cloud@ga4gh.org
+  license:
+    name: Apache 2.0
+    url: 'https://raw.githubusercontent.com/ga4gh/data-repository-service-schemas/master/LICENSE'
+schemes:
+  - https
+consumes:
+  - application/json
+produces:
+  - application/json
+security:
+  - {}
+  - authToken: []
+paths:
+  '/service-info':
+    get:
+      summary: Get information about this implementation.
+      description: >-
+        May return service version and other information.
+      operationId: GetServiceInfo
+      responses:
+        '200':
+          description: Service information returned successfully
+          schema:
+            $ref: '#/definitions/ServiceInfo'
+      tags:
+        - DataRepositoryService
+      x-swagger-router-controller: ga4gh.drs.server
+  '/bundles/{bundle_id}':
+    get:
+      summary: Get info about a Data Bundle.
+      description: >-
+        Returns bundle metadata, and a list of ids that can be used to fetch bundle contents.
+      operationId: GetBundle
+      responses:
+        '200':
+          description: The Data Bundle was found successfully.
+          schema:
+            $ref: '#/definitions/Bundle'
+        '400':
+          description: The request is malformed.
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: The request is unauthorized.
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: The requester is not authorized to perform this action.
+          schema:
+            $ref: '#/definitions/Error'
+        '404':
+          description: The requested Data Bundle wasn't found.
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: An unexpected error occurred.
+          schema:
+            $ref: '#/definitions/Error'
+      parameters:
+        - name: bundle_id
+          in: path
+          required: true
+          type: string
+      tags:
+        - DataRepositoryService
+      x-swagger-router-controller: ga4gh.drs.server
+  '/objects/{object_id}':
+    get:
+      summary: Get info about a Data Object.
+      description: >-
+        Returns object metadata, and a list of access methods that can be used to fetch object bytes.
+      operationId: GetObject
+      responses:
+        '200':
+          description: The Data Object was found successfully.
+          schema:
+            $ref: '#/definitions/Object'
+        '400':
+          description: The request is malformed.
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: The request is unauthorized.
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: The requester is not authorized to perform this action.
+          schema:
+            $ref: '#/definitions/Error'
+        '404':
+          description: The requested Data Object wasn't found
+          schema:
+            $ref: '#/definitions/Error'
+
+        '500':
+          description: An unexpected error occurred.
+          schema:
+            $ref: '#/definitions/Error'
+      parameters:
+        - name: object_id
+          in: path
+          required: true
+          type: string
+      tags:
+        - DataRepositoryService
+      x-swagger-router-controller: ga4gh.drs.server
+  '/objects/{object_id}/access/{access_id}':
+    get:
+      summary: Get a URL for fetching bytes. 
+      description: >-
+        Returns a URL that can be used to fetch the object bytes.
+
+
+        This method only needs to be called when using an `AccessMethod` that contains an `access_id`
+        (e.g., for servers that use signed URLs for fetching object bytes).
+      operationId: GetAccessURL
+      responses:
+        '200':
+          description: The access URL was found successfully.
+          schema:
+            $ref: '#/definitions/AccessURL'
+        '400':
+          description: The request is malformed.
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: The request is unauthorized.
+          schema:
+            $ref: '#/definitions/Error'
+        '404':
+          description: The requested access URL wasn't found
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: The requester is not authorized to perform this action.
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: An unexpected error occurred.
+          schema:
+            $ref: '#/definitions/Error'
+      parameters:
+        - name: object_id
+          in: path
+          required: true
+          type: string
+          description: An `id` of a Data Object
+        - name: access_id
+          in: path
+          required: true
+          type: string
+          description: An `access_id` from the `access_methods` list of a Data Object
+      tags:
+        - DataRepositoryService
+      x-swagger-router-controller: ga4gh.drs.server
+securityDefinitions:
+  authToken:
+    description: |
+      A valid authorization token must be passed in the 'Authorization' header.
+      Example syntax for using 'Authorization' header :
+        Bearer: token_string
+    type: apiKey
+    name: Authorization
+    in: header
+definitions:
+  Checksum:
+    type: object
+    required:
+      - checksum
+    properties:
+      checksum:
+        type: string
+        description: 'The hex-string encoded checksum for the data'
+      type:
+        type: string
+        description: |-
+          The digest method used to create the checksum. If left unspecified md5
+          will be assumed.
+
+          possible values:
+          md5               # most blob stores provide a checksum using this
+          etag              # multipart uploads to blob stores
+          sha256
+          sha512
+  Bundle:
+    type: object
+    required: ['id', 'size', 'created', 'checksums', 'contents']
+    properties:
+      id:
+        type: string
+        description: >-
+          An identifier unique to this Data Bundle.
+      name:
+        type: string
+        description: >-
+          A string that can be used to name a Data Bundle.
+      size:
+        type: string
+        format: int64
+        description: >-
+          The cumulative size, in bytes, of all Data Objects and Bundles listed in
+          the `contents` field.
+      created:
+        type: string
+        format: date-time
+        description: >-
+          Timestamp of Bundle creation in RFC3339.
+      updated:
+        type: string
+        format: date-time
+        description: >-
+          Timestamp of Bundle update in RFC3339, identical to create timestamp in
+          systems that do not support updates.
+      version:
+        type: string
+        description: >-
+          A string representing a version. (Some systems may use checksum, a
+          RFC3339 timestamp, or an incrementing version number.)
+      checksums:
+        type: array
+        description: |-
+          The checksum of the Data Bundle. At least one checksum must be provided.
+          
+          The Data Bundle checksum is computed over a sorted concatenation of all 
+          the checksums (names not included) within the top-level 'contents' of the
+          Bundle (not recursive). The list of Data Object or Bundle checksums are 
+          sorted alphabetically (hex-code) before concatenation and a further checksum
+          is performed on the concatenated checksum value.
+          Example below:
+          Data Ojects:
+            md5(DO1) = 72794b6d30bc86d92e40a1aa65c880b8
+            md5(DO2) = 5e089d29a18954e68a78ee6a3c6edabd
+          Data Bundle:
+          DB1 = md5( concat( sort( md5(DO1), md5(DO2) ) ) )
+              = md5( concat( sort( 72794b6d30bc86d92e40a1aa65c880b8, 5e089d29a18954e68a78ee6a3c6edabd ) ) )
+              = md5( concat( 5e089d29a18954e68a78ee6a3c6edabd, 72794b6d30bc86d92e40a1aa65c880b8 ) )
+              = md5( 5e089d29a18954e68a78ee6a3c6edabd72794b6d30bc86d92e40a1aa65c880b8 )
+              = f7a29a0422e7d870b10839ad6c985079
+        items:
+          $ref: '#/definitions/Checksum'
+      description:
+        type: string
+        description: A human readable description of the Data Bundle.
+      aliases:
+        type: array
+        description: >-
+          A list of strings that can be used to find other metadata 
+          about this Data Bundle from external metadata sources. These
+          aliases can be used to represent the Data Bundle's secondary
+          accession numbers or external GUIDs.
+        items:
+          type: string
+      contents:
+        type: array
+        description: >-
+          The list of Data Objects and Data Bundles contained by this Data Bundle.
+        items:
+          $ref: '#/definitions/BundleObject'
+  Object:
+    type: object
+    required: ['id', 'size', 'created', 'checksums', 'access_methods']
+    properties:
+      id:
+        type: string
+        description: |-
+          An identifier unique to this Data Object.
+      name:
+        type: string
+        description: |-
+          A string that can be used to name a Data Object.
+      size:
+        type: integer
+        format: int64
+        description: |-
+          The object size in bytes.
+      created:
+        type: string
+        format: date-time
+        description: |-
+          Timestamp of object creation in RFC3339.
+      updated:
+        type: string
+        format: date-time
+        description: >-
+          Timestamp of Object update in RFC3339, identical to create timestamp in systems
+          that do not support updates.
+      version:
+        type: string
+        description: |-
+          A string representing a version.
+      mime_type:
+        type: string
+        description: |-
+          A string providing the mime-type of the Data Object.
+        example:
+          application/json
+      checksums:
+        type: array
+        items:
+          $ref: '#/definitions/Checksum'
+        description: |-
+          The checksum of the Data Object. At least one checksum must be provided.
+      access_methods:
+        type: array
+        minItems: 1
+        items:
+          $ref: '#/definitions/AccessMethod'
+        description: |-
+          The list of access methods that can be used to fetch the Data Object.
+      description:
+        type: string
+        description: |-
+          A human readable description of the Data Object.
+      aliases:
+        type: array
+        items:
+          type: string
+        description: >-
+          A list of strings that can be used to find other metadata 
+          about this Data Object from external metadata sources. These
+          aliases can be used to represent the Data Object's secondary
+          accession numbers or external GUIDs.
+  AccessURL:
+    type: object
+    required: ['url']
+    properties:
+      url:
+        type: string
+        description: A fully resolvable URL that can be used to fetch the actual object bytes.
+      headers:
+        type: array
+        items:
+          type: string
+        description: >-
+          An optional list of headers to include in the HTTP request to `url`.
+          These headers can be used to provide auth tokens required to fetch the object bytes.
+        example:
+          Authorization: Basic Z2E0Z2g6ZHJz
+  AccessMethod:
+    type: object
+    required:
+      - type
+    properties:
+      type:
+        type: string
+        enum:
+        - s3
+        - gs
+        - ftp
+        - gsiftp
+        - globus
+        - htsget
+        - https
+        - file
+        description: >-
+          Type of the access method.
+      access_url:
+        $ref: '#/definitions/AccessURL'
+        description: >-
+          An `AccessURL` that can be used to fetch the actual object bytes.
+          Note that at least one of `access_url` and `access_id` must be provided.
+      access_id:
+        type: string
+        description: >-
+          An arbitrary string to be passed to the `/access` method to get an `AccessURL`.
+          This string must be unique per object.
+          Note that at least one of `access_url` and `access_id` must be provided.
+      region:
+        type: string
+        description: >-
+          Name of the region in the cloud service provider that the object belongs to.
+        example:
+          us-east-1
+  Error:
+    description:
+      An object that can optionally include information about the error.
+    type: object
+    properties:
+      msg:
+        type: string
+        description: A detailed error message.
+      status_code:
+        type: integer
+        description: The integer representing the HTTP status code (e.g. 200, 404).
+  ServiceInfo:
+    type: object
+    required:
+      - version
+    description: >-
+      Useful information about the running service.
+    properties:
+      version:
+        type: string
+        description: Service version
+      title:
+        type: string
+        description: Service name
+      description:
+        type: string
+        description: Service description
+      contact:
+        type: object
+        description: Maintainer contact info
+      license:
+        type: object
+        description: License information for the exposed API
+  BundleObject:
+    type: object
+    properties:
+      name:
+        type: string
+        description: >-
+          A name declared by the Bundle author that must be
+          used when materialising the associated data object, 
+          overriding any name directly associated with the object itself.
+          This string MUST NOT contain any slashes.
+      id:
+        type: string
+        description: >-
+          A DRS identifier of a Data Object or a nested Data Bundle.
+      drs_uri:
+        type: array
+        description: >-
+          A list of full DRS identifier URI paths
+          that may be used obtain the Data Object or Data Bundle.
+          These URIs may be external to this DRS instance.
+        example:
+          drs://example.com/ga4gh/drs/v1/objects/{object_id}
+        items:
+          type: string
+      type:
+        type: string
+        enum:
+          - object
+          - bundle
+        description: >-
+          The type of content being referenced.
+          BundleObject of type bundle will need to be recursed further.
+    required:
+      - name
+      - id
+      - type
+tags:
+  - name: DataRepositoryService
