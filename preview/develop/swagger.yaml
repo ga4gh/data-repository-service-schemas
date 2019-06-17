@@ -78,6 +78,14 @@ paths:
           in: path
           required: true
           type: string
+        - in: query
+          name: expand
+          type: boolean
+          default: false
+          description: |-
+            If false and the object_id refers to a bundle, then the ContentsObject array contains only those objects directly contained in the bundle. That is, if the bundle contains other bundles, those other bundles are not recursively included in the result.
+            If true and the object_id refers to a bundle, then the entire set of objects in the bundle is expanded. That is, if the bundle contains aother bundles, then those other bundles are recursively expanded and included in the result. Recursion continues through the entire sub-tree of the bundle.
+            If the object_id refers to a blob, then the query parameter is ignored.
       tags:
         - DataRepositoryService
       x-swagger-router-controller: ga4gh.drs.server
@@ -335,15 +343,19 @@ definitions:
         description: 'A name declared by the bundle author that must be used when materialising this object,  overriding any name directly associated with the object itself. The name must be unique with the containing bundle.  This string is made up of uppercase and lowercase letters, decimal digits, hypen, period, and underscore [A-Za-z0-9.-_]. See http://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap03.html#tag_03_282[portable filenames].'
       id:
         type: string
-        description: A DRS identifier of an `Object` (either a single blob or a nested bundle).
+        description: 'A DRS identifier of an `Object` (either a single blob or a nested bundle). If this ContentsObject is an object within a nested bundle, then the id is optional. Otherwise, the id is required.'
       drs_uri:
         type: array
         description: A list of full DRS identifier URI paths that may be used to obtain the object. These URIs may be external to this DRS instance.
         example: 'drs://example.com/ga4gh/drs/v1/objects/{object_id}'
         items:
           type: string
+      contents:
+        type: array
+        description: 'If this ContentsObject describes a nested bundle and the caller specified "?expand=true" on the request, then this contents array must be present and describe the objects within the nested bundle.'
+        items:
+          $ref: '#/definitions/ContentsObject'
     required:
       - name
-      - id
 tags:
   - name: DataRepositoryService
