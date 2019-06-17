@@ -386,7 +386,7 @@ definitions:
       contents:
         type: array
         description: >-
-          If this ObjectContents describes a nested bundle and the caller specified
+          If this ContentsObject describes a nested bundle and the caller specified
           "?expand=true" on the request, then this contents array must be present and
           describe the objects within the nested bundle.
         items:
