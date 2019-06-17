@@ -50,71 +50,14 @@
         "x-swagger-router-controller": "ga4gh.drs.server"
       }
     },
-    "/bundles/{bundle_id}": {
-      "get": {
-        "summary": "Get info about a Data Bundle.",
-        "description": "Returns bundle metadata, and a list of ids that can be used to fetch bundle contents.",
-        "operationId": "GetBundle",
-        "responses": {
-          "200": {
-            "description": "The Data Bundle was found successfully.",
-            "schema": {
-              "$ref": "#/definitions/Bundle"
-            }
-          },
-          "400": {
-            "description": "The request is malformed.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          },
-          "401": {
-            "description": "The request is unauthorized.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          },
-          "403": {
-            "description": "The requester is not authorized to perform this action.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          },
-          "404": {
-            "description": "The requested Data Bundle wasn't found.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          },
-          "500": {
-            "description": "An unexpected error occurred.",
-            "schema": {
-              "$ref": "#/definitions/Error"
-            }
-          }
-        },
-        "parameters": [
-          {
-            "name": "bundle_id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          }
-        ],
-        "tags": [
-          "DataRepositoryService"
-        ],
-        "x-swagger-router-controller": "ga4gh.drs.server"
-      }
-    },
     "/objects/{object_id}": {
       "get": {
-        "summary": "Get info about a Data Object.",
+        "summary": "Get info about an `Object`.",
         "description": "Returns object metadata, and a list of access methods that can be used to fetch object bytes.",
         "operationId": "GetObject",
         "responses": {
           "200": {
-            "description": "The Data Object was found successfully.",
+            "description": "The `Object` was found successfully.",
             "schema": {
               "$ref": "#/definitions/Object"
             }
@@ -138,7 +81,7 @@
             }
           },
           "404": {
-            "description": "The requested Data Object wasn't found",
+            "description": "The requested `Object` wasn't found",
             "schema": {
               "$ref": "#/definitions/Error"
             }
@@ -167,7 +110,7 @@
     "/objects/{object_id}/access/{access_id}": {
       "get": {
         "summary": "Get a URL for fetching bytes.",
-        "description": "Returns a URL that can be used to fetch the object bytes.\n\nThis method only needs to be called when using an `AccessMethod` that contains an `access_id` (e.g., for servers that use signed URLs for fetching object bytes).",
+        "description": "Returns a URL that can be used to fetch the bytes of an `Object`.\n\nThis method only needs to be called when using an `AccessMethod` that contains an `access_id` (e.g., for servers that use signed URLs for fetching object bytes).",
         "operationId": "GetAccessURL",
         "responses": {
           "200": {
@@ -213,14 +156,14 @@
             "in": "path",
             "required": true,
             "type": "string",
-            "description": "An `id` of a Data Object"
+            "description": "An `id` of an `Object`"
           },
           {
             "name": "access_id",
             "in": "path",
             "required": true,
             "type": "string",
-            "description": "An `access_id` from the `access_methods` list of a Data Object"
+            "description": "An `access_id` from the `access_methods` list of an `Object`"
           }
         ],
         "tags": [
@@ -255,92 +198,27 @@
         }
       }
     },
-    "Bundle": {
-      "type": "object",
-      "required": [
-        "id",
-        "size",
-        "created",
-        "checksums",
-        "contents"
-      ],
-      "properties": {
-        "id": {
-          "type": "string",
-          "description": "An identifier unique to this Data Bundle."
-        },
-        "name": {
-          "type": "string",
-          "description": "A string that can be used to name a Data Bundle."
-        },
-        "size": {
-          "type": "string",
-          "format": "int64",
-          "description": "The cumulative size, in bytes, of all Data Objects and Bundles listed in the `contents` field."
-        },
-        "created": {
-          "type": "string",
-          "format": "date-time",
-          "description": "Timestamp of Bundle creation in RFC3339."
-        },
-        "updated": {
-          "type": "string",
-          "format": "date-time",
-          "description": "Timestamp of Bundle update in RFC3339, identical to create timestamp in systems that do not support updates."
-        },
-        "version": {
-          "type": "string",
-          "description": "A string representing a version. (Some systems may use checksum, a RFC3339 timestamp, or an incrementing version number.)"
-        },
-        "checksums": {
-          "type": "array",
-          "description": "The checksum of the Data Bundle. At least one checksum must be provided.\n\nThe Data Bundle checksum is computed over a sorted concatenation of all \nthe checksums (names not included) within the top-level 'contents' of the\nBundle (not recursive). The list of Data Object or Bundle checksums are \nsorted alphabetically (hex-code) before concatenation and a further checksum\nis performed on the concatenated checksum value.\nExample below:\nData Ojects:\n  md5(DO1) = 72794b6d30bc86d92e40a1aa65c880b8\n  md5(DO2) = 5e089d29a18954e68a78ee6a3c6edabd\nData Bundle:\nDB1 = md5( concat( sort( md5(DO1), md5(DO2) ) ) )\n    = md5( concat( sort( 72794b6d30bc86d92e40a1aa65c880b8, 5e089d29a18954e68a78ee6a3c6edabd ) ) )\n    = md5( concat( 5e089d29a18954e68a78ee6a3c6edabd, 72794b6d30bc86d92e40a1aa65c880b8 ) )\n    = md5( 5e089d29a18954e68a78ee6a3c6edabd72794b6d30bc86d92e40a1aa65c880b8 )\n    = f7a29a0422e7d870b10839ad6c985079",
-          "items": {
-            "$ref": "#/definitions/Checksum"
-          }
-        },
-        "description": {
-          "type": "string",
-          "description": "A human readable description of the Data Bundle."
-        },
-        "aliases": {
-          "type": "array",
-          "description": "A list of strings that can be used to find other metadata  about this Data Bundle from external metadata sources. These aliases can be used to represent the Data Bundle's secondary accession numbers or external GUIDs.",
-          "items": {
-            "type": "string"
-          }
-        },
-        "contents": {
-          "type": "array",
-          "description": "The list of Data Objects and Data Bundles contained by this Data Bundle.",
-          "items": {
-            "$ref": "#/definitions/BundleObject"
-          }
-        }
-      }
-    },
     "Object": {
       "type": "object",
       "required": [
         "id",
         "size",
         "created",
-        "checksums",
-        "access_methods"
+        "checksums"
       ],
       "properties": {
         "id": {
           "type": "string",
-          "description": "An identifier unique to this Data Object."
+          "description": "An identifier unique to this `Object`."
         },
         "name": {
           "type": "string",
-          "description": "A string that can be used to name a Data Object."
+          "description": "A string that can be used to name an `Object`."
         },
         "size": {
           "type": "integer",
           "format": "int64",
-          "description": "The object size in bytes."
+          "description": "For blobs, the blob size in bytes.\nFor bundles, the cumulative size, in bytes, of items in the `contents` field."
         },
         "created": {
           "type": "string",
@@ -350,23 +228,24 @@
         "updated": {
           "type": "string",
           "format": "date-time",
-          "description": "Timestamp of Object update in RFC3339, identical to create timestamp in systems that do not support updates."
+          "description": "Timestamp of `Object` update in RFC3339, identical to create timestamp in systems that do not support updates."
         },
         "version": {
           "type": "string",
-          "description": "A string representing a version."
+          "description": "A string representing a version.\n(Some systems may use checksum, a RFC3339 timestamp, or an incrementing version number.)"
         },
         "mime_type": {
           "type": "string",
-          "description": "A string providing the mime-type of the Data Object.",
+          "description": "A string providing the mime-type of the `Object`.",
           "example": "application/json"
         },
         "checksums": {
           "type": "array",
+          "minItems": 1,
           "items": {
             "$ref": "#/definitions/Checksum"
           },
-          "description": "The checksum of the Data Object. At least one checksum must be provided."
+          "description": "The checksum of the `Object`. At least one checksum must be provided.\nFor blobs, the checksum is computed over the bytes in the blob.\n\nFor bundles, the checksum is computed over a sorted concatenation of the  checksums of its top-level contained objects (not recursive, names not included). The list of checksums is sorted alphabetically (hex-code) before concatenation and a further checksum is performed on the concatenated checksum value.\n\nFor example, if a bundle contains blobs with the following checksums:\nmd5(blob1) = 72794b6d\nmd5(blob2) = 5e089d29   \n\nThen the checksum of the bundle is:\nmd5( concat( sort( md5(blob1), md5(blob2) ) ) )\n= md5( concat( sort( 72794b6d, 5e089d29 ) ) )\n= md5( concat( 5e089d29, 72794b6d ) )\n= md5( 5e089d2972794b6d )\n= f7a29a04"
         },
         "access_methods": {
           "type": "array",
@@ -374,18 +253,25 @@
           "items": {
             "$ref": "#/definitions/AccessMethod"
           },
-          "description": "The list of access methods that can be used to fetch the Data Object."
+          "description": "The list of access methods that can be used to fetch the `Object`.\nRequired for single blobs; optional for bundles."
+        },
+        "contents": {
+          "type": "array",
+          "description": "If not set, this `Object` is a single blob.\nIf set, this `Object` is a bundle containing the listed `ContentsObject` s (some of which may be further nested).",
+          "items": {
+            "$ref": "#/definitions/ContentsObject"
+          }
         },
         "description": {
           "type": "string",
-          "description": "A human readable description of the Data Object."
+          "description": "A human readable description of the `Object`."
         },
         "aliases": {
           "type": "array",
           "items": {
             "type": "string"
           },
-          "description": "A list of strings that can be used to find other metadata  about this Data Object from external metadata sources. These aliases can be used to represent the Data Object's secondary accession numbers or external GUIDs."
+          "description": "A list of strings that can be used to find other metadata  about this `Object` from external metadata sources. These aliases can be used to represent secondary accession numbers or external GUIDs."
         }
       }
     },
@@ -463,64 +349,61 @@
     "ServiceInfo": {
       "type": "object",
       "required": [
+        "id",
+        "name",
         "version"
       ],
       "description": "Useful information about the running service.",
       "properties": {
-        "version": {
+        "id": {
           "type": "string",
-          "description": "Service version"
+          "description": "Unique ID of this service. Reverse domain name notation is recommended, though not required."
         },
-        "title": {
+        "name": {
           "type": "string",
-          "description": "Service name"
+          "description": "Name of this specific service."
         },
         "description": {
           "type": "string",
-          "description": "Service description"
+          "description": "Description of the service."
         },
-        "contact": {
-          "type": "object",
-          "description": "Maintainer contact info"
+        "documentationUrl": {
+          "type": "string",
+          "description": "URL of the documentation of this service (RFC 3986 format)."
         },
-        "license": {
-          "type": "object",
-          "description": "License information for the exposed API"
+        "contactUrl": {
+          "type": "string",
+          "description": "URL of the contact for the host/maintainer of this service, e.g. a link to a contact form (RFC 3986 format), or an email (RFC 2368 format)."
+        },
+        "version": {
+          "type": "string",
+          "description": "Version of the service."
         }
       }
     },
-    "BundleObject": {
+    "ContentsObject": {
       "type": "object",
       "properties": {
         "name": {
           "type": "string",
-          "description": "A name declared by the Bundle author that must be used when materialising the associated data object,  overriding any name directly associated with the object itself. This string MUST NOT contain any slashes."
+          "description": "A name declared by the bundle author that must be used when materialising this object,  overriding any name directly associated with the object itself. This string MUST NOT contain any slashes."
         },
         "id": {
           "type": "string",
-          "description": "A DRS identifier of a Data Object or a nested Data Bundle."
+          "description": "A DRS identifier of an `Object` (either a single blob or a nested bundle)."
         },
         "drs_uri": {
           "type": "array",
-          "description": "A list of full DRS identifier URI paths that may be used obtain the Data Object or Data Bundle. These URIs may be external to this DRS instance.",
+          "description": "A list of full DRS identifier URI paths that may be used to obtain the object. These URIs may be external to this DRS instance.",
           "example": "drs://example.com/ga4gh/drs/v1/objects/{object_id}",
           "items": {
             "type": "string"
           }
-        },
-        "type": {
-          "type": "string",
-          "enum": [
-            "object",
-            "bundle"
-          ],
-          "description": "The type of content being referenced. BundleObject of type bundle will need to be recursed further."
         }
       },
       "required": [
         "name",
-        "id",
-        "type"
+        "id"
       ]
     }
   },
