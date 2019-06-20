@@ -1,7 +1,7 @@
 swagger: '2.0'
 basePath: '/ga4gh/drs/v1'
 info:
-  title: Data Repository Service
+  title: Data Repository Service (this is a test change)
   version: 0.1.0
   description: 'https://github.com/ga4gh/data-repository-service-schemas'
   termsOfService: 'https://www.ga4gh.org/terms-and-conditions/'
@@ -95,7 +95,7 @@ paths:
             contains only those objects directly contained in the bundle. That is, if the
             bundle contains other bundles, those other bundles are not recursively
             included in the result.
-            
+
             If true and the object_id refers to a bundle, then the entire set of objects
             in the bundle is expanded. That is, if the bundle contains aother bundles,
             then those other bundles are recursively expanded and included in the result.
@@ -107,7 +107,7 @@ paths:
       x-swagger-router-controller: ga4gh.drs.server
   '/objects/{object_id}/access/{access_id}':
     get:
-      summary: Get a URL for fetching bytes. 
+      summary: Get a URL for fetching bytes.
       description: >-
         Returns a URL that can be used to fetch the bytes of an `Object`.
 
@@ -247,33 +247,33 @@ definitions:
           $ref: '#/definitions/Checksum'
         description: >-
           The checksum of the `Object`. At least one checksum must be provided.
-          
+
           For blobs, the checksum is computed over the bytes in the blob.
-          
-          
-          For bundles, the checksum is computed over a sorted concatenation of the 
+
+
+          For bundles, the checksum is computed over a sorted concatenation of the
           checksums of its top-level contained objects (not recursive, names not included).
           The list of checksums is sorted alphabetically (hex-code) before concatenation
           and a further checksum is performed on the concatenated checksum value.
-          
-          
+
+
           For example, if a bundle contains blobs with the following checksums:
-          
+
           md5(blob1) = 72794b6d
-          
-          md5(blob2) = 5e089d29   
-          
-          
+
+          md5(blob2) = 5e089d29
+
+
           Then the checksum of the bundle is:
-          
+
           md5( concat( sort( md5(blob1), md5(blob2) ) ) )
-          
+
           = md5( concat( sort( 72794b6d, 5e089d29 ) ) )
-          
+
           = md5( concat( 5e089d29, 72794b6d ) )
-          
+
           = md5( 5e089d2972794b6d )
-          
+
           = f7a29a04
       access_methods:
         type: array
@@ -287,7 +287,7 @@ definitions:
         type: array
         description: >-
           If not set, this `Object` is a single blob.
-          
+
           If set, this `Object` is a bundle containing the listed `ContentsObject` s (some of which may be further nested).
         items:
           $ref: '#/definitions/ContentsObject'
@@ -300,7 +300,7 @@ definitions:
         items:
           type: string
         description: >-
-          A list of strings that can be used to find other metadata 
+          A list of strings that can be used to find other metadata
           about this `Object` from external metadata sources. These
           aliases can be used to represent secondary
           accession numbers or external GUIDs.
@@ -377,7 +377,7 @@ definitions:
     properties:
       id:
         type: string
-        description: Unique ID of this service. Reverse domain name notation is recommended, though not required.  
+        description: Unique ID of this service. Reverse domain name notation is recommended, though not required.
       name:
         type: string
         description: Name of this specific service.
@@ -400,9 +400,9 @@ definitions:
         type: string
         description: >-
           A name declared by the bundle author that must be
-          used when materialising this object, 
+          used when materialising this object,
           overriding any name directly associated with the object itself.
-          The name must be unique with the containing bundle. 
+          The name must be unique with the containing bundle.
           This string is made up of uppercase and lowercase letters, decimal digits, hypen, period, and underscore [A-Za-z0-9.-_]. See http://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap03.html#tag_03_282[portable filenames].
       id:
         type: string
@@ -428,7 +428,7 @@ definitions:
           describe the objects within the nested bundle.
         items:
           $ref: '#/definitions/ContentsObject'
-        
+
     required:
       - name
 tags:
