@@ -31,12 +31,12 @@ stages:
 
 jobs:
   include:
-    # If the linting stage fails, then none of the other stages will run.
-    - stage: linting
-      python: '3.6'
-      script:
-        # Travis will install requirements.txt by default
-        - flake8 --select=E121,E123,E126,E226,E24,E704,W503,W504 --ignore=E501 app.py tests
+    # # If the linting stage fails, then none of the other stages will run.
+    # - stage: linting
+    #   python: '3.6'
+    #   script:
+    #     # Travis will install requirements.txt by default
+    #     - flake8 --select=E121,E123,E126,E226,E24,E704,W503,W504 --ignore=E501 app.py tests
 
     # the build process from James Eddy adapted from the WES repo
     - stage: build_pages
