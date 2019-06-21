@@ -2,12 +2,14 @@
 
 # Data Repository Service (DRS) API
 
-<sup>`master` branch status: </sup>[![Build Status](https://travis-ci.org/ga4gh/data-repository-service-schemas.svg?branch=master)](https://travis-ci.org/ga4gh/data-repository-service-schemas?branch=master)
-<a href="https://ga4gh.github.io/data-repository-service-schemas/swagger.yaml"><img src="http://online.swagger.io/validator?url=https://ga4gh.github.io/data-repository-service-schemas/swagger.yaml" alt="Swagger Validator" height="20em" width="72em"></A>
+<sup>`develop` branch status: </sup>[![Build Status](https://travis-ci.org/ga4gh/data-repository-service-schemas.svg?branch=develop)](https://travis-ci.org/ga4gh/data-repository-service-schemas?branch=develop)
+<a href="https://ga4gh.github.io/data-repository-service-schemas/preview/develop/swagger.yaml"><img src="http://online.swagger.io/validator?url=https://ga4gh.github.io/data-repository-service-schemas/preview/develop/swagger.yaml" alt="Swagger Validator" height="20em" width="72em"></A>
 <!--
 [![Read the Docs badge](https://readthedocs.org/projects/data-repository-service/badge/)](https://data-repository-service.readthedocs.io/en/latest)
-![PyPI - Python Version](https://img.shields.io/pypi/pyversions/ga4gh-drs-schemas.svg)
--->
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/ga4gh-drs-schemas.svg)-->
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1478838.svg)](https://doi.org/10.5281/zenodo.1478838)
+
+
 The [Global Alliance for Genomics and Health](http://genomicsandhealth.org/) (GA4GH) is an international coalition, formed to enable the sharing of genomic and clinical data.
 
 # About the GA4GH Cloud Work Stream
