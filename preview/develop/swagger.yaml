@@ -2,7 +2,7 @@ swagger: '2.0'
 basePath: /ga4gh/drs/v1
 info:
   title: Data Repository Service
-  version: 0.1.0
+  version: 0.1.1
   description: 'https://github.com/ga4gh/data-repository-service-schemas'
   termsOfService: 'https://www.ga4gh.org/terms-and-conditions/'
   contact:
@@ -222,11 +222,11 @@ definitions:
           The checksum of the `Object`. At least one checksum must be provided.
           For blobs, the checksum is computed over the bytes in the blob.
 
-          For bundles, the checksum is computed over a sorted concatenation of the  checksums of its top-level contained objects (not recursive, names not included). The list of checksums is sorted alphabetically (hex-code) before concatenation and a further checksum is performed on the concatenated checksum value.
+          For bundles, the checksum is computed over a sorted concatenation of the checksums of its top-level contained objects (not recursive, names not included). The list of checksums is sorted alphabetically (hex-code) before concatenation and a further checksum is performed on the concatenated checksum value.
 
           For example, if a bundle contains blobs with the following checksums:
           md5(blob1) = 72794b6d
-          md5(blob2) = 5e089d29   
+          md5(blob2) = 5e089d29
 
           Then the checksum of the bundle is:
           md5( concat( sort( md5(blob1), md5(blob2) ) ) )
@@ -256,7 +256,7 @@ definitions:
         type: array
         items:
           type: string
-        description: A list of strings that can be used to find other metadata  about this `Object` from external metadata sources. These aliases can be used to represent secondary accession numbers or external GUIDs.
+        description: A list of strings that can be used to find other metadata about this `Object` from external metadata sources. These aliases can be used to represent secondary accession numbers or external GUIDs.
   AccessURL:
     type: object
     required:
@@ -340,7 +340,7 @@ definitions:
     properties:
       name:
         type: string
-        description: 'A name declared by the bundle author that must be used when materialising this object,  overriding any name directly associated with the object itself. The name must be unique with the containing bundle.  This string is made up of uppercase and lowercase letters, decimal digits, hypen, period, and underscore [A-Za-z0-9.-_]. See http://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap03.html#tag_03_282[portable filenames].'
+        description: 'A name declared by the bundle author that must be used when materialising this object, overriding any name directly associated with the object itself. The name must be unique with the containing bundle.  This string is made up of uppercase and lowercase letters, decimal digits, hypen, period, and underscore [A-Za-z0-9.-_]. See http://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap03.html#tag_03_282[portable filenames].'
       id:
         type: string
         description: 'A DRS identifier of an `Object` (either a single blob or a nested bundle). If this ContentsObject is an object within a nested bundle, then the id is optional. Otherwise, the id is required.'
