@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
-
-set -e
-set -v
+set -ev
 
 if [ "$TRAVIS_BRANCH" != "gh-pages" ]; then
   if [ "$TRAVIS_BRANCH" == "master" ]; then
@@ -15,7 +13,7 @@ if [ "$TRAVIS_BRANCH" != "gh-pages" ]; then
   cp docs/html5/index.html "$branchpath/docs/"
   cp docs/pdf/index.pdf "$branchpath/docs/"
   cp docs/asciidoc/*.png "$branchpath/docs/"
-  # cp openapi/data_repository_service.swagger.yaml "$branchpath/swagger.yaml"
+  cp openapi/data_repository_service.swagger.yaml "$branchpath/swagger.yaml"
   cp -R web_deploy/* "$branchpath/"
 fi
 
