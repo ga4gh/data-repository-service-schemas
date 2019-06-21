@@ -2,7 +2,7 @@ swagger: '2.0'
 basePath: '/ga4gh/drs/v1'
 info:
   title: Data Repository Service
-  version: 0.1.0
+  version: 0.1.1
   description: 'https://github.com/ga4gh/data-repository-service-schemas'
   termsOfService: 'https://www.ga4gh.org/terms-and-conditions/'
   contact:
@@ -76,7 +76,7 @@ paths:
       x-swagger-router-controller: ga4gh.drs.server
   '/objects/{object_id}/access/{access_id}':
     get:
-      summary: Get a URL for fetching bytes. 
+      summary: Get a URL for fetching bytes.
       description: >-
         Returns a URL that can be used to fetch the bytes of an `Object`.
 
@@ -200,33 +200,33 @@ definitions:
           $ref: '#/definitions/Checksum'
         description: >-
           The checksum of the `Object`. At least one checksum must be provided.
-          
+
           For blobs, the checksum is computed over the bytes in the blob.
-          
-          
-          For bundles, the checksum is computed over a sorted concatenation of the 
+
+
+          For bundles, the checksum is computed over a sorted concatenation of the
           checksums of its top-level contained objects (not recursive, names not included).
           The list of checksums is sorted alphabetically (hex-code) before concatenation
           and a further checksum is performed on the concatenated checksum value.
-          
-          
+
+
           For example, if a bundle contains blobs with the following checksums:
-          
+
           md5(blob1) = 72794b6d
-          
-          md5(blob2) = 5e089d29   
-          
-          
+
+          md5(blob2) = 5e089d29
+
+
           Then the checksum of the bundle is:
-          
+
           md5( concat( sort( md5(blob1), md5(blob2) ) ) )
-          
+
           = md5( concat( sort( 72794b6d, 5e089d29 ) ) )
-          
+
           = md5( concat( 5e089d29, 72794b6d ) )
-          
+
           = md5( 5e089d2972794b6d )
-          
+
           = f7a29a04
       access_methods:
         type: array
@@ -240,7 +240,7 @@ definitions:
         type: array
         description: >-
           If not set, this `Object` is a single blob.
-          
+
           If set, this `Object` is a bundle containing the listed `ContentsObject` s (some of which may be further nested).
         items:
           $ref: '#/definitions/ContentsObject'
@@ -253,7 +253,7 @@ definitions:
         items:
           type: string
         description: >-
-          A list of strings that can be used to find other metadata 
+          A list of strings that can be used to find other metadata
           about this `Object` from external metadata sources. These
           aliases can be used to represent secondary
           accession numbers or external GUIDs.
@@ -348,7 +348,7 @@ definitions:
         type: string
         description: >-
           A name declared by the bundle author that must be
-          used when materialising this object, 
+          used when materialising this object,
           overriding any name directly associated with the object itself.
           This string MUST NOT contain any slashes.
       id:
