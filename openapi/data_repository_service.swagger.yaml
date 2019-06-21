@@ -46,6 +46,21 @@ paths:
           description: The `Object` was found successfully.
           schema:
             $ref: '#/definitions/Object'
+        '202':
+          description: >
+            The operation is delayed and will continue asynchronously.
+            The client should retry this same request after the delay specified by Retry-After header.
+          headers:
+            Retry-After:
+              description: >
+                Delay in seconds. The client should retry this same request after waiting for this duration.
+                To simplify client response processing, this must be an integral relative time in seconds.
+                This value SHOULD represent the minimum duration the client should wait before attempting
+                the operation again with a reasonable expectation of success. When it is not feasible
+                for the server to determine the actual expected delay, the server may return a
+                brief, fixed value instead.
+              type: integer
+              format: int64
         '400':
           description: The request is malformed.
           schema:
@@ -71,6 +86,22 @@ paths:
           in: path
           required: true
           type: string
+        - in: query
+          name: expand
+          type: boolean
+          default: false
+          description: >-
+            If false and the object_id refers to a bundle, then the ContentsObject array
+            contains only those objects directly contained in the bundle. That is, if the
+            bundle contains other bundles, those other bundles are not recursively
+            included in the result.
+            
+            If true and the object_id refers to a bundle, then the entire set of objects
+            in the bundle is expanded. That is, if the bundle contains aother bundles,
+            then those other bundles are recursively expanded and included in the result.
+            Recursion continues through the entire sub-tree of the bundle.
+
+            If the object_id refers to a blob, then the query parameter is ignored.
       tags:
         - DataRepositoryService
       x-swagger-router-controller: ga4gh.drs.server
@@ -89,6 +120,21 @@ paths:
           description: The access URL was found successfully.
           schema:
             $ref: '#/definitions/AccessURL'
+        '202':
+          description: >
+            The operation is delayed and will continue asynchronously.
+            The client should retry this same request after the delay specified by Retry-After header.
+          headers:
+            Retry-After:
+              description: >
+                Delay in seconds. The client should retry this same request after waiting for this duration.
+                To simplify client response processing, this must be an integral relative time in seconds.
+                This value SHOULD represent the minimum duration the client should wait before attempting
+                the operation again with a reasonable expectation of success. When it is not feasible
+                for the server to determine the actual expected delay, the server may return a
+                brief, fixed value instead.
+              type: integer
+              format: int64
         '400':
           description: The request is malformed.
           schema:
@@ -164,6 +210,7 @@ definitions:
         type: string
         description: |-
           A string that can be used to name an `Object`.
+          This string is made up of uppercase and lowercase letters, decimal digits, hypen, period, and underscore [A-Za-z0-9.-_]. See http://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap03.html#tag_03_282[portable filenames].
       size:
         type: integer
         format: int64
@@ -322,25 +369,30 @@ definitions:
   ServiceInfo:
     type: object
     required:
+      - id
+      - name
       - version
     description: >-
       Useful information about the running service.
     properties:
-      version:
+      id:
         type: string
-        description: Service version
-      title:
+        description: Unique ID of this service. Reverse domain name notation is recommended, though not required.  
+      name:
         type: string
-        description: Service name
+        description: Name of this specific service.
       description:
         type: string
-        description: Service description
-      contact:
-        type: object
-        description: Maintainer contact info
-      license:
-        type: object
-        description: License information for the exposed API
+        description: Description of the service.
+      documentationUrl:
+        type: string
+        description: URL of the documentation of this service (RFC 3986 format).
+      contactUrl:
+        type: string
+        description: 'URL of the contact for the host/maintainer of this service, e.g. a link to a contact form (RFC 3986 format), or an email (RFC 2368 format).'
+      version:
+        type: string
+        description: Version of the service.
   ContentsObject:
     type: object
     properties:
@@ -350,11 +402,14 @@ definitions:
           A name declared by the bundle author that must be
           used when materialising this object,
           overriding any name directly associated with the object itself.
-          This string MUST NOT contain any slashes.
+          The name must be unique with the containing bundle. 
+          This string is made up of uppercase and lowercase letters, decimal digits, hypen, period, and underscore [A-Za-z0-9.-_]. See http://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap03.html#tag_03_282[portable filenames].
       id:
         type: string
         description: >-
           A DRS identifier of an `Object` (either a single blob or a nested bundle).
+          If this ContentsObject is an object within a nested bundle, then the id is
+          optional. Otherwise, the id is required.
       drs_uri:
         type: array
         description: >-
@@ -365,8 +420,16 @@ definitions:
           drs://example.com/ga4gh/drs/v1/objects/{object_id}
         items:
           type: string
+      contents:
+        type: array
+        description: >-
+          If this ContentsObject describes a nested bundle and the caller specified
+          "?expand=true" on the request, then this contents array must be present and
+          describe the objects within the nested bundle.
+        items:
+          $ref: '#/definitions/ContentsObject'
+        
     required:
       - name
-      - id
 tags:
   - name: DataRepositoryService
