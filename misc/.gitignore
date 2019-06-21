@@ -15,8 +15,7 @@ dist/
 downloads/
 eggs/
 .eggs/
-# need to comment out otherwise the swagger js libs don't get copied in the gh-pages deploy
-#lib/
+# lib/
 lib64/
 parts/
 sdist/
@@ -100,3 +99,21 @@ docs/asciidoc/swagger2markup/
 spec/
 web_deploy/
 node_modules/
+
+# Non-pages content
+docs/asciidoc/
+python
+setup.py
+requirements.txt
+gradle
+build.gradle
+settings.gradle
+gradlew
+scripts
+misc
+openapi
+package.json
+package-lock.json
+Makefile
+merge_yaml.py
+.travis.yml

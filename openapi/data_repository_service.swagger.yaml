@@ -116,7 +116,7 @@ paths:
       x-swagger-router-controller: ga4gh.drs.server
   '/objects/{object_id}/access/{access_id}':
     get:
-      summary: Get a URL for fetching bytes. 
+      summary: Get a URL for fetching bytes.
       description: >-
         Returns a URL that can be used to fetch the object bytes.
 
@@ -230,10 +230,10 @@ definitions:
         type: array
         description: |-
           The checksum of the Data Bundle. At least one checksum must be provided.
-          
-          The Data Bundle checksum is computed over a sorted concatenation of all 
+
+          The Data Bundle checksum is computed over a sorted concatenation of all
           the checksums (names not included) within the top-level 'contents' of the
-          Bundle (not recursive). The list of Data Object or Bundle checksums are 
+          Bundle (not recursive). The list of Data Object or Bundle checksums are
           sorted alphabetically (hex-code) before concatenation and a further checksum
           is performed on the concatenated checksum value.
           Example below:
@@ -254,7 +254,7 @@ definitions:
       aliases:
         type: array
         description: >-
-          A list of strings that can be used to find other metadata 
+          A list of strings that can be used to find other metadata
           about this Data Bundle from external metadata sources. These
           aliases can be used to represent the Data Bundle's secondary
           accession numbers or external GUIDs.
@@ -326,7 +326,7 @@ definitions:
         items:
           type: string
         description: >-
-          A list of strings that can be used to find other metadata 
+          A list of strings that can be used to find other metadata
           about this Data Object from external metadata sources. These
           aliases can be used to represent the Data Object's secondary
           accession numbers or external GUIDs.
@@ -421,7 +421,7 @@ definitions:
         type: string
         description: >-
           A name declared by the Bundle author that must be
-          used when materialising the associated data object, 
+          used when materialising the associated data object,
           overriding any name directly associated with the object itself.
           This string MUST NOT contain any slashes.
       id:

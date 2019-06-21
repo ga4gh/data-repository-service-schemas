@@ -49,6 +49,8 @@ jobs:
       - "./scripts/fetchpages.sh"
       - "./gradlew installSwagger buildSwagger asciidoctor"
       - "./scripts/stagepages.sh"
+      before_deploy:
+      - "mv misc/.gitignore .gitignore"
       deploy:
         provider: pages
         skip_cleanup: true
