@@ -3,7 +3,7 @@
   "basePath": "/ga4gh/drs/v1",
   "info": {
     "title": "Data Repository Service",
-    "version": "0.1.1",
+    "version": "1.0.0",
     "description": "https://github.com/ga4gh/data-repository-service-schemas",
     "termsOfService": "https://www.ga4gh.org/terms-and-conditions/",
     "contact": {
