@@ -217,6 +217,12 @@ definitions:
         description: |-
           For blobs, the blob size in bytes.
           For bundles, the cumulative size, in bytes, of items in the `contents` field.
+      self:
+        type: string
+        description: |-
+          A DRS URI referencing where this `Object` was retrieved from.
+        example:
+          drs://example.com/ga4gh/drs/v1/objects/{id}
       created:
         type: string
         format: date-time
