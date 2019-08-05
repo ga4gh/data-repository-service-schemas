@@ -222,7 +222,7 @@
         },
         "type": {
           "type": "string",
-          "description": "The digest method used to create the checksum.\n\nThe value (e.g. `sha-256`) SHOULD be listed in the https://www.iana.org/assignments/named-information/named-information.xhtml#hash-alg[IANA Named Information Hash Algorithm Registry].\nOther values (e.g. `md5`, `etag`) MAY be used, as long as implementors are aware of the issues discussed in https://tools.ietf.org/html/rfc6920#section-9.4[RFC6920]."
+          "description": "The digest method used to create the checksum.\n\nThe value (e.g. `sha-256`) SHOULD be listed as `Hash Name String` in the https://www.iana.org/assignments/named-information/named-information.xhtml#hash-alg[IANA Named Information Hash Algorithm Registry].\nOther values (e.g. `md5`, `etag`) MAY be used, as long as implementors are aware of the issues discussed in https://tools.ietf.org/html/rfc6920#section-9.4[RFC6920]."
         }
       }
     },
