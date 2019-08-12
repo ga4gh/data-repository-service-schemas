@@ -1211,9 +1211,10 @@ If set, this <code>Object</code> is a bundle containing the listed <code>Content
 <td class="tableblock halign-left valign-middle"><p class="tableblock">&lt; <a href="#_contentsobject">ContentsObject</a> &gt; array</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>created</strong><br>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>created_time</strong><br>
 <em>required</em></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">Timestamp of object creation in RFC3339.</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">Timestamp of content creation in RFC3339.<br>
+(This is the creation time of the underlying content, not of the JSON object.)</p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">string (date-time)</p></td>
 </tr>
 <tr>
@@ -1258,9 +1259,9 @@ For bundles, the cumulative size, in bytes, of items in the <code>contents</code
 <td class="tableblock halign-left valign-middle"><p class="tableblock">integer (int64)</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>updated</strong><br>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>updated_time</strong><br>
 <em>optional</em></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">Timestamp of <code>Object</code> update in RFC3339, identical to create timestamp in systems that do not support updates.</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">Timestamp of content update in RFC3339, identical to <code>created_time</code> in systems that do not support updates. (This is the update time of the underlying content, not of the JSON object.)</p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">string (date-time)</p></td>
 </tr>
 <tr>
@@ -1377,7 +1378,7 @@ For bundles, the cumulative size, in bytes, of items in the <code>contents</code
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-08-12 14:39:16 UTC
+Last updated 2019-08-12 14:53:55 UTC
 </div>
 </div>
 </body>

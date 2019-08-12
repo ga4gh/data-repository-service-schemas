@@ -212,7 +212,7 @@
         "id",
         "self_uri",
         "size",
-        "created",
+        "created_time",
         "checksums"
       ],
       "properties": {
@@ -234,15 +234,15 @@
           "format": "int64",
           "description": "For blobs, the blob size in bytes.\nFor bundles, the cumulative size, in bytes, of items in the `contents` field."
         },
-        "created": {
+        "created_time": {
           "type": "string",
           "format": "date-time",
-          "description": "Timestamp of object creation in RFC3339."
+          "description": "Timestamp of content creation in RFC3339.\n(This is the creation time of the underlying content, not of the JSON object.) "
         },
-        "updated": {
+        "updated_time": {
           "type": "string",
           "format": "date-time",
-          "description": "Timestamp of `Object` update in RFC3339, identical to create timestamp in systems that do not support updates."
+          "description": "Timestamp of content update in RFC3339, identical to `created_time` in systems that do not support updates. (This is the update time of the underlying content, not of the JSON object.)"
         },
         "version": {
           "type": "string",
