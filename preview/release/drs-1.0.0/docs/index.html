@@ -640,7 +640,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sect2">
 <h3 id="_making_drs_requests"><a class="anchor" href="#_making_drs_requests"></a><a class="link" href="#_making_drs_requests">4.1. Making DRS Requests</a></h3>
 <div class="paragraph">
-<p>The DRS implementation is responsible for defining and enforcing an authorization policy that determines which users are allowed to make which requests. We recommend that DRS implementations use an OAuth2 <a href="https://oauth.net/2/bearer-tokens/">bearer token</a>, although they can choose other mechanisms if appropriate.  The <code>service-info</code> endpoint should provide sufficient information for a user to figure out how to authenticate with a DRS implementation.</p>
+<p>The DRS implementation is responsible for defining and enforcing an authorization policy that determines which users are allowed to make which requests. GA4GH recommends that DRS implementations use an OAuth 2.0 <a href="https://oauth.net/2/bearer-tokens/">bearer token</a>, although they can choose other mechanisms if appropriate.  The <code>service-info</code> endpoint should provide sufficient information for a user to figure out how to authenticate with a DRS implementation.</p>
 </div>
 </div>
 <div class="sect2">
@@ -709,6 +709,9 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 </li>
 </ul>
+</div>
+<div class="paragraph">
+<p>DRS implementers should ensure their solutions restrict access to targets as much as possible, detect attempts to exploit through log monitoring, and they are prepared to take action if an exploit in their DRS implementation is detected.</p>
 </div>
 </div>
 </div>
@@ -1211,9 +1214,10 @@ If set, this <code>Object</code> is a bundle containing the listed <code>Content
 <td class="tableblock halign-left valign-middle"><p class="tableblock">&lt; <a href="#_contentsobject">ContentsObject</a> &gt; array</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>created</strong><br>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>created_time</strong><br>
 <em>required</em></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">Timestamp of object creation in RFC3339.</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">Timestamp of content creation in RFC3339.<br>
+(This is the creation time of the underlying content, not of the JSON object.)</p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">string (date-time)</p></td>
 </tr>
 <tr>
@@ -1258,9 +1262,9 @@ For bundles, the cumulative size, in bytes, of items in the <code>contents</code
 <td class="tableblock halign-left valign-middle"><p class="tableblock">integer (int64)</p></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>updated</strong><br>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>updated_time</strong><br>
 <em>optional</em></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">Timestamp of <code>Object</code> update in RFC3339, identical to create timestamp in systems that do not support updates.</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">Timestamp of content update in RFC3339, identical to <code>created_time</code> in systems that do not support updates. (This is the update time of the underlying content, not of the JSON object.)</p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">string (date-time)</p></td>
 </tr>
 <tr>
@@ -1377,7 +1381,7 @@ For bundles, the cumulative size, in bytes, of items in the <code>contents</code
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-08-12 14:39:16 UTC
+Last updated 2019-08-12 15:16:51 UTC
 </div>
 </div>
 </body>
