@@ -186,7 +186,7 @@ definitions:
           sha512
   Object:
     type: object
-    required: ['id', 'size', 'created', 'checksums']
+    required: ['id', 'self_uri', 'size', 'created', 'checksums']
     properties:
       id:
         type: string
@@ -197,6 +197,13 @@ definitions:
         description: |-
           A string that can be used to name an `Object`.
           This string is made up of uppercase and lowercase letters, decimal digits, hypen, period, and underscore [A-Za-z0-9.-_]. See http://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap03.html#tag_03_282[portable filenames].
+      self_uri:
+        type: string
+        description: |-
+          A drs:// URI, as defined in the DRS documentation, that tells clients how to access this object.
+          The intent of this field is to make DRS objects self-contained, and therefore easier for clients to store and pass around.
+        example:
+          drs://drs.example.org/314159
       size:
         type: integer
         format: int64
