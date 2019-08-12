@@ -21,19 +21,6 @@ security:
   - {}
   - authToken: []
 paths:
-  /service-info:
-    get:
-      summary: Get information about this implementation.
-      description: May return service version and other information.
-      operationId: GetServiceInfo
-      responses:
-        '200':
-          description: Service information returned successfully
-          schema:
-            $ref: '#/definitions/ServiceInfo'
-      tags:
-        - DataRepositoryService
-      x-swagger-router-controller: ga4gh.drs.server
   '/objects/{object_id}':
     get:
       summary: Get info about an `Object`.
@@ -309,32 +296,6 @@ definitions:
       status_code:
         type: integer
         description: 'The integer representing the HTTP status code (e.g. 200, 404).'
-  ServiceInfo:
-    type: object
-    required:
-      - id
-      - name
-      - version
-    description: Useful information about the running service.
-    properties:
-      id:
-        type: string
-        description: 'Unique ID of this service. Reverse domain name notation is recommended, though not required.'
-      name:
-        type: string
-        description: Name of this specific service.
-      description:
-        type: string
-        description: Description of the service.
-      documentationUrl:
-        type: string
-        description: URL of the documentation of this service (RFC 3986 format).
-      contactUrl:
-        type: string
-        description: 'URL of the contact for the host/maintainer of this service, e.g. a link to a contact form (RFC 3986 format), or an email (RFC 2368 format).'
-      version:
-        type: string
-        description: Version of the service.
   ContentsObject:
     type: object
     properties:
