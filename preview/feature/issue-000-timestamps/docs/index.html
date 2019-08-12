@@ -469,13 +469,6 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_tags_3">5.2.4. Tags</a></li>
 </ul>
 </li>
-<li><a href="#_getserviceinfo">5.3. Get information about this implementation.</a>
-<ul class="sectlevel3">
-<li><a href="#_description_3">5.3.1. Description</a></li>
-<li><a href="#_responses_3">5.3.2. Responses</a></li>
-<li><a href="#_tags_4">5.3.3. Tags</a></li>
-</ul>
-</li>
 </ul>
 </li>
 <li><a href="#_definitions">6. Definitions</a>
@@ -486,7 +479,6 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_contentsobject">6.4. ContentsObject</a></li>
 <li><a href="#_error">6.5. Error</a></li>
 <li><a href="#_object">6.6. Object</a></li>
-<li><a href="#_serviceinfo">6.7. ServiceInfo</a></li>
 </ul>
 </li>
 <li><a href="#_appendix_motivation">7. Appendix: Motivation</a>
@@ -609,7 +601,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <p>For convenience, including when passing content references to a WES server, we define a URI syntax for DRS-accessible content. Strings of the form <code>drs://&lt;server&gt;/&lt;id&gt;</code> mean <em>“you can fetch the content with DRS id <code>&lt;id&gt;</code> from the DRS server at <code>&lt;server&gt;</code> "</em>.</p>
 </div>
 <div class="paragraph">
-<p>For example, if a WES server was asked to process <code>drs://drs.example.org/314159</code>, it would know that it could issue a GET request to <code><a href="http://drs.example.org/ga4gh/drs/v1/objects/314159" class="bare">http://drs.example.org/ga4gh/drs/v1/objects/314159</a></code> to learn how to fetch that object.</p>
+<p>For example, if a WES server was asked to process <code>drs://drs.example.org/314159</code>, it would know that it could issue a GET request to <code><a href="https://drs.example.org/ga4gh/drs/v1/objects/314159" class="bare">https://drs.example.org/ga4gh/drs/v1/objects/314159</a></code> to learn how to fetch that object.</p>
 </div>
 </div>
 <div class="sect2">
@@ -963,54 +955,6 @@ If the object_id refers to a blob, then the query parameter is ignored.</p></td>
 </div>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_getserviceinfo"><a class="anchor" href="#_getserviceinfo"></a><a class="link" href="#_getserviceinfo">5.3. Get information about this implementation.</a></h3>
-<div class="literalblock">
-<div class="content">
-<pre>GET /service-info</pre>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_description_3"><a class="anchor" href="#_description_3"></a><a class="link" href="#_description_3">5.3.1. Description</a></h4>
-<div class="paragraph">
-<p>May return service version and other information.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_responses_3"><a class="anchor" href="#_responses_3"></a><a class="link" href="#_responses_3">5.3.2. Responses</a></h4>
-<table class="tableblock frame-all grid-all spread">
-<colgroup>
-<col style="width: 10%;">
-<col style="width: 70%;">
-<col style="width: 20%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-middle">HTTP Code</th>
-<th class="tableblock halign-left valign-middle">Description</th>
-<th class="tableblock halign-left valign-middle">Schema</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>200</strong></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">Service information returned successfully</p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><a href="#_serviceinfo">ServiceInfo</a></p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="sect3">
-<h4 id="_tags_4"><a class="anchor" href="#_tags_4"></a><a class="link" href="#_tags_4">5.3.3. Tags</a></h4>
-<div class="ulist">
-<ul>
-<li>
-<p>DataRepositoryService</p>
-</li>
-</ul>
-</div>
-</div>
-</div>
 </div>
 </div>
 <div class="sect1">
@@ -1035,7 +979,7 @@ If the object_id refers to a blob, then the query parameter is ignored.</p></td>
 <tr>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>access_id</strong><br>
 <em>optional</em></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">An arbitrary string to be passed to the <code>/access</code> method to get an <code>AccessURL</code>. This string must be unique per object. Note that at least one of <code>access_url</code> and <code>access_id</code> must be provided.</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">An arbitrary string to be passed to the <code>/access</code> method to get an <code>AccessURL</code>. This string must be unique within the scope of a single object. Note that at least one of <code>access_url</code> and <code>access_id</code> must be provided.</p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
 </tr>
 <tr>
@@ -1300,6 +1244,14 @@ This string is made up of uppercase and lowercase letters, decimal digits, hypen
 <td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
 </tr>
 <tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>self_uri</strong><br>
+<em>required</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">A drs:// URI, as defined in the DRS documentation, that tells clients how to access this object.<br>
+The intent of this field is to make DRS objects self-contained, and therefore easier for clients to store and pass around.<br>
+<strong>Example</strong> : <code>"drs://drs.example.org/314159"</code></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
+</tr>
+<tr>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>size</strong><br>
 <em>required</em></p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">For blobs, the blob size in bytes.<br>
@@ -1317,64 +1269,6 @@ For bundles, the cumulative size, in bytes, of items in the <code>contents</code
 <em>optional</em></p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">A string representing a version.<br>
 (Some systems may use checksum, a RFC3339 timestamp, or an incrementing version number.)</p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="sect2">
-<h3 id="_serviceinfo"><a class="anchor" href="#_serviceinfo"></a><a class="link" href="#_serviceinfo">6.7. ServiceInfo</a></h3>
-<div class="paragraph">
-<p>Useful information about the running service.</p>
-</div>
-<table class="tableblock frame-all grid-all spread">
-<colgroup>
-<col style="width: 16.6666%;">
-<col style="width: 61.1111%;">
-<col style="width: 22.2223%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-middle">Name</th>
-<th class="tableblock halign-left valign-middle">Description</th>
-<th class="tableblock halign-left valign-middle">Schema</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>contactUrl</strong><br>
-<em>optional</em></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">URL of the contact for the host/maintainer of this service, e.g. a link to a contact form (RFC 3986 format), or an email (RFC 2368 format).</p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>description</strong><br>
-<em>optional</em></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">Description of the service.</p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>documentationUrl</strong><br>
-<em>optional</em></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">URL of the documentation of this service (RFC 3986 format).</p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>id</strong><br>
-<em>required</em></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">Unique ID of this service. Reverse domain name notation is recommended, though not required.</p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>name</strong><br>
-<em>required</em></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">Name of this specific service.</p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>version</strong><br>
-<em>required</em></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">Version of the service.</p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
 </tr>
 </tbody>
@@ -1484,7 +1378,7 @@ For bundles, the cumulative size, in bytes, of items in the <code>contents</code
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-08-03 22:00:07 UTC
+Last updated 2019-08-12 14:45:42 UTC
 </div>
 </div>
 </body>
