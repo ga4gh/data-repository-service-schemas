@@ -1065,15 +1065,13 @@ If the object_id refers to a blob, then the query parameter is ignored.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>type</strong><br>
-<em>optional</em></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">The digest method used to create the checksum. If left unspecified md5<br>
-will be assumed.<br>
+<em>required</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">The digest method used to create the checksum.<br>
 <br>
-possible values:<br>
-md5 # most blob stores provide a checksum using this<br>
-etag # multipart uploads to blob stores<br>
-sha256<br>
-sha512</p></td>
+The value (e.g. <code>sha-256</code>) SHOULD be listed as <code>Hash Name String</code> in the <a href="https://www.iana.org/assignments/named-information/named-information.xhtml#hash-alg">IANA Named Information Hash Algorithm Registry</a>. Other values MAY be used, as long as implementors are aware of the issues discussed in <a href="https://tools.ietf.org/html/rfc6920#section-9.4">RFC6920</a>.<br>
+<br>
+GA4GH may provide more explicit guidance for use of non-IANA-registered algorithms in the future. Until then, if implementors do choose such an algorithm (e.g. because it&#8217;s implemented by their storage provider), they SHOULD use an existing standard <code>type</code> value such as <code>md5</code>, <code>etag</code>, <code>crc32c</code>, <code>trunc512</code>, or <code>sha1</code>.<br>
+<strong>Example</strong> : <code>"sha-256"</code></p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
 </tr>
 </tbody>
@@ -1381,7 +1379,7 @@ For bundles, the cumulative size, in bytes, of items in the <code>contents</code
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-08-12 15:16:51 UTC
+Last updated 2019-08-13 00:22:33 UTC
 </div>
 </div>
 </body>
