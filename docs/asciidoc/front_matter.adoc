@@ -41,7 +41,7 @@ The DRS API specification is written in OpenAPI and embodies a RESTful service p
 
 === Making DRS Requests
 
-The DRS implementation is responsible for defining and enforcing an authorization policy that determines which users are allowed to make which requests. GA4GH recommends that DRS implementations use an OAuth 2.0 https://oauth.net/2/bearer-tokens/[bearer token], although they can choose other mechanisms if appropriate.  The `service-info` endpoint should provide sufficient information for a user to figure out how to authenticate with a DRS implementation.
+The DRS implementation is responsible for defining and enforcing an authorization policy that determines which users are allowed to make which requests. GA4GH recommends the use of the OAuth 2.0 framework https://tools.ietf.org/html/rfc6749[RFC 6749] for authentication and authorization. It is also recommended that implementations of this standard implement and follow the https://github.com/ga4gh/data-security/blob/master/AAI/AAIConnectProfile.md[GA4GH Authentication and Authorization Infrastructure (AAI) standard]. The `service-info` endpoint should provide sufficient information for a user to figure out how to authenticate with a DRS implementation.
 
 === Fetching DRS Objects
 
