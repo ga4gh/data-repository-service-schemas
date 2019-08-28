@@ -84,7 +84,7 @@ paths:
         '200':
           description: The Data Object was found successfully.
           schema:
-            $ref: '#/definitions/Object'
+            $ref: '#/definitions/DrsObject'
         '400':
           description: The request is malformed.
           schema:
@@ -266,7 +266,7 @@ definitions:
           The list of Data Objects and Data Bundles contained by this Data Bundle.
         items:
           $ref: '#/definitions/BundleObject'
-  Object:
+  DrsObject:
     type: object
     required: ['id', 'size', 'created', 'checksums', 'access_methods']
     properties:
