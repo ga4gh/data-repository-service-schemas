@@ -45,7 +45,7 @@ paths:
         '200':
           description: The `Object` was found successfully.
           schema:
-            $ref: '#/definitions/Object'
+            $ref: '#/definitions/DrsObject'
         '202':
           description: >
             The operation is delayed and will continue asynchronously.
@@ -198,7 +198,7 @@ definitions:
           etag              # multipart uploads to blob stores
           sha256
           sha512
-  Object:
+  DrsObject:
     type: object
     required: ['id', 'size', 'created', 'checksums']
     properties:
