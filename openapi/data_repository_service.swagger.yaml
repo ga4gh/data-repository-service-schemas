@@ -23,15 +23,15 @@ security:
 paths:
   '/objects/{object_id}':
     get:
-      summary: Get info about an `Object`.
+      summary: Get info about a `DrsObject`.
       description: >-
         Returns object metadata, and a list of access methods that can be used to fetch object bytes.
       operationId: GetObject
       responses:
         '200':
-          description: The `Object` was found successfully.
+          description: The `DrsObject` was found successfully.
           schema:
-            $ref: '#/definitions/Object'
+            $ref: '#/definitions/DrsObject'
         '202':
           description: >
             The operation is delayed and will continue asynchronously.
@@ -60,7 +60,7 @@ paths:
           schema:
             $ref: '#/definitions/Error'
         '404':
-          description: The requested `Object` wasn't found
+          description: The requested `DrsObject` wasn't found
           schema:
             $ref: '#/definitions/Error'
         '500':
@@ -95,7 +95,7 @@ paths:
     get:
       summary: Get a URL for fetching bytes.
       description: >-
-        Returns a URL that can be used to fetch the bytes of an `Object`.
+        Returns a URL that can be used to fetch the bytes of a `DrsObject`.
 
 
         This method only needs to be called when using an `AccessMethod` that contains an `access_id`
@@ -146,12 +146,12 @@ paths:
           in: path
           required: true
           type: string
-          description: An `id` of an `Object`
+          description: An `id` of a `DrsObject`
         - name: access_id
           in: path
           required: true
           type: string
-          description: An `access_id` from the `access_methods` list of an `Object`
+          description: An `access_id` from the `access_methods` list of a `DrsObject`
       tags:
         - DataRepositoryService
       x-swagger-router-controller: ga4gh.drs.server
@@ -187,18 +187,18 @@ definitions:
           standard `type` value such as `md5`, `etag`, `crc32c`, `trunc512`, or `sha1`.
         example:
           sha-256
-  Object:
+  DrsObject:
     type: object
     required: ['id', 'self_uri', 'size', 'created_time', 'checksums']
     properties:
       id:
         type: string
         description: |-
-          An identifier unique to this `Object`.
+          An identifier unique to this `DrsObject`.
       name:
         type: string
         description: |-
-          A string that can be used to name an `Object`.
+          A string that can be used to name a `DrsObject`.
           This string is made up of uppercase and lowercase letters, decimal digits, hypen, period, and underscore [A-Za-z0-9.-_]. See http://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap03.html#tag_03_282[portable filenames].
       self_uri:
         type: string
@@ -235,7 +235,7 @@ definitions:
       mime_type:
         type: string
         description: |-
-          A string providing the mime-type of the `Object`.
+          A string providing the mime-type of the `DrsObject`.
         example:
           application/json
       checksums:
@@ -244,7 +244,7 @@ definitions:
         items:
           $ref: '#/definitions/Checksum'
         description: >-
-          The checksum of the `Object`. At least one checksum must be provided.
+          The checksum of the `DrsObject`. At least one checksum must be provided.
 
           For blobs, the checksum is computed over the bytes in the blob.
 
@@ -279,27 +279,27 @@ definitions:
         items:
           $ref: '#/definitions/AccessMethod'
         description: |-
-          The list of access methods that can be used to fetch the `Object`.
+          The list of access methods that can be used to fetch the `DrsObject`.
           Required for single blobs; optional for bundles.
       contents:
         type: array
         description: >-
-          If not set, this `Object` is a single blob.
+          If not set, this `DrsObject` is a single blob.
 
-          If set, this `Object` is a bundle containing the listed `ContentsObject` s (some of which may be further nested).
+          If set, this `DrsObject` is a bundle containing the listed `ContentsObject` s (some of which may be further nested).
         items:
           $ref: '#/definitions/ContentsObject'
       description:
         type: string
         description: |-
-          A human readable description of the `Object`.
+          A human readable description of the `DrsObject`.
       aliases:
         type: array
         items:
           type: string
         description: >-
           A list of strings that can be used to find other metadata
-          about this `Object` from external metadata sources. These
+          about this `DrsObject` from external metadata sources. These
           aliases can be used to represent secondary
           accession numbers or external GUIDs.
   AccessURL:
@@ -378,7 +378,7 @@ definitions:
       id:
         type: string
         description: >-
-          A DRS identifier of an `Object` (either a single blob or a nested bundle).
+          A DRS identifier of a `DrsObject` (either a single blob or a nested bundle).
           If this ContentsObject is an object within a nested bundle, then the id is
           optional. Otherwise, the id is required.
       drs_uri:
