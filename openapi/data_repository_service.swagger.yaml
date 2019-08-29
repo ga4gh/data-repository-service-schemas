@@ -31,7 +31,7 @@ paths:
         '200':
           description: The `Object` was found successfully.
           schema:
-            $ref: '#/definitions/Object'
+            $ref: '#/definitions/DrsObject'
         '202':
           description: >
             The operation is delayed and will continue asynchronously.
@@ -187,7 +187,7 @@ definitions:
           standard `type` value such as `md5`, `etag`, `crc32c`, `trunc512`, or `sha1`.
         example:
           sha-256
-  Object:
+  DrsObject:
     type: object
     required: ['id', 'self_uri', 'size', 'created_time', 'checksums']
     properties:
