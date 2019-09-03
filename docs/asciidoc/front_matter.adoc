@@ -26,8 +26,8 @@ For example, if a WES server was asked to process `drs://drs.example.org/314159`
 
 DRS v1 supports two types of content:
 
-* a _blob_ is like a file -- it's a single blob of bytes, represented by an `Object` without a `contents` array
-* a _bundle_ is like a folder -- it's a collection of other DRS content (either blobs or bundles), represented by an `Object` with a `contents` array
+* a _blob_ is like a file -- it's a single blob of bytes, represented by a `DrsObject` without a `contents` array
+* a _bundle_ is like a folder -- it's a collection of other DRS content (either blobs or bundles), represented by a `DrsObject` with a `contents` array
 
 === Read-only
 
