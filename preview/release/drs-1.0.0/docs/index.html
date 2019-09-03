@@ -453,7 +453,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </li>
 <li><a href="#_paths">5. Paths</a>
 <ul class="sectlevel2">
-<li><a href="#_getobject">5.1. Get info about an <code>Object</code>.</a>
+<li><a href="#_getobject">5.1. Get info about a <code>DrsObject</code>.</a>
 <ul class="sectlevel3">
 <li><a href="#_description">5.1.1. Description</a></li>
 <li><a href="#_parameters">5.1.2. Parameters</a></li>
@@ -477,8 +477,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_accessurl">6.2. AccessURL</a></li>
 <li><a href="#_checksum">6.3. Checksum</a></li>
 <li><a href="#_contentsobject">6.4. ContentsObject</a></li>
-<li><a href="#_error">6.5. Error</a></li>
-<li><a href="#_object">6.6. Object</a></li>
+<li><a href="#_drsobject">6.5. DrsObject</a></li>
+<li><a href="#_error">6.6. Error</a></li>
 </ul>
 </li>
 <li><a href="#_appendix_motivation">7. Appendix: Motivation</a>
@@ -612,10 +612,10 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="ulist">
 <ul>
 <li>
-<p>a <em>blob</em> is like a file&#8201;&#8212;&#8201;it&#8217;s a single blob of bytes, represented by an <code>Object</code> without a <code>contents</code> array</p>
+<p>a <em>blob</em> is like a file&#8201;&#8212;&#8201;it&#8217;s a single blob of bytes, represented by a <code>DrsObject</code> without a <code>contents</code> array</p>
 </li>
 <li>
-<p>a <em>bundle</em> is like a folder&#8201;&#8212;&#8201;it&#8217;s a collection of other DRS content (either blobs or bundles), represented by an <code>Object</code> with a <code>contents</code> array</p>
+<p>a <em>bundle</em> is like a folder&#8201;&#8212;&#8201;it&#8217;s a collection of other DRS content (either blobs or bundles), represented by a <code>DrsObject</code> with a <code>contents</code> array</p>
 </li>
 </ul>
 </div>
@@ -720,7 +720,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h2 id="_paths"><a class="anchor" href="#_paths"></a><a class="link" href="#_paths">5. Paths</a></h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_getobject"><a class="anchor" href="#_getobject"></a><a class="link" href="#_getobject">5.1. Get info about an <code>Object</code>.</a></h3>
+<h3 id="_getobject"><a class="anchor" href="#_getobject"></a><a class="link" href="#_getobject">5.1. Get info about a <code>DrsObject</code>.</a></h3>
 <div class="literalblock">
 <div class="content">
 <pre>GET /objects/{object_id}</pre>
@@ -791,8 +791,8 @@ If the object_id refers to a blob, then the query parameter is ignored.</p></td>
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>200</strong></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">The <code>Object</code> was found successfully.</p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><a href="#_object">Object</a></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">The <code>DrsObject</code> was found successfully.</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><a href="#_drsobject">DrsObject</a></p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>202</strong></p></td>
@@ -818,7 +818,7 @@ If the object_id refers to a blob, then the query parameter is ignored.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>404</strong></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">The requested <code>Object</code> wasn&#8217;t found</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">The requested <code>DrsObject</code> wasn&#8217;t found</p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><a href="#_error">Error</a></p></td>
 </tr>
 <tr>
@@ -850,7 +850,7 @@ If the object_id refers to a blob, then the query parameter is ignored.</p></td>
 <div class="sect3">
 <h4 id="_description_2"><a class="anchor" href="#_description_2"></a><a class="link" href="#_description_2">5.2.1. Description</a></h4>
 <div class="paragraph">
-<p>Returns a URL that can be used to fetch the bytes of an <code>Object</code>.</p>
+<p>Returns a URL that can be used to fetch the bytes of a <code>DrsObject</code>.</p>
 </div>
 <div class="paragraph">
 <p>This method only needs to be called when using an <code>AccessMethod</code> that contains an <code>access_id</code> (e.g., for servers that use signed URLs for fetching object bytes).</p>
@@ -878,14 +878,14 @@ If the object_id refers to a blob, then the query parameter is ignored.</p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>Path</strong></p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>access_id</strong><br>
 <em>required</em></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">An <code>access_id</code> from the <code>access_methods</code> list of an <code>Object</code></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">An <code>access_id</code> from the <code>access_methods</code> list of a <code>DrsObject</code></p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>Path</strong></p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>object_id</strong><br>
 <em>required</em></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">An <code>id</code> of an <code>Object</code></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">An <code>id</code> of a <code>DrsObject</code></p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
 </tr>
 </tbody>
@@ -1109,7 +1109,7 @@ GA4GH may provide more explicit guidance for use of non-IANA-registered algorith
 <tr>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>id</strong><br>
 <em>optional</em></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">A DRS identifier of an <code>Object</code> (either a single blob or a nested bundle). If this ContentsObject is an object within a nested bundle, then the id is optional. Otherwise, the id is required.</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">A DRS identifier of a <code>DrsObject</code> (either a single blob or a nested bundle). If this ContentsObject is an object within a nested bundle, then the id is optional. Otherwise, the id is required.</p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
 </tr>
 <tr>
@@ -1122,41 +1122,7 @@ GA4GH may provide more explicit guidance for use of non-IANA-registered algorith
 </table>
 </div>
 <div class="sect2">
-<h3 id="_error"><a class="anchor" href="#_error"></a><a class="link" href="#_error">6.5. Error</a></h3>
-<div class="paragraph">
-<p>An object that can optionally include information about the error.</p>
-</div>
-<table class="tableblock frame-all grid-all spread">
-<colgroup>
-<col style="width: 16.6666%;">
-<col style="width: 61.1111%;">
-<col style="width: 22.2223%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-middle">Name</th>
-<th class="tableblock halign-left valign-middle">Description</th>
-<th class="tableblock halign-left valign-middle">Schema</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>msg</strong><br>
-<em>optional</em></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">A detailed error message.</p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>status_code</strong><br>
-<em>optional</em></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">The integer representing the HTTP status code (e.g. 200, 404).</p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">integer</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="sect2">
-<h3 id="_object"><a class="anchor" href="#_object"></a><a class="link" href="#_object">6.6. Object</a></h3>
+<h3 id="_drsobject"><a class="anchor" href="#_drsobject"></a><a class="link" href="#_drsobject">6.5. DrsObject</a></h3>
 <table class="tableblock frame-all grid-all spread">
 <colgroup>
 <col style="width: 16.6666%;">
@@ -1174,20 +1140,20 @@ GA4GH may provide more explicit guidance for use of non-IANA-registered algorith
 <tr>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>access_methods</strong><br>
 <em>optional</em></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">The list of access methods that can be used to fetch the <code>Object</code>.<br>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">The list of access methods that can be used to fetch the <code>DrsObject</code>.<br>
 Required for single blobs; optional for bundles.</p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">&lt; <a href="#_accessmethod">AccessMethod</a> &gt; array</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>aliases</strong><br>
 <em>optional</em></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">A list of strings that can be used to find other metadata about this <code>Object</code> from external metadata sources. These aliases can be used to represent secondary accession numbers or external GUIDs.</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">A list of strings that can be used to find other metadata about this <code>DrsObject</code> from external metadata sources. These aliases can be used to represent secondary accession numbers or external GUIDs.</p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">&lt; string &gt; array</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>checksums</strong><br>
 <em>required</em></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">The checksum of the <code>Object</code>. At least one checksum must be provided.<br>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">The checksum of the <code>DrsObject</code>. At least one checksum must be provided.<br>
 For blobs, the checksum is computed over the bytes in the blob.<br>
 <br>
 For bundles, the checksum is computed over a sorted concatenation of the checksums of its top-level contained objects (not recursive, names not included). The list of checksums is sorted alphabetically (hex-code) before concatenation and a further checksum is performed on the concatenated checksum value.<br>
@@ -1207,8 +1173,8 @@ md5( concat( sort( md5(blob1), md5(blob2) ) ) )<br>
 <tr>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>contents</strong><br>
 <em>optional</em></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">If not set, this <code>Object</code> is a single blob.<br>
-If set, this <code>Object</code> is a bundle containing the listed <code>ContentsObject</code> s (some of which may be further nested).</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">If not set, this <code>DrsObject</code> is a single blob.<br>
+If set, this <code>DrsObject</code> is a bundle containing the listed <code>ContentsObject</code> s (some of which may be further nested).</p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">&lt; <a href="#_contentsobject">ContentsObject</a> &gt; array</p></td>
 </tr>
 <tr>
@@ -1221,26 +1187,26 @@ If set, this <code>Object</code> is a bundle containing the listed <code>Content
 <tr>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>description</strong><br>
 <em>optional</em></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">A human readable description of the <code>Object</code>.</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">A human readable description of the <code>DrsObject</code>.</p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>id</strong><br>
 <em>required</em></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">An identifier unique to this <code>Object</code>.</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">An identifier unique to this <code>DrsObject</code>.</p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>mime_type</strong><br>
 <em>optional</em></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">A string providing the mime-type of the <code>Object</code>.<br>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">A string providing the mime-type of the <code>DrsObject</code>.<br>
 <strong>Example</strong> : <code>"application/json"</code></p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>name</strong><br>
 <em>optional</em></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">A string that can be used to name an <code>Object</code>.<br>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">A string that can be used to name a <code>DrsObject</code>.<br>
 This string is made up of uppercase and lowercase letters, decimal digits, hypen, period, and underscore [A-Za-z0-9.-_]. See <a href="http://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap03.html#tag_03_282">portable filenames</a>.</p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
 </tr>
@@ -1271,6 +1237,40 @@ For bundles, the cumulative size, in bytes, of items in the <code>contents</code
 <td class="tableblock halign-left valign-middle"><p class="tableblock">A string representing a version.<br>
 (Some systems may use checksum, a RFC3339 timestamp, or an incrementing version number.)</p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_error"><a class="anchor" href="#_error"></a><a class="link" href="#_error">6.6. Error</a></h3>
+<div class="paragraph">
+<p>An object that can optionally include information about the error.</p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 16.6666%;">
+<col style="width: 61.1111%;">
+<col style="width: 22.2223%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-middle">Name</th>
+<th class="tableblock halign-left valign-middle">Description</th>
+<th class="tableblock halign-left valign-middle">Schema</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>msg</strong><br>
+<em>optional</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">A detailed error message.</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>status_code</strong><br>
+<em>optional</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">The integer representing the HTTP status code (e.g. 200, 404).</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">integer</p></td>
 </tr>
 </tbody>
 </table>
@@ -1379,7 +1379,7 @@ For bundles, the cumulative size, in bytes, of items in the <code>contents</code
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-08-13 00:22:33 UTC
+Last updated 2019-09-03 12:31:17 UTC
 </div>
 </div>
 </body>
