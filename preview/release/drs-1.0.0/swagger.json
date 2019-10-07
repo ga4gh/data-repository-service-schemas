@@ -376,7 +376,7 @@
         "drs_uri": {
           "type": "array",
           "description": "A list of full DRS identifier URI paths that may be used to obtain the object. These URIs may be external to this DRS instance.",
-          "example": "drs://example.com/ga4gh/drs/v1/objects/{object_id}",
+          "example": "drs://drs.example.org/314159",
           "items": {
             "type": "string"
           }
