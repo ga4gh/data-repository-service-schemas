@@ -3,11 +3,11 @@
 # Data Repository Service (DRS) API
 
 <sup>`develop` branch status: </sup>[![Build Status](https://travis-ci.org/ga4gh/data-repository-service-schemas.svg?branch=develop)](https://travis-ci.org/ga4gh/data-repository-service-schemas?branch=develop)
-<a href="https://ga4gh.github.io/data-repository-service-schemas/preview/develop/swagger.yaml"><img src="http://online.swagger.io/validator?url=https://ga4gh.github.io/data-repository-service-schemas/preview/develop/swagger.yaml" alt="Swagger Validator" height="20em" width="72em"></A>
+<a href="https://ga4gh.github.io/data-repository-service-schemas/preview/develop/swagger.yaml"><img src="http://online.swagger.io/validator?url=https://ga4gh.github.io/data-repository-service-schemas/preview/develop/swagger.yaml" alt="Swagger Validator" height="20em" width="72em"></A> [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1405753.svg)](https://doi.org/10.5281/zenodo.1405753)
+
 <!--
 [![Read the Docs badge](https://readthedocs.org/projects/data-repository-service/badge/)](https://data-repository-service.readthedocs.io/en/latest)
 ![PyPI - Python Version](https://img.shields.io/pypi/pyversions/ga4gh-drs-schemas.svg)-->
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1478838.svg)](https://doi.org/10.5281/zenodo.1478838)
 
 
 The [Global Alliance for Genomics and Health](http://genomicsandhealth.org/) (GA4GH) is an international coalition, formed to enable the sharing of genomic and clinical data.
@@ -21,7 +21,7 @@ We work with platform development partners and industry leaders to develop stand
 
 # What is DRS?
 
-The Data Repository Service (DRS) API provides a generic interface to data repositories so data consumers, including workflow systems, can access data in a single, standard way regardless of where it’s stored and how it’s managed.
+The Data Repository Service (DRS) API provides a generic interface to data repositories so data consumers, including workflow systems, can access data in a single, standardized way regardless of where it’s stored or how it’s managed.
 The primary functionality of DRS is to map a logical ID to a means for physically retrieving the data represented by the ID.
 
 For more information see our HTML documentation links in the table below.
@@ -32,8 +32,9 @@ For more information see our HTML documentation links in the table below.
 | --- | --- | --- |
 | **master**: the current release | [HTML](https://ga4gh.github.io/data-repository-service-schemas/docs/) | [Swagger](https://ga4gh.github.io/data-repository-service-schemas/swagger-ui/#/DataRepositoryService/) |
 | **develop**: the stable development branch, into which feature branches are merged | [HTML](https://ga4gh.github.io/data-repository-service-schemas/preview/develop/docs/) | [Swagger](https://ga4gh.github.io/data-repository-service-schemas/preview/develop/swagger-ui/#/DataRepositoryService/) |
-| **release 0.0.1**: the initial DRS after the rename from DOS | [HTML](https://ga4gh.github.io/data-repository-service-schemas/preview/release/0.0.1/docs/) | [Swagger](https://ga4gh.github.io/data-repository-service-schemas/preview/release/0.0.1/swagger-ui/#/DataRepositoryService/) |
+| **release 1.0.0**: the 1.0.0 release of DRS that we are submitting to GA4GH for standards approval | [HTML](https://ga4gh.github.io/data-repository-service-schemas/preview/release/drs-1.0.0/docs/) | [Swagger](https://ga4gh.github.io/data-repository-service-schemas/preview/release/drs-1.0.0/swagger-ui/#/DataRepositoryService/) |
 | **release 0.1**: simplifying DRS to core functionality | [HTML](https://ga4gh.github.io/data-repository-service-schemas/preview/release/drs-0.1.0/docs/) | [Swagger](https://ga4gh.github.io/data-repository-service-schemas/preview/release/drs-0.1.0/swagger-ui/#/DataRepositoryService/) |
+| **release 0.0.1**: the initial DRS after the rename from DOS | [HTML](https://ga4gh.github.io/data-repository-service-schemas/preview/release/0.0.1/docs/) | [Swagger](https://ga4gh.github.io/data-repository-service-schemas/preview/release/0.0.1/swagger-ui/#/DataRepositoryService/) |
 
 To monitor development work on various branches, add 'preview/\<branch-name\>' to the master URLs above (e.g., 'https://ga4gh.github.io/data-repository-service-schemas/preview/\<branch-name\>/docs').
 
