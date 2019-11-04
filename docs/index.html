@@ -439,9 +439,9 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_drs_api_principles">3. DRS API Principles</a>
 <ul class="sectlevel2">
 <li><a href="#_drs_ids">3.1. DRS IDs</a></li>
-<li><a href="#_drs_datatypes">3.2. DRS Datatypes</a></li>
-<li><a href="#_read_only">3.3. Read-only</a></li>
-<li><a href="#_uri_convention">3.4. URI convention</a></li>
+<li><a href="#_drs_uris">3.2. DRS URIs</a></li>
+<li><a href="#_drs_datatypes">3.3. DRS Datatypes</a></li>
+<li><a href="#_read_only">3.4. Read-only</a></li>
 <li><a href="#_standards">3.5. Standards</a></li>
 </ul>
 </li>
@@ -453,7 +453,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </li>
 <li><a href="#_paths">5. Paths</a>
 <ul class="sectlevel2">
-<li><a href="#_getbundle">5.1. Get info about a Data Bundle.</a>
+<li><a href="#_getobject">5.1. Get info about a <code>DrsObject</code>.</a>
 <ul class="sectlevel3">
 <li><a href="#_description">5.1.1. Description</a></li>
 <li><a href="#_parameters">5.1.2. Parameters</a></li>
@@ -461,27 +461,12 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_tags_2">5.1.4. Tags</a></li>
 </ul>
 </li>
-<li><a href="#_getobject">5.2. Get info about a Data Object.</a>
+<li><a href="#_getaccessurl">5.2. Get a URL for fetching bytes.</a>
 <ul class="sectlevel3">
 <li><a href="#_description_2">5.2.1. Description</a></li>
 <li><a href="#_parameters_2">5.2.2. Parameters</a></li>
 <li><a href="#_responses_2">5.2.3. Responses</a></li>
 <li><a href="#_tags_3">5.2.4. Tags</a></li>
-</ul>
-</li>
-<li><a href="#_getaccessurl">5.3. Get a URL for fetching bytes.</a>
-<ul class="sectlevel3">
-<li><a href="#_description_3">5.3.1. Description</a></li>
-<li><a href="#_parameters_3">5.3.2. Parameters</a></li>
-<li><a href="#_responses_3">5.3.3. Responses</a></li>
-<li><a href="#_tags_4">5.3.4. Tags</a></li>
-</ul>
-</li>
-<li><a href="#_getserviceinfo">5.4. Get information about this implementation.</a>
-<ul class="sectlevel3">
-<li><a href="#_description_4">5.4.1. Description</a></li>
-<li><a href="#_responses_4">5.4.2. Responses</a></li>
-<li><a href="#_tags_5">5.4.3. Tags</a></li>
 </ul>
 </li>
 </ul>
@@ -490,12 +475,10 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <ul class="sectlevel2">
 <li><a href="#_accessmethod">6.1. AccessMethod</a></li>
 <li><a href="#_accessurl">6.2. AccessURL</a></li>
-<li><a href="#_bundle">6.3. Bundle</a></li>
-<li><a href="#_bundleobject">6.4. BundleObject</a></li>
-<li><a href="#_checksum">6.5. Checksum</a></li>
+<li><a href="#_checksum">6.3. Checksum</a></li>
+<li><a href="#_contentsobject">6.4. ContentsObject</a></li>
+<li><a href="#_drsobject">6.5. DrsObject</a></li>
 <li><a href="#_error">6.6. Error</a></li>
-<li><a href="#_object">6.7. Object</a></li>
-<li><a href="#_serviceinfo">6.8. ServiceInfo</a></li>
 </ul>
 </li>
 <li><a href="#_appendix_motivation">7. Appendix: Motivation</a>
@@ -516,7 +499,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sect2">
 <h3 id="_version_information"><a class="anchor" href="#_version_information"></a><a class="link" href="#_version_information">1.1. Version information</a></h3>
 <div class="paragraph">
-<p><em>Version</em> : 0.1.0</p>
+<p><em>Version</em> : 1.0.0</p>
 </div>
 </div>
 <div class="sect2">
@@ -595,7 +578,10 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="ulist">
 <ul>
 <li>
-<p>DRS IDs are URL-safe text strings made up of alphanumeric characters and any of [.-_/]</p>
+<p>DRS IDs are strings made up of uppercase and lowercase letters, decimal digits, hypen, period, underscore and tilde [A-Za-z0-9.-_~]. See <a href="https://tools.ietf.org/html/rfc3986#section-2.3">RFC 3986 § 2.3</a>.</p>
+</li>
+<li>
+<p>Note to server implementors: internal IDs can contain other characters, but they MUST be encoded into valid DRS IDs whenever exposed by the API.</p>
 </li>
 <li>
 <p>One DRS ID MUST always return the same object data (or, in the case of a collection, the same set of objects). This constraint aids with reproducibility.</p>
@@ -610,31 +596,34 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 </div>
 <div class="sect2">
-<h3 id="_drs_datatypes"><a class="anchor" href="#_drs_datatypes"></a><a class="link" href="#_drs_datatypes">3.2. DRS Datatypes</a></h3>
+<h3 id="_drs_uris"><a class="anchor" href="#_drs_uris"></a><a class="link" href="#_drs_uris">3.2. DRS URIs</a></h3>
+<div class="paragraph">
+<p>For convenience, including when passing content references to a WES server, we define a URI syntax for DRS-accessible content. Strings of the form <code>drs://&lt;server&gt;/&lt;id&gt;</code> mean <em>“you can fetch the content with DRS id <code>&lt;id&gt;</code> from the DRS server at <code>&lt;server&gt;</code> "</em>.</p>
+</div>
+<div class="paragraph">
+<p>For example, if a WES server was asked to process <code>drs://drs.example.org/314159</code>, it would know that it could issue a GET request to <code><a href="https://drs.example.org/ga4gh/drs/v1/objects/314159" class="bare">https://drs.example.org/ga4gh/drs/v1/objects/314159</a></code> to learn how to fetch that object.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_drs_datatypes"><a class="anchor" href="#_drs_datatypes"></a><a class="link" href="#_drs_datatypes">3.3. DRS Datatypes</a></h3>
 <div class="paragraph">
 <p>DRS v1 supports two types of content:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p>an <code>Object</code> is like a file&#8201;&#8212;&#8201;it&#8217;s a single blob of bytes</p>
+<p>a <em>blob</em> is like a file&#8201;&#8212;&#8201;it&#8217;s a single blob of bytes, represented by a <code>DrsObject</code> without a <code>contents</code> array</p>
 </li>
 <li>
-<p>a <code>Bundle</code> is like a folder&#8201;&#8212;&#8201;it&#8217;s a collection of other DRS content (either objects or bundles)</p>
+<p>a <em>bundle</em> is like a folder&#8201;&#8212;&#8201;it&#8217;s a collection of other DRS content (either blobs or bundles), represented by a <code>DrsObject</code> with a <code>contents</code> array</p>
 </li>
 </ul>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_read_only"><a class="anchor" href="#_read_only"></a><a class="link" href="#_read_only">3.3. Read-only</a></h3>
+<h3 id="_read_only"><a class="anchor" href="#_read_only"></a><a class="link" href="#_read_only">3.4. Read-only</a></h3>
 <div class="paragraph">
 <p>DRS v1 is a read-only API. We expect that each implementation will define its own mechanisms and interfaces (graphical and/or programmatic) for adding and updating data.</p>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_uri_convention"><a class="anchor" href="#_uri_convention"></a><a class="link" href="#_uri_convention">3.4. URI convention</a></h3>
-<div class="paragraph">
-<p>For convenience, including when passing content references to a WES server, we intend to define a recommended URI syntax. The syntax will probably use URI strings beginning with <code>drs://</code>&#8201;&#8212;&#8201;details are being discussed in <a href="https://github.com/ga4gh/data-repository-service-schemas/issues/252">DRS#252</a>.</p>
 </div>
 </div>
 <div class="sect2">
@@ -651,7 +640,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sect2">
 <h3 id="_making_drs_requests"><a class="anchor" href="#_making_drs_requests"></a><a class="link" href="#_making_drs_requests">4.1. Making DRS Requests</a></h3>
 <div class="paragraph">
-<p>The DRS implementation is responsible for defining and enforcing an authorization policy that determines which users are allowed to make which requests. GA4GH recommends that DRS implementations use an OAuth 2.0 <a href="https://oauth.net/2/bearer-tokens/">bearer token</a>, although they can choose other mechanisms if appropriate.  The <code>service-info</code> endpoint should provide sufficient information for a user to figure out how to authenticate with a DRS implementation.</p>
+<p>The DRS implementation is responsible for defining and enforcing an authorization policy that determines which users are allowed to make which requests. GA4GH recommends that DRS implementations use an OAuth 2.0 <a href="https://oauth.net/2/bearer-tokens/">bearer token</a>, although they can choose other mechanisms if appropriate.</p>
 </div>
 </div>
 <div class="sect2">
@@ -731,39 +720,55 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h2 id="_paths"><a class="anchor" href="#_paths"></a><a class="link" href="#_paths">5. Paths</a></h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_getbundle"><a class="anchor" href="#_getbundle"></a><a class="link" href="#_getbundle">5.1. Get info about a Data Bundle.</a></h3>
+<h3 id="_getobject"><a class="anchor" href="#_getobject"></a><a class="link" href="#_getobject">5.1. Get info about a <code>DrsObject</code>.</a></h3>
 <div class="literalblock">
 <div class="content">
-<pre>GET /bundles/{bundle_id}</pre>
+<pre>GET /objects/{object_id}</pre>
 </div>
 </div>
 <div class="sect3">
 <h4 id="_description"><a class="anchor" href="#_description"></a><a class="link" href="#_description">5.1.1. Description</a></h4>
 <div class="paragraph">
-<p>Returns bundle metadata, and a list of ids that can be used to fetch bundle contents.</p>
+<p>Returns object metadata, and a list of access methods that can be used to fetch object bytes.</p>
 </div>
 </div>
 <div class="sect3">
 <h4 id="_parameters"><a class="anchor" href="#_parameters"></a><a class="link" href="#_parameters">5.1.2. Parameters</a></h4>
 <table class="tableblock frame-all grid-all spread">
 <colgroup>
-<col style="width: 22.2222%;">
-<col style="width: 33.3333%;">
-<col style="width: 44.4445%;">
+<col style="width: 10%;">
+<col style="width: 15%;">
+<col style="width: 45%;">
+<col style="width: 20%;">
+<col style="width: 10%;">
 </colgroup>
 <thead>
 <tr>
 <th class="tableblock halign-left valign-middle">Type</th>
 <th class="tableblock halign-left valign-middle">Name</th>
+<th class="tableblock halign-left valign-middle">Description</th>
 <th class="tableblock halign-left valign-middle">Schema</th>
+<th class="tableblock halign-left valign-middle">Default</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>Path</strong></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>bundle_id</strong><br>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>object_id</strong><br>
 <em>required</em></p></td>
+<td class="tableblock halign-left valign-middle"></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-middle"></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>Query</strong></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>expand</strong><br>
+<em>optional</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">If false and the object_id refers to a bundle, then the ContentsObject array contains only those objects directly contained in the bundle. That is, if the bundle contains other bundles, those other bundles are not recursively included in the result.<br>
+If true and the object_id refers to a bundle, then the entire set of objects in the bundle is expanded. That is, if the bundle contains aother bundles, then those other bundles are recursively expanded and included in the result. Recursion continues through the entire sub-tree of the bundle.<br>
+If the object_id refers to a blob, then the query parameter is ignored.</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">boolean</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><code>"false"</code></p></td>
 </tr>
 </tbody>
 </table>
@@ -786,8 +791,15 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>200</strong></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">The Data Bundle was found successfully.</p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><a href="#_bundle">Bundle</a></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">The <code>DrsObject</code> was found successfully.</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><a href="#_drsobject">DrsObject</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>202</strong></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">The operation is delayed and will continue asynchronously. The client should retry this same request after the delay specified by Retry-After header.<br>
+<strong>Headers</strong> : <br>
+<code>Retry-After</code> (integer (int64)) : Delay in seconds. The client should retry this same request after waiting for this duration. To simplify client response processing, this must be an integral relative time in seconds. This value SHOULD represent the minimum duration the client should wait before attempting the operation again with a reasonable expectation of success. When it is not feasible for the server to determine the actual expected delay, the server may return a brief, fixed value instead.</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">No Content</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>400</strong></p></td>
@@ -806,7 +818,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </tr>
 <tr>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>404</strong></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">The requested Data Bundle wasn&#8217;t found.</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">The requested <code>DrsObject</code> wasn&#8217;t found</p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><a href="#_error">Error</a></p></td>
 </tr>
 <tr>
@@ -829,38 +841,51 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 </div>
 <div class="sect2">
-<h3 id="_getobject"><a class="anchor" href="#_getobject"></a><a class="link" href="#_getobject">5.2. Get info about a Data Object.</a></h3>
+<h3 id="_getaccessurl"><a class="anchor" href="#_getaccessurl"></a><a class="link" href="#_getaccessurl">5.2. Get a URL for fetching bytes.</a></h3>
 <div class="literalblock">
 <div class="content">
-<pre>GET /objects/{object_id}</pre>
+<pre>GET /objects/{object_id}/access/{access_id}</pre>
 </div>
 </div>
 <div class="sect3">
 <h4 id="_description_2"><a class="anchor" href="#_description_2"></a><a class="link" href="#_description_2">5.2.1. Description</a></h4>
 <div class="paragraph">
-<p>Returns object metadata, and a list of access methods that can be used to fetch object bytes.</p>
+<p>Returns a URL that can be used to fetch the bytes of a <code>DrsObject</code>.</p>
+</div>
+<div class="paragraph">
+<p>This method only needs to be called when using an <code>AccessMethod</code> that contains an <code>access_id</code> (e.g., for servers that use signed URLs for fetching object bytes).</p>
 </div>
 </div>
 <div class="sect3">
 <h4 id="_parameters_2"><a class="anchor" href="#_parameters_2"></a><a class="link" href="#_parameters_2">5.2.2. Parameters</a></h4>
 <table class="tableblock frame-all grid-all spread">
 <colgroup>
-<col style="width: 22.2222%;">
-<col style="width: 33.3333%;">
-<col style="width: 44.4445%;">
+<col style="width: 11.1111%;">
+<col style="width: 16.6666%;">
+<col style="width: 50%;">
+<col style="width: 22.2223%;">
 </colgroup>
 <thead>
 <tr>
 <th class="tableblock halign-left valign-middle">Type</th>
 <th class="tableblock halign-left valign-middle">Name</th>
+<th class="tableblock halign-left valign-middle">Description</th>
 <th class="tableblock halign-left valign-middle">Schema</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>Path</strong></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>access_id</strong><br>
+<em>required</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">An <code>access_id</code> from the <code>access_methods</code> list of a <code>DrsObject</code></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>Path</strong></p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>object_id</strong><br>
 <em>required</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">An <code>id</code> of a <code>DrsObject</code></p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
 </tr>
 </tbody>
@@ -884,119 +909,15 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>200</strong></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">The Data Object was found successfully.</p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><a href="#_object">Object</a></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>400</strong></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">The request is malformed.</p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><a href="#_error">Error</a></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>401</strong></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">The request is unauthorized.</p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><a href="#_error">Error</a></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>403</strong></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">The requester is not authorized to perform this action.</p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><a href="#_error">Error</a></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>404</strong></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">The requested Data Object wasn&#8217;t found</p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><a href="#_error">Error</a></p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>500</strong></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">An unexpected error occurred.</p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><a href="#_error">Error</a></p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="sect3">
-<h4 id="_tags_3"><a class="anchor" href="#_tags_3"></a><a class="link" href="#_tags_3">5.2.4. Tags</a></h4>
-<div class="ulist">
-<ul>
-<li>
-<p>DataRepositoryService</p>
-</li>
-</ul>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_getaccessurl"><a class="anchor" href="#_getaccessurl"></a><a class="link" href="#_getaccessurl">5.3. Get a URL for fetching bytes.</a></h3>
-<div class="literalblock">
-<div class="content">
-<pre>GET /objects/{object_id}/access/{access_id}</pre>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_description_3"><a class="anchor" href="#_description_3"></a><a class="link" href="#_description_3">5.3.1. Description</a></h4>
-<div class="paragraph">
-<p>Returns a URL that can be used to fetch the object bytes.</p>
-</div>
-<div class="paragraph">
-<p>This method only needs to be called when using an <code>AccessMethod</code> that contains an <code>access_id</code> (e.g., for servers that use signed URLs for fetching object bytes).</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_parameters_3"><a class="anchor" href="#_parameters_3"></a><a class="link" href="#_parameters_3">5.3.2. Parameters</a></h4>
-<table class="tableblock frame-all grid-all spread">
-<colgroup>
-<col style="width: 11.1111%;">
-<col style="width: 16.6666%;">
-<col style="width: 50%;">
-<col style="width: 22.2223%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-middle">Type</th>
-<th class="tableblock halign-left valign-middle">Name</th>
-<th class="tableblock halign-left valign-middle">Description</th>
-<th class="tableblock halign-left valign-middle">Schema</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>Path</strong></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>access_id</strong><br>
-<em>required</em></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">An <code>access_id</code> from the <code>access_methods</code> list of a Data Object</p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>Path</strong></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>object_id</strong><br>
-<em>required</em></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">An <code>id</code> of a Data Object</p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="sect3">
-<h4 id="_responses_3"><a class="anchor" href="#_responses_3"></a><a class="link" href="#_responses_3">5.3.3. Responses</a></h4>
-<table class="tableblock frame-all grid-all spread">
-<colgroup>
-<col style="width: 10%;">
-<col style="width: 70%;">
-<col style="width: 20%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-middle">HTTP Code</th>
-<th class="tableblock halign-left valign-middle">Description</th>
-<th class="tableblock halign-left valign-middle">Schema</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>200</strong></p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">The access URL was found successfully.</p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><a href="#_accessurl">AccessURL</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>202</strong></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">The operation is delayed and will continue asynchronously. The client should retry this same request after the delay specified by Retry-After header.<br>
+<strong>Headers</strong> : <br>
+<code>Retry-After</code> (integer (int64)) : Delay in seconds. The client should retry this same request after waiting for this duration. To simplify client response processing, this must be an integral relative time in seconds. This value SHOULD represent the minimum duration the client should wait before attempting the operation again with a reasonable expectation of success. When it is not feasible for the server to determine the actual expected delay, the server may return a brief, fixed value instead.</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">No Content</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>400</strong></p></td>
@@ -1027,55 +948,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </table>
 </div>
 <div class="sect3">
-<h4 id="_tags_4"><a class="anchor" href="#_tags_4"></a><a class="link" href="#_tags_4">5.3.4. Tags</a></h4>
-<div class="ulist">
-<ul>
-<li>
-<p>DataRepositoryService</p>
-</li>
-</ul>
-</div>
-</div>
-</div>
-<div class="sect2">
-<h3 id="_getserviceinfo"><a class="anchor" href="#_getserviceinfo"></a><a class="link" href="#_getserviceinfo">5.4. Get information about this implementation.</a></h3>
-<div class="literalblock">
-<div class="content">
-<pre>GET /service-info</pre>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_description_4"><a class="anchor" href="#_description_4"></a><a class="link" href="#_description_4">5.4.1. Description</a></h4>
-<div class="paragraph">
-<p>May return service version and other information.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_responses_4"><a class="anchor" href="#_responses_4"></a><a class="link" href="#_responses_4">5.4.2. Responses</a></h4>
-<table class="tableblock frame-all grid-all spread">
-<colgroup>
-<col style="width: 10%;">
-<col style="width: 70%;">
-<col style="width: 20%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-middle">HTTP Code</th>
-<th class="tableblock halign-left valign-middle">Description</th>
-<th class="tableblock halign-left valign-middle">Schema</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>200</strong></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">Service information returned successfully</p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><a href="#_serviceinfo">ServiceInfo</a></p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="sect3">
-<h4 id="_tags_5"><a class="anchor" href="#_tags_5"></a><a class="link" href="#_tags_5">5.4.3. Tags</a></h4>
+<h4 id="_tags_3"><a class="anchor" href="#_tags_3"></a><a class="link" href="#_tags_3">5.2.4. Tags</a></h4>
 <div class="ulist">
 <ul>
 <li>
@@ -1109,7 +982,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <tr>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>access_id</strong><br>
 <em>optional</em></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">An arbitrary string to be passed to the <code>/access</code> method to get an <code>AccessURL</code>. This string must be unique per object. Note that at least one of <code>access_url</code> and <code>access_id</code> must be provided.</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">An arbitrary string to be passed to the <code>/access</code> method to get an <code>AccessURL</code>. This string must be unique within the scope of a single object. Note that at least one of <code>access_url</code> and <code>access_id</code> must be provided.</p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
 </tr>
 <tr>
@@ -1169,146 +1042,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </table>
 </div>
 <div class="sect2">
-<h3 id="_bundle"><a class="anchor" href="#_bundle"></a><a class="link" href="#_bundle">6.3. Bundle</a></h3>
-<table class="tableblock frame-all grid-all spread">
-<colgroup>
-<col style="width: 16.6666%;">
-<col style="width: 61.1111%;">
-<col style="width: 22.2223%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-middle">Name</th>
-<th class="tableblock halign-left valign-middle">Description</th>
-<th class="tableblock halign-left valign-middle">Schema</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>aliases</strong><br>
-<em>optional</em></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">A list of strings that can be used to find other metadata about this Data Bundle from external metadata sources. These aliases can be used to represent the Data Bundle&#8217;s secondary accession numbers or external GUIDs.</p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">&lt; string &gt; array</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>checksums</strong><br>
-<em>required</em></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">The checksum of the Data Bundle. At least one checksum must be provided.<br>
-<br>
-The Data Bundle checksum is computed over a sorted concatenation of all<br>
-the checksums (names not included) within the top-level 'contents' of the<br>
-Bundle (not recursive). The list of Data Object or Bundle checksums are<br>
-sorted alphabetically (hex-code) before concatenation and a further checksum<br>
-is performed on the concatenated checksum value.<br>
-Example below:<br>
-Data Ojects:<br>
- md5(DO1) = 72794b6d30bc86d92e40a1aa65c880b8<br>
- md5(DO2) = 5e089d29a18954e68a78ee6a3c6edabd<br>
-Data Bundle:<br>
-DB1 = md5( concat( sort( md5(DO1), md5(DO2) ) ) )<br>
- = md5( concat( sort( 72794b6d30bc86d92e40a1aa65c880b8, 5e089d29a18954e68a78ee6a3c6edabd ) ) )<br>
- = md5( concat( 5e089d29a18954e68a78ee6a3c6edabd, 72794b6d30bc86d92e40a1aa65c880b8 ) )<br>
- = md5( 5e089d29a18954e68a78ee6a3c6edabd72794b6d30bc86d92e40a1aa65c880b8 )<br>
- = f7a29a0422e7d870b10839ad6c985079</p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">&lt; <a href="#_checksum">Checksum</a> &gt; array</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>contents</strong><br>
-<em>required</em></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">The list of Data Objects and Data Bundles contained by this Data Bundle.</p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">&lt; <a href="#_bundleobject">BundleObject</a> &gt; array</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>created</strong><br>
-<em>required</em></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">Timestamp of Bundle creation in RFC3339.</p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">string (date-time)</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>description</strong><br>
-<em>optional</em></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">A human readable description of the Data Bundle.</p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>id</strong><br>
-<em>required</em></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">An identifier unique to this Data Bundle.</p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>name</strong><br>
-<em>optional</em></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">A string that can be used to name a Data Bundle.</p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>size</strong><br>
-<em>required</em></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">The cumulative size, in bytes, of all Data Objects and Bundles listed in the <code>contents</code> field.</p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">string (int64)</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>updated</strong><br>
-<em>optional</em></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">Timestamp of Bundle update in RFC3339, identical to create timestamp in systems that do not support updates.</p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">string (date-time)</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>version</strong><br>
-<em>optional</em></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">A string representing a version. (Some systems may use checksum, a RFC3339 timestamp, or an incrementing version number.)</p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="sect2">
-<h3 id="_bundleobject"><a class="anchor" href="#_bundleobject"></a><a class="link" href="#_bundleobject">6.4. BundleObject</a></h3>
-<table class="tableblock frame-all grid-all spread">
-<colgroup>
-<col style="width: 16.6666%;">
-<col style="width: 61.1111%;">
-<col style="width: 22.2223%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-middle">Name</th>
-<th class="tableblock halign-left valign-middle">Description</th>
-<th class="tableblock halign-left valign-middle">Schema</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>drs_uri</strong><br>
-<em>optional</em></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">A list of full DRS identifier URI paths that may be used obtain the Data Object or Data Bundle. These URIs may be external to this DRS instance.<br>
-<strong>Example</strong> : <code>"drs://example.com/ga4gh/drs/v1/objects/{object_id}"</code></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">&lt; string &gt; array</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>id</strong><br>
-<em>required</em></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">A DRS identifier of a Data Object or a nested Data Bundle.</p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>name</strong><br>
-<em>required</em></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">A name declared by the Bundle author that must be used when materialising the associated data object, overriding any name directly associated with the object itself. This string MUST NOT contain any slashes.</p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>type</strong><br>
-<em>required</em></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">The type of content being referenced. BundleObject of type bundle will need to be recursed further.</p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">enum (object, bundle)</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="sect2">
-<h3 id="_checksum"><a class="anchor" href="#_checksum"></a><a class="link" href="#_checksum">6.5. Checksum</a></h3>
+<h3 id="_checksum"><a class="anchor" href="#_checksum"></a><a class="link" href="#_checksum">6.3. Checksum</a></h3>
 <table class="tableblock frame-all grid-all spread">
 <colgroup>
 <col style="width: 16.6666%;">
@@ -1331,15 +1065,177 @@ DB1 = md5( concat( sort( md5(DO1), md5(DO2) ) ) )<br>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>type</strong><br>
-<em>optional</em></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">The digest method used to create the checksum. If left unspecified md5<br>
-will be assumed.<br>
+<em>required</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">The digest method used to create the checksum.<br>
 <br>
-possible values:<br>
-md5 # most blob stores provide a checksum using this<br>
-etag # multipart uploads to blob stores<br>
-sha256<br>
-sha512</p></td>
+The value (e.g. <code>sha-256</code>) SHOULD be listed as <code>Hash Name String</code> in the <a href="https://www.iana.org/assignments/named-information/named-information.xhtml#hash-alg">IANA Named Information Hash Algorithm Registry</a>. Other values MAY be used, as long as implementors are aware of the issues discussed in <a href="https://tools.ietf.org/html/rfc6920#section-9.4">RFC6920</a>.<br>
+<br>
+GA4GH may provide more explicit guidance for use of non-IANA-registered algorithms in the future. Until then, if implementors do choose such an algorithm (e.g. because it&#8217;s implemented by their storage provider), they SHOULD use an existing standard <code>type</code> value such as <code>md5</code>, <code>etag</code>, <code>crc32c</code>, <code>trunc512</code>, or <code>sha1</code>.<br>
+<strong>Example</strong> : <code>"sha-256"</code></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_contentsobject"><a class="anchor" href="#_contentsobject"></a><a class="link" href="#_contentsobject">6.4. ContentsObject</a></h3>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 16.6666%;">
+<col style="width: 61.1111%;">
+<col style="width: 22.2223%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-middle">Name</th>
+<th class="tableblock halign-left valign-middle">Description</th>
+<th class="tableblock halign-left valign-middle">Schema</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>contents</strong><br>
+<em>optional</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">If this ContentsObject describes a nested bundle and the caller specified "?expand=true" on the request, then this contents array must be present and describe the objects within the nested bundle.</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">&lt; <a href="#_contentsobject">ContentsObject</a> &gt; array</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>drs_uri</strong><br>
+<em>optional</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">A list of full DRS identifier URI paths that may be used to obtain the object. These URIs may be external to this DRS instance.<br>
+<strong>Example</strong> : <code>"drs://drs.example.org/314159"</code></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">&lt; string &gt; array</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>id</strong><br>
+<em>optional</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">A DRS identifier of a <code>DrsObject</code> (either a single blob or a nested bundle). If this ContentsObject is an object within a nested bundle, then the id is optional. Otherwise, the id is required.</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>name</strong><br>
+<em>required</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">A name declared by the bundle author that must be used when materialising this object, overriding any name directly associated with the object itself. The name must be unique with the containing bundle. This string is made up of uppercase and lowercase letters, decimal digits, hypen, period, and underscore [A-Za-z0-9.-_]. See <a href="http://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap03.html#tag_03_282">portable filenames</a>.</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_drsobject"><a class="anchor" href="#_drsobject"></a><a class="link" href="#_drsobject">6.5. DrsObject</a></h3>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 16.6666%;">
+<col style="width: 61.1111%;">
+<col style="width: 22.2223%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-middle">Name</th>
+<th class="tableblock halign-left valign-middle">Description</th>
+<th class="tableblock halign-left valign-middle">Schema</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>access_methods</strong><br>
+<em>optional</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">The list of access methods that can be used to fetch the <code>DrsObject</code>.<br>
+Required for single blobs; optional for bundles.</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">&lt; <a href="#_accessmethod">AccessMethod</a> &gt; array</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>aliases</strong><br>
+<em>optional</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">A list of strings that can be used to find other metadata about this <code>DrsObject</code> from external metadata sources. These aliases can be used to represent secondary accession numbers or external GUIDs.</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">&lt; string &gt; array</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>checksums</strong><br>
+<em>required</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">The checksum of the <code>DrsObject</code>. At least one checksum must be provided.<br>
+For blobs, the checksum is computed over the bytes in the blob.<br>
+<br>
+For bundles, the checksum is computed over a sorted concatenation of the checksums of its top-level contained objects (not recursive, names not included). The list of checksums is sorted alphabetically (hex-code) before concatenation and a further checksum is performed on the concatenated checksum value.<br>
+<br>
+For example, if a bundle contains blobs with the following checksums:<br>
+md5(blob1) = 72794b6d<br>
+md5(blob2) = 5e089d29<br>
+<br>
+Then the checksum of the bundle is:<br>
+md5( concat( sort( md5(blob1), md5(blob2) ) ) )<br>
+= md5( concat( sort( 72794b6d, 5e089d29 ) ) )<br>
+= md5( concat( 5e089d29, 72794b6d ) )<br>
+= md5( 5e089d2972794b6d )<br>
+= f7a29a04</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">&lt; <a href="#_checksum">Checksum</a> &gt; array</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>contents</strong><br>
+<em>optional</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">If not set, this <code>DrsObject</code> is a single blob.<br>
+If set, this <code>DrsObject</code> is a bundle containing the listed <code>ContentsObject</code> s (some of which may be further nested).</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">&lt; <a href="#_contentsobject">ContentsObject</a> &gt; array</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>created_time</strong><br>
+<em>required</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">Timestamp of content creation in RFC3339.<br>
+(This is the creation time of the underlying content, not of the JSON object.)</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">string (date-time)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>description</strong><br>
+<em>optional</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">A human readable description of the <code>DrsObject</code>.</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>id</strong><br>
+<em>required</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">An identifier unique to this <code>DrsObject</code>.</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>mime_type</strong><br>
+<em>optional</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">A string providing the mime-type of the <code>DrsObject</code>.<br>
+<strong>Example</strong> : <code>"application/json"</code></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>name</strong><br>
+<em>optional</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">A string that can be used to name a <code>DrsObject</code>.<br>
+This string is made up of uppercase and lowercase letters, decimal digits, hypen, period, and underscore [A-Za-z0-9.-_]. See <a href="http://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap03.html#tag_03_282">portable filenames</a>.</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>self_uri</strong><br>
+<em>required</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">A drs:// URI, as defined in the DRS documentation, that tells clients how to access this object.<br>
+The intent of this field is to make DRS objects self-contained, and therefore easier for clients to store and pass around.<br>
+<strong>Example</strong> : <code>"drs://drs.example.org/314159"</code></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>size</strong><br>
+<em>required</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">For blobs, the blob size in bytes.<br>
+For bundles, the cumulative size, in bytes, of items in the <code>contents</code> field.</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">integer (int64)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>updated_time</strong><br>
+<em>optional</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">Timestamp of content update in RFC3339, identical to <code>created_time</code> in systems that do not support updates. (This is the update time of the underlying content, not of the JSON object.)</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">string (date-time)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>version</strong><br>
+<em>optional</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">A string representing a version.<br>
+(Some systems may use checksum, a RFC3339 timestamp, or an incrementing version number.)</p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
 </tr>
 </tbody>
@@ -1375,144 +1271,6 @@ sha512</p></td>
 <em>optional</em></p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">The integer representing the HTTP status code (e.g. 200, 404).</p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">integer</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="sect2">
-<h3 id="_object"><a class="anchor" href="#_object"></a><a class="link" href="#_object">6.7. Object</a></h3>
-<table class="tableblock frame-all grid-all spread">
-<colgroup>
-<col style="width: 16.6666%;">
-<col style="width: 61.1111%;">
-<col style="width: 22.2223%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-middle">Name</th>
-<th class="tableblock halign-left valign-middle">Description</th>
-<th class="tableblock halign-left valign-middle">Schema</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>access_methods</strong><br>
-<em>required</em></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">The list of access methods that can be used to fetch the Data Object.</p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">&lt; <a href="#_accessmethod">AccessMethod</a> &gt; array</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>aliases</strong><br>
-<em>optional</em></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">A list of strings that can be used to find other metadata about this Data Object from external metadata sources. These aliases can be used to represent the Data Object&#8217;s secondary accession numbers or external GUIDs.</p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">&lt; string &gt; array</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>checksums</strong><br>
-<em>required</em></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">The checksum of the Data Object. At least one checksum must be provided.</p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">&lt; <a href="#_checksum">Checksum</a> &gt; array</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>created</strong><br>
-<em>required</em></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">Timestamp of object creation in RFC3339.</p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">string (date-time)</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>description</strong><br>
-<em>optional</em></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">A human readable description of the Data Object.</p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>id</strong><br>
-<em>required</em></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">An identifier unique to this Data Object.</p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>mime_type</strong><br>
-<em>optional</em></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">A string providing the mime-type of the Data Object.<br>
-<strong>Example</strong> : <code>"application/json"</code></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>name</strong><br>
-<em>optional</em></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">A string that can be used to name a Data Object.</p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>size</strong><br>
-<em>required</em></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">The object size in bytes.</p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">integer (int64)</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>updated</strong><br>
-<em>optional</em></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">Timestamp of Object update in RFC3339, identical to create timestamp in systems that do not support updates.</p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">string (date-time)</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>version</strong><br>
-<em>optional</em></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">A string representing a version.</p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="sect2">
-<h3 id="_serviceinfo"><a class="anchor" href="#_serviceinfo"></a><a class="link" href="#_serviceinfo">6.8. ServiceInfo</a></h3>
-<div class="paragraph">
-<p>Useful information about the running service.</p>
-</div>
-<table class="tableblock frame-all grid-all spread">
-<colgroup>
-<col style="width: 16.6666%;">
-<col style="width: 61.1111%;">
-<col style="width: 22.2223%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-middle">Name</th>
-<th class="tableblock halign-left valign-middle">Description</th>
-<th class="tableblock halign-left valign-middle">Schema</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>contact</strong><br>
-<em>optional</em></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">Maintainer contact info</p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">object</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>description</strong><br>
-<em>optional</em></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">Service description</p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>license</strong><br>
-<em>optional</em></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">License information for the exposed API</p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">object</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>title</strong><br>
-<em>optional</em></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">Service name</p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>version</strong><br>
-<em>required</em></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">Service version</p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
 </tr>
 </tbody>
 </table>
@@ -1621,7 +1379,7 @@ sha512</p></td>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-08-12 14:54:21 UTC
+Last updated 2019-11-04 02:06:58 UTC
 </div>
 </div>
 </body>
