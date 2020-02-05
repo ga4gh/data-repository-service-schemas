@@ -2,7 +2,7 @@ swagger: '2.0'
 basePath: '/ga4gh/drs/v1'
 info:
   title: Data Repository Service
-  version: 1.0.0
+  version: 1.0.1
   description: 'https://github.com/ga4gh/data-repository-service-schemas'
   termsOfService: 'https://www.ga4gh.org/terms-and-conditions/'
   contact:
@@ -21,6 +21,9 @@ security:
   - {}
   - authToken: []
 paths:
+  '/service-info':
+    # Links to the latest version of service-info. Use a tag once service-info is released instead.
+    $ref: 'https://raw.githubusercontent.com/ga4gh-discovery/ga4gh-service-info/v1.0.0/service-info.yaml#/paths/~1service-info'
   '/objects/{object_id}':
     get:
       summary: Get info about a `DrsObject`.
