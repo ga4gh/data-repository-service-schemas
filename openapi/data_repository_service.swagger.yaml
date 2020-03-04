@@ -21,7 +21,7 @@ security:
   - {}
   - authToken: []
 paths:
-  '/objects/{object_id}':
+  '/objects/{scheme}{identifier}/{object_id}':
     get:
       summary: Get info about a `DrsObject`.
       description: >-
@@ -68,6 +68,19 @@ paths:
           schema:
             $ref: '#/definitions/Error'
       parameters:
+        - name: scheme
+          in: path
+          required: false
+          type: string
+          enum: |-
+            ark:
+            dg.
+          description: A string of characters the define which resolution service is used for object resolution (i.e. "dg." or "ark:")
+        - name: identifier
+          in: path
+          required: false
+          type: string
+          description: A string of characters after the scheme that is a unique identifer of the organization that the object belongs to
         - name: object_id
           in: path
           required: true
@@ -91,7 +104,7 @@ paths:
       tags:
         - DataRepositoryService
       x-swagger-router-controller: ga4gh.drs.server
-  '/objects/{object_id}/access/{access_id}':
+  '/objects/{scheme}{identifier}/{object_id}/access/{access_id}':
     get:
       summary: Get a URL for fetching bytes.
       description: >-
@@ -147,6 +160,19 @@ paths:
           required: true
           type: string
           description: An `id` of a `DrsObject`
+        - name: scheme
+          in: path
+          required: false
+          type: string
+          enum: |-
+            ark:
+            dg.
+          description: A string of characters the define which resolution service is used for object resolution (i.e. "dg." or "ark:")
+        - name: identifier
+          in: path
+          required: false
+          type: string
+          description: A string of characters after the scheme that is a unique identifer of the organization that the object belongs to
         - name: access_id
           in: path
           required: true
@@ -388,7 +414,7 @@ definitions:
           that may be used to obtain the object.
           These URIs may be external to this DRS instance.
         example:
-          drs://drs.example.org/314159
+          drs://drs.example.org/dg.1234/314159
         items:
           type: string
       contents:
