@@ -77,4 +77,26 @@ DRS implementers should ensure their solutions restrict access to targets as muc
 
 When making DRS requests if a 404 is encountered, the DRS implementation CAN use the DRS prefix to resolve the identifiers. DRS implementors can use a resolution service like http://n2t.net/[n2t], http://identifiers.org/[identifiers.org], or https://dataguids.org/[dataguids] (for `dg.`) to resolve prefixes. This request will give a HTTP 302 response with the redirect to the new URL associated with the DRS implementation. This new URL can then be cached to be used for subsequent DRS requests.
 
+A DRS Resolution flow would look like this:
+
+Propose we have a DRS URL to resolve in the form of <drs://example.com/ga4gh/drs/v1/object/dg.4503/182>
+
+Send a GET request to the DRS URI
+	e.x. (GET http://example.com/ga4gh/drs/v1/object/dg.4503/182)
+
+If this returns a 404 error we can then resolve this guid to find the appropriate server URL
+	If the prefix starts with `dg.` we then use dataguids.org as the resolver and send a new GET request
+		GET https://dataguids.org/ga4gh/drs/v1/dataobjects/dg.4503/dg.4503/182
+
+	If the prefix starts with `ark:` we then can use n2t.net as the resolver and send a new GET request
+		GET http://n2t.net/ark:67531
+
+	If these requests fail you may try identifiers.org as a resolver. As it is a centeral resolver that handles many prefixes.
+		GET http://identifiers.org/dg.4503 or GET http://identifiers.org/ark:67531
+
+	If all of these fail then this DRS URI cannot be resolved
+
+If these requests return a 302 with the correct URL to send a new GET request to. A DRS implemntation CAN cache this new URL and use it until it doesn't work any more
+	GET http://<NEW URL>/dg.4503/182
+
 There is no need to pass any authorization headers to the resolution service
