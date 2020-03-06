@@ -100,3 +100,5 @@ If these requests return a 302 with the correct URL to send a new GET request to
 	GET http://<NEW URL>/dg.4503/182
 
 There is no need to pass any authorization headers to the resolution service
+
+image::DRS-URL-request.png[]
