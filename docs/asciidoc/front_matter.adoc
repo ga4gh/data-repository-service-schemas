@@ -22,6 +22,20 @@ For convenience, including when passing content references to a WES server, we d
 
 For example, if a WES server was asked to process `drs://drs.example.org/314159`, it would know that it could issue a GET request to `https://drs.example.org/ga4gh/drs/v1/objects/314159` to learn how to fetch that object.
 
+==== URI Redirection
+One potential concern with this URI syntax is that it depends on the server name (e.g. `drs.example.org`) remaining valid. In the rare event where a DRS server operator needs to preserve the validity of published resources, but can't preserved the validity of their DNS name, we define a standard mechanism for DRS server operators to redirect DRS clients to a new physical server.
+
+If a *DRS client* tries to fetch content, and gets an error indicating that the DRS server in the URI doesn't exist, the client should:
+
+* call `identifiers.org` with `drs:servername`, which will 302 them to a new cacheable servername (e.g. `drs:obsolete.org` will redirect to `newhotness.org`.)
+* use the new servername to resolve the updated DRS URI normally (e.g. if they're redirected to `newhotness.org`, they should act is if the URI were `drs://newhotness.org/314159` and issue a GET request to `https://newhotness.org/ga4gh/drs/v1/objects/314159`)
+* cache the redirect to avoid having to call the resolver too often
+
+If a *DRS server operator* is concerned with URIs outliving their published server names, they should:
+
+* If a DRS server operator has already handed out DRS URIs containing no-longer-valid server names, they should register a redirect with `identifiers.org` (E.g. the operator of `obsolete.org` would register `drs:obsolete.org` as resolving to `newhotness.org`)
+* If a DRS server operator wants to hand out non-DNS-containing URIs, they can provide non-resolvable URIs (e.g. `drs://dg4503/314159`), know that `dg4503` will never be DNS-findable, and therefore clients will always ask the resolver where `drs:dg4503` lives, and go through the normal redirection process
+
 === DRS Datatypes
 
 DRS v1 supports two types of content:
