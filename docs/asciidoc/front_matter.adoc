@@ -23,7 +23,7 @@ For convenience, including when passing content references to a WES server, we d
 For example, if a WES server was asked to process `drs://drs.example.org/314159`, it would know that it could issue a GET request to `https://drs.example.org/ga4gh/drs/v1/objects/314159` to learn how to fetch that object.
 
 ==== URI Redirection
-One potential concern with this URI syntax is that it depends on the server name (e.g. `drs.example.org`) remaining valid. In the rare event where a DRS server operator needs to preserve the validity of published resources, but can't preserved the validity of their DNS name, we define a standard mechanism for DRS server operators to redirect DRS clients to a new physical server.
+One potential concern with this URI syntax is that it depends on the server name (e.g. `drs.example.org`) remaining valid. In the rare event where a DRS server operator needs to preserve the validity of published resources, but can't preserve the validity of their DNS name, we define a standard mechanism for DRS server operators to redirect DRS clients to a new physical server.
 
 If a *DRS client* tries to fetch content, and gets an error indicating that the DRS server in the URI doesn't exist, the client should:
 
