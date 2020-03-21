@@ -439,7 +439,11 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_drs_api_principles">3. DRS API Principles</a>
 <ul class="sectlevel2">
 <li><a href="#_drs_ids">3.1. DRS IDs</a></li>
-<li><a href="#_drs_uris">3.2. DRS URIs</a></li>
+<li><a href="#_drs_uris">3.2. DRS URIs</a>
+<ul class="sectlevel3">
+<li><a href="#_uri_redirection">3.2.1. URI Redirection</a></li>
+</ul>
+</li>
 <li><a href="#_drs_datatypes">3.3. DRS Datatypes</a></li>
 <li><a href="#_read_only">3.4. Read-only</a></li>
 <li><a href="#_standards">3.5. Standards</a></li>
@@ -602,6 +606,41 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 <div class="paragraph">
 <p>For example, if a WES server was asked to process <code>drs://drs.example.org/314159</code>, it would know that it could issue a GET request to <code><a href="https://drs.example.org/ga4gh/drs/v1/objects/314159" class="bare">https://drs.example.org/ga4gh/drs/v1/objects/314159</a></code> to learn how to fetch that object.</p>
+</div>
+<div class="sect3">
+<h4 id="_uri_redirection"><a class="anchor" href="#_uri_redirection"></a><a class="link" href="#_uri_redirection">3.2.1. URI Redirection</a></h4>
+<div class="paragraph">
+<p>One potential concern with this URI syntax is that it depends on the server name (e.g. <code>drs.example.org</code>) remaining valid. In the rare event where a DRS server operator needs to preserve the validity of published resources, but can&#8217;t preserved the validity of their DNS name, we define a standard mechanism for DRS server operators to redirect DRS clients to a new physical server.</p>
+</div>
+<div class="paragraph">
+<p>If a <strong>DRS client</strong> tries to fetch content, and gets an error indicating that the DRS server in the URI doesn&#8217;t exist, the client should:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>call <code>identifiers.org</code> with <code>drs:servername</code>, which will 302 them to a new cacheable servername (e.g. <code>drs:obsolete.org</code> will redirect to <code>newhotness.org</code>.)</p>
+</li>
+<li>
+<p>use the new servername to resolve the updated DRS URI normally (e.g. if they&#8217;re redirected to <code>newhotness.org</code>, they should act is if the URI were <code>drs://newhotness.org/314159</code> and issue a GET request to <code><a href="https://newhotness.org/ga4gh/drs/v1/objects/314159" class="bare">https://newhotness.org/ga4gh/drs/v1/objects/314159</a></code>)</p>
+</li>
+<li>
+<p>cache the redirect to avoid having to call the resolver too often</p>
+</li>
+</ul>
+</div>
+<div class="paragraph">
+<p>If a <strong>DRS server operator</strong> is concerned with URIs outliving their published server names, they should:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>If a DRS server operator has already handed out DRS URIs containing no-longer-valid server names, they should register a redirect with <code>identifiers.org</code> (E.g. the operator of <code>obsolete.org</code> would register <code>drs:obsolete.org</code> as resolving to <code>newhotness.org</code>)</p>
+</li>
+<li>
+<p>If a DRS server operator wants to hand out non-DNS-containing URIs, they can provide non-resolvable URIs (e.g. <code>drs://dg4503/314159</code>), know that <code>dg4503</code> will never be DNS-findable, and therefore clients will always ask the resolver where <code>drs:dg4503</code> lives, and go through the normal redirection process</p>
+</li>
+</ul>
+</div>
 </div>
 </div>
 <div class="sect2">
@@ -1379,7 +1418,7 @@ For bundles, the cumulative size, in bytes, of items in the <code>contents</code
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2020-03-21 18:25:31 UTC
+Last updated 2020-03-21 18:57:19 UTC
 </div>
 </div>
 </body>
