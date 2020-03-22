@@ -8,6 +8,8 @@ The primary functionality of DRS is to map a logical ID to a means for physicall
 
 === DRS IDs
 
+DRS id refers to the <id> in the CURIE syntax described below.
+
 Each implementation of DRS can choose its own id scheme, as long as it follows these guidelines:
 
 * DRS IDs are strings made up of uppercase and lowercase letters, decimal digits, hypen, period, underscore and tilde [A-Za-z0-9.-_~]. See https://tools.ietf.org/html/rfc3986#section-2.3[RFC 3986 § 2.3].
@@ -16,25 +18,35 @@ Each implementation of DRS can choose its own id scheme, as long as it follows t
 * DRS v1 does NOT support semantics around multiple versions of an object. (For example, there’s no notion of “get latest version” or “list all versions”.) Individual implementation MAY choose an ID scheme that includes version hints.
 * DRS implementations MAY have more than one ID that maps to the same object.
 
-=== DRS URIs
+=== DRS CURIEs
 
-For convenience, including when passing content references to a WES server, we define a URI syntax for DRS-accessible content. Strings of the form `drs://<server>/<id>` mean _“you can fetch the content with DRS id `<id>` from the DRS server at `<server>` "_.
+For convenience, including when passing content references to a WES server, we use a CURIE syntax for DRS-accessible content. Strings of the form `<prefix>:<id>` mean _“you can fetch the content with id `<id>` from the DRS server which has been registered to handle requests beginning with prefix `<prefix>` "_.
 
-For example, if a WES server was asked to process `drs://drs.example.org/314159`, it would know that it could issue a GET request to `https://drs.example.org/ga4gh/drs/v1/objects/314159` to learn how to fetch that object.
+For example, the organization acting as a DRS server for DRS objects prefixed as eg: would
+register the prefix <eg> with identifiers.org for the URL pattern 'https://drs.example.org/ga4gh/drs/v1/objects/($id)'
+(See https://registry.identifiers.org/prefixregistrationrequest for URL prefix etc.)
 
-==== URI Redirection
-One potential concern with this URI syntax is that it depends on the server name (e.g. `drs.example.org`) remaining valid. In the rare event where a DRS server operator needs to preserve the validity of published resources, but can't preserve the validity of their DNS name, we define a standard mechanism for DRS server operators to redirect DRS clients to a new physical server.
+if a WES server was asked to process `eg:314159`, it would know that it could issue a GET request to any identifiers.org compliant mirror to learn how to fetch that object. The GET for eg:314159 could be sent to 
+http://identifiers.org/eg:314159
+or
+http://n2t.net/eg:314159
+In either case a redirect would be issued to `https://drs.example.org/ga4gh/drs/v1/objects/314159` 
 
-If a *DRS client* tries to fetch content, and gets an error indicating that the DRS server in the URI doesn't exist, the client should:
+A WES server, or any program needing to resolve objects, may locally cache the URL pattern for prefix eg: and call it directly for further ids.
 
-* call `identifiers.org` with `drs:servername`, which will 302 them to a new cacheable servername (e.g. `drs:obsolete.org` will redirect to `newhotness.org`.)
-* use the new servername to resolve the updated DRS URI normally (e.g. if they're redirected to `newhotness.org`, they should act is if the URI were `drs://newhotness.org/314159` and issue a GET request to `https://newhotness.org/ga4gh/drs/v1/objects/314159`)
-* cache the redirect to avoid having to call the resolver too often
 
-If a *DRS server operator* is concerned with URIs outliving their published server names, they should:
+==== Changes to DRS server location
+This addresses the concern that resolution depends on the server name (e.g. `drs.example.org`) remaining valid. In the rare event where a DRS server operator needs to preserve the validity of published resources, but can't preserve the validity of their DNS name, the operator would contact identifiers.org to update the registered URL pattern to redirect DRS clients to the new physical server.
 
-* If a DRS server operator has already handed out DRS URIs containing no-longer-valid server names, they should register a redirect with `identifiers.org` (E.g. the operator of `obsolete.org` would register `drs:obsolete.org` as resolving to `newhotness.org`)
-* If a DRS server operator wants to hand out non-DNS-containing URIs, they can provide non-resolvable URIs (e.g. `drs://dg4503/314159`), know that `dg4503` will never be DNS-findable, and therefore clients will always ask the resolver where `drs:dg4503` lives, and go through the normal redirection process
+For example an operator that had previous been using `obsolete.org` for the prefix 'ox:'  would update the URL pattern for 'ox:' to 'https://newhotness.org/ga4gh/drs/v1/objects/($id)'
+
+
+==== Options to optimize performance
+
+A site needing high performance for resolution of objects
+
+An operator using a given prefix would likely choose not to call a remote resolver for objects which use its own prefix, but access its local resources directly.
+
 
 === DRS Datatypes
 
