@@ -604,7 +604,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h3 id="_drs_uris"><a class="anchor" href="#_drs_uris"></a><a class="link" href="#_drs_uris">3.2. DRS URIs</a></h3>
 <div class="paragraph">
 <p>For convenience, including when passing content references to a WES server, we define a<br>
-[URI scheme](<a href="https://en.wikipedia.org/wiki/Uniform_Resource_Identifier#Generic_syntax" class="bare">https://en.wikipedia.org/wiki/Uniform_Resource_Identifier#Generic_syntax</a>)<br>
+<a href="https://en.wikipedia.org/wiki/Uniform_Resource_Identifier#Generic_syntax">URI scheme</a><br>
 for DRS-accessible content See <a href="https://tools.ietf.org/html/rfc3986#section-3.1">RFC 3986 § 3.1</a>.<br>
 We felt it was important to introduce a DRS scheme for URIs<br>
 since it signals to systems consuming these URIs that the response they will ultimately<br>
@@ -623,14 +623,13 @@ Hostname-based and Compact Identifier-based.</p>
 <h4 id="_compact_identifier_based_drs_uris"><a class="anchor" href="#_compact_identifier_based_drs_uris"></a><a class="link" href="#_compact_identifier_based_drs_uris">3.2.1. Compact Identifier-based DRS URIs</a></h4>
 <div class="paragraph">
 <p>Compact identifiers refer to locally-unique persistent identifiers that have been<br>
-namespaced to provide global uniqueness. See ["Uniform resolution of compact identifiers<br>
-for biomedical data"](<a href="https://www.biorxiv.org/content/10.1101/101279v3" class="bare">https://www.biorxiv.org/content/10.1101/101279v3</a>) for an excellent guide<br>
-to this topic.  We support the use of compact identifiers in DRS URIs since many resources<br>
-in the research community issue these identifiers of a variety of formats.</p>
+namespaced to provide global uniqueness. See <a href="https://www.biorxiv.org/content/10.1101/101279v3">"Uniform resolution of compact identifiers for biomedical data"</a> for an excellent<br>
+ guide to this topic.  We support the use of compact identifiers in DRS URIs since many<br>
+resources in the research community issue these identifiers of a variety of formats.</p>
 </div>
 <div class="paragraph">
 <p>When combined with the resolver registry services of<br>
-[identifiers.org](<a href="https://identifiers.org/)/">n2t.net (Name-To-Thing)</a>(<a href="https://n2t.net/" class="bare">https://n2t.net/</a>),<br>
+<a href="https://identifiers.org/">identifiers.org</a> / <a href="https://n2t.net/">n2t.net (Name-To-Thing)</a>,<br>
 we can support any registered form of compact identifiers (Arks, DOIs, Data GUIDs, etc)<br>
 and also allow for the resolution of<br>
 DRS objects without needing to use a hostname in the URI.  By using compact identifiers with a resolver<br>
@@ -675,9 +674,9 @@ IGSN:SSH000SUA</pre>
 If your DRS implementation will issue IDs and pass around references with DRS URIs<br>
 with compact identifiers you <strong>must</strong> register your prefix on identifiers.org/n2t.net<br>
 otherwise DRS clients will not know how to resolve your compact identifiers and,<br>
-ultimately, generate a DRS URL that can be accessed.<br>
----</p>
+ultimately, generate a DRS URL that can be accessed.</p>
 </div>
+<hr>
 <div class="paragraph">
 <p>Translating the identifiers.org/n2t.net to DRS URIs we get the following URI form:</p>
 </div>
@@ -696,8 +695,8 @@ which is not allowed in hostname-based URI.</p>
 used as DRS URIs they must be</p>
 </div>
 <div class="paragraph">
-<p>See the documentation on [n2t.net](<a href="https://n2t.net/e/compact_ids.html" class="bare">https://n2t.net/e/compact_ids.html</a>) and<br>
-[identifiers.org](<a href="https://docs.identifiers.org/" class="bare">https://docs.identifiers.org/</a>) for much more information on<br>
+<p>See the documentation on <a href="https://n2t.net/e/compact_ids.html">n2t.net</a> and<br>
+<a href="https://docs.identifiers.org/">identifiers.org</a> for much more information on<br>
 the compact identifiers used there and details about the resolution process.<br>
 You can also register new prefixes or mirrors (additional resource providers).</p>
 </div>
@@ -757,34 +756,48 @@ For example a DRS URI would look like:</p>
 <p><strong>Please keep in mind identifiers.org/n2t.net does not support directly resolving URI encoded IDs.<br>
  So we recommend this approach above to looking up resolvers on these registries and then making a valid<br>
 DRS GET request directly.  This approach is also useful for caching resolvers since they are<br>
-unlikely to change frequently.</strong><br>
----</p>
+unlikely to change frequently.</strong></p>
 </div>
+<hr>
 </div>
 <div class="sect3">
 <h4 id="_hostname_based_drs_uris"><a class="anchor" href="#_hostname_based_drs_uris"></a><a class="link" href="#_hostname_based_drs_uris">3.2.2. Hostname-based DRS URIs</a></h4>
 <div class="paragraph">
-<p>Strings of the form <code>drs://&lt;server&gt;/&lt;id&gt;</code> mean <em>“you can fetch the content with DRS id <code>&lt;id&gt;</code> from the DRS server at <code>&lt;server&gt;</code> "</em>.</p>
+<p>Strings of the form <code>drs://&lt;server&gt;/&lt;id&gt;</code> mean <em>“you can fetch the content with DRS id <code>&lt;id&gt;</code> from the DRS server at <code>&lt;server&gt;</code> "</em>.  For example:</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>drs://dataguids.org/dg.4503%2F00e6cfa9-a183-42f6-bb44-b70347106bbe</pre>
+</div>
 </div>
 <div class="paragraph">
 <p>For example, if a WES server was asked to process <code>drs://drs.example.org/314159</code>, it would know that it could issue a GET request to <code><a href="https://drs.example.org/ga4gh/drs/v1/objects/314159" class="bare">https://drs.example.org/ga4gh/drs/v1/objects/314159</a></code> to learn how to fetch that object.</p>
 </div>
 <div class="paragraph">
-<p>The protocol is always https and the port is always the standard 443 SSL port.  It would be invalid to include,<br>
-for example, a port in the DRS URI.</p>
+<p>The protocol is always https and the port is always the standard 443 SSL port.  It would<br>
+be invalid to include, for example, a port in the DRS URI.</p>
 </div>
 <div class="paragraph">
 <p>As with DRS URIs based on compact identifiers, the ID is percent-encoded to ensure special characters<br>
 do not interfere with subsequent DRS endpoint calls.  As such, ":" is not allowed in the URI.</p>
 </div>
+<div class="paragraph">
+<p>Hostname-based DRS URIs are less resistant to future project/domain name changes<br>
+than compact identifiers.  But they do provide a more explicit way of pointing<br>
+to a DRS object.  The fact that they can be resolved using a simple rule<br>
+means a DRS client can skip the extra overhead of a DRS server lookup<br>
+as is done for compact identifier-based URIs.  This can translate to<br>
+greater performance also, possibly, security since it avoids the lookup of<br>
+a resolver through a separate service (identifiers.org/n2t.net).</p>
+</div>
 <hr>
 <div class="paragraph">
 <p><strong>NOTE</strong><br>
-In the future, as newer versions of DRS are released, multiple versions of DRS may be supported on the same server.  Using the hostname in the DRS URI, plus information in the [service-registry](<a href="https://github.com/ga4gh-discovery/ga4gh-service-registry" class="bare">https://github.com/ga4gh-discovery/ga4gh-service-registry</a>) standard endpoint,<br>
-which lead to [service-info](<a href="https://github.com/ga4gh-discovery/ga4gh-service-info" class="bare">https://github.com/ga4gh-discovery/ga4gh-service-info</a>) endpoints, a client can discover enough information to<br>
-translate a DRS URI into a valid URL.<br>
----</p>
+In the future, as newer versions of DRS are released, multiple versions of DRS may be supported on the same server.  Using the hostname in the DRS URI, plus information in the <a href="https://github.com/ga4gh-discovery/ga4gh-service-registry">service-registry</a> standard endpoint,<br>
+which lead to <a href="https://github.com/ga4gh-discovery/ga4gh-service-info">service-info</a> endpoints, a client can discover enough information to<br>
+translate a DRS URI into a valid URL.</p>
 </div>
+<hr>
 </div>
 </div>
 <div class="sect2">
@@ -1562,7 +1575,7 @@ For bundles, the cumulative size, in bytes, of items in the <code>contents</code
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2020-04-07 06:24:01 UTC
+Last updated 2020-04-07 23:54:32 UTC
 </div>
 </div>
 </body>
