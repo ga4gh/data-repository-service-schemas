@@ -75,6 +75,7 @@ If your DRS implementation will issue IDs and pass around references with DRS UR
 with compact identifiers you *must* register your prefix on identifiers.org/n2t.net
 otherwise DRS clients will not know how to resolve your compact identifiers and,
 ultimately, generate a DRS URL that can be accessed.
+
 ---
 
 Translating the identifiers.org/n2t.net to DRS URIs we get the following URI form:
@@ -128,6 +129,7 @@ IDs in DRS URIs/URLs are always percent-encoded to eliminate ambiguity.
  So we recommend this approach above to looking up resolvers on these registries and then making a valid
 DRS GET request directly.  This approach is also useful for caching resolvers since they are
 unlikely to change frequently.**
+
 ---
 
 ==== Hostname-based DRS URIs
@@ -144,9 +146,10 @@ do not interfere with subsequent DRS endpoint calls.  As such, ":" is not allowe
 
 ---
 **NOTE**
-In the future, as newer versions of DRS are released, multiple versions of DRS may be supported on the same server.  Using the hostname in the DRS URI, plus information in the [service-registry](https://github.com/ga4gh-discovery/ga4gh-service-registry) standard endpoint, 
+In the future, as newer versions of DRS are released, multiple versions of DRS may be supported on the same server.  Using the hostname in the DRS URI, plus information in the [service-registry](https://github.com/ga4gh-discovery/ga4gh-service-registry) standard endpoint,
 which lead to [service-info](https://github.com/ga4gh-discovery/ga4gh-service-info) endpoints, a client can discover enough information to
 translate a DRS URI into a valid URL.
+
 ---
 
 === DRS Datatypes
