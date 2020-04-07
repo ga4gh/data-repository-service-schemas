@@ -134,15 +134,25 @@ unlikely to change frequently.**
 
 ==== Hostname-based DRS URIs
 
-Strings of the form `drs://<server>/<id>` mean _“you can fetch the content with DRS id `<id>` from the DRS server at `<server>` "_.
+Strings of the form `drs://<server>/<id>` mean _“you can fetch the content with DRS id `<id>` from the DRS server at `<server>` "_.  For example:
+
+    drs://dataguids.org/dg.4503%2F00e6cfa9-a183-42f6-bb44-b70347106bbe
 
 For example, if a WES server was asked to process `drs://drs.example.org/314159`, it would know that it could issue a GET request to `https://drs.example.org/ga4gh/drs/v1/objects/314159` to learn how to fetch that object.
 
-The protocol is always https and the port is always the standard 443 SSL port.  It would be invalid to include,
-for example, a port in the DRS URI.
+The protocol is always https and the port is always the standard 443 SSL port.  It would
+be invalid to include, for example, a port in the DRS URI.
 
 As with DRS URIs based on compact identifiers, the ID is percent-encoded to ensure special characters
 do not interfere with subsequent DRS endpoint calls.  As such, ":" is not allowed in the URI.
+
+Hostname-based DRS URIs are less resistant to future project/domain name changes
+than compact identifiers.  But they do provide a more explicit way of pointing
+to a DRS object.  The fact that they can be resolved using a simple rule
+means a DRS client can skip the extra overhead of a DRS server lookup
+as is done for compact identifier-based URIs.  This can translate to
+greater performance also, possibly, security since it avoids the lookup of
+a resolver through a separate service (identifiers.org/n2t.net).
 
 ---
 **NOTE**
