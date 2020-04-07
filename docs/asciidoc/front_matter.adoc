@@ -19,7 +19,7 @@ Each implementation of DRS can choose its own id scheme, as long as it follows t
 === DRS URIs
 
 For convenience, including when passing content references to a WES server, we define a
-[URI scheme](https://en.wikipedia.org/wiki/Uniform_Resource_Identifier#Generic_syntax)
+https://en.wikipedia.org/wiki/Uniform_Resource_Identifier#Generic_syntax[URI scheme]
 for DRS-accessible content See https://tools.ietf.org/html/rfc3986#section-3.1[RFC 3986 § 3.1].
 We felt it was important to introduce a DRS scheme for URIs
 since it signals to systems consuming these URIs that the response they will ultimately
@@ -36,13 +36,12 @@ Hostname-based and Compact Identifier-based.
 ==== Compact Identifier-based DRS URIs
 
 Compact identifiers refer to locally-unique persistent identifiers that have been
-namespaced to provide global uniqueness. See ["Uniform resolution of compact identifiers
-for biomedical data"](https://www.biorxiv.org/content/10.1101/101279v3) for an excellent guide
-to this topic.  We support the use of compact identifiers in DRS URIs since many resources
-in the research community issue these identifiers of a variety of formats.
+namespaced to provide global uniqueness. See https://www.biorxiv.org/content/10.1101/101279v3["Uniform resolution of compact identifiers for biomedical data"] for an excellent
+ guide to this topic.  We support the use of compact identifiers in DRS URIs since many
+resources in the research community issue these identifiers of a variety of formats.
 
 When combined with the resolver registry services of
-[identifiers.org](https://identifiers.org/)/[n2t.net (Name-To-Thing)](https://n2t.net/),
+https://identifiers.org/[identifiers.org] / https://n2t.net/[n2t.net (Name-To-Thing)],
 we can support any registered form of compact identifiers (Arks, DOIs, Data GUIDs, etc)
 and also allow for the resolution of
 DRS objects without needing to use a hostname in the URI.  By using compact identifiers with a resolver
@@ -89,8 +88,8 @@ which is not allowed in hostname-based URI.
 As mentioned in the DRS IDs section, when IDs from compact identifiers are
 used as DRS URIs they must be
 
-See the documentation on [n2t.net](https://n2t.net/e/compact_ids.html) and
-[identifiers.org](https://docs.identifiers.org/) for much more information on
+See the documentation on https://n2t.net/e/compact_ids.html[n2t.net] and
+https://docs.identifiers.org/[identifiers.org] for much more information on
 the compact identifiers used there and details about the resolution process.
 You can also register new prefixes or mirrors (additional resource providers).
 
@@ -156,8 +155,8 @@ a resolver through a separate service (identifiers.org/n2t.net).
 
 ---
 **NOTE**
-In the future, as newer versions of DRS are released, multiple versions of DRS may be supported on the same server.  Using the hostname in the DRS URI, plus information in the [service-registry](https://github.com/ga4gh-discovery/ga4gh-service-registry) standard endpoint,
-which lead to [service-info](https://github.com/ga4gh-discovery/ga4gh-service-info) endpoints, a client can discover enough information to
+In the future, as newer versions of DRS are released, multiple versions of DRS may be supported on the same server.  Using the hostname in the DRS URI, plus information in the https://github.com/ga4gh-discovery/ga4gh-service-registry[service-registry] standard endpoint,
+which lead to https://github.com/ga4gh-discovery/ga4gh-service-info[service-info] endpoints, a client can discover enough information to
 translate a DRS URI into a valid URL.
 
 ---
