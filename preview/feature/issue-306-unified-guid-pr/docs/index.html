@@ -603,44 +603,21 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sect2">
 <h3 id="_drs_uris"><a class="anchor" href="#_drs_uris"></a><a class="link" href="#_drs_uris">3.2. DRS URIs</a></h3>
 <div class="paragraph">
-<p>For convenience, including when passing content references to a WES server, we define a<br>
-<a href="https://en.wikipedia.org/wiki/Uniform_Resource_Identifier#Generic_syntax">URI scheme</a><br>
-for DRS-accessible content See <a href="https://tools.ietf.org/html/rfc3986#section-3.1">RFC 3986 § 3.1</a>.<br>
-We felt it was important to introduce a DRS scheme for URIs<br>
-since it signals to systems consuming these URIs that the response they will ultimately<br>
-receive, once transforming the URI to a fetchable URL, will be a DRS JSON.<br>
-If we had gone with a Compact URI (CURIE) we felt that this would have been more<br>
-difficult for systems consuming DRS objects to understand and differentiate them<br>
-given the ubiquitous use of CURIEs in the research community and the fact that<br>
-CURIEs can point to a wide variety of entities (HTML documents, PDFs, identities in data<br>
-models, etc).</p>
+<p>For convenience, including when passing content references to a WES server, we define a <a href="https://en.wikipedia.org/wiki/Uniform_Resource_Identifier#Generic_syntax">URI scheme</a> for DRS-accessible content See <a href="https://tools.ietf.org/html/rfc3986#section-3.1">RFC 3986 § 3.1</a>. We felt it was important to introduce a DRS scheme for URIs since it signals to systems consuming these URIs that the response they will ultimately receive, once transforming the URI to a fetchable URL, will be a DRS JSON. If we had gone with a Compact URI (CURIE) we felt that this would have been more difficult for systems consuming DRS objects to understand and differentiate them given the ubiquitous use of CURIEs in the research community and the fact that CURIEs can point to a wide variety of entities (HTML documents, PDFs, identities in data models, etc).</p>
 </div>
 <div class="paragraph">
-<p>There are two styles of DRS URI based on whether or not a compact identifier is used:<br>
-Hostname-based and Compact Identifier-based.</p>
+<p>There are two styles of DRS URI based on whether or not a compact identifier is used: Hostname-based and Compact Identifier-based.</p>
 </div>
 <div class="sect3">
 <h4 id="_compact_identifier_based_drs_uris"><a class="anchor" href="#_compact_identifier_based_drs_uris"></a><a class="link" href="#_compact_identifier_based_drs_uris">3.2.1. Compact Identifier-based DRS URIs</a></h4>
 <div class="paragraph">
-<p>Compact identifiers refer to locally-unique persistent identifiers that have been<br>
-namespaced to provide global uniqueness. See <a href="https://www.biorxiv.org/content/10.1101/101279v3">"Uniform resolution of compact identifiers for biomedical data"</a> for an excellent<br>
- guide to this topic.  We support the use of compact identifiers in DRS URIs since many<br>
-resources in the research community issue these identifiers of a variety of formats.</p>
+<p>Compact identifiers refer to locally-unique persistent identifiers that have been namespaced to provide global uniqueness. See <a href="https://www.biorxiv.org/content/10.1101/101279v3">"Uniform resolution of compact identifiers for biomedical data"</a> for an excellent guide to this topic.  We support the use of compact identifiers in DRS URIs since many resources in the research community issue these identifiers of a variety of formats.</p>
 </div>
 <div class="paragraph">
-<p>When combined with the resolver registry services of<br>
-<a href="https://identifiers.org/">identifiers.org</a> / <a href="https://n2t.net/">n2t.net (Name-To-Thing)</a>,<br>
-we can support any registered form of compact identifiers (Arks, DOIs, Data GUIDs, etc)<br>
-and also allow for the resolution of<br>
-DRS objects without needing to use a hostname in the URI.  By using compact identifiers with a resolver<br>
-registry, systems using DRS URIs can identify the current resolver when needed.<br>
-This allows a project to issue compact identifiers in DRS URIs and not be concerned<br>
-if the project name or hostname change in the future since the current resolver can always<br>
-be found through the identifiers.org/n2t.net registries.</p>
+<p>When combined with the resolver registry services of <a href="https://identifiers.org/">identifiers.org</a> / <a href="https://n2t.net/">n2t.net (Name-To-Thing)</a>, we can support any registered form of compact identifiers (Arks, DOIs, Data GUIDs, etc) and also allow for the resolution of DRS objects without needing to use a hostname in the URI.  By using compact identifiers with a resolver registry, systems using DRS URIs can identify the current resolver when needed. This allows a project to issue compact identifiers in DRS URIs and not be concerned if the project name or hostname change in the future since the current resolver can always be found through the identifiers.org/n2t.net registries.</p>
 </div>
 <div class="paragraph">
-<p>To make this work we embrace the CURIE format used by identifiers.org/n2t.net.  Compact<br>
-identifiers have the form:</p>
+<p>To make this work we embrace the CURIE format used by identifiers.org/n2t.net.  Compact identifiers have the form:</p>
 </div>
 <div class="literalblock">
 <div class="content">
@@ -648,8 +625,7 @@ identifiers have the form:</p>
 </div>
 </div>
 <div class="paragraph">
-<p>The prefix can be divided into an optional provider code and the namespace.  The accession here is an Ark,<br>
-DOI, Data GUID ID, or one of the ~700 compact identifiers in the identifiers.org/n2t.net system:</p>
+<p>The prefix can be divided into an optional provider code and the namespace.  The accession here is an Ark, DOI, Data GUID ID, or one of the ~700 compact identifiers in the identifiers.org/n2t.net system:</p>
 </div>
 <div class="literalblock">
 <div class="content">
@@ -657,7 +633,7 @@ DOI, Data GUID ID, or one of the ~700 compact identifiers in the identifiers.org
 </div>
 </div>
 <div class="paragraph">
-<p>Examples include (from n2t.net):</p>
+<p><a href="https://n2t.net/e/compact_ids.html" class="bare">https://n2t.net/e/compact_ids.html</a> [Examples] include (from n2t.net):</p>
 </div>
 <div class="literalblock">
 <div class="content">
@@ -668,15 +644,14 @@ ark:/47881/m6g15z54
 IGSN:SSH000SUA</pre>
 </div>
 </div>
-<hr>
+<div class="sidebarblock">
+<div class="content">
+<div class="title">NOTE</div>
 <div class="paragraph">
-<p><strong>NOTE</strong><br>
-If your DRS implementation will issue IDs and pass around references with DRS URIs<br>
-with compact identifiers you <strong>must</strong> register your prefix on identifiers.org/n2t.net<br>
-otherwise DRS clients will not know how to resolve your compact identifiers and,<br>
-ultimately, generate a DRS URL that can be accessed.</p>
+<p>If your DRS implementation will issue IDs and pass around references with DRS URIs with compact identifiers you <strong>must</strong> register your prefix on identifiers.org/n2t.net otherwise DRS clients will not know how to resolve your compact identifiers and, ultimately, generate a DRS URL that can be accessed.</p>
 </div>
-<hr>
+</div>
+</div>
 <div class="paragraph">
 <p>Translating the identifiers.org/n2t.net to DRS URIs we get the following URI form:</p>
 </div>
@@ -1575,7 +1550,7 @@ For bundles, the cumulative size, in bytes, of items in the <code>contents</code
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2020-04-07 23:54:32 UTC
+Last updated 2020-04-08 06:43:58 UTC
 </div>
 </div>
 </body>
