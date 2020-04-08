@@ -675,17 +675,26 @@ DRS URIs using compact identifiers with resolvers registered in identifiers.org/
 </tr>
 </table>
 </div>
-<div class="paragraph">
-<p>As mentioned in the DRS IDs section, when IDs from compact identifiers are used as DRS URIs they must be percent encoded.</p>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Tip</div>
+</td>
+<td class="content">
+The CURIE format used by identifiers.org/n2t.net does not percent-encode reserved URI characters but, instead, relies on the first ":" character to separate prefix from access. Since these accessions can contain any characters, some of which like "/" will interfere with DRS API calls, you <em>must</em> percent encode the accessions extracted from DRS compact identifier-based URIs when using them in DRS GET requests.  For more information see the Note "DRS Client Compact Identifier Resolution Process" below.
+</td>
+</tr>
+</table>
 </div>
 <div class="paragraph">
-<p>See the documentation on <a href="https://n2t.net/e/compact_ids.html">n2t.net</a> and <a href="https://docs.identifiers.org/">identifiers.org</a> for much more information on the compact identifiers used there and details about the resolution process. You can also register new prefixes or mirrors (additional resource providers).</p>
+<p>See the documentation on <a href="https://n2t.net/e/compact_ids.html">n2t.net</a> and <a href="https://docs.identifiers.org/">identifiers.org</a> for much more information on the compact identifiers used there and details about the resolution process. You can also register new prefixes (or mirrors using additional resource providers) for free using a simple online form.  Keep in mind, while anyone can register prefixes, the identifiers.org/n2t.net sites do basic hand curation to verify new prefix requests.  See those sites for more details on their security practices.</p>
 </div>
 <div class="sidebarblock">
 <div class="content">
 <div class="title">Note: DRS Client Compact Identifier Resolution Process</div>
 <div class="paragraph">
-<p>A DRS client identifies the a DRS URI using compact identifiers with the ":" character which is not allowed in provider_code, the namespace, or the ID. It is also not allowed in a Hostname-based DRS URI. Once the provider_code (optional) and namespace are extracted from a DRS URI, a client can use services on identifiers.org to identify available resolvers for example, for a Data GUID namespace:</p>
+<p>A DRS client identifies the a DRS URI compact identifier components with the "/" (optional) and ":" characters which are not allowed in provider_code (optional), the namespace, or the accession. The ":" character is also not allowed in a Hostname-based DRS URI, providing a convenient mechanism to differentiate them. Once the provider_code (optional) and namespace are extracted from a DRS URI, a client can use services on identifiers.org to identify available resolvers for example, for a Data GUID namespace "dg":</p>
 </div>
 <div class="literalblock">
 <div class="content">
@@ -693,7 +702,7 @@ DRS URIs using compact identifiers with resolvers registered in identifiers.org/
 </div>
 </div>
 <div class="paragraph">
-<p>Followed by (assuming the prefix ID for Data GUIDs is 1234):</p>
+<p>Followed by (assuming the namespace ID identified by the response to the above GET request for Data GUIDs is 1234):</p>
 </div>
 <div class="literalblock">
 <div class="content">
@@ -701,7 +710,10 @@ DRS URIs using compact identifiers with resolvers registered in identifiers.org/
 </div>
 </div>
 <div class="paragraph">
-<p>This returns enough information to, ultimately, identify one or more resolvers and each have a URL prefix that, for DRS-supporting systems, tells how to make a successful DRS request. For example a DRS URI would look like:</p>
+<p>This returns enough information to, ultimately, identify one or more resolvers and each have a URL prefix that, for DRS-supporting systems, tells how to make a successful DRS request.</p>
+</div>
+<div class="paragraph">
+<p>Walking through a hypothetical Data GUID example compact identifier DRS URI&#8217;s resolution:</p>
 </div>
 <div class="literalblock">
 <div class="content">
@@ -717,7 +729,7 @@ DRS URIs using compact identifiers with resolvers registered in identifiers.org/
 </div>
 </div>
 <div class="paragraph">
-<p>And that can then be translated to:</p>
+<p>And that can then be translated to the following using the accession parsed from the compact identifier that has been percent-encoded:</p>
 </div>
 <div class="literalblock">
 <div class="content">
@@ -725,10 +737,10 @@ DRS URIs using compact identifiers with resolvers registered in identifiers.org/
 </div>
 </div>
 <div class="paragraph">
-<p>IDs in DRS URIs/URLs are always percent-encoded to eliminate ambiguity.</p>
+<p><em>IDs in DRS hostname-based URIs/URLs are always percent-encoded to eliminate ambiguity even though the DRS compact identifier-based URIs do not percent encode accessions.  This was done in order to 1) follow the CURIE conventions of identifiers.org/n2t.net for compact identifier-based DRS URIs and 2) to aid in readability for users who understand they are working with compact identifiers.</em></p>
 </div>
 <div class="paragraph">
-<p><strong>Please keep in mind identifiers.org/n2t.net does not support directly resolving URI encoded IDs. So we recommend this approach above to looking up resolvers on these registries and then making a valid DRS GET request directly.  This approach is also useful for caching resolvers since they are unlikely to change frequently.</strong></p>
+<p><strong>Please keep in mind identifiers.org/n2t.net does not support directly resolving percent-encoded accessions. So we recommend this approach above for DRS clients to looking up resolvers on these registries and then make a valid DRS GET request directly, using the percent-encoded accession as the DRS ID in the GET request.  This approach is also useful for caching resolvers and their URL patterns since this information is unlikely to change frequently.</strong></p>
 </div>
 </div>
 </div>
@@ -744,22 +756,43 @@ DRS URIs using compact identifiers with resolvers registered in identifiers.org/
 </div>
 </div>
 <div class="paragraph">
-<p>For example, if a WES server was asked to process <code>drs://drs.example.org/314159</code>, it would know that it could issue a GET request to <code><a href="https://drs.example.org/ga4gh/drs/v1/objects/314159" class="bare">https://drs.example.org/ga4gh/drs/v1/objects/314159</a></code> to learn how to fetch that object.</p>
+<p>For example, if a WES server was asked to process:<br>
+    drs://drs.example.org/314159</p>
+</div>
+<div class="paragraph">
+<p>It would know that it could issue a GET request to:</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>https://drs.example.org/ga4gh/drs/v1/objects/314159</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>to learn how to fetch that object via one of a variety of approaches.</p>
 </div>
 <div class="paragraph">
 <p>The protocol is always https and the port is always the standard 443 SSL port.  It would be invalid to include, for example, a port in the DRS URI.</p>
 </div>
-<div class="paragraph">
-<p>As with DRS URIs based on compact identifiers, the ID is percent-encoded to ensure special characters do not interfere with subsequent DRS endpoint calls.  As such, ":" is not allowed in the URI.</p>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Tip</div>
+</td>
+<td class="content">
+In hostname-based DRS URIs, the ID is always percent-encoded to ensure special characters do not interfere with subsequent DRS endpoint calls.  As such, ":" is not allowed in the URI and is a convientn way of differentiating from a compact identifier-based DRS URI.  Also, if a given DRS service implementation uses compact identifier accessions as their DRS IDs, they must be percent encoded before using them as IDs in hostname-based DRS URIs.
+</td>
+</tr>
+</table>
 </div>
 <div class="paragraph">
-<p>Hostname-based DRS URIs are less resistant to future project/domain name changes than compact identifiers.  But they do provide a more explicit way of pointing to a DRS object.  The fact that they can be resolved using a simple rule means a DRS client can skip the extra overhead of a DRS server lookup as is done for compact identifier-based URIs.  This can translate to greater performance also, possibly, security since it avoids the lookup of a resolver through a separate service (identifiers.org/n2t.net).</p>
+<p>Hostname-based DRS URIs are less resistant to future project/domain name changes than compact identifiers.  But they do provide a more explicit way of pointing to a DRS object which can have benefits.  The fact that they can be resolved using a simple rule means a DRS client can skip the extra overhead of a DRS server lookup as is done for compact identifier-based URIs.  This can translate to greater performance also, possibly, security since it avoids the lookup of a resolver through a separate service (identifiers.org/n2t.net).</p>
 </div>
 <div class="sidebarblock">
 <div class="content">
 <div class="title">Note: Service Registry/Info and Future Versions of DRS</div>
 <div class="paragraph">
-<p>In the future, as newer versions of DRS are released, multiple versions of DRS may be supported on the same server.  Using the hostname in the DRS URI, plus information in the <a href="https://github.com/ga4gh-discovery/ga4gh-service-registry">service-registry</a> standard endpoint, which lead to <a href="https://github.com/ga4gh-discovery/ga4gh-service-info">service-info</a> endpoints, a client can discover enough information to translate a DRS URI into a valid URL.</p>
+<p>In the future, as newer versions of DRS are released, the ability to look at a hostname-based DRS URI and derive a valid GET URL will not be possible.  Multiple versions of DRS on different URL paths may be supported on the same server.  We expect to add support for service-registry and service-info in future releases of DRS.  Using the hostname in the DRS URI, plus information in the <a href="https://github.com/ga4gh-discovery/ga4gh-service-registry">service-registry</a> standard endpoint, which lead to <a href="https://github.com/ga4gh-discovery/ga4gh-service-info">service-info</a> endpoints, a client will be able to discover enough information to translate a DRS URI into a valid URL.  For now we assume a rules-based translation to <a href="https://&lt;drs_server_hostname&gt;:443/ga4gh/drs/v1/objects/&lt;object_id&gt" class="bare">https://&lt;drs_server_hostname&gt;:443/ga4gh/drs/v1/objects/&lt;object_id&gt</a>;</p>
 </div>
 </div>
 </div>
@@ -1540,7 +1573,7 @@ For bundles, the cumulative size, in bytes, of items in the <code>contents</code
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2020-04-08 07:09:36 UTC
+Last updated 2020-04-08 07:33:02 UTC
 </div>
 </div>
 </body>
