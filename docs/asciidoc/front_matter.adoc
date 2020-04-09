@@ -33,7 +33,7 @@ To make this work we leverage the CURIE format used by identifiers.org/n2t.net. 
 
     prefix:accession
 
-The prefix can be divided into an optional provider code and the namespace.  The accession here is an Ark, DOI, Data GUID, or other issuers's ID for the object being pointed to:
+The prefix can be divided into an optional provider code and the namespace.  The accession here is an Ark, DOI, Data GUID, or another issuers's local ID for the object being pointed to:
 
     [provider_code/]namespace:accession
 
