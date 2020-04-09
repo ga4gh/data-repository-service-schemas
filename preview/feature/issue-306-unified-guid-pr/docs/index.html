@@ -656,7 +656,7 @@ IGSN:SSH000SUA</pre>
 </div>
 </div>
 <div class="paragraph">
-<p>Translating the identifiers.org/n2t.net CURIE format to a DRS compact identifier-based URI we get the following form:</p>
+<p>Translating the identifiers.org/n2t.net CURIE format to a DRS compact identifier-based URI we get the following form (provider code is optional):</p>
 </div>
 <div class="literalblock">
 <div class="content">
@@ -682,13 +682,13 @@ DRS URIs using compact identifiers with resolvers registered in identifiers.org/
 <div class="title">Tip</div>
 </td>
 <td class="content">
-The CURIE format used by identifiers.org/n2t.net does not percent-encode reserved URI characters but, instead, relies on the first ":" character to separate prefix from access. Since these accessions can contain any characters, characters like "/" will interfere with DRS API calls, you <em>must</em> percent encode the accessions extracted from DRS compact identifier-based URIs when using them in DRS GET requests.  For more information see the Note "DRS Client Compact Identifier Resolution Process" below.
+The CURIE format used by identifiers.org/n2t.net does not percent-encode reserved URI characters but, instead, relies on the first ":" character to separate prefix from accession. Since these accessions can contain any characters, and characters like "/" will interfere with DRS API calls, you <em>must</em> percent encode the accessions extracted from DRS compact identifier-based URIs when using them in DRS GET requests.  For more information see the Note "DRS Client Compact Identifier Resolution Process" below.
 </td>
 </tr>
 </table>
 </div>
 <div class="paragraph">
-<p>See the documentation on <a href="https://n2t.net/e/compact_ids.html">n2t.net</a> and <a href="https://docs.identifiers.org/">identifiers.org</a> for much more information on the compact identifiers used there and details about the resolution process. You can also register new prefixes (or mirrors using additional resource providers) for free using a simple online form.  Keep in mind, while anyone can register prefixes, the identifiers.org/n2t.net sites do basic hand curation to verify new prefix and resource (provider code) requests.  See those sites for more details on their security practices.</p>
+<p>See the documentation on <a href="https://n2t.net/e/compact_ids.html">n2t.net</a> and <a href="https://docs.identifiers.org/">identifiers.org</a> for much more information on the compact identifiers used there and details about the resolution process. You can also register new prefixes (or mirrors by adding resource providers) for free using a simple online form.  Keep in mind, while anyone can register prefixes, the identifiers.org/n2t.net sites do basic hand curation to verify new prefix and resource (provider code) requests.  See those sites for more details on their security practices.</p>
 </div>
 <div class="sidebarblock">
 <div class="content">
@@ -1572,7 +1572,7 @@ For bundles, the cumulative size, in bytes, of items in the <code>contents</code
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2020-04-09 01:33:00 UTC
+Last updated 2020-04-09 01:37:01 UTC
 </div>
 </div>
 </body>
