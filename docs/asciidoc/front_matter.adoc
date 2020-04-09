@@ -14,7 +14,6 @@ Each implementation of DRS can choose its own id scheme, as long as it follows t
 * DRS IDs can contain other characters, but they MUST be encoded into valid DRS IDs whenever exposed by the API.  This is because non-URL encoded IDs may interfere with the interpretation of the `objects/{id}/access` endpoint.  To overcome this limitation use percent-encoding of the ID, see https://tools.ietf.org/html/rfc3986#section-2.4[RFC 3986 § 2.4]
 * One DRS ID MUST always return the same object data (or, in the case of a collection, the same set of objects). This constraint aids with reproducibility.
 * DRS implementations MAY have more than one ID that maps to the same object.
-* DRS objects can be referenced using two different URI conventions described below, one using compact identifiers following the conventions of identifiers.org/n2t.net and a second using hostnames
 * DRS version 1.x does NOT support semantics around multiple versions of an object. (For example, there’s no notion of “get latest version” or “list all versions”.) Individual implementation MAY choose an ID scheme that includes version hints.
 
 
