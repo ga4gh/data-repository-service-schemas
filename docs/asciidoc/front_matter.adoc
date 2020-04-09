@@ -21,7 +21,7 @@ Each implementation of DRS can choose its own id scheme, as long as it follows t
 
 For convenience, including when passing content references to a WES server, we define a https://en.wikipedia.org/wiki/Uniform_Resource_Identifier#Generic_syntax[URI scheme] for DRS-accessible content. See https://tools.ietf.org/html/rfc3986#section-3.1[RFC 3986 § 3.1]. _We felt it was important to introduce a DRS scheme for URIs since it signals to systems consuming these URIs that the response they will ultimately receive, once transforming the URI to a fetchable URL, will be a DRS JSON._ If we had gone with a https://en.wikipedia.org/wiki/CURIE[Compact URI (CURIE)] we felt that this would have been more difficult for systems consuming DRS objects to understand and differentiate them given the ubiquitous use of CURIEs in the research community and the fact that CURIEs can point to a wide variety of entities (HTML documents, PDFs, identities in data models, etc).
 
-There are two styles of DRS URIs: Hostname-based and Compact Identifier-based, both use the `drs://` scheme.
+There are two styles of DRS URIs: Compact Identifier-based and Hostname-based, both use the `drs://` URI scheme.
 
 ==== Compact Identifier-based DRS URIs
 
