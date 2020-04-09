@@ -606,7 +606,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <p>For convenience, including when passing content references to a WES server, we define a <a href="https://en.wikipedia.org/wiki/Uniform_Resource_Identifier#Generic_syntax">URI scheme</a> for DRS-accessible content. See <a href="https://tools.ietf.org/html/rfc3986#section-3.1">RFC 3986 § 3.1</a>. <em>We felt it was important to introduce a DRS scheme for URIs since it signals to systems consuming these URIs that the response they will ultimately receive, once transforming the URI to a fetchable URL, will be a DRS JSON.</em> If we had gone with a <a href="https://en.wikipedia.org/wiki/CURIE">Compact URI (CURIE)</a> we felt that this would have been more difficult for systems consuming DRS objects to understand and differentiate them given the ubiquitous use of CURIEs in the research community and the fact that CURIEs can point to a wide variety of entities (HTML documents, PDFs, identities in data models, etc).</p>
 </div>
 <div class="paragraph">
-<p>There are two styles of DRS URIs: Hostname-based and Compact Identifier-based, both use the <code>drs://</code> scheme.</p>
+<p>There are two styles of DRS URIs: Compact Identifier-based and Hostname-based, both use the <code>drs://</code> URI scheme.</p>
 </div>
 <div class="sect3">
 <h4 id="_compact_identifier_based_drs_uris"><a class="anchor" href="#_compact_identifier_based_drs_uris"></a><a class="link" href="#_compact_identifier_based_drs_uris">3.2.1. Compact Identifier-based DRS URIs</a></h4>
@@ -1572,7 +1572,7 @@ For bundles, the cumulative size, in bytes, of items in the <code>contents</code
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2020-04-09 01:29:02 UTC
+Last updated 2020-04-09 01:30:21 UTC
 </div>
 </div>
 </body>
