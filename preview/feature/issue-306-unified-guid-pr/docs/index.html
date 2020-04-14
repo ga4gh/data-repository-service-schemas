@@ -619,7 +619,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="title">Tip</div>
 </td>
 <td class="content">
-Much more information is provided in the <a href="#_appendix_compact_identifiers">Appendix: Compact Identifiers</a>.
+Much more information is provided in the <a href="#_appendix_compact_identifiers">Appendix: Compact Identifiers</a> including details on the structure of compact identifiers.
 </td>
 </tr>
 </table>
@@ -633,7 +633,7 @@ Much more information is provided in the <a href="#_appendix_compact_identifiers
 </div>
 </div>
 <div class="paragraph">
-<p>Translating the identifiers.org/n2t.net CURIE format to a DRS compact identifier-based URI we get the following form. Together provider code and the namespace are referred to as the <em>prefix</em>. The provider code is optional and is used by identifiers.org/n2t.net for compact identifier resolver mirrors:</p>
+<p>Translating the identifiers.org/n2t.net CURIE format to a DRS compact identifier-based URI we get the following form. Together, provider code and the namespace are referred to as the <em>prefix</em>. The provider code is optional and is used by identifiers.org/n2t.net for compact identifier resolver mirrors:</p>
 </div>
 <div class="literalblock">
 <div class="content">
@@ -644,7 +644,7 @@ Much more information is provided in the <a href="#_appendix_compact_identifiers
 <div class="content">
 <div class="title">Note: DRS Client Compact Identifier-Based URI Resolution Process</div>
 <div class="paragraph">
-<p>A DRS client identifies the a DRS URI compact identifier components using the first occurance of "/" (optional) and ":" characters. These are not allowed inside the provider_code (optional) or the namespace. The ":" character is also not allowed in a Hostname-based DRS URI, providing a convenient mechanism to differentiate them. Once the provider_code (optional) and namespace are extracted from a DRS URI, a client can use services on identifiers.org to identify available resolvers. For example, for a Data GUID namespace of "dg" the following GET request will return information about the namespace:</p>
+<p>A DRS client identifies the a DRS URI compact identifier components using the first occurance of "/" (optional) and ":" characters. These are not allowed inside the provider_code (optional) or the namespace. The ":" character is also not allowed in a Hostname-based DRS URI, providing a convenient mechanism to differentiate them. Once the provider_code (optional) and namespace are extracted from a DRS URI, a client can use services on identifiers.org to identify available resolvers. As a hypothetical example for a Data GUID namespace of "dg", the following GET request will return information about the namespace:</p>
 </div>
 <div class="literalblock">
 <div class="content">
@@ -660,7 +660,7 @@ Much more information is provided in the <a href="#_appendix_compact_identifiers
 </div>
 </div>
 <div class="paragraph">
-<p>This returns enough information to, ultimately, identify one or more resolvers and each have a URL prefix that, for DRS-supporting systems, tells how to make a successful DRS GET request.</p>
+<p>This returns enough information to, ultimately, identify one or more resolvers and each have a URL prefix that, for DRS-supporting systems, provides a URL template for making a successful DRS GET request.  If applicable, a provide code can be supplied in the above requests to specify a particular mirror if there are multiple resolvers for this namespace.</p>
 </div>
 <div class="paragraph">
 <p>Walking through a hypothetical Data GUID example compact identifier DRS URI&#8217;s resolution:</p>
@@ -679,7 +679,7 @@ Much more information is provided in the <a href="#_appendix_compact_identifiers
 </div>
 </div>
 <div class="paragraph">
-<p>And that can then be translated to the following using the accession parsed from the compact identifier that has been percent-encoded since DRS IDs must only use non-reserved URI characters:</p>
+<p>And that can then be translated to the following using the accession parsed from the compact identifier (which has been percent-encoded since DRS IDs must only use non-reserved URI characters):</p>
 </div>
 <div class="literalblock">
 <div class="content">
@@ -687,10 +687,10 @@ Much more information is provided in the <a href="#_appendix_compact_identifiers
 </div>
 </div>
 <div class="paragraph">
-<p><em>IDs in DRS hostname-based URIs/URLs are always percent-encoded to eliminate ambiguity even though the DRS compact identifier-based URIs do not percent encode accessions.  This was done in order to 1) follow the CURIE conventions of identifiers.org/n2t.net for compact identifier-based DRS URIs and 2) to aid in readability for users who understand they are working with compact identifiers.</em> <strong>The general rule of thumb, when using an compact identifier accession as a DRS ID make sure to percent-encode it.</strong></p>
+<p><em>IDs in DRS hostname-based URIs/URLs are always percent-encoded to eliminate ambiguity even though the DRS compact identifier-based URIs do not percent-encode accessions.</em>  This was done in order to 1) follow the CURIE conventions of identifiers.org/n2t.net for compact identifier-based DRS URIs and 2) to aid in readability for users who understand they are working with compact identifiers. <strong>The general rule of thumb, when using an compact identifier accession as a DRS ID make sure to percent-encode it.</strong></p>
 </div>
 <div class="paragraph">
-<p>Please keep in mind identifiers.org/n2t.net does not support directly resolving percent-encoded accessions. <em>So we recommend the approach above for DRS clients to look up resolvers on these registries and then make a valid DRS GET request directly, using the percent-encoded accession as the DRS ID in the GET request.</em>  This approach is also useful for caching resolvers and their URL patterns for performance reasons since this information is unlikely to change frequently.</p>
+<p>Please keep in mind identifiers.org/n2t.net does not support directly resolving percent-encoded accessions. <em>So we recommend the approach above for DRS clients to look up resolvers URL patters on these registries and then make a valid DRS GET request directly, using the percent-encoded accession as the DRS ID in the GET request.</em>  This approach is also useful for caching resolvers and their URL patterns for performance reasons since this information is unlikely to change frequently.</p>
 </div>
 </div>
 </div>
@@ -736,7 +736,7 @@ Much more information is provided in the <a href="#_appendix_compact_identifiers
 </div>
 </div>
 <div class="paragraph">
-<p>Hostname-based DRS URIs are less resistant to future project/domain name changes than compact identifiers.  But they do provide a more direct way of pointing to a DRS object which can have benefits.  The fact that they can be resolved using a simple rule means a DRS client can skip the extra overhead of a prefix lookup as is done for compact identifier-based URIs.  This can translate to possibly greater performance and/or security since the DRS server hostname is explicitly specified and this avoids the lookup of a resolver through a separate service (identifiers.org/n2t.net).</p>
+<p>Hostname-based DRS URIs are less resistant to future project/domain name changes than compact identifiers.  But they do provide a more direct way of pointing to a DRS object which can have benefits.  The fact that they can be resolved using a simple rule means a DRS client can skip the extra overhead of a prefix lookup as is done for compact identifier-based URIs.  This can translate to possibly greater performance and/or security since the DRS server hostname is explicitly specified and this avoids the lookup of a resolver through a third-party service (identifiers.org/n2t.net).</p>
 </div>
 <div class="admonitionblock tip">
 <table>
@@ -745,7 +745,7 @@ Much more information is provided in the <a href="#_appendix_compact_identifiers
 <div class="title">Tip</div>
 </td>
 <td class="content">
-Information on how hostname-based DRS URI resolution to URLs will work in the future is provided in the <a href="#_appendix_service_registry_and_service_info">Appendix: Service Registry and Service Info</a>.
+Information on how hostname-based DRS URI resolution to URLs will work in the future, when the 2.x major release happens, is provided in the <a href="#_appendix_service_registry_and_service_info">Appendix: Service Registry and Service Info</a>.
 </td>
 </tr>
 </table>
@@ -1429,13 +1429,10 @@ For bundles, the cumulative size, in bytes, of items in the <code>contents</code
 <h2 id="_appendix_compact_identifiers"><a class="anchor" href="#_appendix_compact_identifiers"></a><a class="link" href="#_appendix_compact_identifiers">7. Appendix: Compact Identifiers</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Compact identifiers refer to locally-unique persistent identifiers that have been namespaced to provide global uniqueness. See <a href="https://www.biorxiv.org/content/10.1101/101279v3">"Uniform resolution of compact identifiers for biomedical data"</a> for an excellent introduction to this topic.  We support the use of compact identifiers in DRS URIs since many resources in the research community issue these identifiers in a variety of formats.</p>
+<p>Compact identifiers refer to locally-unique persistent identifiers that have been namespaced to provide global uniqueness. See <a href="https://www.biorxiv.org/content/10.1101/101279v3">"Uniform resolution of compact identifiers for biomedical data"</a> for an excellent introduction to this topic.  By using compact identifiers in DRS URIs, along with a resolver registry (identifiers.org/n2t.net), systems can identify the current resolver when they need to translate the DRS URI into a fetchable URL. This allows a project to issue compact identifiers in DRS URIs and not be concerned if the project name or DRS hostname change in the future.  The current resolver can always be found through the identifiers.org/n2t.net registries.  Together the identifiers.org/n2t.net systems support the resolver lookup for over 700 compact identifiers formats used in the research community, making it possible for a DRS server to use any of these as DRS IDs (or to register a new compact identifier service of their own).</p>
 </div>
 <div class="paragraph">
-<p>When combined with the resolver registry services of <a href="https://identifiers.org/">identifiers.org</a> or <a href="https://n2t.net/">n2t.net (Name-To-Thing)</a>, we can support any registered form of compact identifiers (Arks, DOIs, Data GUIDs, etc) and also allow for the resolution of DRS objects without needing to use a hostname in the URI.  By using compact identifiers with a resolver registry, systems using DRS URIs can identify the current resolver when needed. This allows a project to issue compact identifiers in DRS URIs and not be concerned if the project name or DRS hostname change in the future since the current resolver can always be found through the identifiers.org/n2t.net registries.  Together the identifiers.org/n2t.net systems support the resolver lookup for over 700 compact identifiers formats used in the research community.</p>
-</div>
-<div class="paragraph">
-<p>To make this work we leverage the CURIE format used by identifiers.org/n2t.net.  Compact identifiers have the form:</p>
+<p>To make compact identifiers work in DRS URIs we leverage the CURIE format used by identifiers.org/n2t.net.  Compact identifiers have the form:</p>
 </div>
 <div class="literalblock">
 <div class="content">
@@ -1443,7 +1440,7 @@ For bundles, the cumulative size, in bytes, of items in the <code>contents</code
 </div>
 </div>
 <div class="paragraph">
-<p>The prefix can be divided into an optional provider code and the namespace.  The accession here is an Ark, DOI, Data GUID, or another issuers&#8217;s local ID for the object being pointed to:</p>
+<p>The prefix can be divided into an optional <code>provider_code</code> and <code>namespace</code>.  The <code>accession</code> here is an Ark, DOI, Data GUID, or another issuers&#8217;s ID for the object being pointed to:</p>
 </div>
 <div class="literalblock">
 <div class="content">
@@ -1451,7 +1448,7 @@ For bundles, the cumulative size, in bytes, of items in the <code>contents</code
 </div>
 </div>
 <div class="paragraph">
-<p>Both the provider code and namespace disallow spaces or punctuation, only lowercase alphanumerical characters, underscores and dots are allowed.</p>
+<p>Both the <code>provider_code</code> and <code>namespace</code> disallow spaces or punctuation, only lowercase alphanumerical characters, underscores and dots are allowed.</p>
 </div>
 <div class="paragraph">
 <p><a href="https://n2t.net/e/compact_ids.html">Examples</a> include (from n2t.net):</p>
@@ -1484,13 +1481,13 @@ DRS URIs using compact identifiers with resolvers registered in identifiers.org/
 <div class="title">Tip</div>
 </td>
 <td class="content">
-The CURIE format used by identifiers.org/n2t.net does not percent-encode reserved URI characters but, instead, relies on the first ":" character to separate prefix from accession. Since these accessions can contain any characters, and characters like "/" will interfere with DRS API calls, you <em>must</em> percent encode the accessions extracted from DRS compact identifier-based URIs when using them in DRS GET requests.  For more information see the Note "DRS Client Compact Identifier Resolution Process" below.
+The CURIE format used by identifiers.org/n2t.net does not percent-encode reserved URI characters but, instead, relies on the first ":" character to separate prefix from accession. Since these accessions can contain any characters, and characters like "/" will interfere with DRS API calls, you <em>must</em> percent encode the accessions extracted from DRS compact identifier-based URIs when using them in DRS GET requests.  For more information see the Note "DRS Client Compact Identifier-Based URI Resolution Process".
 </td>
 </tr>
 </table>
 </div>
 <div class="paragraph">
-<p>See the documentation on <a href="https://n2t.net/e/compact_ids.html">n2t.net</a> and <a href="https://docs.identifiers.org/">identifiers.org</a> for much more information on the compact identifiers used there and details about the resolution process. You can also register new prefixes (or mirrors by adding resource providers) for free using a simple online form.  Keep in mind, while anyone can register prefixes, the identifiers.org/n2t.net sites do basic hand curation to verify new prefix and resource (provider code) requests.  See those sites for more details on their security practices.</p>
+<p>See the documentation on <a href="https://n2t.net/e/compact_ids.html">n2t.net</a> and <a href="https://docs.identifiers.org/">identifiers.org</a> for much more information on the compact identifiers used there and details about the resolution process. You can also register new prefixes (or mirrors by adding resource provider codes) for free using a simple online form.  Keep in mind, while anyone can register prefixes, the identifiers.org/n2t.net sites do basic hand curation to verify new prefix and resource (provider code) requests.  See those sites for more details on their security practices.</p>
 </div>
 </div>
 </div>
@@ -1609,7 +1606,7 @@ The CURIE format used by identifiers.org/n2t.net does not percent-encode reserve
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2020-04-14 00:09:53 UTC
+Last updated 2020-04-14 00:58:28 UTC
 </div>
 </div>
 </body>
