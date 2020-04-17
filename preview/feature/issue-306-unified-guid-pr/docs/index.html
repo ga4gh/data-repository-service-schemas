@@ -486,8 +486,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_error">6.6. Error</a></li>
 </ul>
 </li>
-<li><a href="#_appendix_compact_identifiers">7. Appendix: Compact Identifiers</a></li>
-<li><a href="#_appendix_service_registry_and_service_info">8. Appendix: Service Registry and Service Info</a></li>
+<li><a href="#_appendix_compact_identifier_based_uris">7. Appendix: Compact Identifier-Based URIs</a></li>
+<li><a href="#_appendix_hostname_based_uris">8. Appendix: Hostname-Based URIs</a></li>
 <li><a href="#_appendix_motivation">9. Appendix: Motivation</a>
 <ul class="sectlevel2">
 <li><a href="#_federation">9.1. Federation</a></li>
@@ -612,18 +612,6 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="paragraph">
 <p>Compact identifiers refer to locally-unique persistent identifiers that have been namespaced to provide global uniqueness. See <a href="https://www.biorxiv.org/content/10.1101/101279v3">"Uniform resolution of compact identifiers for biomedical data"</a> for an excellent introduction to this topic.  We support the use of compact identifiers in DRS URIs since many resources in the research community issue these identifiers in a variety of formats.  We leverage the resolver registry services of <a href="https://identifiers.org/">identifiers.org</a> or <a href="https://n2t.net/">n2t.net (Name-To-Thing)</a> to support any registered form of compact identifiers (Arks, DOIs, Data GUIDs, etc), allowing for the resolution of DRS objects without needing to use a hostname in the URI.</p>
 </div>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<div class="title">Tip</div>
-</td>
-<td class="content">
-Much more information is provided in the <a href="#_appendix_compact_identifiers">Appendix: Compact Identifiers</a> including details on the structure of compact identifiers.
-</td>
-</tr>
-</table>
-</div>
 <div class="sidebarblock">
 <div class="content">
 <div class="title">Note: DRS Service Implementers Prefix Registration</div>
@@ -640,59 +628,17 @@ Much more information is provided in the <a href="#_appendix_compact_identifiers
 <pre>drs://[provider_code/]namespace:accession</pre>
 </div>
 </div>
-<div class="sidebarblock">
-<div class="content">
-<div class="title">Note: DRS Client Compact Identifier-Based URI Resolution Process</div>
-<div class="paragraph">
-<p>A DRS client identifies the a DRS URI compact identifier components using the first occurance of "/" (optional) and ":" characters. These are not allowed inside the provider_code (optional) or the namespace. The ":" character is also not allowed in a Hostname-based DRS URI, providing a convenient mechanism to differentiate them. Once the provider_code (optional) and namespace are extracted from a DRS URI, a client can use services on identifiers.org to identify available resolvers. As a hypothetical example for a Data GUID namespace of "dg", the following GET request will return information about the namespace:</p>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre>GET https://registry.api.identifiers.org/restApi/namespaces/search/findByPrefix?prefix=dg</pre>
-</div>
-</div>
-<div class="paragraph">
-<p>This information then points to resolvers for the "dg" namespace (assuming the namespace ID identified by the response to the above GET request for Data GUIDs is 1234):</p>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre>GET https://registry.api.identifiers.org/restApi/resources/search/findAllByNamespaceId?id=1234</pre>
-</div>
-</div>
-<div class="paragraph">
-<p>This returns enough information to, ultimately, identify one or more resolvers and each have a URL prefix that, for DRS-supporting systems, provides a URL template for making a successful DRS GET request.  If applicable, a provide code can be supplied in the above requests to specify a particular mirror if there are multiple resolvers for this namespace.</p>
-</div>
-<div class="paragraph">
-<p>Walking through a hypothetical Data GUID example compact identifier DRS URI&#8217;s resolution:</p>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre>drs://dg:4503/00e6cfa9-a183-42f6-bb44-b70347106bbe</pre>
-</div>
-</div>
-<div class="paragraph">
-<p>Looking up the resolver on identifiers.org would tell you the URL pattern to get a DRS response would be:</p>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre>https://dataguids.org/ga4gh/drs/v1/objects/dg.{$id}</pre>
-</div>
-</div>
-<div class="paragraph">
-<p>And that can then be translated to the following using the accession parsed from the compact identifier (which has been percent-encoded since DRS IDs must only use non-reserved URI characters):</p>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre>GET https://dataguids.org/ga4gh/drs/v1/objects/dg.4503%2F00e6cfa9-a183-42f6-bb44-b70347106bbe</pre>
-</div>
-</div>
-<div class="paragraph">
-<p><em>IDs in DRS hostname-based URIs/URLs are always percent-encoded to eliminate ambiguity even though the DRS compact identifier-based URIs do not percent-encode accessions.</em>  This was done in order to 1) follow the CURIE conventions of identifiers.org/n2t.net for compact identifier-based DRS URIs and 2) to aid in readability for users who understand they are working with compact identifiers. <strong>The general rule of thumb, when using an compact identifier accession as a DRS ID make sure to percent-encode it.</strong></p>
-</div>
-<div class="paragraph">
-<p>Please keep in mind identifiers.org/n2t.net does not support directly resolving percent-encoded accessions. <em>So we recommend the approach above for DRS clients to look up resolvers URL patters on these registries and then make a valid DRS GET request directly, using the percent-encoded accession as the DRS ID in the GET request.</em>  This approach is also useful for caching resolvers and their URL patterns for performance reasons since this information is unlikely to change frequently.</p>
-</div>
-</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Tip</div>
+</td>
+<td class="content">
+Much more information is provided in the <a href="#_appendix_compact_identifier-based_uris">[_appendix_compact_identifier-based_uris]</a> including details on the structure of compact identifiers and how to resolve compact identifier-based DRS URIs.
+</td>
+</tr>
+</table>
 </div>
 </div>
 <div class="sect3">
@@ -705,36 +651,6 @@ Much more information is provided in the <a href="#_appendix_compact_identifiers
 <pre>drs://&lt;hostname&gt;/&lt;id&gt;</pre>
 </div>
 </div>
-<div class="sidebarblock">
-<div class="content">
-<div class="title">Note: DRS Client Hostname-Based URI Resolution Process</div>
-<div class="paragraph">
-<p>Strings of the form <code>drs://&lt;hostname&gt;/&lt;id&gt;</code> mean <em>“you can fetch the content with DRS id <code>&lt;id&gt;</code> from the DRS server at <code>&lt;hostname&gt;</code> "</em>.  For example, if a WES server was asked to process:</p>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre>drs://drs.example.org/314159</pre>
-</div>
-</div>
-<div class="paragraph">
-<p>It would know that it could issue a GET request to:</p>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre>https://drs.example.org/ga4gh/drs/v1/objects/314159</pre>
-</div>
-</div>
-<div class="paragraph">
-<p>to learn how to fetch that data object via one of the available access approaches.</p>
-</div>
-<div class="paragraph">
-<p>The protocol is always https and the port is always the standard 443 SSL port.  It would be invalid to include, for example, a different port in the DRS hostname-based URI.</p>
-</div>
-<div class="paragraph">
-<p>In hostname-based DRS URIs, the ID is always percent-encoded to ensure special characters do not interfere with subsequent DRS endpoint calls.  As such, ":" is not allowed in the URI and is a convenient way of differentiating from a compact identifier-based DRS URI.  Also, if a given DRS service implementation uses compact identifier accessions as their DRS IDs, they must be percent encoded before using them as DRS IDs in hostname-based DRS URIs.</p>
-</div>
-</div>
-</div>
 <div class="paragraph">
 <p>Hostname-based DRS URIs are less resistant to future project/domain name changes than compact identifiers.  But they do provide a more direct way of pointing to a DRS object which can have benefits.  The fact that they can be resolved using a simple rule means a DRS client can skip the extra overhead of a prefix lookup as is done for compact identifier-based URIs.  This can translate to possibly greater performance and/or security since the DRS server hostname is explicitly specified and this avoids the lookup of a resolver through a third-party service (identifiers.org/n2t.net).</p>
 </div>
@@ -745,7 +661,7 @@ Much more information is provided in the <a href="#_appendix_compact_identifiers
 <div class="title">Tip</div>
 </td>
 <td class="content">
-Information on how hostname-based DRS URI resolution to URLs will work in the future, when the 2.x major release happens, is provided in the <a href="#_appendix_service_registry_and_service_info">Appendix: Service Registry and Service Info</a>.
+Much more information is provided in the <a href="#_appendix_hostname-based_uris">[_appendix_hostname-based_uris]</a> including details on how to resolve hostname-based DRS URIs. It also includes information on how hostname-based DRS URI resolution to URLs will work in the future, when the 2.x major release happens.
 </td>
 </tr>
 </table>
@@ -1426,7 +1342,7 @@ For bundles, the cumulative size, in bytes, of items in the <code>contents</code
 </div>
 </div>
 <div class="sect1">
-<h2 id="_appendix_compact_identifiers"><a class="anchor" href="#_appendix_compact_identifiers"></a><a class="link" href="#_appendix_compact_identifiers">7. Appendix: Compact Identifiers</a></h2>
+<h2 id="_appendix_compact_identifier_based_uris"><a class="anchor" href="#_appendix_compact_identifier_based_uris"></a><a class="link" href="#_appendix_compact_identifier_based_uris">7. Appendix: Compact Identifier-Based URIs</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>Compact identifiers refer to locally-unique persistent identifiers that have been namespaced to provide global uniqueness. See <a href="https://www.biorxiv.org/content/10.1101/101279v3">"Uniform resolution of compact identifiers for biomedical data"</a> for an excellent introduction to this topic.  By using compact identifiers in DRS URIs, along with a resolver registry (identifiers.org/n2t.net), systems can identify the current resolver when they need to translate the DRS URI into a fetchable URL. This allows a project to issue compact identifiers in DRS URIs and not be concerned if the project name or DRS hostname change in the future.  The current resolver can always be found through the identifiers.org/n2t.net registries.  Together the identifiers.org/n2t.net systems support the resolver lookup for over 700 compact identifiers formats used in the research community, making it possible for a DRS server to use any of these as DRS IDs (or to register a new compact identifier service of their own).</p>
@@ -1489,11 +1405,101 @@ The CURIE format used by identifiers.org/n2t.net does not percent-encode reserve
 <div class="paragraph">
 <p>See the documentation on <a href="https://n2t.net/e/compact_ids.html">n2t.net</a> and <a href="https://docs.identifiers.org/">identifiers.org</a> for much more information on the compact identifiers used there and details about the resolution process. You can also register new prefixes (or mirrors by adding resource provider codes) for free using a simple online form.  Keep in mind, while anyone can register prefixes, the identifiers.org/n2t.net sites do basic hand curation to verify new prefix and resource (provider code) requests.  See those sites for more details on their security practices.</p>
 </div>
+<div class="sidebarblock">
+<div class="content">
+<div class="title">Note: DRS Client Compact Identifier-Based URI Resolution Process</div>
+<div class="paragraph">
+<p>A DRS client identifies the a DRS URI compact identifier components using the first occurance of "/" (optional) and ":" characters. These are not allowed inside the provider_code (optional) or the namespace. The ":" character is also not allowed in a Hostname-based DRS URI, providing a convenient mechanism to differentiate them. Once the provider_code (optional) and namespace are extracted from a DRS URI, a client can use services on identifiers.org to identify available resolvers. As a hypothetical example for a Data GUID namespace of "dg", the following GET request will return information about the namespace:</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>GET https://registry.api.identifiers.org/restApi/namespaces/search/findByPrefix?prefix=dg</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This information then points to resolvers for the "dg" namespace (assuming the namespace ID identified by the response to the above GET request for Data GUIDs is 1234):</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>GET https://registry.api.identifiers.org/restApi/resources/search/findAllByNamespaceId?id=1234</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This returns enough information to, ultimately, identify one or more resolvers and each have a URL prefix that, for DRS-supporting systems, provides a URL template for making a successful DRS GET request.  If applicable, a provide code can be supplied in the above requests to specify a particular mirror if there are multiple resolvers for this namespace.</p>
+</div>
+<div class="paragraph">
+<p>Walking through a hypothetical Data GUID example compact identifier DRS URI&#8217;s resolution:</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>drs://dg:4503/00e6cfa9-a183-42f6-bb44-b70347106bbe</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Looking up the resolver on identifiers.org would tell you the URL pattern to get a DRS response would be:</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>https://dataguids.org/ga4gh/drs/v1/objects/dg.{$id}</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>And that can then be translated to the following using the accession parsed from the compact identifier (which has been percent-encoded since DRS IDs must only use non-reserved URI characters):</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>GET https://dataguids.org/ga4gh/drs/v1/objects/dg.4503%2F00e6cfa9-a183-42f6-bb44-b70347106bbe</pre>
+</div>
+</div>
+<div class="paragraph">
+<p><em>IDs in DRS hostname-based URIs/URLs are always percent-encoded to eliminate ambiguity even though the DRS compact identifier-based URIs do not percent-encode accessions.</em>  This was done in order to 1) follow the CURIE conventions of identifiers.org/n2t.net for compact identifier-based DRS URIs and 2) to aid in readability for users who understand they are working with compact identifiers. <strong>The general rule of thumb, when using an compact identifier accession as a DRS ID make sure to percent-encode it.</strong></p>
+</div>
+<div class="paragraph">
+<p>Please keep in mind identifiers.org/n2t.net does not support directly resolving percent-encoded accessions. <em>So we recommend the approach above for DRS clients to look up resolvers URL patters on these registries and then make a valid DRS GET request directly, using the percent-encoded accession as the DRS ID in the GET request.</em>  This approach is also useful for caching resolvers and their URL patterns for performance reasons since this information is unlikely to change frequently.</p>
+</div>
+</div>
+</div>
+<div class="sidebarblock">
+<div class="content">
+<div class="title">Note: Compact Identifier Registration</div>
+
+</div>
+</div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="_appendix_service_registry_and_service_info"><a class="anchor" href="#_appendix_service_registry_and_service_info"></a><a class="link" href="#_appendix_service_registry_and_service_info">8. Appendix: Service Registry and Service Info</a></h2>
+<h2 id="_appendix_hostname_based_uris"><a class="anchor" href="#_appendix_hostname_based_uris"></a><a class="link" href="#_appendix_hostname_based_uris">8. Appendix: Hostname-Based URIs</a></h2>
 <div class="sectionbody">
+<div class="sidebarblock">
+<div class="content">
+<div class="title">Note: DRS Client Hostname-Based URI Resolution Process</div>
+<div class="paragraph">
+<p>Strings of the form <code>drs://&lt;hostname&gt;/&lt;id&gt;</code> mean <em>“you can fetch the content with DRS id <code>&lt;id&gt;</code> from the DRS server at <code>&lt;hostname&gt;</code> "</em>.  For example, if a WES server was asked to process:</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>drs://drs.example.org/314159</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>It would know that it could issue a GET request to:</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>https://drs.example.org/ga4gh/drs/v1/objects/314159</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>to learn how to fetch that data object via one of the available access approaches.</p>
+</div>
+<div class="paragraph">
+<p>The protocol is always https and the port is always the standard 443 SSL port.  It would be invalid to include, for example, a different port in the DRS hostname-based URI.</p>
+</div>
+<div class="paragraph">
+<p>In hostname-based DRS URIs, the ID is always percent-encoded to ensure special characters do not interfere with subsequent DRS endpoint calls.  As such, ":" is not allowed in the URI and is a convenient way of differentiating from a compact identifier-based DRS URI.  Also, if a given DRS service implementation uses compact identifier accessions as their DRS IDs, they must be percent encoded before using them as DRS IDs in hostname-based DRS URIs.</p>
+</div>
+</div>
+</div>
 <div class="sidebarblock">
 <div class="content">
 <div class="title">Note: Service Registry/Info and Future Versions of DRS</div>
@@ -1606,7 +1612,7 @@ The CURIE format used by identifiers.org/n2t.net does not percent-encode reserve
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2020-04-14 00:59:57 UTC
+Last updated 2020-04-17 00:43:29 UTC
 </div>
 </div>
 </body>
