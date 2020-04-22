@@ -34,15 +34,19 @@ A DRS client identifies the a DRS URI compact identifier components using the fi
 
 _Let's look at a specific example DRS compact identifier-based URI that uses DOIs, a popular compact identifier, and walk through the process that a client would use to resolve it._  Starting with the DRS URI:
 
-    drs://doi:10.5072/FK2805660V
+[source,bash]
+----
+drs://doi:10.5072/FK2805660V
+----
 
 with a namespace of "doi", the following GET request will return information about the namespace:
 
-    GET https://registry.api.identifiers.org/restApi/namespaces/search/findByPrefix?prefix=doi[https://registry.api.identifiers.org/restApi/namespaces/search/findByPrefix?prefix=doi]
+    GET https://registry.api.identifiers.org/restApi/namespaces/search/findByPrefix?prefix=doi
 
 This information then points to resolvers for the "doi" namespace (this "doi" namespace was assigned a namespace ID of 75 by identifiers.org, this "id" has nothing to do with compact identifier accessions or DRS IDs):
 
-    GET https://registry.api.identifiers.org/restApi/resources/search/findAllByNamespaceId?id=75[https://registry.api.identifiers.org/restApi/resources/search/findAllByNamespaceId?id=75]
+GET https://registry.api.identifiers.org/restApi/resources/search/findAllByNamespaceId?id=75
+
 
 This returns enough information to, ultimately, identify one or more resolvers and each have a URL pattern that, for DRS-supporting systems, provides a URL template for making a successful DRS GET request.  For example, the DOI urlPattern is:
 
