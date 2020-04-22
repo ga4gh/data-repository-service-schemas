@@ -1,6 +1,7 @@
 ////
 TODO:
 * I need to clear up the section showing the GET requests, clarify the "ID", and also probably mention these API calls are examples and we make not guarantees that identifiers.org/n2t.net won't change.
+* do we want to add a self_url to the JSON response from DRS objects?  This would make it much, much easier to construct the access method rather than using the hostname-based URI which requires manipulation and parsing. 
 ////
 
 == Introduction
