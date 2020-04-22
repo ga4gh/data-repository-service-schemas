@@ -1,0 +1,33 @@
+{
+  "id": "string",
+  "name": "string",
+  "self_uri": "drs://drs.example.org/24207d90-c5b8-4fac-8c07-6426521dfeac",
+  "size": 921,
+  "created_time": "2020-04-22T04:56:21.375Z",
+  "updated_time": "2020-04-22T04:56:21.375Z",
+  "version": "1.0.0",
+  "mime_type": "application/json",
+  "checksums": [
+    {
+      "checksum": "b89297ef23cf9fe468166dad080fc97c9c582e10614bd3626ef17fb1bbd90c77",
+      "type": "sha-256"
+    }
+  ],
+  "access_methods": [
+    {
+      "type": "s3",
+      "access_url": {
+        "url": "s3://drs.example.bucket/24207d90-c5b8-4fac-8c07-6426521dfeac",
+        "headers": {
+          "Authorization": "Basic Z2E0Z2g6ZHJz"
+        }
+      },
+      "access_id": "1",
+      "region": "us-east-1"
+    }
+  ],
+  "description": "a sample DRS file",
+  "aliases": [
+    "this is a test"
+  ]
+}
