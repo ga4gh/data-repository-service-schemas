@@ -1,12 +1,14 @@
 == Appendix: Compact Identifier-Based URIs
 
-Compact identifiers refer to locally-unique persistent identifiers that have been namespaced to provide global uniqueness. See https://www.biorxiv.org/content/10.1101/101279v3["Uniform resolution of compact identifiers for biomedical data"] for an excellent introduction to this topic.  By using compact identifiers in DRS URIs, along with a resolver registry (identifiers.org/n2t.net), systems can identify the current resolver when they need to translate the DRS URI into a fetchable URL. This allows a project to issue compact identifiers in DRS URIs and not be concerned if the project name or DRS hostname change in the future.  The current resolver can always be found through the identifiers.org/n2t.net registries.  Together the identifiers.org/n2t.net systems support the resolver lookup for over 700 compact identifiers formats used in the research community, making it possible for a DRS server to use any of these as DRS IDs (or to register a new compact identifier service of their own).
+Compact identifiers refer to locally-unique persistent identifiers that have been namespaced to provide global uniqueness. See https://www.biorxiv.org/content/10.1101/101279v3["Uniform resolution of compact identifiers for biomedical data"] for an excellent introduction to this topic.  By using compact identifiers in DRS URIs, along with a resolver registry (identifiers.org/n2t.net), systems can identify the current resolver when they need to translate a DRS URI into a fetchable URL. This allows a project to issue compact identifiers in DRS URIs and not be concerned if the project name or DRS hostname changes in the future, the current resolver can always be found through the identifiers.org/n2t.net registries.  Together the identifiers.org/n2t.net systems support the resolver lookup for over 700 compact identifiers formats used in the research community, making it possible for a DRS server to use any of these as DRS IDs (or to register a new compact identifier resolver service of their own).
 
-To make compact identifiers work in DRS URIs we leverage the CURIE format used by identifiers.org/n2t.net.  Compact identifiers have the form:
+We use a DRS URI scheme rather than https://en.wikipedia.org/wiki/CURIE[Compact URIs (CURIEs)] directly since we feel that systems consuming DRS objects will be able to better differentiate a DRS URI.  CURIEs are widely used in the research community and we felt the fact that they can point to a wide variety of entities (HTML documents, PDFs, identities in data models, etc), making it more difficult for systems to unambiguously identify entities as DRS objects.
+
+Still, to make compact identifiers work in DRS URIs we leverage the CURIE format used by identifiers.org/n2t.net.  Compact identifiers have the form:
 
     prefix:accession
 
-The prefix can be divided into an optional `provider_code` and `namespace`.  The `accession` here is an Ark, DOI, Data GUID, or another issuers's ID for the object being pointed to:
+The prefix can be divided into an optional `provider_code` and `namespace`.  The `accession` here is an Ark, DOI, Data GUID, or another issuers's local ID for the object being pointed to:
 
     [provider_code/]namespace:accession
 

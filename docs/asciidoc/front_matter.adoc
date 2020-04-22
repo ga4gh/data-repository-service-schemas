@@ -22,7 +22,7 @@ Each implementation of DRS can choose its own id scheme, as long as it follows t
 
 === DRS URIs
 
-For convenience, including when passing content references to a https://github.com/ga4gh/workflow-execution-service-schemas[WES server], we define a https://en.wikipedia.org/wiki/Uniform_Resource_Identifier#Generic_syntax[URI scheme] for DRS-accessible content. See https://tools.ietf.org/html/rfc3986#section-3.1[RFC 3986 § 3.1]. _We feel it is important to introduce a DRS scheme for URIs since it signals to systems consuming these URIs that the response they will ultimately receive, once transforming the URI to a fetchable URL, will be a DRS JSON._ If we had gone with a https://en.wikipedia.org/wiki/CURIE[Compact URI (CURIE)] we felt that this would have been more difficult for systems consuming DRS objects to understand and differentiate them given the ubiquitous use of CURIEs in the research community and the fact that CURIEs can point to a wide variety of entities (HTML documents, PDFs, identities in data models, etc).
+For convenience, including when passing content references to a https://github.com/ga4gh/workflow-execution-service-schemas[WES server], we define a https://en.wikipedia.org/wiki/Uniform_Resource_Identifier#Generic_syntax[URI scheme] for DRS-accessible content. See https://tools.ietf.org/html/rfc3986#section-3.1[RFC 3986 § 3.1]. _We feel it is important to introduce a DRS scheme for URIs since it signals to systems consuming these URIs that the response they will ultimately receive, once transforming the URI to a fetchable URL, will be a DRS JSON._
 
 There are two styles of DRS URIs: Compact Identifier-based and Hostname-based, both use the `drs://` URI scheme.
 
@@ -39,7 +39,7 @@ Translating the identifiers.org/n2t.net CURIE format to a DRS compact identifier
 
     drs://[provider_code/]namespace:accession
 
-TIP: Much more information is provided in the <<_appendix_compact_identifier-based_uris>> including details on the structure of compact identifiers and how to resolve compact identifier-based DRS URIs.
+TIP: Much more information is provided in the <<_appendix_compact_identifier_based_uris>> including details on the structure of compact identifiers, how to register prefixes, how to resolve compact identifier-based DRS URIs, possible caching strategies, and security considerations.
 
 
 ==== Hostname-based DRS URIs
@@ -50,7 +50,7 @@ Hostname-based DRS URIs are simpler than compact identifier-based URIs.  They co
 
 Hostname-based DRS URIs are less resistant to future project/domain name changes than compact identifiers.  But they do provide a more direct way of pointing to a DRS object which can have benefits.  The fact that they can be resolved using a simple rule means a DRS client can skip the extra overhead of a prefix lookup as is done for compact identifier-based URIs.  This can translate to possibly greater performance and/or security since the DRS server hostname is explicitly specified and this avoids the lookup of a resolver through a third-party service (identifiers.org/n2t.net).
 
-TIP: Much more information is provided in the <<_appendix_hostname-based_uris>> including details on how to resolve hostname-based DRS URIs. It also includes information on how hostname-based DRS URI resolution to URLs will work in the future, when the 2.x major release happens.
+TIP: Much more information is provided in the <<_appendix_hostname_based_uris>> including details on how to resolve hostname-based DRS URIs. It also includes information on how hostname-based DRS URI resolution to URLs will work in the future, when the DRS v2 major release happens.
 
 
 === DRS Datatypes
