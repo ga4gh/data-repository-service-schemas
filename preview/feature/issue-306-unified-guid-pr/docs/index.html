@@ -1417,9 +1417,9 @@ The CURIE format used by identifiers.org/n2t.net does not percent-encode reserve
 <div class="paragraph">
 <p><em>Let&#8217;s look at a specific example DRS compact identifier-based URI that uses DOIs, a popular compact identifier, and walk through the process that a client would use to resolve it.</em>  Starting with the DRS URI:</p>
 </div>
-<div class="literalblock">
+<div class="listingblock">
 <div class="content">
-<pre>drs://doi:10.5072/FK2805660V</pre>
+<pre class="highlight"><code class="language-bash" data-lang="bash">drs://doi:10.5072/FK2805660V</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -1427,16 +1427,14 @@ The CURIE format used by identifiers.org/n2t.net does not percent-encode reserve
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>GET https://registry.api.identifiers.org/restApi/namespaces/search/findByPrefix?prefix=doi[https://registry.api.identifiers.org/restApi/namespaces/search/findByPrefix?prefix=doi]</pre>
+<pre>GET https://registry.api.identifiers.org/restApi/namespaces/search/findByPrefix?prefix=doi</pre>
 </div>
 </div>
 <div class="paragraph">
 <p>This information then points to resolvers for the "doi" namespace (this "doi" namespace was assigned a namespace ID of 75 by identifiers.org, this "id" has nothing to do with compact identifier accessions or DRS IDs):</p>
 </div>
-<div class="literalblock">
-<div class="content">
-<pre>GET https://registry.api.identifiers.org/restApi/resources/search/findAllByNamespaceId?id=75[https://registry.api.identifiers.org/restApi/resources/search/findAllByNamespaceId?id=75]</pre>
-</div>
+<div class="paragraph">
+<p>GET <a href="https://registry.api.identifiers.org/restApi/resources/search/findAllByNamespaceId?id=75" class="bare">https://registry.api.identifiers.org/restApi/resources/search/findAllByNamespaceId?id=75</a></p>
 </div>
 <div class="paragraph">
 <p>This returns enough information to, ultimately, identify one or more resolvers and each have a URL pattern that, for DRS-supporting systems, provides a URL template for making a successful DRS GET request.  For example, the DOI urlPattern is:</p>
@@ -1636,7 +1634,7 @@ The CURIE format used by identifiers.org/n2t.net does not percent-encode reserve
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2020-04-22 06:08:38 UTC
+Last updated 2020-04-22 06:17:05 UTC
 </div>
 </div>
 </body>
