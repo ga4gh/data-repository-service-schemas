@@ -1400,35 +1400,54 @@ DRS URIs using compact identifiers with resolvers registered in identifiers.org/
 <div class="title">Tip</div>
 </td>
 <td class="content">
-The CURIE format used by identifiers.org/n2t.net does not percent-encode reserved URI characters but, instead, relies on the first ":" character to separate prefix from accession. Since these accessions can contain any characters, and characters like "/" will interfere with DRS API calls, you <em>must</em> percent encode the accessions extracted from DRS compact identifier-based URIs when using them in DRS GET requests.  For more information see the Note "DRS Client Compact Identifier-Based URI Resolution Process".
+The CURIE format used by identifiers.org/n2t.net does not percent-encode reserved URI characters but, instead, relies on the first ":" character to separate prefix from accession. Since these accessions can contain any characters, and characters like "/" will interfere with DRS API calls, you <em>must</em> percent encode the accessions extracted from DRS compact identifier-based URIs when using as DRS IDs in DRS GET requests.  For more information see the Note "DRS Client Compact Identifier-Based URI Resolution Process".
 </td>
 </tr>
 </table>
 </div>
 <div class="paragraph">
-<p>See the documentation on <a href="https://n2t.net/e/compact_ids.html">n2t.net</a> and <a href="https://docs.identifiers.org/">identifiers.org</a> for much more information on the compact identifiers used there and details about the resolution process. You can also register new prefixes (or mirrors by adding resource provider codes) for free using a simple online form.  Keep in mind, while anyone can register prefixes, the identifiers.org/n2t.net sites do basic hand curation to verify new prefix and resource (provider code) requests.  See those sites for more details on their security practices.</p>
+<p>See the documentation on <a href="https://n2t.net/e/compact_ids.html">n2t.net</a> and <a href="https://docs.identifiers.org/">identifiers.org</a> for much more information on the compact identifiers used there and details about the resolution process.</p>
 </div>
 <div class="sidebarblock">
 <div class="content">
 <div class="title">Note: DRS Client Compact Identifier-Based URI Resolution Process</div>
 <div class="paragraph">
-<p>A DRS client identifies the a DRS URI compact identifier components using the first occurance of "/" (optional) and ":" characters. These are not allowed inside the provider_code (optional) or the namespace. The ":" character is also not allowed in a Hostname-based DRS URI, providing a convenient mechanism to differentiate them. Once the provider_code (optional) and namespace are extracted from a DRS URI, a client can use services on identifiers.org to identify available resolvers. As a hypothetical example for a Data GUID namespace of "dg", the following GET request will return information about the namespace:</p>
+<p>A DRS client identifies the a DRS URI compact identifier components using the first occurance of "/" (optional) and ":" characters. These are not allowed inside the provider_code (optional) or the namespace. The ":" character is also not allowed in a Hostname-based DRS URI, providing a convenient mechanism to differentiate them. Once the provider_code (optional) and namespace are extracted from a DRS URI, a client can use services on identifiers.org to identify available resolvers.</p>
+</div>
+<div class="paragraph">
+<p>Let&#8217;s look at an example for DOIs, a popular compact identifier.</p>
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>GET https://registry.api.identifiers.org/restApi/namespaces/search/findByPrefix?prefix=dg</pre>
+<pre>drs://doi:</pre>
 </div>
 </div>
 <div class="paragraph">
-<p>This information then points to resolvers for the "dg" namespace (assuming the namespace ID identified by the response to the above GET request for Data GUIDs is 1234):</p>
+<p>with a namespace of "doi", the following GET request will return information about the namespace:</p>
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>GET https://registry.api.identifiers.org/restApi/resources/search/findAllByNamespaceId?id=1234</pre>
+<pre>GET https://registry.api.identifiers.org/restApi/namespaces/search/findByPrefix?prefix=doi[https://registry.api.identifiers.org/restApi/namespaces/search/findByPrefix?prefix=doi]</pre>
 </div>
 </div>
 <div class="paragraph">
-<p>This returns enough information to, ultimately, identify one or more resolvers and each have a URL prefix that, for DRS-supporting systems, provides a URL template for making a successful DRS GET request.  If applicable, a provide code can be supplied in the above requests to specify a particular mirror if there are multiple resolvers for this namespace.</p>
+<p>This information then points to resolvers for the "doi" namespace (this "doi" namespace was assigned a namespace ID of 75 by identifiers.org, this "id" has nothing to do with compact identifier accessions or DRS IDs):</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>GET https://registry.api.identifiers.org/restApi/resources/search/findAllByNamespaceId?id=75[https://registry.api.identifiers.org/restApi/resources/search/findAllByNamespaceId?id=75]</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This returns enough information to, ultimately, identify one or more resolvers and each have a URL pattern that, for DRS-supporting systems, provides a URL template for making a successful DRS GET request.  For example, the DOI urlPattern is:</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>urlPattern: "https://doi.org/{$id}"</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>If applicable, a provide code can be supplied in the above requests to specify a particular mirror if there are multiple resolvers for this namespace.  In the case of</p>
 </div>
 <div class="paragraph">
 <p>Walking through a hypothetical Data GUID example compact identifier DRS URI&#8217;s resolution:</p>
@@ -1464,8 +1483,18 @@ The CURIE format used by identifiers.org/n2t.net does not percent-encode reserve
 </div>
 <div class="sidebarblock">
 <div class="content">
-<div class="title">Note: Compact Identifier Registration</div>
-
+<div class="title">Note: Registering a new Compact Identifier</div>
+<div class="paragraph">
+<p>See the documentation on <a href="https://n2t.net/e/compact_ids.html">n2t.net</a> and <a href="https://docs.identifiers.org/">identifiers.org</a> for. You can also register new prefixes (or mirrors by adding resource provider codes) for free using a simple online form.  Keep in mind, while anyone can register prefixes, the identifiers.org/n2t.net sites do basic hand curation to verify new prefix and resource (provider code) requests.  See those sites for more details on their security practices.</p>
+</div>
+</div>
+</div>
+<div class="sidebarblock">
+<div class="content">
+<div class="title">Note: Using an Existing Compact Identifier</div>
+<div class="paragraph">
+<p>See the documentation on <a href="https://n2t.net/e/compact_ids.html">n2t.net</a> and <a href="https://docs.identifiers.org/">identifiers.org</a> for. You can also register new prefixes (or mirrors by adding resource provider codes) for free using a simple online form.  Keep in mind, while anyone can register prefixes, the identifiers.org/n2t.net sites do basic hand curation to verify new prefix and resource (provider code) requests.  See those sites for more details on their security practices.</p>
+</div>
 </div>
 </div>
 </div>
@@ -1615,7 +1644,7 @@ The CURIE format used by identifiers.org/n2t.net does not percent-encode reserve
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2020-04-22 04:26:18 UTC
+Last updated 2020-04-22 05:06:28 UTC
 </div>
 </div>
 </body>
