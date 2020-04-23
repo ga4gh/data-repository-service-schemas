@@ -59,11 +59,11 @@ TIP: Much more information is provided in the <<_appendix_compact_identifier_bas
 
 ==== Choosing a URI Style
 
-Ultimately, the choice of issuing hostname- or compact identifier-based DRS URIs comes down to the preferences of the particular DRS server system builder (and the builders who make portals and other apps on top of the DRS server).  Each have their own benefits and drawbacks.  Compact identifier-based DRS URIs are more resilient to change, if a project is renamed or hosts are moved around, the identifiers.org/n2t.net registration is updated and the compact identifier-based DRS URIs continue to work.  This greatly helps with the https://www.nature.com/articles/sdata201618[FAIR-ness] of your data objects.  On the other hand, this requires DRS clients to resolve your DRS server via identifiers.org/n2t.net with potential performance and security implications.
+The choice of issuing hostname- or compact identifier-based DRS URIs comes down to the preferences of the particular DRS server system builder (and the builders who make portals and other apps on top of the DRS server).  Each have their own benefits and drawbacks.  Compact identifier-based DRS URIs are more resilient to change, if a project is renamed or hosts are moved around, the identifiers.org/n2t.net registration is updated and the compact identifier-based DRS URIs continue to work.  This greatly helps with the https://www.nature.com/articles/sdata201618[FAIR-ness] of your data objects.  On the other hand, this requires DRS clients to resolve your DRS server via identifiers.org/n2t.net with potential performance and security implications.
 
 Hostname-based DRS URIs are less resistant to future project/domain name changes than compact identifier-based DRS URIs.  But they do provide a more direct way of pointing to a DRS object which can have benefits.  The fact that they can be resolved using a simple rule means a DRS client can skip the extra overhead of a prefix lookup as is done for compact identifier-based URIs.  This can translate to possibly greater performance and/or security since the DRS server hostname is explicitly specified and this avoids the lookup of a resolver through a third-party service (identifiers.org/n2t.net).
 
-Ultimately, the choice is with the DRS system builders, DRS clients must be able to accomodate both URI types.
+Ultimately, the choice is with the DRS system builders, DRS clients must be able to accommodate both URI types.
 
 
 === DRS Datatypes
