@@ -1,12 +1,12 @@
 ////
 TODO:
 * I need to clear up the section showing the GET requests, clarify the "ID", and also probably mention these API calls are examples and we make not guarantees that identifiers.org/n2t.net won't change.
-* do we want to add a self_url to the JSON response from DRS objects?  This would make it much, much easier to construct the access method rather than using the hostname-based URI which requires manipulation and parsing. 
+* do we want to add a self_url to the JSON response from DRS objects?  This would make it much, much easier to construct the access method rather than using the hostname-based URI which requires manipulation and parsing.
 ////
 
 == Introduction
 
-The Data Repository Service (DRS) API provides a generic interface to data repositories so data consumers, including workflow systems, can access data objects in a single, standard way regardless of where they are stored and how they are managed. The primary functionality of DRS is to map a logical ID to a means for physically retrieving the data represented by the ID. The sections below describe the characteristics of those IDs, the types of data supported, how they can be pointed to using URIs, and how clients can use these URIs to ultimately make successful DRS API requests. This document describes the DRS API in detail and provides information on the specific endpoints, request formats, and responses.  This specification is intended for developers of DRS-compatible services and of clients that will call these DRS services.
+The Data Repository Service (DRS) API provides a generic interface to data repositories so data consumers, including workflow systems, can access data objects in a single, standard way regardless of where they are stored and how they are managed. The primary functionality of DRS is to map a logical ID to a means for physically retrieving the data represented by the ID. The sections below describe the characteristics of those IDs, the types of data supported, how they can be pointed to using URIs, and how clients can use these URIs to ultimately make successful DRS API requests. This document also describes the DRS API in detail and provides information on the specific endpoints, request formats, and responses.  This specification is intended for developers of DRS-compatible services and of clients that will call these DRS services.
 
 == DRS API Principles
 
@@ -25,22 +25,22 @@ Each implementation of DRS can choose its own id scheme, as long as it follows t
 
 For convenience, including when passing content references to a https://github.com/ga4gh/workflow-execution-service-schemas[WES server], we define a https://en.wikipedia.org/wiki/Uniform_Resource_Identifier#Generic_syntax[URI scheme] for DRS-accessible content. See https://tools.ietf.org/html/rfc3986#section-3.1[RFC 3986 § 3.1]. _We feel it is important to introduce a DRS scheme for URIs since it signals to systems consuming these URIs that the response they will ultimately receive, once transforming the URI to a fetchable URL, will be a DRS JSON._
 
-There are two styles of DRS URIs: Compact Identifier-based and Hostname-based, both use the `drs://` URI scheme.
+There are two styles of DRS URIs: Compact Identifier-based and Hostname-based, both use the `drs://` URI scheme.  Different systems may choose to share one or both styles of DRS URIs but DRS clients must support resolving both types.
 
 ==== Compact Identifier-based DRS URIs
 
 Compact identifiers refer to locally-unique persistent identifiers that have been namespaced to provide global uniqueness. See https://www.biorxiv.org/content/10.1101/101279v3["Uniform resolution of compact identifiers for biomedical data"] for an excellent introduction to this topic.  We support the use of compact identifiers in DRS URIs since many resources in the research community issue these identifiers in a variety of formats.  We leverage the resolver registry services of https://identifiers.org/[identifiers.org] or https://n2t.net/[n2t.net (Name-To-Thing)] to support any registered form of compact identifiers (Arks, DOIs, Data GUIDs, etc), allowing for the resolution of DRS objects without needing to use a hostname in the URI.
 
-.Note: DRS Service Implementers Prefix Registration
+.Note: DRS Service Implementations Prefix Registration
 ****
-If your DRS implementation will issue IDs based on compact identifiers, and pass around DRS URIs using these compact identifiers, you *must* register your prefix (which consists of `[provider_code/]namespace`) on identifiers.org/n2t.net. If you don't, DRS clients will not know how to resolve your compact identifiers and, ultimately, generate a valid DRS URL that clients can access.
+If your DRS implementation will issue IDs based on compact identifiers, and will pass around DRS URIs using these compact identifiers, you *must* register your prefix (which consists of `[provider_code/]namespace`) on identifiers.org/n2t.net. If you don't, DRS clients will not know how to resolve your compact identifiers and, ultimately, generate a valid DRS URL that clients can access.
 ****
 
 Translating the identifiers.org/n2t.net CURIE format to a DRS compact identifier-based URI we get the following form. Together, provider code and the namespace are referred to as the _prefix_. The provider code is optional and is used by identifiers.org/n2t.net for compact identifier resolver mirrors:
 
     drs://[provider_code/]namespace:accession
 
-TIP: Much more information is provided in the <<_appendix_compact_identifier_based_uris>> including details on the structure of compact identifiers, how to register prefixes, how to resolve compact identifier-based DRS URIs, possible caching strategies, and security considerations.
+TIP: Much more information is provided in the <<_appendix_compact_identifier_based_uris>> including details on the structure of compact identifiers, how to register prefixes, how clients resolve compact identifier-based DRS URIs, possible caching strategies, and security considerations.
 
 
 ==== Hostname-based DRS URIs
@@ -77,7 +77,7 @@ The DRS implementation is responsible for defining and enforcing an authorizatio
 
 === Fetching DRS Objects
 
-The DRS API allows implementers to support a variety of different content access policies, depending on what `AccessMethod` s they return:
+The DRS API allows implementers to support a variety of different content access policies, depending on what `AccessMethod` records they return:
 
 * public content:
 ** server provides an `access_url` with a `url` and no `headers`
