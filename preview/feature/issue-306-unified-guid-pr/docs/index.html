@@ -441,8 +441,9 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_drs_ids">3.1. DRS IDs</a></li>
 <li><a href="#_drs_uris">3.2. DRS URIs</a>
 <ul class="sectlevel3">
-<li><a href="#_compact_identifier_based_drs_uris">3.2.1. Compact Identifier-based DRS URIs</a></li>
-<li><a href="#_hostname_based_drs_uris">3.2.2. Hostname-based DRS URIs</a></li>
+<li><a href="#_hostname_based_drs_uris">3.2.1. Hostname-based DRS URIs</a></li>
+<li><a href="#_compact_identifier_based_drs_uris">3.2.2. Compact Identifier-based DRS URIs</a></li>
+<li><a href="#_choosing_a_uri_style">3.2.3. Choosing a URI Style</a></li>
 </ul>
 </li>
 <li><a href="#_drs_datatypes">3.3. DRS Datatypes</a></li>
@@ -486,13 +487,13 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_error">6.6. Error</a></li>
 </ul>
 </li>
-<li><a href="#_appendix_compact_identifier_based_uris">7. Appendix: Compact Identifier-Based URIs</a></li>
-<li><a href="#_appendix_hostname_based_uris">8. Appendix: Hostname-Based URIs</a></li>
-<li><a href="#_appendix_motivation">9. Appendix: Motivation</a>
+<li><a href="#_appendix_motivation">7. Appendix: Motivation</a>
 <ul class="sectlevel2">
-<li><a href="#_federation">9.1. Federation</a></li>
+<li><a href="#_federation">7.1. Federation</a></li>
 </ul>
 </li>
+<li><a href="#_appendix_hostname_based_uris">8. Appendix: Hostname-Based URIs</a></li>
+<li><a href="#_appendix_compact_identifier_based_uris">9. Appendix: Compact Identifier-Based URIs</a></li>
 </ul>
 </div>
 </div>
@@ -605,10 +606,44 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <p>For convenience, including when passing content references to a <a href="https://github.com/ga4gh/workflow-execution-service-schemas">WES server</a>, we define a <a href="https://en.wikipedia.org/wiki/Uniform_Resource_Identifier#Generic_syntax">URI scheme</a> for DRS-accessible content. See <a href="https://tools.ietf.org/html/rfc3986#section-3.1">RFC 3986 § 3.1</a>. <em>We feel it is important to introduce a DRS scheme for URIs since it signals to systems consuming these URIs that the response they will ultimately receive, once transforming the URI to a fetchable URL, will be a DRS JSON.</em></p>
 </div>
 <div class="paragraph">
-<p>There are two styles of DRS URIs: Compact Identifier-based and Hostname-based, both use the <code>drs://</code> URI scheme.  Different systems may choose to share one or both styles of DRS URIs but DRS clients must support resolving both types.</p>
+<p>There are two styles of DRS URIs: Hostname-based and Compact Identifier-based, both use the <code>drs://</code> URI scheme.  Different systems may choose to share one or both styles of DRS URIs but DRS clients must support resolving both types.</p>
 </div>
 <div class="sect3">
-<h4 id="_compact_identifier_based_drs_uris"><a class="anchor" href="#_compact_identifier_based_drs_uris"></a><a class="link" href="#_compact_identifier_based_drs_uris">3.2.1. Compact Identifier-based DRS URIs</a></h4>
+<h4 id="_hostname_based_drs_uris"><a class="anchor" href="#_hostname_based_drs_uris"></a><a class="link" href="#_hostname_based_drs_uris">3.2.1. Hostname-based DRS URIs</a></h4>
+<div class="paragraph">
+<p>Hostname-based DRS URIs are simpler than compact identifier-based URIs.  They contain the DRS server name and the DRS ID only and can be converted directly into a fetchable URL based on a simple rule.  They take the form:</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>drs://&lt;hostname&gt;/&lt;id&gt;</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>And this can be converted into the following fetchable URL:</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>https://&lt;hostname&gt;/ga4gh/drs/v1/objects/&lt;id&gt;</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The protocol is always https and the port is always the standard 443 SSL port.  It would be invalid to include, for example, a different port in the DRS hostname-based URI.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Tip</div>
+</td>
+<td class="content">
+Much more information is provided in the <a href="#_appendix_hostname_based_uris">Appendix: Hostname-Based URIs</a> including details on how to resolve hostname-based DRS URIs and how they compare to compact identifier-based DRS URIs. It also includes information on how hostname-based DRS URI resolution to URLs will work in the future, when the DRS v2 major release happens.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_compact_identifier_based_drs_uris"><a class="anchor" href="#_compact_identifier_based_drs_uris"></a><a class="link" href="#_compact_identifier_based_drs_uris">3.2.2. Compact Identifier-based DRS URIs</a></h4>
 <div class="paragraph">
 <p>Compact identifiers refer to locally-unique persistent identifiers that have been namespaced to provide global uniqueness. See <a href="https://www.biorxiv.org/content/10.1101/101279v3">"Uniform resolution of compact identifiers for biomedical data"</a> for an excellent introduction to this topic.  We support the use of compact identifiers in DRS URIs since many resources in the research community issue these identifiers in a variety of formats.  We leverage the resolver registry services of <a href="https://identifiers.org/">identifiers.org</a> or <a href="https://n2t.net/">n2t.net (Name-To-Thing)</a> to support any registered form of compact identifiers (Arks, DOIs, Data GUIDs, etc), allowing for the resolution of DRS objects without needing to use a hostname in the URI.</p>
 </div>
@@ -642,29 +677,15 @@ Much more information is provided in the <a href="#_appendix_compact_identifier_
 </div>
 </div>
 <div class="sect3">
-<h4 id="_hostname_based_drs_uris"><a class="anchor" href="#_hostname_based_drs_uris"></a><a class="link" href="#_hostname_based_drs_uris">3.2.2. Hostname-based DRS URIs</a></h4>
+<h4 id="_choosing_a_uri_style"><a class="anchor" href="#_choosing_a_uri_style"></a><a class="link" href="#_choosing_a_uri_style">3.2.3. Choosing a URI Style</a></h4>
 <div class="paragraph">
-<p>Hostname-based DRS URIs are simpler than compact identifier-based URIs.  They contain the DRS server name and the DRS ID only and can be converted directly into a fetchable URL based on a simple rule.  They take the form:</p>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre>drs://&lt;hostname&gt;/&lt;id&gt;</pre>
-</div>
+<p>The choice of issuing hostname- or compact identifier-based DRS URIs comes down to the preferences of the particular DRS server system builder (and the builders who make portals and other apps on top of the DRS server).  Each have their own benefits and drawbacks.  Compact identifier-based DRS URIs are more resilient to change, if a project is renamed or hosts are moved around, the identifiers.org/n2t.net registration is updated and the compact identifier-based DRS URIs continue to work.  This greatly helps with the <a href="https://www.nature.com/articles/sdata201618">FAIR-ness</a> of your data objects.  On the other hand, this requires DRS clients to resolve your DRS server via identifiers.org/n2t.net with potential performance and security implications.</p>
 </div>
 <div class="paragraph">
-<p>Hostname-based DRS URIs are less resistant to future project/domain name changes than compact identifiers.  But they do provide a more direct way of pointing to a DRS object which can have benefits.  The fact that they can be resolved using a simple rule means a DRS client can skip the extra overhead of a prefix lookup as is done for compact identifier-based URIs.  This can translate to possibly greater performance and/or security since the DRS server hostname is explicitly specified and this avoids the lookup of a resolver through a third-party service (identifiers.org/n2t.net).</p>
+<p>Hostname-based DRS URIs are less resistant to future project/domain name changes than compact identifier-based DRS URIs.  But they do provide a more direct way of pointing to a DRS object which can have benefits.  The fact that they can be resolved using a simple rule means a DRS client can skip the extra overhead of a prefix lookup as is done for compact identifier-based URIs.  This can translate to possibly greater performance and/or security since the DRS server hostname is explicitly specified and this avoids the lookup of a resolver through a third-party service (identifiers.org/n2t.net).</p>
 </div>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<div class="title">Tip</div>
-</td>
-<td class="content">
-Much more information is provided in the <a href="#_appendix_hostname_based_uris">Appendix: Hostname-Based URIs</a> including details on how to resolve hostname-based DRS URIs. It also includes information on how hostname-based DRS URI resolution to URLs will work in the future, when the DRS v2 major release happens.
-</td>
-</tr>
-</table>
+<div class="paragraph">
+<p>Ultimately, the choice is with the DRS system builders, DRS clients must be able to accommodate both URI types.</p>
 </div>
 </div>
 </div>
@@ -1342,7 +1363,146 @@ For bundles, the cumulative size, in bytes, of items in the <code>contents</code
 </div>
 </div>
 <div class="sect1">
-<h2 id="_appendix_compact_identifier_based_uris"><a class="anchor" href="#_appendix_compact_identifier_based_uris"></a><a class="link" href="#_appendix_compact_identifier_based_uris">7. Appendix: Compact Identifier-Based URIs</a></h2>
+<h2 id="_appendix_motivation"><a class="anchor" href="#_appendix_motivation"></a><a class="link" href="#_appendix_motivation">7. Appendix: Motivation</a></h2>
+<div class="sectionbody">
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 40%;">
+<col style="width: 60%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>Data sharing requires portable data, consistent with the FAIR data principles (findable, accessible, interoperable, reusable). Today’s researchers and clinicians are surrounded by potentially useful data, but often need bespoke tools and processes to work with each dataset. Today’s data publishers don’t have a reliable way to make their data useful to all (and only) the people they choose. And today’s data controllers are tasked with implementing standard controls of non-standard mechanisms for data access.</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div><div class="imageblock">
+<div class="content">
+<img src="figure1.png" alt="figure1">
+</div>
+</div>
+<div class="paragraph">
+<p><em>Figure 1: there’s an ocean of data, with many different tools to drink from it, but no guarantee that any tool will work with any subset of the data</em></p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 40%;">
+<col style="width: 60%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>We need a standard way for data producers to make their data available to data consumers, that supports the control needs of the former and the access needs of the latter. And we need it to be interoperable, so anyone who builds access tools and systems can be confident they&#8217;ll work with all the data out there, and anyone who publishes data can be confident it will work with all the tools out there.</p>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div><div class="imageblock">
+<div class="content">
+<img src="figure2.png" alt="figure2">
+</div>
+</div>
+<div class="paragraph">
+<p><em>Figure 2: by defining a standard Data Repository API, and adapting tools to use it, every data publisher can now make their data useful to every data consumer</em></p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 75%;">
+<col style="width: 25%;">
+</colgroup>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><div><div class="paragraph">
+<p>We envision a world where:</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>there are many many <strong>data consumers</strong>, working in research and in care, who can use the tools of their choice to access any and all data that they have permission to see</p>
+</li>
+<li>
+<p>there are many <strong>data access tools</strong> and platforms, supporting discovery, visualization, analysis, and collaboration</p>
+</li>
+<li>
+<p>there are many <strong>data repositories</strong>, each with their own policies and characteristics, which can be accessed by a variety of tools</p>
+</li>
+<li>
+<p>there are many <strong>data publishing tools</strong> and platforms, supporting a variety of data lifecycles and formats</p>
+</li>
+<li>
+<p>there are many many <strong>data producers</strong>, generating data of all types, who can use the tools of their choice to make their data as widely available as is appropriate</p>
+</li>
+</ul>
+</div></div></td>
+<td class="tableblock halign-left valign-top"><div><div class="imageblock">
+<div class="content">
+<img src="figure3.png" alt="figure3">
+</div>
+</div>
+<div class="paragraph">
+<p><em>Figure 3: a standard Data Repository API enables an ecosystem of data producers and consumers</em></p>
+</div></div></td>
+</tr>
+</tbody>
+</table>
+<div class="paragraph">
+<p>This spec defines a standard <strong>Data Repository Service (DRS) API</strong> (“the yellow box”), to enable that ecosystem of data producers and consumers. Our goal is that the only thing data consumers need to know about a data repo is <em>"here&#8217;s the DRS endpoint to access it"</em>, and the only thing data publishers need to know to tap into the world of consumption tools is <em>"here&#8217;s how to tell it where my DRS endpoint lives"</em>.</p>
+</div>
+<div class="sect2">
+<h3 id="_federation"><a class="anchor" href="#_federation"></a><a class="link" href="#_federation">7.1. Federation</a></h3>
+<div class="paragraph">
+<p>The world&#8217;s biomedical data is controlled by groups with very different policies and restrictions on where their data lives and how it can be accessed. A primary purpose of DRS is to support unified access to disparate and distributed data. (As opposed to the alternative centralized model of "let&#8217;s just bring all the data into one single data repository”, which would be technically easier but is no more realistic than “let’s just bring all the websites into one single web host”.)</p>
+</div>
+<div class="paragraph">
+<p>In a DRS-enabled world, tool builders don’t have to worry about where the data their tools operate on lives&#8201;&#8212;&#8201;they can count on DRS to give them access. And tool users only need to know which DRS server is managing the data they need, and whether they have permission to access it; they don’t have to worry about how to physically get access to, or (worse) make a copy of the data. For example, if I have appropriate permissions, I can run a pooled analysis where I run a single tool across data managed by different DRS servers, potentially in different locations.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_appendix_hostname_based_uris"><a class="anchor" href="#_appendix_hostname_based_uris"></a><a class="link" href="#_appendix_hostname_based_uris">8. Appendix: Hostname-Based URIs</a></h2>
+<div class="sectionbody">
+<div class="sidebarblock">
+<div class="content">
+<div class="title">Note: DRS Client Hostname-Based URI Resolution Process</div>
+<div class="paragraph">
+<p>Strings of the form <code>drs://&lt;hostname&gt;/&lt;id&gt;</code> mean <em>“you can fetch the content with DRS id <code>&lt;id&gt;</code> from the DRS server at <code>&lt;hostname&gt;</code> "</em>.  For example, if a WES server was asked to process:</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>drs://drs.example.org/314159</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>It would know that it could issue a GET request to:</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>https://drs.example.org/ga4gh/drs/v1/objects/314159</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>to learn how to fetch that data object via one of the available <code>access</code> methods.</p>
+</div>
+<div class="paragraph">
+<p>In hostname-based DRS URIs, the ID is always percent-encoded to ensure special characters do not interfere with subsequent DRS endpoint calls.  As such, ":" is not allowed in the URI and is a convenient way of differentiating from a compact identifier-based DRS URI.  Also, if a given DRS service implementation uses compact identifier accessions as their DRS IDs, they must be percent encoded before using them as DRS IDs in hostname-based DRS URIs.</p>
+</div>
+</div>
+</div>
+<div class="sidebarblock">
+<div class="content">
+<div class="title">Note: Service Registry/Info and Future Versions of DRS</div>
+<div class="paragraph">
+<p>In the future, as newer major versions of DRS are released, the ability to look at a hostname-based DRS URI and derive a valid GET URL will not be possible.  Multiple versions of DRS on different URL paths may be supported on the same server.  We expect to add support for <a href="https://github.com/ga4gh-discovery/ga4gh-service-registry">service-registry</a> and <a href="https://github.com/ga4gh-discovery/ga4gh-service-info">service-info</a> endpoints in future releases of DRS.  Using the hostname in the DRS URI, plus information in the service-registry standard endpoint (which lead to service-info endpoints on that server), a client will be able to discover enough information to translate a DRS hostname-based URI into a valid URL.  For, now we assume a rules-based translation to the pattern <code><a href="https://&lt;hostname&gt;/ga4gh/drs/v1/objects/&lt;id&gt" class="bare">https://&lt;hostname&gt;/ga4gh/drs/v1/objects/&lt;id&gt</a>;</code></p>
+</div>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_appendix_compact_identifier_based_uris"><a class="anchor" href="#_appendix_compact_identifier_based_uris"></a><a class="link" href="#_appendix_compact_identifier_based_uris">9. Appendix: Compact Identifier-Based URIs</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>Compact identifiers refer to locally-unique persistent identifiers that have been namespaced to provide global uniqueness. See <a href="https://www.biorxiv.org/content/10.1101/101279v3">"Uniform resolution of compact identifiers for biomedical data"</a> for an excellent introduction to this topic.  By using compact identifiers in DRS URIs, along with a resolver registry (identifiers.org/n2t.net), systems can identify the current resolver when they need to translate a DRS URI into a fetchable URL. This allows a project to issue compact identifiers in DRS URIs and not be concerned if the project name or DRS hostname changes in the future, the current resolver can always be found through the identifiers.org/n2t.net registries.  Together the identifiers.org/n2t.net systems support the resolver lookup for over 700 compact identifiers formats used in the research community, making it possible for a DRS server to use any of these as DRS IDs (or to register a new compact identifier type and resolver service of their own).</p>
@@ -1502,152 +1662,10 @@ The CURIE format used by identifiers.org/n2t.net does not percent-encode reserve
 </div>
 </div>
 </div>
-<div class="sect1">
-<h2 id="_appendix_hostname_based_uris"><a class="anchor" href="#_appendix_hostname_based_uris"></a><a class="link" href="#_appendix_hostname_based_uris">8. Appendix: Hostname-Based URIs</a></h2>
-<div class="sectionbody">
-<div class="sidebarblock">
-<div class="content">
-<div class="title">Note: DRS Client Hostname-Based URI Resolution Process</div>
-<div class="paragraph">
-<p>Strings of the form <code>drs://&lt;hostname&gt;/&lt;id&gt;</code> mean <em>“you can fetch the content with DRS id <code>&lt;id&gt;</code> from the DRS server at <code>&lt;hostname&gt;</code> "</em>.  For example, if a WES server was asked to process:</p>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre>drs://drs.example.org/314159</pre>
-</div>
-</div>
-<div class="paragraph">
-<p>It would know that it could issue a GET request to:</p>
-</div>
-<div class="literalblock">
-<div class="content">
-<pre>https://drs.example.org/ga4gh/drs/v1/objects/314159</pre>
-</div>
-</div>
-<div class="paragraph">
-<p>to learn how to fetch that data object via one of the available <code>access</code> methods.</p>
-</div>
-<div class="paragraph">
-<p>The protocol is always https and the port is always the standard 443 SSL port.  It would be invalid to include, for example, a different port in the DRS hostname-based URI.</p>
-</div>
-<div class="paragraph">
-<p>In hostname-based DRS URIs, the ID is always percent-encoded to ensure special characters do not interfere with subsequent DRS endpoint calls.  As such, ":" is not allowed in the URI and is a convenient way of differentiating from a compact identifier-based DRS URI.  Also, if a given DRS service implementation uses compact identifier accessions as their DRS IDs, they must be percent encoded before using them as DRS IDs in hostname-based DRS URIs.</p>
-</div>
-</div>
-</div>
-<div class="sidebarblock">
-<div class="content">
-<div class="title">Note: Service Registry/Info and Future Versions of DRS</div>
-<div class="paragraph">
-<p>In the future, as newer major versions of DRS are released, the ability to look at a hostname-based DRS URI and derive a valid GET URL will not be possible.  Multiple versions of DRS on different URL paths may be supported on the same server.  We expect to add support for <a href="https://github.com/ga4gh-discovery/ga4gh-service-registry">service-registry</a> and <a href="https://github.com/ga4gh-discovery/ga4gh-service-info">service-info</a> endpoints in future releases of DRS.  Using the hostname in the DRS URI, plus information in the service-registry standard endpoint (which lead to service-info endpoints on that server), a client will be able to discover enough information to translate a DRS hostname-based URI into a valid URL.  For, now we assume a rules-based translation to the pattern <code><a href="https://&lt;hostname&gt;/ga4gh/drs/v1/objects/&lt;id&gt" class="bare">https://&lt;hostname&gt;/ga4gh/drs/v1/objects/&lt;id&gt</a>;</code></p>
-</div>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="_appendix_motivation"><a class="anchor" href="#_appendix_motivation"></a><a class="link" href="#_appendix_motivation">9. Appendix: Motivation</a></h2>
-<div class="sectionbody">
-<table class="tableblock frame-all grid-all spread">
-<colgroup>
-<col style="width: 40%;">
-<col style="width: 60%;">
-</colgroup>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><div><div class="paragraph">
-<p>Data sharing requires portable data, consistent with the FAIR data principles (findable, accessible, interoperable, reusable). Today’s researchers and clinicians are surrounded by potentially useful data, but often need bespoke tools and processes to work with each dataset. Today’s data publishers don’t have a reliable way to make their data useful to all (and only) the people they choose. And today’s data controllers are tasked with implementing standard controls of non-standard mechanisms for data access.</p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div><div class="imageblock">
-<div class="content">
-<img src="figure1.png" alt="figure1">
-</div>
-</div>
-<div class="paragraph">
-<p><em>Figure 1: there’s an ocean of data, with many different tools to drink from it, but no guarantee that any tool will work with any subset of the data</em></p>
-</div></div></td>
-</tr>
-</tbody>
-</table>
-<table class="tableblock frame-all grid-all spread">
-<colgroup>
-<col style="width: 40%;">
-<col style="width: 60%;">
-</colgroup>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><div><div class="paragraph">
-<p>We need a standard way for data producers to make their data available to data consumers, that supports the control needs of the former and the access needs of the latter. And we need it to be interoperable, so anyone who builds access tools and systems can be confident they&#8217;ll work with all the data out there, and anyone who publishes data can be confident it will work with all the tools out there.</p>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div><div class="imageblock">
-<div class="content">
-<img src="figure2.png" alt="figure2">
-</div>
-</div>
-<div class="paragraph">
-<p><em>Figure 2: by defining a standard Data Repository API, and adapting tools to use it, every data publisher can now make their data useful to every data consumer</em></p>
-</div></div></td>
-</tr>
-</tbody>
-</table>
-<table class="tableblock frame-all grid-all spread">
-<colgroup>
-<col style="width: 75%;">
-<col style="width: 25%;">
-</colgroup>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-top"><div><div class="paragraph">
-<p>We envision a world where:</p>
-</div>
-<div class="ulist">
-<ul>
-<li>
-<p>there are many many <strong>data consumers</strong>, working in research and in care, who can use the tools of their choice to access any and all data that they have permission to see</p>
-</li>
-<li>
-<p>there are many <strong>data access tools</strong> and platforms, supporting discovery, visualization, analysis, and collaboration</p>
-</li>
-<li>
-<p>there are many <strong>data repositories</strong>, each with their own policies and characteristics, which can be accessed by a variety of tools</p>
-</li>
-<li>
-<p>there are many <strong>data publishing tools</strong> and platforms, supporting a variety of data lifecycles and formats</p>
-</li>
-<li>
-<p>there are many many <strong>data producers</strong>, generating data of all types, who can use the tools of their choice to make their data as widely available as is appropriate</p>
-</li>
-</ul>
-</div></div></td>
-<td class="tableblock halign-left valign-top"><div><div class="imageblock">
-<div class="content">
-<img src="figure3.png" alt="figure3">
-</div>
-</div>
-<div class="paragraph">
-<p><em>Figure 3: a standard Data Repository API enables an ecosystem of data producers and consumers</em></p>
-</div></div></td>
-</tr>
-</tbody>
-</table>
-<div class="paragraph">
-<p>This spec defines a standard <strong>Data Repository Service (DRS) API</strong> (“the yellow box”), to enable that ecosystem of data producers and consumers. Our goal is that the only thing data consumers need to know about a data repo is <em>"here&#8217;s the DRS endpoint to access it"</em>, and the only thing data publishers need to know to tap into the world of consumption tools is <em>"here&#8217;s how to tell it where my DRS endpoint lives"</em>.</p>
-</div>
-<div class="sect2">
-<h3 id="_federation"><a class="anchor" href="#_federation"></a><a class="link" href="#_federation">9.1. Federation</a></h3>
-<div class="paragraph">
-<p>The world&#8217;s biomedical data is controlled by groups with very different policies and restrictions on where their data lives and how it can be accessed. A primary purpose of DRS is to support unified access to disparate and distributed data. (As opposed to the alternative centralized model of "let&#8217;s just bring all the data into one single data repository”, which would be technically easier but is no more realistic than “let’s just bring all the websites into one single web host”.)</p>
-</div>
-<div class="paragraph">
-<p>In a DRS-enabled world, tool builders don’t have to worry about where the data their tools operate on lives&#8201;&#8212;&#8201;they can count on DRS to give them access. And tool users only need to know which DRS server is managing the data they need, and whether they have permission to access it; they don’t have to worry about how to physically get access to, or (worse) make a copy of the data. For example, if I have appropriate permissions, I can run a pooled analysis where I run a single tool across data managed by different DRS servers, potentially in different locations.</p>
-</div>
-</div>
-</div>
-</div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2020-04-23 18:51:16 UTC
+Last updated 2020-04-23 19:11:21 UTC
 </div>
 </div>
 </body>
