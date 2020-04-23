@@ -1348,7 +1348,7 @@ For bundles, the cumulative size, in bytes, of items in the <code>contents</code
 <p>Compact identifiers refer to locally-unique persistent identifiers that have been namespaced to provide global uniqueness. See <a href="https://www.biorxiv.org/content/10.1101/101279v3">"Uniform resolution of compact identifiers for biomedical data"</a> for an excellent introduction to this topic.  By using compact identifiers in DRS URIs, along with a resolver registry (identifiers.org/n2t.net), systems can identify the current resolver when they need to translate a DRS URI into a fetchable URL. This allows a project to issue compact identifiers in DRS URIs and not be concerned if the project name or DRS hostname changes in the future, the current resolver can always be found through the identifiers.org/n2t.net registries.  Together the identifiers.org/n2t.net systems support the resolver lookup for over 700 compact identifiers formats used in the research community, making it possible for a DRS server to use any of these as DRS IDs (or to register a new compact identifier type and resolver service of their own).</p>
 </div>
 <div class="paragraph">
-<p>We use a DRS URI scheme rather than <a href="https://en.wikipedia.org/wiki/CURIE">Compact URIs (CURIEs)</a> directly since we feel that systems consuming DRS objects will be able to better differentiate a DRS URI.  CURIEs are widely used in the research community and we felt the fact that they can point to a wide variety of entities (HTML documents, PDFs, identities in data models, etc) makes it more difficult for systems to unambiguously identify entities as DRS objects.</p>
+<p>We use a DRS URI scheme rather than <a href="https://en.wikipedia.org/wiki/CURIE">Compact URIs (CURIEs)</a> directly since we feel that systems consuming DRS objects will be able to better differentiate a DRS URI.  CURIEs are widely used in the research community and we feel the fact that they can point to a wide variety of entities (HTML documents, PDFs, identities in data models, etc) makes it more difficult for systems to unambiguously identify entities as DRS objects.</p>
 </div>
 <div class="paragraph">
 <p>Still, to make compact identifiers work in DRS URIs we leverage the CURIE format used by identifiers.org/n2t.net.  Compact identifiers have the form:</p>
@@ -1359,7 +1359,7 @@ For bundles, the cumulative size, in bytes, of items in the <code>contents</code
 </div>
 </div>
 <div class="paragraph">
-<p>The prefix can be divided into an optional <code>provider_code</code> and <code>namespace</code>.  The <code>accession</code> here is an Ark, DOI, Data GUID, or another issuers&#8217;s local ID for the object being pointed to:</p>
+<p>The prefix can be divided into a <code>provider_code</code> (optional) and <code>namespace</code>.  The <code>accession</code> here is an Ark, DOI, Data GUID, or another issuers&#8217;s local ID for the object being pointed to:</p>
 </div>
 <div class="literalblock">
 <div class="content">
@@ -1433,8 +1433,10 @@ The CURIE format used by identifiers.org/n2t.net does not percent-encode reserve
 <div class="paragraph">
 <p>This information then points to resolvers for the "doi" namespace (this "doi" namespace was assigned a namespace ID of 75 by identifiers.org, this "id" has nothing to do with compact identifier accessions or DRS IDs):</p>
 </div>
-<div class="paragraph">
-<p>GET <a href="https://registry.api.identifiers.org/restApi/resources/search/findAllByNamespaceId?id=75" class="bare">https://registry.api.identifiers.org/restApi/resources/search/findAllByNamespaceId?id=75</a></p>
+<div class="literalblock">
+<div class="content">
+<pre>GET https://registry.api.identifiers.org/restApi/resources/search/findAllByNamespaceId?id=75</pre>
+</div>
 </div>
 <div class="paragraph">
 <p>This returns enough information to, ultimately, identify one or more resolvers and each have a URL pattern that, for DRS-supporting systems, provides a URL template for making a successful DRS GET request.  For example, the DOI urlPattern is:</p>
@@ -1456,7 +1458,7 @@ The CURIE format used by identifiers.org/n2t.net does not percent-encode reserve
 </div>
 </div>
 <div class="paragraph">
-<p><em>The URL above is valid for a DOI object but it is not actually a DRS server!  Instead, it redirects to a DRS server through a series of HTTP redirects.  This is likely to be common when working with existing compact identifiers like DOIs or Arks.  Regardless, the redirect should eventually lead to a DRS URL that percent-encodes the access as a DRS ID in a DRS object API call.  For a hypothetical example, here&#8217;s what a redirect to a DRS API might look like for the Data GUIDs compact identifiers who host a DRS server.</em></p>
+<p><em>The URL above is valid for a DOI object but it is not actually a DRS server!  Instead, it redirects to a DRS server through a series of HTTP redirects.  This is likely to be common when working with existing compact identifiers like DOIs or Arks.  Regardless, the redirect should eventually lead to a DRS URL that percent-encodes the accession as a DRS ID in a DRS object API call.  For a hypothetical example, here&#8217;s what a redirect to a DRS API might look like for the Data GUIDs compact identifiers who host a DRS server.</em></p>
 </div>
 <div class="literalblock">
 <div class="content">
@@ -1464,15 +1466,23 @@ The CURIE format used by identifiers.org/n2t.net does not percent-encode reserve
 </div>
 </div>
 <div class="paragraph">
-<p><em>IDs in DRS hostname-based URIs/URLs are always percent-encoded to eliminate ambiguity even though the DRS compact identifier-based URIs and the identifier.orgs API do not percent-encode accessions.</em>  This was done in order to 1) follow the CURIE conventions of identifiers.org/n2t.net for compact identifier-based DRS URIs and 2) to aid in readability for users who understand they are working with compact identifiers. <strong>The general rule of thumb, when using a compact identifier accession as a DRS ID in a DRS API call, make sure to percent-encode it.  An easy way to handle this is to get the initial DRS object JSON response from whatever redirects the compact identifier resolves to, then look for the <code>self_uri</code> in the JSON which will give you the correctly percent-encoded DRS ID for subsequent DRS API calls such as the access method.</strong></p>
+<p>IDs in DRS hostname-based URIs/URLs are always percent-encoded to eliminate ambiguity even though the DRS compact identifier-based URIs and the identifier.orgs API do not percent-encode accessions.  This was done in order to 1) follow the CURIE conventions of identifiers.org/n2t.net for compact identifier-based DRS URIs and 2) to aid in readability for users who understand they are working with compact identifiers. <strong>The general rule of thumb, when using a compact identifier accession as a DRS ID in a DRS API call, make sure to percent-encode it.  An easy way to handle this is to get the initial DRS object JSON response from whatever redirects the compact identifier resolves to, then look for the <code>self_uri</code> in the JSON, which will give you the correctly percent-encoded DRS ID for subsequent DRS API calls such as the <code>access</code> method.</strong></p>
 </div>
 </div>
 </div>
 <div class="sidebarblock">
 <div class="content">
-<div class="title">Note: Registering a new Compact Identifier</div>
+<div class="title">Note: Registering a new Compact Identifier for Your DRS Server</div>
 <div class="paragraph">
-<p>See the documentation on <a href="https://n2t.net/e/compact_ids.html">n2t.net</a> and <a href="https://docs.identifiers.org/">identifiers.org</a> for. You can register new prefixes (or mirrors by adding resource provider codes) for free using a simple online form.  Keep in mind, while anyone can register prefixes, the identifiers.org/n2t.net sites do basic hand curation to verify new prefix and resource (provider code) requests.  See those sites for more details on their security practices.</p>
+<p>See the documentation on <a href="https://n2t.net/e/compact_ids.html">n2t.net</a> and <a href="https://docs.identifiers.org/">identifiers.org</a> for adding your own compact identifier type and registering your DRS server as a resolver. You can register new prefixes (or mirrors by adding resource provider codes) for free using a simple online form.  Keep in mind, while anyone can register prefixes, the identifiers.org/n2t.net sites do basic hand curation to verify new prefix and resource (provider code) requests.  See those sites for more details on their security practices.</p>
+</div>
+</div>
+</div>
+<div class="sidebarblock">
+<div class="content">
+<div class="title">Note: Using an Existing Compact Identifier Type with Your DRS Server</div>
+<div class="paragraph">
+<p>See the documentation on <a href="https://n2t.net/e/compact_ids.html">n2t.net</a> and <a href="https://docs.identifiers.org/">identifiers.org</a> for information about all the compact identifiers that are supported. You can choose to use an existing compact identifier provider for your DRS server, as we did in the example above using DOIs.  Just keep in mind, each provider will have their own approach for generating compact identifiers and associating them with a DRS data object.  Some compact identifier providers, like DOIs, provide a method whereby you can register in their network and get your own prefix, allowing you to mint your own accessions.  Other services, like the University of California&#8217;s <a href="https://ezid.cdlib.org/">EZID</a> service, provide accounts and a mechanism to mint accessions centrally for each of your data objects.  For experimentation we recommend you take a look at the EZID website that allows you to create DOIs and ARKs, associating them with your data object URLs on your DRS server for testing purposes.</p>
 </div>
 </div>
 </div>
@@ -1480,10 +1490,10 @@ The CURIE format used by identifiers.org/n2t.net does not percent-encode reserve
 <div class="content">
 <div class="title">Note: Caching and Security with Compact Identifiers</div>
 <div class="paragraph">
-<p>As mentioned earlier identifiers.org/n2t.net resolver records do not change frequently.  This approach is  useful for caching resolver records and their URL patterns for performance reasons.  Builders of systems that use compact identifier-based DRS URIs should cache prefix resolver records from identifiers.org/n2t.net and occasionally refresh the records (such as every 24 hours).  The implementation of this approach is up to the system builder but it will ultimately reduce the burden on identifiers.org/n2t.net.  System builders may also choose to cache the compact identifier accession to final DRS URL records as well, but that decision/design is at the discretion of the system builder.</p>
+<p>Identifiers.org/n2t.net compact identifier resolver records do not change frequently.  This reality is  useful for caching resolver records and their URL patterns for performance reasons.  Builders of systems that use compact identifier-based DRS URIs should cache prefix resolver records from identifiers.org/n2t.net and occasionally refresh the records (such as every 24 hours).  This approach will reduce the burden on these community services since we anticipate many DRS URIs will be regularly resolved in workflow systems.  The implementation of the caching approach is up to system builders but we recommend at least caching the mapping of prefixes to URL patterns.  System builders may also choose to cache the compact identifier accession to final DRS URL records as well, but that decision/design is at the discretion of the system builder.</p>
 </div>
 <div class="paragraph">
-<p>As mentioned earlier identifiers.org/n2t.net performs some basic verification of new prefixes and provider code mirror registrations on their sites.  However, system builders may have certain compliance requirements and regulations that prohibit relying on an external site for resolving compact identifiers.  In this case, systems under these security and compliance constraints may which to either whitelist certain compact identifier resolvers and/or vet records from identifiers.org/n2t.net before enabling in their system.</p>
+<p>As mentioned earlier, identifiers.org/n2t.net performs some basic verification of new prefixes and provider code mirror registrations on their sites.  However, system builders may have certain security compliance requirements and regulations that prohibit relying on an external site for resolving compact identifiers.  In this case, systems under these security and compliance constraints may wish to whitelist certain compact identifier resolvers and/or vet records from identifiers.org/n2t.net before enabling in their system.</p>
 </div>
 </div>
 </div>
@@ -1512,7 +1522,7 @@ The CURIE format used by identifiers.org/n2t.net does not percent-encode reserve
 </div>
 </div>
 <div class="paragraph">
-<p>to learn how to fetch that data object via one of the available access approaches.</p>
+<p>to learn how to fetch that data object via one of the available <code>access</code> methods.</p>
 </div>
 <div class="paragraph">
 <p>The protocol is always https and the port is always the standard 443 SSL port.  It would be invalid to include, for example, a different port in the DRS hostname-based URI.</p>
@@ -1526,7 +1536,7 @@ The CURIE format used by identifiers.org/n2t.net does not percent-encode reserve
 <div class="content">
 <div class="title">Note: Service Registry/Info and Future Versions of DRS</div>
 <div class="paragraph">
-<p>In the future, as newer major versions of DRS are released, the ability to look at a hostname-based DRS URI and derive a valid GET URL will not be possible.  Multiple versions of DRS on different URL paths may be supported on the same server.  We expect to add support for <a href="https://github.com/ga4gh-discovery/ga4gh-service-registry">service-registry</a> and <a href="https://github.com/ga4gh-discovery/ga4gh-service-info">service-info</a> endpoints in future releases of DRS.  Using the hostname in the DRS URI, plus information in the service-registry standard endpoint (which lead to service-info endpoints on that server) a client will be able to discover enough information to translate a DRS hostname-based URI into a valid URL.  For, now we assume a rules-based translation to the pattern <code><a href="https://&lt;hostname&gt;/ga4gh/drs/v1/objects/&lt;id&gt" class="bare">https://&lt;hostname&gt;/ga4gh/drs/v1/objects/&lt;id&gt</a>;</code></p>
+<p>In the future, as newer major versions of DRS are released, the ability to look at a hostname-based DRS URI and derive a valid GET URL will not be possible.  Multiple versions of DRS on different URL paths may be supported on the same server.  We expect to add support for <a href="https://github.com/ga4gh-discovery/ga4gh-service-registry">service-registry</a> and <a href="https://github.com/ga4gh-discovery/ga4gh-service-info">service-info</a> endpoints in future releases of DRS.  Using the hostname in the DRS URI, plus information in the service-registry standard endpoint (which lead to service-info endpoints on that server), a client will be able to discover enough information to translate a DRS hostname-based URI into a valid URL.  For, now we assume a rules-based translation to the pattern <code><a href="https://&lt;hostname&gt;/ga4gh/drs/v1/objects/&lt;id&gt" class="bare">https://&lt;hostname&gt;/ga4gh/drs/v1/objects/&lt;id&gt</a>;</code></p>
 </div>
 </div>
 </div>
@@ -1634,7 +1644,7 @@ The CURIE format used by identifiers.org/n2t.net does not percent-encode reserve
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2020-04-23 02:55:56 UTC
+Last updated 2020-04-23 03:20:41 UTC
 </div>
 </div>
 </body>
