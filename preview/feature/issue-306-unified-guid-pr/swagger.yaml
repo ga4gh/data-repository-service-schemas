@@ -2,7 +2,7 @@ swagger: '2.0'
 basePath: /ga4gh/drs/v1
 info:
   title: Data Repository Service
-  version: 1.0.0
+  version: 1.1.0
   description: 'https://github.com/ga4gh/data-repository-service-schemas'
   termsOfService: 'https://www.ga4gh.org/terms-and-conditions/'
   contact:
