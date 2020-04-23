@@ -25,7 +25,21 @@ Each implementation of DRS can choose its own id scheme, as long as it follows t
 
 For convenience, including when passing content references to a https://github.com/ga4gh/workflow-execution-service-schemas[WES server], we define a https://en.wikipedia.org/wiki/Uniform_Resource_Identifier#Generic_syntax[URI scheme] for DRS-accessible content. See https://tools.ietf.org/html/rfc3986#section-3.1[RFC 3986 § 3.1]. _We feel it is important to introduce a DRS scheme for URIs since it signals to systems consuming these URIs that the response they will ultimately receive, once transforming the URI to a fetchable URL, will be a DRS JSON._
 
-There are two styles of DRS URIs: Compact Identifier-based and Hostname-based, both use the `drs://` URI scheme.  Different systems may choose to share one or both styles of DRS URIs but DRS clients must support resolving both types.
+There are two styles of DRS URIs: Hostname-based and Compact Identifier-based, both use the `drs://` URI scheme.  Different systems may choose to share one or both styles of DRS URIs but DRS clients must support resolving both types.
+
+==== Hostname-based DRS URIs
+
+Hostname-based DRS URIs are simpler than compact identifier-based URIs.  They contain the DRS server name and the DRS ID only and can be converted directly into a fetchable URL based on a simple rule.  They take the form:
+
+    drs://<hostname>/<id>
+
+And this can be converted into the following fetchable URL:
+
+    https://<hostname>/ga4gh/drs/v1/objects/<id>
+
+The protocol is always https and the port is always the standard 443 SSL port.  It would be invalid to include, for example, a different port in the DRS hostname-based URI.
+
+TIP: Much more information is provided in the <<_appendix_hostname_based_uris>> including details on how to resolve hostname-based DRS URIs and how they compare to compact identifier-based DRS URIs. It also includes information on how hostname-based DRS URI resolution to URLs will work in the future, when the DRS v2 major release happens.
 
 ==== Compact Identifier-based DRS URIs
 
@@ -43,15 +57,13 @@ Translating the identifiers.org/n2t.net CURIE format to a DRS compact identifier
 TIP: Much more information is provided in the <<_appendix_compact_identifier_based_uris>> including details on the structure of compact identifiers, how to register prefixes, how clients resolve compact identifier-based DRS URIs, possible caching strategies, and security considerations.
 
 
-==== Hostname-based DRS URIs
+==== Choosing a URI Style
 
-Hostname-based DRS URIs are simpler than compact identifier-based URIs.  They contain the DRS server name and the DRS ID only and can be converted directly into a fetchable URL based on a simple rule.  They take the form:
+Ultimately, the choice of issuing hostname- or compact identifier-based DRS URIs comes down to the preferences of the particular DRS server system builder (and the builders who make portals and other apps on top of the DRS server).  Each have their own benefits and drawbacks.  Compact identifier-based DRS URIs are more resilient to change, if a project is renamed or hosts are moved around, the identifiers.org/n2t.net registration is updated and the compact identifier-based DRS URIs continue to work.  This greatly helps with the https://www.nature.com/articles/sdata201618[FAIR-ness] of your data objects.  On the other hand, this requires DRS clients to resolve your DRS server via identifiers.org/n2t.net with potential performance and security implications.
 
-    drs://<hostname>/<id>
+Hostname-based DRS URIs are less resistant to future project/domain name changes than compact identifier-based DRS URIs.  But they do provide a more direct way of pointing to a DRS object which can have benefits.  The fact that they can be resolved using a simple rule means a DRS client can skip the extra overhead of a prefix lookup as is done for compact identifier-based URIs.  This can translate to possibly greater performance and/or security since the DRS server hostname is explicitly specified and this avoids the lookup of a resolver through a third-party service (identifiers.org/n2t.net).
 
-Hostname-based DRS URIs are less resistant to future project/domain name changes than compact identifiers.  But they do provide a more direct way of pointing to a DRS object which can have benefits.  The fact that they can be resolved using a simple rule means a DRS client can skip the extra overhead of a prefix lookup as is done for compact identifier-based URIs.  This can translate to possibly greater performance and/or security since the DRS server hostname is explicitly specified and this avoids the lookup of a resolver through a third-party service (identifiers.org/n2t.net).
-
-TIP: Much more information is provided in the <<_appendix_hostname_based_uris>> including details on how to resolve hostname-based DRS URIs. It also includes information on how hostname-based DRS URI resolution to URLs will work in the future, when the DRS v2 major release happens.
+Ultimately, the choice is with the DRS system builders, DRS clients must be able to accomodate both URI types.
 
 
 === DRS Datatypes
