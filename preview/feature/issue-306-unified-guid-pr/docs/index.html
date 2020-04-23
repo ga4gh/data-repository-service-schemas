@@ -1415,7 +1415,10 @@ The CURIE format used by identifiers.org/n2t.net does not percent-encode reserve
 <p>A DRS client identifies the a DRS URI compact identifier components using the first occurance of "/" (optional) and ":" characters. These are not allowed inside the provider_code (optional) or the namespace. The ":" character is not allowed in a Hostname-based DRS URI, providing a convenient mechanism to differentiate them. Once the provider_code (optional) and namespace are extracted from a DRS compact identifier-based URI, a client can use services on identifiers.org to identify available resolvers.</p>
 </div>
 <div class="paragraph">
-<p><em>Let&#8217;s look at a specific example DRS compact identifier-based URI that uses DOIs, a popular compact identifier, and walk through the process that a client would use to resolve it.</em>  Starting with the DRS URI:</p>
+<p><em>Let&#8217;s look at a specific example DRS compact identifier-based URI that uses DOIs, a popular compact identifier, and walk through the process that a client would use to resolve it.  Keep in mind, the resolution process is the same from the client perspective if a given DRS server is using an existing compact identifier type (DOIs, ARKs, Data GUIDs) or creating their own compact identifier type for their DRS server and registering it on identifiers.org/n2t.net.</em></p>
+</div>
+<div class="paragraph">
+<p>Starting with the DRS URI:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -1431,7 +1434,7 @@ The CURIE format used by identifiers.org/n2t.net does not percent-encode reserve
 </div>
 </div>
 <div class="paragraph">
-<p>This information then points to resolvers for the "doi" namespace (this "doi" namespace was assigned a namespace ID of 75 by identifiers.org, this "id" has nothing to do with compact identifier accessions or DRS IDs):</p>
+<p>This information then points to resolvers for the "doi" namespace. This "doi" namespace was assigned a namespace ID of 75 by identifiers.org. This "id" has nothing to do with compact identifier accessions (which are used in the URL pattern as <code>{$id}</code> below) or DRS IDs.  This namespace ID (75 below) is purely a identifiers.org internal ID for use with their APIs:</p>
 </div>
 <div class="literalblock">
 <div class="content">
@@ -1447,7 +1450,7 @@ The CURIE format used by identifiers.org/n2t.net does not percent-encode reserve
 </div>
 </div>
 <div class="paragraph">
-<p>If applicable, a provide code can be supplied in the above requests to specify a particular mirror if there are multiple resolvers for this namespace.  In the case of DOIs you only get a single resolver.</p>
+<p>And the <code>{$id}</code> here refers to the accession from the compact identifier (in this example the accession is <code>10.5072/FK2805660V</code>).  If applicable, a provide code can be supplied in the above requests to specify a particular mirror if there are multiple resolvers for this namespace.  In the case of DOIs, you only get a single resolver.</p>
 </div>
 <div class="paragraph">
 <p>Given this information you now know you can make a GET on the URL:</p>
@@ -1458,15 +1461,15 @@ The CURIE format used by identifiers.org/n2t.net does not percent-encode reserve
 </div>
 </div>
 <div class="paragraph">
-<p><em>The URL above is valid for a DOI object but it is not actually a DRS server!  Instead, it redirects to a DRS server through a series of HTTP redirects.  This is likely to be common when working with existing compact identifiers like DOIs or Arks.  Regardless, the redirect should eventually lead to a DRS URL that percent-encodes the accession as a DRS ID in a DRS object API call.  For a hypothetical example, here&#8217;s what a redirect to a DRS API might look like for the Data GUIDs compact identifiers who host a DRS server.</em></p>
+<p><em>The URL above is valid for a DOI object but it is not actually a DRS server!  Instead, it redirects to a DRS server through a series of HTTPS redirects.  This is likely to be common when working with existing compact identifiers like DOIs or ARKs.  Regardless, the redirect should eventually lead to a DRS URL that percent-encodes the accession as a DRS ID in a DRS object API call.  For a <strong>hypothetical</strong> example, here&#8217;s what a redirect to a DRS API URL might ultimately look.  A client doesn&#8217;t have to do anything other than follow the HTTPS redirects.  The link between the DOI resolver on doi.org and the DRS server URL below is the result of the DRS server registering their data objects with a DOI issuer.</em></p>
 </div>
 <div class="literalblock">
 <div class="content">
-<pre>GET https://dataguids.org/ga4gh/drs/v1/objects/dg.4503%2F00e6cfa9-a183-42f6-bb44-b70347106bbe</pre>
+<pre>GET https://drs.example.org/ga4gh/drs/v1/objects/10.5072%2FFK2805660V</pre>
 </div>
 </div>
 <div class="paragraph">
-<p>IDs in DRS hostname-based URIs/URLs are always percent-encoded to eliminate ambiguity even though the DRS compact identifier-based URIs and the identifier.orgs API do not percent-encode accessions.  This was done in order to 1) follow the CURIE conventions of identifiers.org/n2t.net for compact identifier-based DRS URIs and 2) to aid in readability for users who understand they are working with compact identifiers. <strong>The general rule of thumb, when using a compact identifier accession as a DRS ID in a DRS API call, make sure to percent-encode it.  An easy way to handle this is to get the initial DRS object JSON response from whatever redirects the compact identifier resolves to, then look for the <code>self_uri</code> in the JSON, which will give you the correctly percent-encoded DRS ID for subsequent DRS API calls such as the <code>access</code> method.</strong></p>
+<p>IDs in DRS hostname-based URIs/URLs are always percent-encoded to eliminate ambiguity even though the DRS compact identifier-based URIs and the identifier.orgs API do not percent-encode accessions.  This was done in order to 1) follow the CURIE conventions of identifiers.org/n2t.net for compact identifier-based DRS URIs and 2) to aid in readability for users who understand they are working with compact identifiers. <strong>The general rule of thumb, when using a compact identifier accession as a DRS ID in a DRS API call, make sure to percent-encode it.  An easy way for a DRS client to handle this is to get the initial DRS object JSON response from whatever redirects the compact identifier resolves to, then look for the <code>self_uri</code> in the JSON, which will give you the correctly percent-encoded DRS ID for subsequent DRS API calls such as the <code>access</code> method.</strong></p>
 </div>
 </div>
 </div>
@@ -1482,7 +1485,7 @@ The CURIE format used by identifiers.org/n2t.net does not percent-encode reserve
 <div class="content">
 <div class="title">Note: Using an Existing Compact Identifier Type with Your DRS Server</div>
 <div class="paragraph">
-<p>See the documentation on <a href="https://n2t.net/e/compact_ids.html">n2t.net</a> and <a href="https://docs.identifiers.org/">identifiers.org</a> for information about all the compact identifiers that are supported. You can choose to use an existing compact identifier provider for your DRS server, as we did in the example above using DOIs.  Just keep in mind, each provider will have their own approach for generating compact identifiers and associating them with a DRS data object.  Some compact identifier providers, like DOIs, provide a method whereby you can register in their network and get your own prefix, allowing you to mint your own accessions.  Other services, like the University of California&#8217;s <a href="https://ezid.cdlib.org/">EZID</a> service, provide accounts and a mechanism to mint accessions centrally for each of your data objects.  For experimentation we recommend you take a look at the EZID website that allows you to create DOIs and ARKs, associating them with your data object URLs on your DRS server for testing purposes.</p>
+<p>See the documentation on <a href="https://n2t.net/e/compact_ids.html">n2t.net</a> and <a href="https://docs.identifiers.org/">identifiers.org</a> for information about all the compact identifiers that are supported. You can choose to use an existing compact identifier provider for your DRS server, as we did in the example above using DOIs.  Just keep in mind, each provider will have their own approach for generating compact identifiers and associating them with a DRS data object.  Some compact identifier providers, like DOIs, provide a method whereby you can register in their network and get your own prefix, allowing you to mint your own accessions.  Other services, like the University of California&#8217;s <a href="https://ezid.cdlib.org/">EZID</a> service, provide accounts and a mechanism to mint accessions centrally for each of your data objects.  For experimentation we recommend you take a look at the EZID website that allows you to create DOIs and ARKs and associate them with your data object URLs on your DRS server for testing purposes.</p>
 </div>
 </div>
 </div>
@@ -1644,7 +1647,7 @@ The CURIE format used by identifiers.org/n2t.net does not percent-encode reserve
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2020-04-23 03:20:41 UTC
+Last updated 2020-04-23 18:25:15 UTC
 </div>
 </div>
 </body>
