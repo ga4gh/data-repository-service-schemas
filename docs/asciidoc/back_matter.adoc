@@ -108,7 +108,7 @@ with a namespace of "doi", the following GET request will return information abo
 
     GET https://registry.api.identifiers.org/restApi/namespaces/search/findByPrefix?prefix=doi
 
-This information then points to resolvers for the "doi" namespace. This "doi" namespace was assigned a namespace ID of 75 by identifiers.org. This "id" has nothing to do with compact identifier accessions (which are used in the URL pattern as `{$id}` below) or DRS IDs.  This namespace ID (75 below) is purely a identifiers.org internal ID for use with their APIs:
+This information then points to resolvers for the "doi" namespace. This "doi" namespace was assigned a namespace ID of 75 by identifiers.org. This "id" has nothing to do with compact identifier accessions (which are used in the URL pattern as `{$id}` below) or DRS IDs.  This namespace ID (75 below) is purely an identifiers.org internal ID for use with their APIs:
 
     GET https://registry.api.identifiers.org/restApi/resources/search/findAllByNamespaceId?id=75
 
