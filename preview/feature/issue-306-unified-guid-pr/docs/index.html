@@ -567,7 +567,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h2 id="_introduction"><a class="anchor" href="#_introduction"></a><a class="link" href="#_introduction">2. Introduction</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The Data Repository Service (DRS) API provides a generic interface to data repositories so data consumers, including workflow systems, can access data objects in a single, standard way regardless of where they are stored and how they are managed. The primary functionality of DRS is to map a logical ID to a means for physically retrieving the data represented by the ID. The sections below describe the characteristics of those IDs, the types of data supported, how they can be pointed to using URIs, and how clients can use these URIs to ultimately make successful DRS API requests. This document describes the DRS API in detail and provides information on the specific endpoints, request formats, and responses.  This specification is intended for developers of DRS-compatible services and of clients that will call these DRS services.</p>
+<p>The Data Repository Service (DRS) API provides a generic interface to data repositories so data consumers, including workflow systems, can access data objects in a single, standard way regardless of where they are stored and how they are managed. The primary functionality of DRS is to map a logical ID to a means for physically retrieving the data represented by the ID. The sections below describe the characteristics of those IDs, the types of data supported, how they can be pointed to using URIs, and how clients can use these URIs to ultimately make successful DRS API requests. This document also describes the DRS API in detail and provides information on the specific endpoints, request formats, and responses.  This specification is intended for developers of DRS-compatible services and of clients that will call these DRS services.</p>
 </div>
 </div>
 </div>
@@ -605,7 +605,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <p>For convenience, including when passing content references to a <a href="https://github.com/ga4gh/workflow-execution-service-schemas">WES server</a>, we define a <a href="https://en.wikipedia.org/wiki/Uniform_Resource_Identifier#Generic_syntax">URI scheme</a> for DRS-accessible content. See <a href="https://tools.ietf.org/html/rfc3986#section-3.1">RFC 3986 § 3.1</a>. <em>We feel it is important to introduce a DRS scheme for URIs since it signals to systems consuming these URIs that the response they will ultimately receive, once transforming the URI to a fetchable URL, will be a DRS JSON.</em></p>
 </div>
 <div class="paragraph">
-<p>There are two styles of DRS URIs: Compact Identifier-based and Hostname-based, both use the <code>drs://</code> URI scheme.</p>
+<p>There are two styles of DRS URIs: Compact Identifier-based and Hostname-based, both use the <code>drs://</code> URI scheme.  Different systems may choose to share one or both styles of DRS URIs but DRS clients must support resolving both types.</p>
 </div>
 <div class="sect3">
 <h4 id="_compact_identifier_based_drs_uris"><a class="anchor" href="#_compact_identifier_based_drs_uris"></a><a class="link" href="#_compact_identifier_based_drs_uris">3.2.1. Compact Identifier-based DRS URIs</a></h4>
@@ -614,9 +614,9 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 <div class="sidebarblock">
 <div class="content">
-<div class="title">Note: DRS Service Implementers Prefix Registration</div>
+<div class="title">Note: DRS Service Implementations Prefix Registration</div>
 <div class="paragraph">
-<p>If your DRS implementation will issue IDs based on compact identifiers, and pass around DRS URIs using these compact identifiers, you <strong>must</strong> register your prefix (which consists of <code>[provider_code/]namespace</code>) on identifiers.org/n2t.net. If you don&#8217;t, DRS clients will not know how to resolve your compact identifiers and, ultimately, generate a valid DRS URL that clients can access.</p>
+<p>If your DRS implementation will issue IDs based on compact identifiers, and will pass around DRS URIs using these compact identifiers, you <strong>must</strong> register your prefix (which consists of <code>[provider_code/]namespace</code>) on identifiers.org/n2t.net. If you don&#8217;t, DRS clients will not know how to resolve your compact identifiers and, ultimately, generate a valid DRS URL that clients can access.</p>
 </div>
 </div>
 </div>
@@ -635,7 +635,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="title">Tip</div>
 </td>
 <td class="content">
-Much more information is provided in the <a href="#_appendix_compact_identifier_based_uris">Appendix: Compact Identifier-Based URIs</a> including details on the structure of compact identifiers, how to register prefixes, how to resolve compact identifier-based DRS URIs, possible caching strategies, and security considerations.
+Much more information is provided in the <a href="#_appendix_compact_identifier_based_uris">Appendix: Compact Identifier-Based URIs</a> including details on the structure of compact identifiers, how to register prefixes, how clients resolve compact identifier-based DRS URIs, possible caching strategies, and security considerations.
 </td>
 </tr>
 </table>
@@ -710,7 +710,7 @@ Much more information is provided in the <a href="#_appendix_hostname_based_uris
 <div class="sect2">
 <h3 id="_fetching_drs_objects"><a class="anchor" href="#_fetching_drs_objects"></a><a class="link" href="#_fetching_drs_objects">4.2. Fetching DRS Objects</a></h3>
 <div class="paragraph">
-<p>The DRS API allows implementers to support a variety of different content access policies, depending on what <code>AccessMethod</code> s they return:</p>
+<p>The DRS API allows implementers to support a variety of different content access policies, depending on what <code>AccessMethod</code> records they return:</p>
 </div>
 <div class="ulist">
 <ul>
@@ -1345,10 +1345,10 @@ For bundles, the cumulative size, in bytes, of items in the <code>contents</code
 <h2 id="_appendix_compact_identifier_based_uris"><a class="anchor" href="#_appendix_compact_identifier_based_uris"></a><a class="link" href="#_appendix_compact_identifier_based_uris">7. Appendix: Compact Identifier-Based URIs</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Compact identifiers refer to locally-unique persistent identifiers that have been namespaced to provide global uniqueness. See <a href="https://www.biorxiv.org/content/10.1101/101279v3">"Uniform resolution of compact identifiers for biomedical data"</a> for an excellent introduction to this topic.  By using compact identifiers in DRS URIs, along with a resolver registry (identifiers.org/n2t.net), systems can identify the current resolver when they need to translate a DRS URI into a fetchable URL. This allows a project to issue compact identifiers in DRS URIs and not be concerned if the project name or DRS hostname changes in the future, the current resolver can always be found through the identifiers.org/n2t.net registries.  Together the identifiers.org/n2t.net systems support the resolver lookup for over 700 compact identifiers formats used in the research community, making it possible for a DRS server to use any of these as DRS IDs (or to register a new compact identifier resolver service of their own).</p>
+<p>Compact identifiers refer to locally-unique persistent identifiers that have been namespaced to provide global uniqueness. See <a href="https://www.biorxiv.org/content/10.1101/101279v3">"Uniform resolution of compact identifiers for biomedical data"</a> for an excellent introduction to this topic.  By using compact identifiers in DRS URIs, along with a resolver registry (identifiers.org/n2t.net), systems can identify the current resolver when they need to translate a DRS URI into a fetchable URL. This allows a project to issue compact identifiers in DRS URIs and not be concerned if the project name or DRS hostname changes in the future, the current resolver can always be found through the identifiers.org/n2t.net registries.  Together the identifiers.org/n2t.net systems support the resolver lookup for over 700 compact identifiers formats used in the research community, making it possible for a DRS server to use any of these as DRS IDs (or to register a new compact identifier type and resolver service of their own).</p>
 </div>
 <div class="paragraph">
-<p>We use a DRS URI scheme rather than <a href="https://en.wikipedia.org/wiki/CURIE">Compact URIs (CURIEs)</a> directly since we feel that systems consuming DRS objects will be able to better differentiate a DRS URI.  CURIEs are widely used in the research community and we felt the fact that they can point to a wide variety of entities (HTML documents, PDFs, identities in data models, etc), making it more difficult for systems to unambiguously identify entities as DRS objects.</p>
+<p>We use a DRS URI scheme rather than <a href="https://en.wikipedia.org/wiki/CURIE">Compact URIs (CURIEs)</a> directly since we feel that systems consuming DRS objects will be able to better differentiate a DRS URI.  CURIEs are widely used in the research community and we felt the fact that they can point to a wide variety of entities (HTML documents, PDFs, identities in data models, etc) makes it more difficult for systems to unambiguously identify entities as DRS objects.</p>
 </div>
 <div class="paragraph">
 <p>Still, to make compact identifiers work in DRS URIs we leverage the CURIE format used by identifiers.org/n2t.net.  Compact identifiers have the form:</p>
@@ -1634,7 +1634,7 @@ The CURIE format used by identifiers.org/n2t.net does not percent-encode reserve
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2020-04-22 06:17:05 UTC
+Last updated 2020-04-23 02:37:38 UTC
 </div>
 </div>
 </body>
