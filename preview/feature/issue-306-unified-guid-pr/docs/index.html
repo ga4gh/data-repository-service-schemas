@@ -1570,7 +1570,7 @@ The CURIE format used by identifiers.org/n2t.net does not percent-encode reserve
 </div>
 <div class="sidebarblock">
 <div class="content">
-<div class="title">Note: DRS Client Compact Identifier-Based URI Resolution Process</div>
+<div class="title">Note: DRS Client Compact Identifier-Based URI Resolution Process - Existing Compact Identifier Provider</div>
 <div class="paragraph">
 <p>A DRS client identifies the a DRS URI compact identifier components using the first occurance of "/" (optional) and ":" characters. These are not allowed inside the provider_code (optional) or the namespace. The ":" character is not allowed in a Hostname-based DRS URI, providing a convenient mechanism to differentiate them. Once the provider_code (optional) and namespace are extracted from a DRS compact identifier-based URI, a client can use services on identifiers.org to identify available resolvers.</p>
 </div>
@@ -1635,17 +1635,91 @@ The CURIE format used by identifiers.org/n2t.net does not percent-encode reserve
 </div>
 <div class="sidebarblock">
 <div class="content">
-<div class="title">Note: Registering a new Compact Identifier for Your DRS Server</div>
+<div class="title">Note: DRS Client Compact Identifier-Based URI Resolution Process - Registering a new Compact Identifier for Your DRS Server</div>
 <div class="paragraph">
 <p>See the documentation on <a href="https://n2t.net/e/compact_ids.html">n2t.net</a> and <a href="https://docs.identifiers.org/">identifiers.org</a> for adding your own compact identifier type and registering your DRS server as a resolver. You can register new prefixes (or mirrors by adding resource provider codes) for free using a simple online form.  Keep in mind, while anyone can register prefixes, the identifiers.org/n2t.net sites do basic hand curation to verify new prefix and resource (provider code) requests.  See those sites for more details on their security practices.</p>
+</div>
+<div class="paragraph">
+<p>Starting with the prefix for our new compact identifier, let&#8217;s register the namespace <code>mydrsprefix</code> on identifiers.org/n2t.net and use 5-digit numeric IDs as our accessions.  Here&#8217;s what that the registration for our new namespace looks like on <a href="https://registry.identifiers.org/prefixregistrationrequest">identifiers.org</a>:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="prefix_register_1.png" alt="prefix register 1">
+</div>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="prefix_register_2.png" alt="prefix register 2">
+</div>
+</div>
+<div class="paragraph">
+<p>Now the question is how does a client resolve your newly registered compact identifier for your DRS server?  <em>It turns out, whether specific to a DRS implementation or using existing compact identifiers like ARKs or DOIs, the DRS client resolution process for compact identifier-based URIs is exactly the same.</em> We briefly run through process below for a new compact identifier as an example but, again, a client will not need to do anything different from the resolution process documented in "DRS Client Compact Identifier-Based URI Resolution Process  - Existing Compact Identifier Provider".</p>
+</div>
+<div class="paragraph">
+<p>Now we can issue DRS URI for our data objects like:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-bash" data-lang="bash">drs://mydrsprefix:12345</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This is a little simpler than working with DOIs or other existing compact identifier issuers out there since we can create our own IDs and not have to allocate them through a third-party service (see "Issuing Existing Compact Identifiers for Use with Your DRS Server" below).</p>
+</div>
+<div class="paragraph">
+<p>With a namespace of "mydrsprefix", the following GET request will return information about the namespace:</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>GET https://registry.api.identifiers.org/restApi/namespaces/search/findByPrefix?prefix=mydrsprefix</pre>
+</div>
+</div>
+<div class="paragraph">
+<p><em>Of course, this is a hypothetical example so the actual API call won&#8217;t work but you can see the GET request is identical to "DRS Client Compact Identifier-Based URI Resolution Process - Existing Compact Identifier Provider".</em></p>
+</div>
+<div class="paragraph">
+<p>This information then points to resolvers for the "mydrsprefix" namespace. Hypothetically, this "mydrsprefix" namespace was assigned a namespace ID of 1829 by identifiers.org. This "id" has nothing to do with compact identifier accessions (which are used in the URL pattern as <code>{$id}</code> below) or DRS IDs.  This namespace ID (1829 below) is purely an identifiers.org internal ID for use with their APIs:</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>GET https://registry.api.identifiers.org/restApi/resources/search/findAllByNamespaceId?id=1829</pre>
+</div>
+</div>
+<div class="paragraph">
+<p><em>Like the previous GET request this URL won&#8217;t work but you can see the GET request is identical to "DRS Client Compact Identifier-Based URI Resolution Process - Existing Compact Identifier Provider".</em></p>
+</div>
+<div class="paragraph">
+<p>This returns enough information to, ultimately, identify one or more resolvers and each have a URL pattern that, for DRS-supporting systems, provides a URL template for making a successful DRS GET request.  For example, the "mydrsprefix" urlPattern is:</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>urlPattern: "https://mydrs.server.org/ga4gh/drs/v1/objects/{$id}"</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>And the <code>{$id}</code> here refers to the accession from the compact identifier (in this example the accession is <code>12345</code>).  If applicable, a provide code can be supplied in the above requests to specify a particular mirror if there are multiple resolvers for this namespace.</p>
+</div>
+<div class="paragraph">
+<p>Given this information you now know you can make a GET on the URL:</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>GET https://mydrs.server.org/ga4gh/drs/v1/objects/12345</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>So, compared to using a third party service like DOIs and ARKs, this would be a direct pointer to a DRS server.  However, just as with "DRS Client Compact Identifier-Based URI Resolution Process - Existing Compact Identifier Provider", the client should always be prepared to follow HTTPS redirects.</p>
+</div>
+<div class="paragraph">
+<p><em>To summarize, a client resolving a custom compact identifier registered for a single DRS server is actually the same as resolving using a third-party compact identifier service like ARKs or DOIs with a DRS server, just make sure to follow redirects in all cases.</em></p>
 </div>
 </div>
 </div>
 <div class="sidebarblock">
 <div class="content">
-<div class="title">Note: Using an Existing Compact Identifier Type with Your DRS Server</div>
+<div class="title">Note: Issuing Existing Compact Identifiers for Use with Your DRS Server</div>
 <div class="paragraph">
-<p>See the documentation on <a href="https://n2t.net/e/compact_ids.html">n2t.net</a> and <a href="https://docs.identifiers.org/">identifiers.org</a> for information about all the compact identifiers that are supported. You can choose to use an existing compact identifier provider for your DRS server, as we did in the example above using DOIs.  Just keep in mind, each provider will have their own approach for generating compact identifiers and associating them with a DRS data object.  Some compact identifier providers, like DOIs, provide a method whereby you can register in their network and get your own prefix, allowing you to mint your own accessions.  Other services, like the University of California&#8217;s <a href="https://ezid.cdlib.org/">EZID</a> service, provide accounts and a mechanism to mint accessions centrally for each of your data objects.  For experimentation we recommend you take a look at the EZID website that allows you to create DOIs and ARKs and associate them with your data object URLs on your DRS server for testing purposes.</p>
+<p>See the documentation on <a href="https://n2t.net/e/compact_ids.html">n2t.net</a> and <a href="https://docs.identifiers.org/">identifiers.org</a> for information about all the compact identifiers that are supported. You can choose to use an existing compact identifier provider for your DRS server, as we did in the example above using DOIs ("DRS Client Compact Identifier-Based URI Resolution Process - Existing Compact Identifier Provider").  Just keep in mind, each provider will have their own approach for generating compact identifiers and associating them with a DRS data object URL.  Some compact identifier providers, like DOIs, provide a method whereby you can register in their network and get your own prefix, allowing you to mint your own accessions.  Other services, like the University of California&#8217;s <a href="https://ezid.cdlib.org/">EZID</a> service, provide accounts and a mechanism to mint accessions centrally for each of your data objects.  For experimentation we recommend you take a look at the EZID website that allows you to create DOIs and ARKs and associate them with your data object URLs on your DRS server for testing purposes.</p>
 </div>
 </div>
 </div>
@@ -1665,7 +1739,7 @@ The CURIE format used by identifiers.org/n2t.net does not percent-encode reserve
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2020-04-24 14:27:02 UTC
+Last updated 2020-04-27 20:07:06 UTC
 </div>
 </div>
 </body>
