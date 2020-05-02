@@ -54,28 +54,63 @@ TIP: See the <<_appendix_hostname_based_uris>> for information on how hostname-b
 
 ==== Compact Identifier-based DRS URIs
 
-Compact Identifier-based DRS URIs use meta-resolver services (specifically, https://identifiers.org/[identifiers.org] and https://n2t.net/[n2t.net (Name-To-Thing)]) to provide a layer of indirection between the DRS URI and the DRS server name -- the actual DNS name of the DRS server isn’t present in the URI. (See the <<_appendix_compact_identifier_based_uris>> for more background on Compact Identifiers and meta-resolver services.) They take the form:
+Compact Identifier-based DRS URIs use resolver registry services (specifically, https://identifiers.org/[identifiers.org] and https://n2t.net/[n2t.net (Name-To-Thing)]) to provide a layer of indirection between the DRS URI and the DRS server name -- the actual DNS name of the DRS server isn’t present in the URI.  This approach is based on the Joint Declaration of Data Citation Principles as detailed by https://doi.org/10.1038/sdata.2018.29[Wimalaratne et al (2018)].
+
+Compact Identifiers take the form:
 
     drs://[provider_code/]namespace:accession
 
-Together, provider code and the namespace are referred to as the _prefix_. The provider code is optional and is used by identifiers.org/n2t.net for compact identifier resolver mirrors
+Together, provider code and the namespace are referred to as the _prefix_. The provider code is optional and is used by identifiers.org/n2t.net for compact identifier resolver mirrors.
 
-TIP: Much more information is provided in the <<_appendix_compact_identifier_based_uris>> including details on the structure of compact identifiers, how to register prefixes, how clients resolve compact identifier-based DRS URIs, possible caching strategies, and security considerations.
+TIP: See the <<_appendix_compact_identifier_based_uris>> for more background on Compact Identifiers and resolver services.
 
+===== For DRS Servers
 
-=== For DRS Servers
+If your DRS implementation will issue DRS URIs based on your own compact identifiers, you MUST first register a new prefix with identifiers.org (which is automatically mirrored to n2t.net). You will also need to include a provider resolver resource in this registration which links the prefix to your DRS server, so that DRS clients can get sufficient information to make a successful DRS GET request.  For clarity, we recommend you choose a namespace beginning with `drs.`.
 
-If your DRS implementation will issue IDs based on compact identifiers, and will pass around DRS URIs using these compact identifiers, you *must* register your prefix (which consists of `[provider_code/]namespace`) on identifiers.org/n2t.net. If you don't, DRS clients will not know how to resolve your compact identifiers and, ultimately, generate a valid DRS URL that clients can access.
+===== For DRS Clients
 
+A DRS client parses the DRS URI compact identifier components to extract the namespace and the id, and then uses meta-resolver APIs to locate the actual DRS server. For example, here are the client resolution steps if the URI is:
+
+    drs://drs.42:314159
+
+1) The client parses the string to extract the namespace of `drs.42` and the id of `314159`, using the first occurrence of a colon (":") character after the initial `drs://` as a delimiter. (The colon character is not allowed in a Hostname-based DRS URI, making it easy to tell them apart.)
+2) The client makes API calls to a meta-resolver to look up the URL template for the namespace. (See <<_appendix_compact_identifier_based_uris>> for details.) The URL pattern is a string containing a `{$id}` parameter, such as:
+
+    https://drs.myexample.org/ga4gh/drs/v1/objects/{$id}
+
+3) The client generates a DRS URL from the URL template by replacing {$id} with the accession it extracted in step 1. It then makes a GET request to the DRS server:
+
+    GET https://drs.myexample.org/ga4gh/drs/v1/objects/314159
+
+4) The client follows any HTTP redirects returned in step 3, in case the resolver goes through an extra layer of redirection.
+
+For performance reasons, DRS clients SHOULD cache the URL pattern returned in step 2, with a suggested 24 hour cache life.
 
 ==== Choosing a URI Style
 
-The choice of issuing hostname- or compact identifier-based DRS URIs comes down to the preferences of the particular DRS server system builder (and the builders who make portals and other apps on top of the DRS server).  Each have their own benefits and drawbacks.  Compact identifier-based DRS URIs are more resilient to change, if a project is renamed or hosts are moved around, the identifiers.org/n2t.net registration is updated and the compact identifier-based DRS URIs continue to work.  This greatly helps with the https://www.nature.com/articles/sdata201618[FAIR-ness] of your data objects.  On the other hand, this requires DRS clients to resolve your DRS server via identifiers.org/n2t.net with potential performance and security implications.
+DRS servers can choose to issue either hostname-based or compact identifier-based DRS URIs, and can be confident that compliant DRS clients will support both.  DRS clients *must* be able to accommodate both URI types. Tradeoffs that DRS server builders, and third parties who need to cite DRS objects in datasets, workflows or elsewhere, may want to consider include:
 
-Hostname-based DRS URIs are less resistant to future project/domain name changes than compact identifier-based DRS URIs.  But they do provide a more direct way of pointing to a DRS object which can have benefits.  The fact that they can be resolved using a simple rule means a DRS client can skip the extra overhead of a prefix lookup as is done for compact identifier-based URIs.  This can translate to possibly greater performance and/or security since the DRS server hostname is explicitly specified and this avoids the lookup of a resolver through a third-party service (identifiers.org/n2t.net).
+.Table Choosing a URI Style
+|===
+| |Hostname-based |Compact Identifier-based
 
-Ultimately, the choice is with the DRS system builders, DRS clients must be able to accommodate both URI types.
+|URI Durability
+|URIs are valid for as long as the server operator maintains ownership of the published DNS address. (They can of course point that address at different physical serving infrastructure as often as they’d like.)
+|URIs are valid for as long as the server operator maintains ownership of the published compact identifier resolver namespace. (They also depend on the meta-resolvers like identifiers.org/n2t.net remaining operational, which is intended to be essentially forever.)
 
+|Client Efficiency
+|URIs require minimal client logic, and no network requests, to resolve.
+|Citation practice is consistent with publisher instructions. URIs require small client logic, and 1-2 cacheable network requests, to resolve.
+
+|Security
+|Servers have full control over their own security practices.
+|Server operators, in addition to maintaining their own security practices, should confirm they are comfortable with the resolver registry security practices, including protection against denial of service and namespace-hijacking attacks. (See the <<_appendix_compact_identifier_based_uris>> for more information on resolver registry security.)
+
+|https://www.nature.com/articles/sdata201618[FAIR-ness]
+|Provided the published DNS address is valid.
+|Same assuming the resolver registry namespace is valid. Slightly increased find-ability given the extra metadata available in the resolver registry (contact, organization, etc).
+|===
 
 === DRS Datatypes
 
