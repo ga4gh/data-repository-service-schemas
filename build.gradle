@@ -61,7 +61,7 @@ asciidoctor {
     sourceDir asciiDocDir
     outputDir file("docs")
     sources {
-        include 'index.adoc'
+        include 'index.adoc', 'more_background_on_compact_identifiers.adoc'
     }
     backends = ['html5', 'pdf']
     attributes = [

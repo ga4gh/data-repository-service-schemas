@@ -42,24 +42,24 @@ In a DRS-enabled world, tool builders don’t have to worry about where the data
 
 === Design Motivation
 
-DRS URIs are aligned with the FAIR data principles and the Joint Declaration of Data Citation Principles -- both hostname-based and compact identifier-based URIs provide globally unique, machine-resolvable, persistent identifiers for data.
+DRS URIs are aligned with the https://www.nature.com/articles/sdata201618[FAIR data principles] and the https://doi.org/10.1038/sdata.2018.2[Joint Declaration of Data Citation Principles] -- both hostname-based and compact identifier-based URIs provide globally unique, machine-resolvable, persistent identifiers for data.
 
-* We require all URIs to begin with drs:// as a signal to humans and  systems consuming these URIs that the response they will ultimately receive, after transforming the URI to a fetchable URL, will be a DRS JSON packet. This signal differentiates DRS URIs from the wide variety of other entities (HTML documents, PDFs, ontology notes, etc.) that can be represented by compact identifiers.
+* We require all URIs to begin with `drs://` as a signal to humans and  systems consuming these URIs that the response they will ultimately receive, after transforming the URI to a fetchable URL, will be a DRS JSON packet. This signal differentiates DRS URIs from the wide variety of other entities (HTML documents, PDFs, ontology notes, etc.) that can be represented by compact identifiers.
 * We support hostname-based URIs because of their simplicity and efficiency for server and client implementers.
-* We support compact identifier-based URIs, and the meta-resolver services of identifiers.org and n2t.net (Name-to-Thing), because of the wide adoption of compact identifiers in the research community. as detailed by Wimalaratne et al. (2018) in Uniform resolution of compact identifiers for biomedical data.
+* We support compact identifier-based URIs, and the meta-resolver services of identifiers.org and n2t.net (Name-to-Thing), because of the wide adoption of compact identifiers in the research community. as detailed by https://doi.org/10.1038/sdata.2018.29[Wimalaratne et al (2018)] in "Uniform resolution of compact identifiers for biomedical data."
 
 == Appendix: Compact Identifier-Based URIs
 
 .Note: Identifiers.org/n2t.net Changes
 ****
-The examples below show the current interactions with identifiers.org/n2t.net and these may change over time.  Please refer to the documentation from each site for the most up-to-date information.  We will make best efforts to keep the DRS specification current but DRS clients MUST maintain their ability to use either the identifiers.org or n2t.net APIs to resolve compact identifier-based DRS URIs.
+The examples below show the current API interactions with https://n2t.net/e/compact_ids.html[n2t.net] and https://docs.identifiers.org/[identifiers.org] and these may change over time.  Please refer to the documentation from each site for the most up-to-date information.  We will make best efforts to keep the DRS specification current but DRS clients MUST maintain their ability to use either the identifiers.org or n2t.net APIs to resolve compact identifier-based DRS URIs.
 ****
 
 === Registering a DRS Server on a Meta-Resolver
 
-See the documentation on https://n2t.net/e/compact_ids.html[n2t.net] and https://docs.identifiers.org/[identifiers.org] for adding your own compact identifier type and registering your DRS server as a resolver. You can register new prefixes (or mirrors by adding resource provider codes) for free using a simple online form.  Keep in mind, while anyone can register prefixes, the identifiers.org/n2t.net sites do basic hand curation to verify new prefix and resource (provider code) requests.  See those sites for more details on their security practices.
+See the documentation on the https://n2t.net/e/compact_ids.html[n2t.net] and https://docs.identifiers.org/[identifiers.org] meta-resolvers for adding your own compact identifier type and registering your DRS server as a resolver. You can register new prefixes (or mirrors by adding resource provider codes) for free using a simple online form.  Keep in mind, while anyone can register prefixes, the identifiers.org/n2t.net sites do basic hand curation to verify new prefix and resource (provider code) requests.  See those sites for more details on their security practices.
 
-Starting with the prefix for our new compact identifier, let's register the namespace `mydrsprefix` on identifiers.org/n2t.net and use 5-digit numeric IDs as our accessions.  Here's what that the registration for our new namespace looks like on https://registry.identifiers.org/prefixregistrationrequest[identifiers.org]:
+Starting with the prefix for our new compact identifier, let's register the namespace `mydrsprefix` on identifiers.org/n2t.net and use 5-digit numeric IDs as our accessions.  We will then link this to the DRS server at `https://mydrs.server.org/ga4gh/drs/v1/` by filling in the provider details.  Here's what that the registration for our new namespace looks like on https://registry.identifiers.org/prefixregistrationrequest[identifiers.org]:
 
 image::prefix_register_1.png[]
 
@@ -83,7 +83,7 @@ This request returns a JSON structure including various URLs containing an embed
    "href":"https://registry.api.identifiers.org/restApi/namespaces/1234"
   }
 
-ii) The client extracts the namespace id (in this example 1234), and uses it to make a second GET request to identifiers.org to find information about the namespace:
+(ii) The client extracts the namespace id (in this example 1234), and uses it to make a second GET request to identifiers.org to find information about the namespace:
 
   GET https://registry.api.identifiers.org/restApi/resources/search/findAllByNamespaceId?id=1234
 
@@ -105,7 +105,7 @@ This request returns a text structure including a redirect field, whose value is
 
 === Caching with Compact Identifiers
 
-Identifiers.org/n2t.net compact identifier resolver records do not change frequently.  This reality is  useful for caching resolver records and their URL patterns for performance reasons.  Builders of systems that use compact identifier-based DRS URIs should cache prefix resolver records from identifiers.org/n2t.net and occasionally refresh the records (such as every 24 hours).  This approach will reduce the burden on these community services since we anticipate many DRS URIs will be regularly resolved in workflow systems.  The implementation of the caching approach is up to system builders but we recommend at least caching the mapping of prefixes to URL patterns. System builders may also choose to cache the compact identifier accession to final DRS URL records as well, but that decision/design is at the discretion of the system builder.  Alternatively, system builders may decide to directly mirror the registries themselves, instructions are provided on identifiers.org/n2t.net websites.
+Identifiers.org/n2t.net compact identifier resolver records do not change frequently.  This reality is  useful for caching resolver records and their URL patterns for performance reasons.  Builders of systems that use compact identifier-based DRS URIs should cache prefix resolver records from identifiers.org/n2t.net and occasionally refresh the records (such as every 24 hours).  This approach will reduce the burden on these community services since we anticipate many DRS URIs will be regularly resolved in workflow systems.  The implementation of the caching approach is up to system builders but we recommend at least caching the mapping of prefixes to URL patterns. System builders may also choose to cache the compact identifier accession to final DRS URL records as well, but that decision/design is at the discretion of the system builder.  Alternatively, system builders may decide to directly mirror the registries themselves, instructions are provided on the identifiers.org/n2t.net websites.
 
 === Security with Compact Identifiers
 
