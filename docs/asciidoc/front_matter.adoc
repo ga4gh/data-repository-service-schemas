@@ -20,7 +20,7 @@ The key words MUST, MUST NOT, REQUIRED, SHALL, SHALL NOT, SHOULD, SHOULD NOT, RE
 Each implementation of DRS can choose its own id scheme, as long as it follows these guidelines:
 
 * DRS IDs are strings made up of uppercase and lowercase letters, decimal digits, hypen, period, underscore and tilde [A-Za-z0-9.-_~]. See https://tools.ietf.org/html/rfc3986#section-2.3[RFC 3986 § 2.3].
-* DRS IDs can contain other characters, but they MUST be encoded into valid DRS IDs whenever exposed by the API.  This is because non-encoded IDs may interfere with the interpretation of the `objects/{id}/access` endpoint.  To overcome this limitation use percent-encoding of the ID, see https://tools.ietf.org/html/rfc3986#section-2.4[RFC 3986 § 2.4]
+* DRS IDs can contain other characters, but they MUST be encoded into valid DRS IDs whenever they are used in API calls.  This is because non-encoded IDs may interfere with the interpretation of the `objects/{id}/access` endpoint.  To overcome this limitation use percent-encoding of the ID, see https://tools.ietf.org/html/rfc3986#section-2.4[RFC 3986 § 2.4]
 * One DRS ID MUST always return the same object data (or, in the case of a collection, the same set of objects). This constraint aids with reproducibility.
 * DRS implementations MAY have more than one ID that maps to the same object.
 * DRS version 1.x does NOT support semantics around multiple versions of an object. (For example, there’s no notion of “get latest version” or “list all versions”.) Individual implementation MAY choose an ID scheme that includes version hints.
@@ -62,7 +62,7 @@ Compact Identifiers take the form:
 
     drs://[provider_code/]namespace:accession
 
-Together, provider code and the namespace are referred to as the _prefix_. The provider code is optional and is used by identifiers.org/n2t.net for compact identifier resolver mirrors.
+Together, provider code and the namespace are referred to as the _prefix_. The provider code is optional and is used by identifiers.org/n2t.net for compact identifier resolver mirrors.  Both the `provider_code` and `namespace` disallow spaces or punctuation, only lowercase alphanumerical characters, underscores and dots are allowed (e.g. [A-Za-z0-9._]).
 
 TIP: See the <<_appendix_compact_identifier_based_uris>> for more background on Compact Identifiers and resolver registry services like identifiers.org/n2t.net (aka meta-resolvers), how to register prefixes, possible caching strategies, and security considerations.
 
