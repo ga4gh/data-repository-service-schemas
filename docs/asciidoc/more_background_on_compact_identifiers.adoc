@@ -50,7 +50,6 @@ https://n2t.net/e/compact_ids.html[Examples] include (from n2t.net):
 
 TIP: DRS URIs using compact identifiers with resolvers registered in identifiers.org/n2t.net can be distinguished from the hostname-based DRS URIs below based on the required ":" which is not allowed in hostname-based URI.
 
-TIP: The CURIE format used by identifiers.org/n2t.net does not percent-encode reserved URI characters but, instead, relies on the first ":" character to separate prefix from accession. Since these accessions can contain any characters, and characters like "/" will interfere with DRS API calls, you _must_ percent encode the accessions extracted from DRS compact identifier-based URIs when using as DRS IDs in DRS GET requests.  For more information see the Note "DRS Client Compact Identifier-Based URI Resolution Process".
 
 See the documentation on https://n2t.net/e/compact_ids.html[n2t.net] and https://docs.identifiers.org/[identifiers.org] for much more information on the compact identifiers used there and details about the resolution process.
 
