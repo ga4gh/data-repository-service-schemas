@@ -1,9 +1,6 @@
 ////
 TODO:
-* I need to clear up the section showing the GET requests, clarify the "ID", and also probably mention these API calls are examples and we make not guarantees that identifiers.org/n2t.net won't change.
 * do we want to add a self_url to the JSON response from DRS objects?  This would make it much, much easier to construct the access method rather than using the hostname-based URI which requires manipulation and parsing.
-* mention "The key words MUST, MUST NOT, REQUIRED, SHALL, SHALL NOT, SHOULD, SHOULD NOT, RECOMMENDED, MAY, and OPTIONAL in this document are to be interpreted as described in RFC 2119." https://tools.ietf.org/html/rfc2119
-* I should mention in the sections in the appendix that the identifiers.org API calls are subject to change, there are n2t.net equivalents, and systems that use these are always welcome to directly mirror the registries themselves as well
 * comments from David to note in the PR conversation
   - removing provider_code
 	- mandating all DRS servers to register new prefixes
@@ -13,6 +10,8 @@ TODO:
 == Introduction
 
 The Data Repository Service (DRS) API provides a generic interface to data repositories so data consumers, including workflow systems, can access data objects in a single, standard way regardless of where they are stored and how they are managed. The primary functionality of DRS is to map a logical ID to a means for physically retrieving the data represented by the ID. The sections below describe the characteristics of those IDs, the types of data supported, how they can be pointed to using URIs, and how clients can use these URIs to ultimately make successful DRS API requests. This document also describes the DRS API in detail and provides information on the specific endpoints, request formats, and responses.  This specification is intended for developers of DRS-compatible services and of clients that will call these DRS services.
+
+The key words MUST, MUST NOT, REQUIRED, SHALL, SHALL NOT, SHOULD, SHOULD NOT, RECOMMENDED, MAY, and OPTIONAL in this document are to be interpreted as described in https://tools.ietf.org/html/rfc2119[RFC 2119].
 
 == DRS API Principles
 
@@ -33,6 +32,8 @@ For convenience, including when passing content references to a https://github.c
 
 There are two styles of DRS URIs, Hostname-based and Compact Identifier-based, both using the `drs://` URI scheme. DRS servers may choose either style when exposing references to their content;. DRS clients MUST support resolving both styles.
 
+TIP: See <<_appendix_background_notes_on_drs_uris>> for more information on our design motivations for DRS URIs.
+
 ==== Hostname-based DRS URIs
 
 Hostname-based DRS URIs are simpler than compact identifier-based URIs.  They contain the DRS server name and the DRS ID only and can be converted directly into a fetchable URL based on a simple rule.  They take the form:
@@ -41,7 +42,8 @@ Hostname-based DRS URIs are simpler than compact identifier-based URIs.  They co
 
 DRS URIs of this form mean “you can fetch the content with DRS id <id> from the DRS server at <hostname> ".
 For example, here are the client resolution steps if the URI is:
-drs://drs.example.org/314159
+
+    drs://drs.example.org/314159
 
 1) The client parses the string to extract the hostname of “drs.example.org” and the id of “314159”.
 2) The client makes a GET request to the DRS server, using the standard DRS URL syntax:
@@ -62,20 +64,21 @@ Compact Identifiers take the form:
 
 Together, provider code and the namespace are referred to as the _prefix_. The provider code is optional and is used by identifiers.org/n2t.net for compact identifier resolver mirrors.
 
-TIP: See the <<_appendix_compact_identifier_based_uris>> for more background on Compact Identifiers and resolver services.
+TIP: See the <<_appendix_compact_identifier_based_uris>> for more background on Compact Identifiers and resolver registry services like identifiers.org/n2t.net (aka meta-resolvers), how to register prefixes, possible caching strategies, and security considerations.
 
 ===== For DRS Servers
 
-If your DRS implementation will issue DRS URIs based on your own compact identifiers, you MUST first register a new prefix with identifiers.org (which is automatically mirrored to n2t.net). You will also need to include a provider resolver resource in this registration which links the prefix to your DRS server, so that DRS clients can get sufficient information to make a successful DRS GET request.  For clarity, we recommend you choose a namespace beginning with `drs.`.
+If your DRS implementation will issue DRS URIs based on _your own_ compact identifiers, you MUST first register a new prefix with identifiers.org (which is automatically mirrored to n2t.net). You will also need to include a provider resolver resource in this registration which links the prefix to your DRS server, so that DRS clients can get sufficient information to make a successful DRS GET request.  For clarity, we recommend you choose a namespace beginning with `drs.`.
 
 ===== For DRS Clients
 
-A DRS client parses the DRS URI compact identifier components to extract the namespace and the id, and then uses meta-resolver APIs to locate the actual DRS server. For example, here are the client resolution steps if the URI is:
+A DRS client parses the DRS URI compact identifier components to extract the prefix and the accession, and then uses meta-resolver APIs to locate the actual DRS server. For example, here are the client resolution steps if the URI is:
 
     drs://drs.42:314159
 
-1) The client parses the string to extract the namespace of `drs.42` and the id of `314159`, using the first occurrence of a colon (":") character after the initial `drs://` as a delimiter. (The colon character is not allowed in a Hostname-based DRS URI, making it easy to tell them apart.)
-2) The client makes API calls to a meta-resolver to look up the URL template for the namespace. (See <<_appendix_compact_identifier_based_uris>> for details.) The URL pattern is a string containing a `{$id}` parameter, such as:
+1) The client parses the string to extract the prefix of `drs.42` and the accession of `314159`, using the first occurrence of a colon (":") character after the initial `drs://` as a delimiter. (The colon character is not allowed in a Hostname-based DRS URI, making it easy to tell them apart.)
+
+2) The client makes API calls to a meta-resolver to look up the URL pattern for the namespace. (See <<_appendix_compact_identifier_based_uris>> for details.) The URL pattern is a string containing a `{$id}` parameter, such as:
 
     https://drs.myexample.org/ga4gh/drs/v1/objects/{$id}
 
