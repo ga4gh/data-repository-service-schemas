@@ -609,7 +609,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <p>DRS IDs are strings made up of uppercase and lowercase letters, decimal digits, hypen, period, underscore and tilde [A-Za-z0-9.-_~]. See <a href="https://tools.ietf.org/html/rfc3986#section-2.3">RFC 3986 § 2.3</a>.</p>
 </li>
 <li>
-<p>DRS IDs can contain other characters, but they MUST be encoded into valid DRS IDs whenever exposed by the API.  This is because non-encoded IDs may interfere with the interpretation of the <code>objects/{id}/access</code> endpoint.  To overcome this limitation use percent-encoding of the ID, see <a href="https://tools.ietf.org/html/rfc3986#section-2.4">RFC 3986 § 2.4</a></p>
+<p>DRS IDs can contain other characters, but they MUST be encoded into valid DRS IDs whenever they are used in API calls.  This is because non-encoded IDs may interfere with the interpretation of the <code>objects/{id}/access</code> endpoint.  To overcome this limitation use percent-encoding of the ID, see <a href="https://tools.ietf.org/html/rfc3986#section-2.4">RFC 3986 § 2.4</a></p>
 </li>
 <li>
 <p>One DRS ID MUST always return the same object data (or, in the case of a collection, the same set of objects). This constraint aids with reproducibility.</p>
@@ -701,7 +701,7 @@ See the <a href="#_appendix_hostname_based_uris">Appendix: Hostname-Based URIs</
 </div>
 </div>
 <div class="paragraph">
-<p>Together, provider code and the namespace are referred to as the <em>prefix</em>. The provider code is optional and is used by identifiers.org/n2t.net for compact identifier resolver mirrors.</p>
+<p>Together, provider code and the namespace are referred to as the <em>prefix</em>. The provider code is optional and is used by identifiers.org/n2t.net for compact identifier resolver mirrors.  Both the <code>provider_code</code> and <code>namespace</code> disallow spaces or punctuation, only lowercase alphanumerical characters, underscores and dots are allowed (e.g. [A-Za-z0-9._]).</p>
 </div>
 <div class="admonitionblock tip">
 <table>
@@ -1736,7 +1736,7 @@ For bundles, the cumulative size, in bytes, of items in the <code>contents</code
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2020-05-11 01:56:29 UTC
+Last updated 2020-05-11 02:16:31 UTC
 </div>
 </div>
 </body>
