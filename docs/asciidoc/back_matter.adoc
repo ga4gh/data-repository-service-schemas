@@ -117,7 +117,7 @@ The compact identifier format used by identifiers.org/n2t.net does not percent-e
 
 === Additional Examples
 
-For additional examples, see the document link:more_background_on_compact_identifiers.adoc[More Background on Compact Identifiers].
+For additional examples, see the document link:more_background_on_compact_identifiers[More Background on Compact Identifiers].
 
 == Appendix: Hostname-Based URIs
 
