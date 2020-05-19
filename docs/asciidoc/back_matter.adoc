@@ -50,9 +50,9 @@ DRS URIs are aligned with the https://www.nature.com/articles/sdata201618[FAIR d
 
 == Appendix: Compact Identifier-Based URIs
 
-.Note: Identifiers.org/n2t.net Changes
+.Note: Identifiers.org/n2t.net API Changes
 ****
-The examples below show the current API interactions with https://n2t.net/e/compact_ids.html[n2t.net] and https://docs.identifiers.org/[identifiers.org] and these may change over time.  Please refer to the documentation from each site for the most up-to-date information.  We will make best efforts to keep the DRS specification current but DRS clients MUST maintain their ability to use either the identifiers.org or n2t.net APIs to resolve compact identifier-based DRS URIs.
+The examples below show the current API interactions with https://n2t.net/e/compact_ids.html[n2t.net] and https://docs.identifiers.org/[identifiers.org] which may change over time.  Please refer to the documentation from each site for the most up-to-date information.  We will make best efforts to keep the DRS specification current but DRS clients MUST maintain their ability to use either the identifiers.org or n2t.net APIs to resolve compact identifier-based DRS URIs.
 ****
 
 === Registering a DRS Server on a Meta-Resolver
