@@ -58,6 +58,8 @@ TIP: See the <<_appendix_hostname_based_uris>> for information on how hostname-b
 
 Compact Identifier-based DRS URIs use resolver registry services (specifically, https://identifiers.org/[identifiers.org] and https://n2t.net/[n2t.net (Name-To-Thing)]) to provide a layer of indirection between the DRS URI and the DRS server name -- the actual DNS name of the DRS server isn’t present in the URI.  This approach is based on the Joint Declaration of Data Citation Principles as detailed by https://doi.org/10.1038/sdata.2018.29[Wimalaratne et al (2018)].
 
+For more information, see the document link:more_background_on_compact_identifiers[More Background on Compact Identifiers].
+
 Compact Identifiers take the form:
 
     drs://[provider_code/]namespace:accession
@@ -104,7 +106,7 @@ DRS servers can choose to issue either hostname-based or compact identifier-base
 
 |Client Efficiency
 |URIs require minimal client logic, and no network requests, to resolve.
-|URIs require small client logic, and 1-2 cacheable network requests, to resolve.  Citation practice is consistent with publisher instructions. 
+|URIs require small client logic, and 1-2 cacheable network requests, to resolve.  Citation practice is consistent with publisher instructions.
 
 |Security
 |Servers have full control over their own security practices.
