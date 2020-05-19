@@ -511,7 +511,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </li>
 <li><a href="#_appendix_hostname_based_uris">10. Appendix: Hostname-Based URIs</a>
 <ul class="sectlevel2">
-<li><a href="#_future_drs_versions_and_service_registry_info">10.1. Future DRS Versions and Service Registry/Info</a></li>
+<li><a href="#_encoding_drs_ids">10.1. Encoding DRS IDs</a></li>
+<li><a href="#_future_drs_versions_and_service_registry_info">10.2. Future DRS Versions and Service Registry/Info</a></li>
 </ul>
 </li>
 </ul>
@@ -786,7 +787,7 @@ See the <a href="#_appendix_compact_identifier_based_uris">Appendix: Compact Ide
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Client Efficiency</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">URIs require minimal client logic, and no network requests, to resolve.</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Citation practice is consistent with publisher instructions. URIs require small client logic, and 1-2 cacheable network requests, to resolve.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">URIs require small client logic, and 1-2 cacheable network requests, to resolve.  Citation practice is consistent with publisher instructions.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Security</p></td>
@@ -1726,7 +1727,13 @@ For bundles, the cumulative size, in bytes, of items in the <code>contents</code
 <h2 id="_appendix_hostname_based_uris"><a class="anchor" href="#_appendix_hostname_based_uris"></a><a class="link" href="#_appendix_hostname_based_uris">10. Appendix: Hostname-Based URIs</a></h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_future_drs_versions_and_service_registry_info"><a class="anchor" href="#_future_drs_versions_and_service_registry_info"></a><a class="link" href="#_future_drs_versions_and_service_registry_info">10.1. Future DRS Versions and Service Registry/Info</a></h3>
+<h3 id="_encoding_drs_ids"><a class="anchor" href="#_encoding_drs_ids"></a><a class="link" href="#_encoding_drs_ids">10.1. Encoding DRS IDs</a></h3>
+<div class="paragraph">
+<p>In hostname-based DRS URIs, the ID is always percent-encoded to ensure special characters do not interfere with subsequent DRS endpoint calls.  As such, ":" is not allowed in the URI and is a convenient way of differentiating from a compact identifier-based DRS URI.  Also, if a given DRS service implementation uses compact identifier accessions as their DRS IDs, they must be percent encoded before using them as DRS IDs in hostname-based DRS URIs and subsequent GET requests to a DRS service endpoint.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_future_drs_versions_and_service_registry_info"><a class="anchor" href="#_future_drs_versions_and_service_registry_info"></a><a class="link" href="#_future_drs_versions_and_service_registry_info">10.2. Future DRS Versions and Service Registry/Info</a></h3>
 <div class="paragraph">
 <p>In the future, as new major versions of DRS are released, a DRS server might support multiple API versions on different URL paths. At that point we expect to add support for <a href="https://github.com/ga4gh-discovery/ga4gh-service-registry">service-registry</a> and <a href="https://github.com/ga4gh-discovery/ga4gh-service-info">service-info</a> endpoints to the API, and to update the URI resolution logic to describe how to use those endpoints when translating hostname-based DRS URIs to URLs.</p>
 </div>
@@ -1736,7 +1743,7 @@ For bundles, the cumulative size, in bytes, of items in the <code>contents</code
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2020-05-19 19:09:36 UTC
+Last updated 2020-05-19 19:51:41 UTC
 </div>
 </div>
 </body>
