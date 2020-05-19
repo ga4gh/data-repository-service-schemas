@@ -71,7 +71,7 @@ IDs in DRS hostname-based URIs/URLs are always percent-encoded to eliminate ambi
 
 == Example DRS Client Compact Identifier-Based URI Resolution Process - Registering a new Compact Identifier for Your DRS Server
 
-See the documentation on https://n2t.net/e/compact_ids.html[n2t.net] and https://docs.identifiers.org/[identifiers.org] for adding your own compact identifier type and registering your DRS server as a resolver. We document this in more detail in the link:#_registering_a_drs_server_on_a_meta_resolver[main specification document].
+See the documentation on https://n2t.net/e/compact_ids.html[n2t.net] and https://docs.identifiers.org/[identifiers.org] for adding your own compact identifier type and registering your DRS server as a resolver. We document this in more detail in the link:index.html#_registering_a_drs_server_on_a_meta_resolver[main specification document].
 
 Now the question is how does a client resolve your newly registered compact identifier for your DRS server?  _It turns out, whether specific to a DRS implementation or using existing compact identifiers like ARKs or DOIs, the DRS client resolution process for compact identifier-based URIs is exactly the same._ We briefly run through process below for a new compact identifier as an example but, again, a client will not need to do anything different from the resolution process documented in "DRS Client Compact Identifier-Based URI Resolution Process  - Existing Compact Identifier Provider".
 
