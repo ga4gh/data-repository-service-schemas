@@ -2,7 +2,7 @@
 
 This document contains more examples of resolving compact identifier-based DRS URIs than we could fit in the DRS specification or appendix.  It's provided here for your reference as a supplement to the specification.
 
-== Compact Identifier-Based URIs
+== Background on Compact Identifier-Based URIs
 
 Compact identifiers refer to locally-unique persistent identifiers that have been namespaced to provide global uniqueness. See https://www.biorxiv.org/content/10.1101/101279v3["Uniform resolution of compact identifiers for biomedical data"] for an excellent introduction to this topic.  By using compact identifiers in DRS URIs, along with a resolver registry (identifiers.org/n2t.net), systems can identify the current resolver when they need to translate a DRS URI into a fetchable URL. This allows a project to issue compact identifiers in DRS URIs and not be concerned if the project name or DRS hostname changes in the future, the current resolver can always be found through the identifiers.org/n2t.net registries.  Together the identifiers.org/n2t.net systems support the resolver lookup for over 700 compact identifiers formats used in the research community, making it possible for a DRS server to use any of these as DRS IDs (or to register a new compact identifier type and resolver service of their own).
 
@@ -31,8 +31,8 @@ TIP: DRS URIs using compact identifiers with resolvers registered in identifiers
 
 See the documentation on https://n2t.net/e/compact_ids.html[n2t.net] and https://docs.identifiers.org/[identifiers.org] for much more information on the compact identifiers used there and details about the resolution process.
 
-.Note: DRS Client Compact Identifier-Based URI Resolution Process - Existing Compact Identifier Provider
-****
+== Example DRS Client Compact Identifier-Based URI Resolution Process - Existing Compact Identifier Provider
+
 A DRS client identifies the a DRS URI compact identifier components using the first occurance of "/" (optional) and ":" characters. These are not allowed inside the provider_code (optional) or the namespace. The ":" character is not allowed in a Hostname-based DRS URI, providing a convenient mechanism to differentiate them. Once the provider_code (optional) and namespace are extracted from a DRS compact identifier-based URI, a client can use services on identifiers.org to identify available resolvers.
 
 _Let's look at a specific example DRS compact identifier-based URI that uses DOIs, a popular compact identifier, and walk through the process that a client would use to resolve it.  Keep in mind, the resolution process is the same from the client perspective if a given DRS server is using an existing compact identifier type (DOIs, ARKs, Data GUIDs) or creating their own compact identifier type for their DRS server and registering it on identifiers.org/n2t.net._
@@ -67,17 +67,11 @@ _The URL above is valid for a DOI object but it is not actually a DRS server!  I
     GET https://drs.example.org/ga4gh/drs/v1/objects/10.5072%2FFK2805660V
 
 IDs in DRS hostname-based URIs/URLs are always percent-encoded to eliminate ambiguity even though the DRS compact identifier-based URIs and the identifier.orgs API do not percent-encode accessions.  This was done in order to 1) follow the CURIE conventions of identifiers.org/n2t.net for compact identifier-based DRS URIs and 2) to aid in readability for users who understand they are working with compact identifiers. **The general rule of thumb, when using a compact identifier accession as a DRS ID in a DRS API call, make sure to percent-encode it.  An easy way for a DRS client to handle this is to get the initial DRS object JSON response from whatever redirects the compact identifier resolves to, then look for the `self_uri` in the JSON, which will give you the correctly percent-encoded DRS ID for subsequent DRS API calls such as the `access` method.**
-****
 
-.Note: DRS Client Compact Identifier-Based URI Resolution Process - Registering a new Compact Identifier for Your DRS Server
-****
-See the documentation on https://n2t.net/e/compact_ids.html[n2t.net] and https://docs.identifiers.org/[identifiers.org] for adding your own compact identifier type and registering your DRS server as a resolver. You can register new prefixes (or mirrors by adding resource provider codes) for free using a simple online form.  Keep in mind, while anyone can register prefixes, the identifiers.org/n2t.net sites do basic hand curation to verify new prefix and resource (provider code) requests.  See those sites for more details on their security practices.
 
-Starting with the prefix for our new compact identifier, let's register the namespace `mydrsprefix` on identifiers.org/n2t.net and use 5-digit numeric IDs as our accessions.  Here's what that the registration for our new namespace looks like on https://registry.identifiers.org/prefixregistrationrequest[identifiers.org]:
+== Example DRS Client Compact Identifier-Based URI Resolution Process - Registering a new Compact Identifier for Your DRS Server
 
-image::prefix_register_1.png[]
-
-image::prefix_register_2.png[]
+See the documentation on https://n2t.net/e/compact_ids.html[n2t.net] and https://docs.identifiers.org/[identifiers.org] for adding your own compact identifier type and registering your DRS server as a resolver. We document this in more detail in the link:#_registering_a_drs_server_on_a_meta_resolver[main specification document].
 
 Now the question is how does a client resolve your newly registered compact identifier for your DRS server?  _It turns out, whether specific to a DRS implementation or using existing compact identifiers like ARKs or DOIs, the DRS client resolution process for compact identifier-based URIs is exactly the same._ We briefly run through process below for a new compact identifier as an example but, again, a client will not need to do anything different from the resolution process documented in "DRS Client Compact Identifier-Based URI Resolution Process  - Existing Compact Identifier Provider".
 
@@ -115,7 +109,6 @@ Given this information you now know you can make a GET on the URL:
 So, compared to using a third party service like DOIs and ARKs, this would be a direct pointer to a DRS server.  However, just as with "DRS Client Compact Identifier-Based URI Resolution Process - Existing Compact Identifier Provider", the client should always be prepared to follow HTTPS redirects.
 
 _To summarize, a client resolving a custom compact identifier registered for a single DRS server is actually the same as resolving using a third-party compact identifier service like ARKs or DOIs with a DRS server, just make sure to follow redirects in all cases._
-****
 
 .Note: Issuing Existing Compact Identifiers for Use with Your DRS Server
 ****
