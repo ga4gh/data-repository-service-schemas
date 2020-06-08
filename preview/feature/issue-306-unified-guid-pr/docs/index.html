@@ -500,13 +500,16 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_appendix_compact_identifier_based_uris">9. Appendix: Compact Identifier-Based URIs</a>
 <ul class="sectlevel2">
 <li><a href="#_registering_a_drs_server_on_a_meta_resolver">9.1. Registering a DRS Server on a Meta-Resolver</a></li>
-<li><a href="#_calling_meta_resolver_apis_for_compact_identifier_based_drs_uris">9.2. Calling Meta-Resolver APIs for Compact Identifier-Based DRS URIs</a></li>
-<li><a href="#_calling_the_identifiers_org_api_as_a_client">9.3. Calling the identifiers.org API as a Client</a></li>
-<li><a href="#_calling_the_n2t_net_api_as_a_client">9.4. Calling the n2t.net API as a Client</a></li>
-<li><a href="#_caching_with_compact_identifiers">9.5. Caching with Compact Identifiers</a></li>
-<li><a href="#_security_with_compact_identifiers">9.6. Security with Compact Identifiers</a></li>
-<li><a href="#_accession_encoding_to_valid_drs_ids">9.7. Accession Encoding to Valid DRS IDs</a></li>
-<li><a href="#_additional_examples">9.8. Additional Examples</a></li>
+<li><a href="#_calling_meta_resolver_apis_for_compact_identifier_based_drs_uris">9.2. Calling Meta-Resolver APIs for Compact Identifier-Based DRS URIs</a>
+<ul class="sectlevel3">
+<li><a href="#_calling_the_identifiers_org_api_as_a_client">9.2.1. Calling the identifiers.org API as a Client</a></li>
+<li><a href="#_calling_the_n2t_net_api_as_a_client">9.2.2. Calling the n2t.net API as a Client</a></li>
+</ul>
+</li>
+<li><a href="#_caching_with_compact_identifiers">9.3. Caching with Compact Identifiers</a></li>
+<li><a href="#_security_with_compact_identifiers">9.4. Security with Compact Identifiers</a></li>
+<li><a href="#_accession_encoding_to_valid_drs_ids">9.5. Accession Encoding to Valid DRS IDs</a></li>
+<li><a href="#_additional_examples">9.6. Additional Examples</a></li>
 </ul>
 </li>
 <li><a href="#_appendix_hostname_based_uris">10. Appendix: Hostname-Based URIs</a>
@@ -739,7 +742,7 @@ See the <a href="#_appendix_compact_identifier_based_uris">Appendix: Compact Ide
 <p>1) The client parses the string to extract the prefix of <code>drs.42</code> and the accession of <code>314159</code>, using the first occurrence of a colon (":") character after the initial <code>drs://</code> as a delimiter. (The colon character is not allowed in a Hostname-based DRS URI, making it easy to tell them apart.)</p>
 </div>
 <div class="paragraph">
-<p>2) The client makes API calls to a meta-resolver to look up the URL pattern for the namespace. (See <a href="#_appendix_compact_identifier_based_uris">Appendix: Compact Identifier-Based URIs</a> for details.) The URL pattern is a string containing a <code>{$id}</code> parameter, such as:</p>
+<p>2) The client makes API calls to a meta-resolver to look up the URL pattern for the namespace. (See <a href="#_calling_meta_resolver_apis_for_compact_identifier_based_drs_uris">Calling Meta-Resolver APIs for Compact Identifier-Based DRS URIs</a> for details.) The URL pattern is a string containing a <code>{$id}</code> parameter, such as:</p>
 </div>
 <div class="literalblock">
 <div class="content">
@@ -790,17 +793,12 @@ See the <a href="#_appendix_compact_identifier_based_uris">Appendix: Compact Ide
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Client Efficiency</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">URIs require minimal client logic, and no network requests, to resolve.</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">URIs require small client logic, and 1-2 cacheable network requests, to resolve.  Citation practice is consistent with publisher instructions.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">URIs require small client logic, and 1-2 cacheable network requests, to resolve.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Security</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Servers have full control over their own security practices.</p></td>
 <td class="tableblock halign-left valign-top"><p class="tableblock">Server operators, in addition to maintaining their own security practices, should confirm they are comfortable with the resolver registry security practices, including protection against denial of service and namespace-hijacking attacks. (See the <a href="#_appendix_compact_identifier_based_uris">Appendix: Compact Identifier-Based URIs</a> for more information on resolver registry security.)</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-top"><p class="tableblock"><a href="https://www.nature.com/articles/sdata201618">FAIR-ness</a></p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Provided the published DNS address is valid.</p></td>
-<td class="tableblock halign-left valign-top"><p class="tableblock">Same assuming the resolver registry namespace is valid. Slightly increased find-ability given the extra metadata available in the resolver registry (contact, organization, etc).</p></td>
 </tr>
 </tbody>
 </table>
@@ -1616,20 +1614,7 @@ For bundles, the cumulative size, in bytes, of items in the <code>contents</code
 <div class="sect2">
 <h3 id="_registering_a_drs_server_on_a_meta_resolver"><a class="anchor" href="#_registering_a_drs_server_on_a_meta_resolver"></a><a class="link" href="#_registering_a_drs_server_on_a_meta_resolver">9.1. Registering a DRS Server on a Meta-Resolver</a></h3>
 <div class="paragraph">
-<p>See the documentation on the <a href="https://n2t.net/e/compact_ids.html">n2t.net</a> and <a href="https://docs.identifiers.org/">identifiers.org</a> meta-resolvers for adding your own compact identifier type and registering your DRS server as a resolver. You can register new prefixes (or mirrors by adding resource provider codes) for free using a simple online form.  Keep in mind, while anyone can register prefixes, the identifiers.org/n2t.net sites do basic hand curation to verify new prefix and resource (provider code) requests.  See those sites for more details on their security practices.</p>
-</div>
-<div class="paragraph">
-<p>Starting with the prefix for our new compact identifier, let&#8217;s register the namespace <code>mydrsprefix</code> on identifiers.org/n2t.net and use 5-digit numeric IDs as our accessions.  We will then link this to the DRS server at <code><a href="https://mydrs.server.org/ga4gh/drs/v1/" class="bare">https://mydrs.server.org/ga4gh/drs/v1/</a></code> by filling in the provider details.  Here&#8217;s what that the registration for our new namespace looks like on <a href="https://registry.identifiers.org/prefixregistrationrequest">identifiers.org</a>:</p>
-</div>
-<div class="imageblock">
-<div class="content">
-<img src="prefix_register_1.png" alt="prefix register 1">
-</div>
-</div>
-<div class="imageblock">
-<div class="content">
-<img src="prefix_register_2.png" alt="prefix register 2">
-</div>
+<p>See the documentation on the <a href="https://n2t.net/e/compact_ids.html">n2t.net</a> and <a href="https://docs.identifiers.org/">identifiers.org</a> meta-resolvers for adding your own compact identifier type and registering your DRS server as a resolver. You can register new prefixes (or mirrors by adding resource provider codes) for free using a simple online form.  For more information see <a href="more_background_on_compact_identifiers">More Background on Compact Identifiers</a>.</p>
 </div>
 </div>
 <div class="sect2">
@@ -1637,9 +1622,8 @@ For bundles, the cumulative size, in bytes, of items in the <code>contents</code
 <div class="paragraph">
 <p>Clients resolving Compact Identifier-based URIs need to convert a prefix (e.g. “drs.42”) into an URL pattern. They can do so by calling either the identifiers.org or the n2t.net API, since the two meta-resolvers keep their mapping databases in sync.</p>
 </div>
-</div>
-<div class="sect2">
-<h3 id="_calling_the_identifiers_org_api_as_a_client"><a class="anchor" href="#_calling_the_identifiers_org_api_as_a_client"></a><a class="link" href="#_calling_the_identifiers_org_api_as_a_client">9.3. Calling the identifiers.org API as a Client</a></h3>
+<div class="sect3">
+<h4 id="_calling_the_identifiers_org_api_as_a_client"><a class="anchor" href="#_calling_the_identifiers_org_api_as_a_client"></a><a class="link" href="#_calling_the_identifiers_org_api_as_a_client">9.2.1. Calling the identifiers.org API as a Client</a></h4>
 <div class="paragraph">
 <p>It takes two API calls to get the URL pattern.</p>
 </div>
@@ -1678,8 +1662,8 @@ For bundles, the cumulative size, in bytes, of items in the <code>contents</code
 </div>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_calling_the_n2t_net_api_as_a_client"><a class="anchor" href="#_calling_the_n2t_net_api_as_a_client"></a><a class="link" href="#_calling_the_n2t_net_api_as_a_client">9.4. Calling the n2t.net API as a Client</a></h3>
+<div class="sect3">
+<h4 id="_calling_the_n2t_net_api_as_a_client"><a class="anchor" href="#_calling_the_n2t_net_api_as_a_client"></a><a class="link" href="#_calling_the_n2t_net_api_as_a_client">9.2.2. Calling the n2t.net API as a Client</a></h4>
 <div class="paragraph">
 <p>It takes one API call to get the URL pattern.</p>
 </div>
@@ -1700,26 +1684,27 @@ For bundles, the cumulative size, in bytes, of items in the <code>contents</code
 </div>
 </div>
 </div>
+</div>
 <div class="sect2">
-<h3 id="_caching_with_compact_identifiers"><a class="anchor" href="#_caching_with_compact_identifiers"></a><a class="link" href="#_caching_with_compact_identifiers">9.5. Caching with Compact Identifiers</a></h3>
+<h3 id="_caching_with_compact_identifiers"><a class="anchor" href="#_caching_with_compact_identifiers"></a><a class="link" href="#_caching_with_compact_identifiers">9.3. Caching with Compact Identifiers</a></h3>
 <div class="paragraph">
-<p>Identifiers.org/n2t.net compact identifier resolver records do not change frequently.  This reality is  useful for caching resolver records and their URL patterns for performance reasons.  Builders of systems that use compact identifier-based DRS URIs should cache prefix resolver records from identifiers.org/n2t.net and occasionally refresh the records (such as every 24 hours).  This approach will reduce the burden on these community services since we anticipate many DRS URIs will be regularly resolved in workflow systems.  The implementation of the caching approach is up to system builders but we recommend at least caching the mapping of prefixes to URL patterns. System builders may also choose to cache the compact identifier accession to final DRS URL records as well, but that decision/design is at the discretion of the system builder.  Alternatively, system builders may decide to directly mirror the registries themselves, instructions are provided on the identifiers.org/n2t.net websites.</p>
+<p>Identifiers.org/n2t.net compact identifier resolver records do not change frequently.  This reality is  useful for caching resolver records and their URL patterns for performance reasons.  Builders of systems that use compact identifier-based DRS URIs should cache prefix resolver records from identifiers.org/n2t.net and occasionally refresh the records (such as every 24 hours).  This approach will reduce the burden on these community services since we anticipate many DRS URIs will be regularly resolved in workflow systems. Alternatively, system builders may decide to directly mirror the registries themselves, instructions are provided on the identifiers.org/n2t.net websites.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_security_with_compact_identifiers"><a class="anchor" href="#_security_with_compact_identifiers"></a><a class="link" href="#_security_with_compact_identifiers">9.6. Security with Compact Identifiers</a></h3>
+<h3 id="_security_with_compact_identifiers"><a class="anchor" href="#_security_with_compact_identifiers"></a><a class="link" href="#_security_with_compact_identifiers">9.4. Security with Compact Identifiers</a></h3>
 <div class="paragraph">
-<p>As mentioned earlier, identifiers.org/n2t.net performs some basic verification of new prefixes and provider code mirror registrations on their sites.  However, system builders may have certain security compliance requirements and regulations that prohibit relying on an external site for resolving compact identifiers.  In this case, systems under these security and compliance constraints may wish to whitelist certain compact identifier resolvers and/or vet records from identifiers.org/n2t.net before enabling in their system.</p>
+<p>As mentioned earlier, identifiers.org/n2t.net performs some basic verification of new prefixes and provider code mirror registrations on their sites.  However, builders of systems that consume and resolve DRS URIs may have certain security compliance requirements and regulations that prohibit relying on an external site for resolving compact identifiers.  In this case, systems under these security and compliance constraints may wish to whitelist certain compact identifier resolvers and/or vet records from identifiers.org/n2t.net before enabling in their systems.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_accession_encoding_to_valid_drs_ids"><a class="anchor" href="#_accession_encoding_to_valid_drs_ids"></a><a class="link" href="#_accession_encoding_to_valid_drs_ids">9.7. Accession Encoding to Valid DRS IDs</a></h3>
+<h3 id="_accession_encoding_to_valid_drs_ids"><a class="anchor" href="#_accession_encoding_to_valid_drs_ids"></a><a class="link" href="#_accession_encoding_to_valid_drs_ids">9.5. Accession Encoding to Valid DRS IDs</a></h3>
 <div class="paragraph">
 <p>The compact identifier format used by identifiers.org/n2t.net does not percent-encode reserved URI characters but, instead, relies on the first ":" character to separate prefix from accession. Since these accessions can contain any characters, and characters like "/" will interfere with DRS API calls, you <em>must</em> percent encode the accessions extracted from DRS compact identifier-based URIs when using as DRS IDs in subsequent DRS GET requests.  An easy way for a DRS client to handle this is to get the initial DRS object JSON response from whatever redirects the compact identifier resolves to, then look for the <code>self_uri</code> in the JSON, which will give you the correctly percent-encoded DRS ID for subsequent DRS API calls such as the <code>access</code> method.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_additional_examples"><a class="anchor" href="#_additional_examples"></a><a class="link" href="#_additional_examples">9.8. Additional Examples</a></h3>
+<h3 id="_additional_examples"><a class="anchor" href="#_additional_examples"></a><a class="link" href="#_additional_examples">9.6. Additional Examples</a></h3>
 <div class="paragraph">
 <p>For additional examples, see the document <a href="more_background_on_compact_identifiers">More Background on Compact Identifiers</a>.</p>
 </div>
@@ -1746,7 +1731,7 @@ For bundles, the cumulative size, in bytes, of items in the <code>contents</code
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2020-05-19 20:49:39 UTC
+Last updated 2020-06-08 03:50:28 UTC
 </div>
 </div>
 </body>

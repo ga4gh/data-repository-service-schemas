@@ -425,8 +425,9 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <ul class="sectlevel1">
 <li><a href="#_about">1. About</a></li>
 <li><a href="#_background_on_compact_identifier_based_uris">2. Background on Compact Identifier-Based URIs</a></li>
-<li><a href="#_example_drs_client_compact_identifier_based_uri_resolution_process_existing_compact_identifier_provider">3. Example DRS Client Compact Identifier-Based URI Resolution Process - Existing Compact Identifier Provider</a></li>
-<li><a href="#_example_drs_client_compact_identifier_based_uri_resolution_process_registering_a_new_compact_identifier_for_your_drs_server">4. Example DRS Client Compact Identifier-Based URI Resolution Process - Registering a new Compact Identifier for Your DRS Server</a></li>
+<li><a href="#_registering_a_drs_server_on_a_meta_resolver">3. Registering a DRS Server on a Meta-Resolver</a></li>
+<li><a href="#_example_drs_client_compact_identifier_based_uri_resolution_process_existing_compact_identifier_provider">4. Example DRS Client Compact Identifier-Based URI Resolution Process - Existing Compact Identifier Provider</a></li>
+<li><a href="#_example_drs_client_compact_identifier_based_uri_resolution_process_registering_a_new_compact_identifier_for_your_drs_server">5. Example DRS Client Compact Identifier-Based URI Resolution Process - Registering a new Compact Identifier for Your DRS Server</a></li>
 </ul>
 </div>
 </div>
@@ -497,7 +498,31 @@ DRS URIs using compact identifiers with resolvers registered in identifiers.org/
 </div>
 </div>
 <div class="sect1">
-<h2 id="_example_drs_client_compact_identifier_based_uri_resolution_process_existing_compact_identifier_provider"><a class="anchor" href="#_example_drs_client_compact_identifier_based_uri_resolution_process_existing_compact_identifier_provider"></a><a class="link" href="#_example_drs_client_compact_identifier_based_uri_resolution_process_existing_compact_identifier_provider">3. Example DRS Client Compact Identifier-Based URI Resolution Process - Existing Compact Identifier Provider</a></h2>
+<h2 id="_registering_a_drs_server_on_a_meta_resolver"><a class="anchor" href="#_registering_a_drs_server_on_a_meta_resolver"></a><a class="link" href="#_registering_a_drs_server_on_a_meta_resolver">3. Registering a DRS Server on a Meta-Resolver</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>See the documentation on the <a href="https://n2t.net/e/compact_ids.html">n2t.net</a> and <a href="https://docs.identifiers.org/">identifiers.org</a> meta-resolvers for adding your own compact identifier type and registering your DRS server as a resolver. You can register new prefixes (or mirrors by adding resource provider codes) for free using a simple online form.</p>
+</div>
+<div class="paragraph">
+<p>Keep in mind, while anyone can register prefixes, the identifiers.org/n2t.net sites do basic hand curation to verify new prefix and resource (provider code) requests.  See those sites for more details on their security practices.  For more information see</p>
+</div>
+<div class="paragraph">
+<p>Starting with the prefix for our new compact identifier, let&#8217;s register the namespace <code>mydrsprefix</code> on identifiers.org/n2t.net and use 5-digit numeric IDs as our accessions.  We will then link this to the DRS server at <code><a href="https://mydrs.server.org/ga4gh/drs/v1/" class="bare">https://mydrs.server.org/ga4gh/drs/v1/</a></code> by filling in the provider details.  Here&#8217;s what that the registration for our new namespace looks like on <a href="https://registry.identifiers.org/prefixregistrationrequest">identifiers.org</a>:</p>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="prefix_register_1.png" alt="prefix register 1">
+</div>
+</div>
+<div class="imageblock">
+<div class="content">
+<img src="prefix_register_2.png" alt="prefix register 2">
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_example_drs_client_compact_identifier_based_uri_resolution_process_existing_compact_identifier_provider"><a class="anchor" href="#_example_drs_client_compact_identifier_based_uri_resolution_process_existing_compact_identifier_provider"></a><a class="link" href="#_example_drs_client_compact_identifier_based_uri_resolution_process_existing_compact_identifier_provider">4. Example DRS Client Compact Identifier-Based URI Resolution Process - Existing Compact Identifier Provider</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>A DRS client identifies the a DRS URI compact identifier components using the first occurance of "/" (optional) and ":" characters. These are not allowed inside the provider_code (optional) or the namespace. The ":" character is not allowed in a Hostname-based DRS URI, providing a convenient mechanism to differentiate them. Once the provider_code (optional) and namespace are extracted from a DRS compact identifier-based URI, a client can use services on identifiers.org to identify available resolvers.</p>
@@ -562,7 +587,7 @@ DRS URIs using compact identifiers with resolvers registered in identifiers.org/
 </div>
 </div>
 <div class="sect1">
-<h2 id="_example_drs_client_compact_identifier_based_uri_resolution_process_registering_a_new_compact_identifier_for_your_drs_server"><a class="anchor" href="#_example_drs_client_compact_identifier_based_uri_resolution_process_registering_a_new_compact_identifier_for_your_drs_server"></a><a class="link" href="#_example_drs_client_compact_identifier_based_uri_resolution_process_registering_a_new_compact_identifier_for_your_drs_server">4. Example DRS Client Compact Identifier-Based URI Resolution Process - Registering a new Compact Identifier for Your DRS Server</a></h2>
+<h2 id="_example_drs_client_compact_identifier_based_uri_resolution_process_registering_a_new_compact_identifier_for_your_drs_server"><a class="anchor" href="#_example_drs_client_compact_identifier_based_uri_resolution_process_registering_a_new_compact_identifier_for_your_drs_server"></a><a class="link" href="#_example_drs_client_compact_identifier_based_uri_resolution_process_registering_a_new_compact_identifier_for_your_drs_server">5. Example DRS Client Compact Identifier-Based URI Resolution Process - Registering a new Compact Identifier for Your DRS Server</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
 <p>See the documentation on <a href="https://n2t.net/e/compact_ids.html">n2t.net</a> and <a href="https://docs.identifiers.org/">identifiers.org</a> for adding your own compact identifier type and registering your DRS server as a resolver. We document this in more detail in the <a href="index.html#_registering_a_drs_server_on_a_meta_resolver">main specification document</a>.</p>
@@ -641,7 +666,7 @@ DRS URIs using compact identifiers with resolvers registered in identifiers.org/
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2020-05-19 20:49:39 UTC
+Last updated 2020-06-08 03:50:28 UTC
 </div>
 </div>
 </body>
