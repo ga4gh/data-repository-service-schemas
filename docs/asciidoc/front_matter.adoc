@@ -1,12 +1,3 @@
-////
-TODO:
-* do we want to add a self_url to the JSON response from DRS objects?  This would make it much, much easier to construct the access method rather than using the hostname-based URI which requires manipulation and parsing.
-* comments from David to note in the PR conversation
-  - removing provider_code
-	- mandating all DRS servers to register new prefixes
-	- saying 'drs.' should be in the prefixes
-////
-
 == Introduction
 
 The Data Repository Service (DRS) API provides a generic interface to data repositories so data consumers, including workflow systems, can access data objects in a single, standard way regardless of where they are stored and how they are managed. The primary functionality of DRS is to map a logical ID to a means for physically retrieving the data represented by the ID. The sections below describe the characteristics of those IDs, the types of data supported, how they can be pointed to using URIs, and how clients can use these URIs to ultimately make successful DRS API requests. This document also describes the DRS API in detail and provides information on the specific endpoints, request formats, and responses.  This specification is intended for developers of DRS-compatible services and of clients that will call these DRS services.
@@ -80,7 +71,7 @@ A DRS client parses the DRS URI compact identifier components to extract the pre
 
 1) The client parses the string to extract the prefix of `drs.42` and the accession of `314159`, using the first occurrence of a colon (":") character after the initial `drs://` as a delimiter. (The colon character is not allowed in a Hostname-based DRS URI, making it easy to tell them apart.)
 
-2) The client makes API calls to a meta-resolver to look up the URL pattern for the namespace. (See <<_appendix_compact_identifier_based_uris>> for details.) The URL pattern is a string containing a `{$id}` parameter, such as:
+2) The client makes API calls to a meta-resolver to look up the URL pattern for the namespace. (See <<_calling_meta_resolver_apis_for_compact_identifier_based_drs_uris>> for details.) The URL pattern is a string containing a `{$id}` parameter, such as:
 
     https://drs.myexample.org/ga4gh/drs/v1/objects/{$id}
 
@@ -106,15 +97,12 @@ DRS servers can choose to issue either hostname-based or compact identifier-base
 
 |Client Efficiency
 |URIs require minimal client logic, and no network requests, to resolve.
-|URIs require small client logic, and 1-2 cacheable network requests, to resolve.  Citation practice is consistent with publisher instructions.
+|URIs require small client logic, and 1-2 cacheable network requests, to resolve.
 
 |Security
 |Servers have full control over their own security practices.
 |Server operators, in addition to maintaining their own security practices, should confirm they are comfortable with the resolver registry security practices, including protection against denial of service and namespace-hijacking attacks. (See the <<_appendix_compact_identifier_based_uris>> for more information on resolver registry security.)
 
-|https://www.nature.com/articles/sdata201618[FAIR-ness]
-|Provided the published DNS address is valid.
-|Same assuming the resolver registry namespace is valid. Slightly increased find-ability given the extra metadata available in the resolver registry (contact, organization, etc).
 |===
 
 === DRS Datatypes

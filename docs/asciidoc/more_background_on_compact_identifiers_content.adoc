@@ -31,6 +31,18 @@ TIP: DRS URIs using compact identifiers with resolvers registered in identifiers
 
 See the documentation on https://n2t.net/e/compact_ids.html[n2t.net] and https://docs.identifiers.org/[identifiers.org] for much more information on the compact identifiers used there and details about the resolution process.
 
+== Registering a DRS Server on a Meta-Resolver
+
+See the documentation on the https://n2t.net/e/compact_ids.html[n2t.net] and https://docs.identifiers.org/[identifiers.org] meta-resolvers for adding your own compact identifier type and registering your DRS server as a resolver. You can register new prefixes (or mirrors by adding resource provider codes) for free using a simple online form.
+
+Keep in mind, while anyone can register prefixes, the identifiers.org/n2t.net sites do basic hand curation to verify new prefix and resource (provider code) requests.  See those sites for more details on their security practices.  For more information see
+
+Starting with the prefix for our new compact identifier, let's register the namespace `mydrsprefix` on identifiers.org/n2t.net and use 5-digit numeric IDs as our accessions.  We will then link this to the DRS server at `https://mydrs.server.org/ga4gh/drs/v1/` by filling in the provider details.  Here's what that the registration for our new namespace looks like on https://registry.identifiers.org/prefixregistrationrequest[identifiers.org]:
+
+image::prefix_register_1.png[]
+
+image::prefix_register_2.png[]
+
 == Example DRS Client Compact Identifier-Based URI Resolution Process - Existing Compact Identifier Provider
 
 A DRS client identifies the a DRS URI compact identifier components using the first occurance of "/" (optional) and ":" characters. These are not allowed inside the provider_code (optional) or the namespace. The ":" character is not allowed in a Hostname-based DRS URI, providing a convenient mechanism to differentiate them. Once the provider_code (optional) and namespace are extracted from a DRS compact identifier-based URI, a client can use services on identifiers.org to identify available resolvers.

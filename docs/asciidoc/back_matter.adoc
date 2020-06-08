@@ -57,19 +57,13 @@ The examples below show the current API interactions with https://n2t.net/e/comp
 
 === Registering a DRS Server on a Meta-Resolver
 
-See the documentation on the https://n2t.net/e/compact_ids.html[n2t.net] and https://docs.identifiers.org/[identifiers.org] meta-resolvers for adding your own compact identifier type and registering your DRS server as a resolver. You can register new prefixes (or mirrors by adding resource provider codes) for free using a simple online form.  Keep in mind, while anyone can register prefixes, the identifiers.org/n2t.net sites do basic hand curation to verify new prefix and resource (provider code) requests.  See those sites for more details on their security practices.
-
-Starting with the prefix for our new compact identifier, let's register the namespace `mydrsprefix` on identifiers.org/n2t.net and use 5-digit numeric IDs as our accessions.  We will then link this to the DRS server at `https://mydrs.server.org/ga4gh/drs/v1/` by filling in the provider details.  Here's what that the registration for our new namespace looks like on https://registry.identifiers.org/prefixregistrationrequest[identifiers.org]:
-
-image::prefix_register_1.png[]
-
-image::prefix_register_2.png[]
+See the documentation on the https://n2t.net/e/compact_ids.html[n2t.net] and https://docs.identifiers.org/[identifiers.org] meta-resolvers for adding your own compact identifier type and registering your DRS server as a resolver. You can register new prefixes (or mirrors by adding resource provider codes) for free using a simple online form.  For more information see link:more_background_on_compact_identifiers[More Background on Compact Identifiers].
 
 === Calling Meta-Resolver APIs for Compact Identifier-Based DRS URIs
 
 Clients resolving Compact Identifier-based URIs need to convert a prefix (e.g. “drs.42”) into an URL pattern. They can do so by calling either the identifiers.org or the n2t.net API, since the two meta-resolvers keep their mapping databases in sync.
 
-=== Calling the identifiers.org API as a Client
+==== Calling the identifiers.org API as a Client
 
 It takes two API calls to get the URL pattern.
 
@@ -91,7 +85,7 @@ This request returns a JSON structure including an urlPattern field, whose value
 
   "urlPattern" : "https://drs.myexample.org/ga4gh/drs/v1/objects/{$id}"
 
-=== Calling the n2t.net API as a Client
+==== Calling the n2t.net API as a Client
 
 It takes one API call to get the URL pattern.
 
@@ -105,11 +99,11 @@ This request returns a text structure including a redirect field, whose value is
 
 === Caching with Compact Identifiers
 
-Identifiers.org/n2t.net compact identifier resolver records do not change frequently.  This reality is  useful for caching resolver records and their URL patterns for performance reasons.  Builders of systems that use compact identifier-based DRS URIs should cache prefix resolver records from identifiers.org/n2t.net and occasionally refresh the records (such as every 24 hours).  This approach will reduce the burden on these community services since we anticipate many DRS URIs will be regularly resolved in workflow systems.  The implementation of the caching approach is up to system builders but we recommend at least caching the mapping of prefixes to URL patterns. System builders may also choose to cache the compact identifier accession to final DRS URL records as well, but that decision/design is at the discretion of the system builder.  Alternatively, system builders may decide to directly mirror the registries themselves, instructions are provided on the identifiers.org/n2t.net websites.
+Identifiers.org/n2t.net compact identifier resolver records do not change frequently.  This reality is  useful for caching resolver records and their URL patterns for performance reasons.  Builders of systems that use compact identifier-based DRS URIs should cache prefix resolver records from identifiers.org/n2t.net and occasionally refresh the records (such as every 24 hours).  This approach will reduce the burden on these community services since we anticipate many DRS URIs will be regularly resolved in workflow systems. Alternatively, system builders may decide to directly mirror the registries themselves, instructions are provided on the identifiers.org/n2t.net websites.
 
 === Security with Compact Identifiers
 
-As mentioned earlier, identifiers.org/n2t.net performs some basic verification of new prefixes and provider code mirror registrations on their sites.  However, system builders may have certain security compliance requirements and regulations that prohibit relying on an external site for resolving compact identifiers.  In this case, systems under these security and compliance constraints may wish to whitelist certain compact identifier resolvers and/or vet records from identifiers.org/n2t.net before enabling in their system.
+As mentioned earlier, identifiers.org/n2t.net performs some basic verification of new prefixes and provider code mirror registrations on their sites.  However, builders of systems that consume and resolve DRS URIs may have certain security compliance requirements and regulations that prohibit relying on an external site for resolving compact identifiers.  In this case, systems under these security and compliance constraints may wish to whitelist certain compact identifier resolvers and/or vet records from identifiers.org/n2t.net before enabling in their systems.
 
 === Accession Encoding to Valid DRS IDs
 
