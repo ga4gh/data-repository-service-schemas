@@ -1,8 +1,8 @@
 == Introduction
 
-The Data Repository Service (DRS) API provides a generic interface to data repositories so data consumers, including workflow systems, can access data in a single, standard way regardless of where it's stored and how it's managed. This document describes the DRS API and provides details on the specific endpoints, request formats, and responses. It is intended for developers of DRS-compatible services and of clients that will call these DRS services.
+The Data Repository Service (DRS) API provides a generic interface to data repositories so data consumers, including workflow systems, can access data objects in a single, standard way regardless of where they are stored and how they are managed. The primary functionality of DRS is to map a logical ID to a means for physically retrieving the data represented by the ID. The sections below describe the characteristics of those IDs, the types of data supported, how they can be pointed to using URIs, and how clients can use these URIs to ultimately make successful DRS API requests. This document also describes the DRS API in detail and provides information on the specific endpoints, request formats, and responses.  This specification is intended for developers of DRS-compatible services and of clients that will call these DRS services.
 
-The primary functionality of DRS is to map a logical ID to a means for physically retrieving the data represented by the ID. The sections below describe the characteristics of those IDs, the types of data supported, and how the mapping works.
+The key words MUST, MUST NOT, REQUIRED, SHALL, SHALL NOT, SHOULD, SHOULD NOT, RECOMMENDED, MAY, and OPTIONAL in this document are to be interpreted as described in https://tools.ietf.org/html/rfc2119[RFC 2119].
 
 == DRS API Principles
 
@@ -11,16 +11,99 @@ The primary functionality of DRS is to map a logical ID to a means for physicall
 Each implementation of DRS can choose its own id scheme, as long as it follows these guidelines:
 
 * DRS IDs are strings made up of uppercase and lowercase letters, decimal digits, hypen, period, underscore and tilde [A-Za-z0-9.-_~]. See https://tools.ietf.org/html/rfc3986#section-2.3[RFC 3986 § 2.3].
-* Note to server implementors: internal IDs can contain other characters, but they MUST be encoded into valid DRS IDs whenever exposed by the API.   
+* DRS IDs can contain other characters, but they MUST be encoded into valid DRS IDs whenever they are used in API calls.  This is because non-encoded IDs may interfere with the interpretation of the `objects/{id}/access` endpoint.  To overcome this limitation use percent-encoding of the ID, see https://tools.ietf.org/html/rfc3986#section-2.4[RFC 3986 § 2.4]
 * One DRS ID MUST always return the same object data (or, in the case of a collection, the same set of objects). This constraint aids with reproducibility.
-* DRS v1 does NOT support semantics around multiple versions of an object. (For example, there’s no notion of “get latest version” or “list all versions”.) Individual implementation MAY choose an ID scheme that includes version hints.
 * DRS implementations MAY have more than one ID that maps to the same object.
+* DRS version 1.x does NOT support semantics around multiple versions of an object. (For example, there’s no notion of “get latest version” or “list all versions”.) Individual implementations MAY choose an ID scheme that includes version hints.
+
 
 === DRS URIs
 
-For convenience, including when passing content references to a WES server, we define a URI syntax for DRS-accessible content. Strings of the form `drs://<server>/<id>` mean _“you can fetch the content with DRS id `<id>` from the DRS server at `<server>` "_.
+For convenience, including when passing content references to a https://github.com/ga4gh/workflow-execution-service-schemas[WES server], we define a https://en.wikipedia.org/wiki/Uniform_Resource_Identifier#Generic_syntax[URI scheme] for DRS-accessible content. This section documents the syntax of DRS URIs, and the rules clients follow for translating a DRS URI into a URL that they use for making the DRS API calls described in this spec.
 
-For example, if a WES server was asked to process `drs://drs.example.org/314159`, it would know that it could issue a GET request to `https://drs.example.org/ga4gh/drs/v1/objects/314159` to learn how to fetch that object.
+There are two styles of DRS URIs, Hostname-based and Compact Identifier-based, both using the `drs://` URI scheme. DRS servers may choose either style when exposing references to their content;. DRS clients MUST support resolving both styles.
+
+TIP: See <<_appendix_background_notes_on_drs_uris>> for more information on our design motivations for DRS URIs.
+
+==== Hostname-based DRS URIs
+
+Hostname-based DRS URIs are simpler than compact identifier-based URIs.  They contain the DRS server name and the DRS ID only and can be converted directly into a fetchable URL based on a simple rule.  They take the form:
+
+    drs://<hostname>/<id>
+
+DRS URIs of this form mean _"you can fetch the content with DRS id <id> from the DRS server at <hostname>"_.
+For example, here are the client resolution steps if the URI is:
+
+    drs://drs.example.org/314159
+
+1) The client parses the string to extract the hostname of “drs.example.org” and the id of “314159”.
+2) The client makes a GET request to the DRS server, using the standard DRS URL syntax:
+
+    GET https://drs.example.org/ga4gh/drs/v1/objects/314159
+
+The protocol is always https and the port is always the standard 443 SSL port. It is invalid to include a different port in a DRS hostname-based URI.
+
+TIP: See the <<_appendix_hostname_based_uris>> for information on how hostname-based DRS URI resolution to URLs is likely to change in the future, when the DRS v2 major release happens.
+
+==== Compact Identifier-based DRS URIs
+
+Compact Identifier-based DRS URIs use resolver registry services (specifically, https://identifiers.org/[identifiers.org] and https://n2t.net/[n2t.net (Name-To-Thing)]) to provide a layer of indirection between the DRS URI and the DRS server name -- the actual DNS name of the DRS server isn’t present in the URI.  This approach is based on the Joint Declaration of Data Citation Principles as detailed by https://doi.org/10.1038/sdata.2018.29[Wimalaratne et al (2018)].
+
+For more information, see the document link:more_background_on_compact_identifiers[More Background on Compact Identifiers].
+
+Compact Identifiers take the form:
+
+    drs://[provider_code/]namespace:accession
+
+Together, provider code and the namespace are referred to as the _prefix_. The provider code is optional and is used by identifiers.org/n2t.net for compact identifier resolver mirrors.  Both the `provider_code` and `namespace` disallow spaces or punctuation, only lowercase alphanumerical characters, underscores and dots are allowed (e.g. [A-Za-z0-9._]).
+
+TIP: See the <<_appendix_compact_identifier_based_uris>> for more background on Compact Identifiers and resolver registry services like identifiers.org/n2t.net (aka meta-resolvers), how to register prefixes, possible caching strategies, and security considerations.
+
+===== For DRS Servers
+
+If your DRS implementation will issue DRS URIs based on _your own_ compact identifiers, you MUST first register a new prefix with identifiers.org (which is automatically mirrored to n2t.net). You will also need to include a provider resolver resource in this registration which links the prefix to your DRS server, so that DRS clients can get sufficient information to make a successful DRS GET request.  For clarity, we recommend you choose a namespace beginning with `drs.`.
+
+===== For DRS Clients
+
+A DRS client parses the DRS URI compact identifier components to extract the prefix and the accession, and then uses meta-resolver APIs to locate the actual DRS server. For example, here are the client resolution steps if the URI is:
+
+    drs://drs.42:314159
+
+1) The client parses the string to extract the prefix of `drs.42` and the accession of `314159`, using the first occurrence of a colon (":") character after the initial `drs://` as a delimiter. (The colon character is not allowed in a Hostname-based DRS URI, making it easy to tell them apart.)
+
+2) The client makes API calls to a meta-resolver to look up the URL pattern for the namespace. (See <<_calling_meta_resolver_apis_for_compact_identifier_based_drs_uris>> for details.) The URL pattern is a string containing a `{$id}` parameter, such as:
+
+    https://drs.myexample.org/ga4gh/drs/v1/objects/{$id}
+
+3) The client generates a DRS URL from the URL template by replacing {$id} with the accession it extracted in step 1. It then makes a GET request to the DRS server:
+
+    GET https://drs.myexample.org/ga4gh/drs/v1/objects/314159
+
+4) The client follows any HTTP redirects returned in step 3, in case the resolver goes through an extra layer of redirection.
+
+For performance reasons, DRS clients SHOULD cache the URL pattern returned in step 2, with a suggested 24 hour cache life.
+
+==== Choosing a URI Style
+
+DRS servers can choose to issue either hostname-based or compact identifier-based DRS URIs, and can be confident that compliant DRS clients will support both.  DRS clients *must* be able to accommodate both URI types. Tradeoffs that DRS server builders, and third parties who need to cite DRS objects in datasets, workflows or elsewhere, may want to consider include:
+
+.Table Choosing a URI Style
+|===
+| |Hostname-based |Compact Identifier-based
+
+|URI Durability
+|URIs are valid for as long as the server operator maintains ownership of the published DNS address. (They can of course point that address at different physical serving infrastructure as often as they’d like.)
+|URIs are valid for as long as the server operator maintains ownership of the published compact identifier resolver namespace. (They also depend on the meta-resolvers like identifiers.org/n2t.net remaining operational, which is intended to be essentially forever.)
+
+|Client Efficiency
+|URIs require minimal client logic, and no network requests, to resolve.
+|URIs require small client logic, and 1-2 cacheable network requests, to resolve.
+
+|Security
+|Servers have full control over their own security practices.
+|Server operators, in addition to maintaining their own security practices, should confirm they are comfortable with the resolver registry security practices, including protection against denial of service and namespace-hijacking attacks. (See the <<_appendix_compact_identifier_based_uris>> for more information on resolver registry security.)
+
+|===
 
 === DRS Datatypes
 
@@ -35,17 +118,17 @@ DRS v1 is a read-only API. We expect that each implementation will define its ow
 
 === Standards
 
-The DRS API specification is written in OpenAPI and embodies a RESTful service philosophy.  It uses JSON in requests and responses and standard HTTPS for information transport.
+The DRS API specification is written in OpenAPI and embodies a RESTful service philosophy.  It uses JSON in requests and responses and standard HTTPS on port 443 for information transport.
 
 == Authorization & Authentication
 
 === Making DRS Requests
 
-The DRS implementation is responsible for defining and enforcing an authorization policy that determines which users are allowed to make which requests. GA4GH recommends that DRS implementations use an OAuth 2.0 https://oauth.net/2/bearer-tokens/[bearer token], although they can choose other mechanisms if appropriate. 
+The DRS implementation is responsible for defining and enforcing an authorization policy that determines which users are allowed to make which requests. GA4GH recommends that DRS implementations use an OAuth 2.0 https://oauth.net/2/bearer-tokens/[bearer token], although they can choose other mechanisms if appropriate.
 
 === Fetching DRS Objects
 
-The DRS API allows implementers to support a variety of different content access policies, depending on what `AccessMethod` s they return:
+The DRS API allows implementers to support a variety of different content access policies, depending on what `AccessMethod` records they return:
 
 * public content:
 ** server provides an `access_url` with a `url` and no `headers`

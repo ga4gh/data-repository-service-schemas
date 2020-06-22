@@ -1,6 +1,6 @@
 {
   "name": "Data-Repository-Service-openapi-spec",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "dependencies": {
     "bower": "^1.7.7",
     "connect": "^3.4.1",
