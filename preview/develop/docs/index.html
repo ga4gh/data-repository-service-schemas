@@ -439,7 +439,13 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_drs_api_principles">3. DRS API Principles</a>
 <ul class="sectlevel2">
 <li><a href="#_drs_ids">3.1. DRS IDs</a></li>
-<li><a href="#_drs_uris">3.2. DRS URIs</a></li>
+<li><a href="#_drs_uris">3.2. DRS URIs</a>
+<ul class="sectlevel3">
+<li><a href="#_hostname_based_drs_uris">3.2.1. Hostname-based DRS URIs</a></li>
+<li><a href="#_compact_identifier_based_drs_uris">3.2.2. Compact Identifier-based DRS URIs</a></li>
+<li><a href="#_choosing_a_uri_style">3.2.3. Choosing a URI Style</a></li>
+</ul>
+</li>
 <li><a href="#_drs_datatypes">3.3. DRS Datatypes</a></li>
 <li><a href="#_read_only">3.4. Read-only</a></li>
 <li><a href="#_standards">3.5. Standards</a></li>
@@ -453,7 +459,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </li>
 <li><a href="#_paths">5. Paths</a>
 <ul class="sectlevel2">
-<li><a href="#_getobject">5.1. Get info about an <code>Object</code>.</a>
+<li><a href="#_getobject">5.1. Get info about a <code>DrsObject</code>.</a>
 <ul class="sectlevel3">
 <li><a href="#_description">5.1.1. Description</a></li>
 <li><a href="#_parameters">5.1.2. Parameters</a></li>
@@ -469,13 +475,6 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_tags_3">5.2.4. Tags</a></li>
 </ul>
 </li>
-<li><a href="#_getserviceinfo">5.3. Get information about this implementation.</a>
-<ul class="sectlevel3">
-<li><a href="#_description_3">5.3.1. Description</a></li>
-<li><a href="#_responses_3">5.3.2. Responses</a></li>
-<li><a href="#_tags_4">5.3.3. Tags</a></li>
-</ul>
-</li>
 </ul>
 </li>
 <li><a href="#_definitions">6. Definitions</a>
@@ -484,14 +483,39 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_accessurl">6.2. AccessURL</a></li>
 <li><a href="#_checksum">6.3. Checksum</a></li>
 <li><a href="#_contentsobject">6.4. ContentsObject</a></li>
-<li><a href="#_error">6.5. Error</a></li>
-<li><a href="#_object">6.6. Object</a></li>
-<li><a href="#_serviceinfo">6.7. ServiceInfo</a></li>
+<li><a href="#_drsobject">6.5. DrsObject</a></li>
+<li><a href="#_error">6.6. Error</a></li>
 </ul>
 </li>
 <li><a href="#_appendix_motivation">7. Appendix: Motivation</a>
 <ul class="sectlevel2">
 <li><a href="#_federation">7.1. Federation</a></li>
+</ul>
+</li>
+<li><a href="#_appendix_background_notes_on_drs_uris">8. Appendix: Background Notes on DRS URIs</a>
+<ul class="sectlevel2">
+<li><a href="#_design_motivation">8.1. Design Motivation</a></li>
+</ul>
+</li>
+<li><a href="#_appendix_compact_identifier_based_uris">9. Appendix: Compact Identifier-Based URIs</a>
+<ul class="sectlevel2">
+<li><a href="#_registering_a_drs_server_on_a_meta_resolver">9.1. Registering a DRS Server on a Meta-Resolver</a></li>
+<li><a href="#_calling_meta_resolver_apis_for_compact_identifier_based_drs_uris">9.2. Calling Meta-Resolver APIs for Compact Identifier-Based DRS URIs</a>
+<ul class="sectlevel3">
+<li><a href="#_calling_the_identifiers_org_api_as_a_client">9.2.1. Calling the identifiers.org API as a Client</a></li>
+<li><a href="#_calling_the_n2t_net_api_as_a_client">9.2.2. Calling the n2t.net API as a Client</a></li>
+</ul>
+</li>
+<li><a href="#_caching_with_compact_identifiers">9.3. Caching with Compact Identifiers</a></li>
+<li><a href="#_security_with_compact_identifiers">9.4. Security with Compact Identifiers</a></li>
+<li><a href="#_accession_encoding_to_valid_drs_ids">9.5. Accession Encoding to Valid DRS IDs</a></li>
+<li><a href="#_additional_examples">9.6. Additional Examples</a></li>
+</ul>
+</li>
+<li><a href="#_appendix_hostname_based_uris">10. Appendix: Hostname-Based URIs</a>
+<ul class="sectlevel2">
+<li><a href="#_encoding_drs_ids">10.1. Encoding DRS IDs</a></li>
+<li><a href="#_future_drs_versions_and_service_registry_info">10.2. Future DRS Versions and Service Registry/Info</a></li>
 </ul>
 </li>
 </ul>
@@ -507,7 +531,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sect2">
 <h3 id="_version_information"><a class="anchor" href="#_version_information"></a><a class="link" href="#_version_information">1.1. Version information</a></h3>
 <div class="paragraph">
-<p><em>Version</em> : 0.1.1</p>
+<p><em>Version</em> : 1.1.0</p>
 </div>
 </div>
 <div class="sect2">
@@ -568,10 +592,10 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h2 id="_introduction"><a class="anchor" href="#_introduction"></a><a class="link" href="#_introduction">2. Introduction</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The Data Repository Service (DRS) API provides a generic interface to data repositories so data consumers, including workflow systems, can access data in a single, standard way regardless of where it&#8217;s stored and how it&#8217;s managed. This document describes the DRS API and provides details on the specific endpoints, request formats, and responses. It is intended for developers of DRS-compatible services and of clients that will call these DRS services.</p>
+<p>The Data Repository Service (DRS) API provides a generic interface to data repositories so data consumers, including workflow systems, can access data objects in a single, standard way regardless of where they are stored and how they are managed. The primary functionality of DRS is to map a logical ID to a means for physically retrieving the data represented by the ID. The sections below describe the characteristics of those IDs, the types of data supported, how they can be pointed to using URIs, and how clients can use these URIs to ultimately make successful DRS API requests. This document also describes the DRS API in detail and provides information on the specific endpoints, request formats, and responses.  This specification is intended for developers of DRS-compatible services and of clients that will call these DRS services.</p>
 </div>
 <div class="paragraph">
-<p>The primary functionality of DRS is to map a logical ID to a means for physically retrieving the data represented by the ID. The sections below describe the characteristics of those IDs, the types of data supported, and how the mapping works.</p>
+<p>The key words MUST, MUST NOT, REQUIRED, SHALL, SHALL NOT, SHOULD, SHOULD NOT, RECOMMENDED, MAY, and OPTIONAL in this document are to be interpreted as described in <a href="https://tools.ietf.org/html/rfc2119">RFC 2119</a>.</p>
 </div>
 </div>
 </div>
@@ -589,16 +613,16 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <p>DRS IDs are strings made up of uppercase and lowercase letters, decimal digits, hypen, period, underscore and tilde [A-Za-z0-9.-_~]. See <a href="https://tools.ietf.org/html/rfc3986#section-2.3">RFC 3986 § 2.3</a>.</p>
 </li>
 <li>
-<p>Note to server implementors: internal IDs can contain other characters, but they MUST be encoded into valid DRS IDs whenever exposed by the API.</p>
+<p>DRS IDs can contain other characters, but they MUST be encoded into valid DRS IDs whenever they are used in API calls.  This is because non-encoded IDs may interfere with the interpretation of the <code>objects/{id}/access</code> endpoint.  To overcome this limitation use percent-encoding of the ID, see <a href="https://tools.ietf.org/html/rfc3986#section-2.4">RFC 3986 § 2.4</a></p>
 </li>
 <li>
 <p>One DRS ID MUST always return the same object data (or, in the case of a collection, the same set of objects). This constraint aids with reproducibility.</p>
 </li>
 <li>
-<p>DRS v1 does NOT support semantics around multiple versions of an object. (For example, there’s no notion of “get latest version” or “list all versions”.) Individual implementation MAY choose an ID scheme that includes version hints.</p>
+<p>DRS implementations MAY have more than one ID that maps to the same object.</p>
 </li>
 <li>
-<p>DRS implementations MAY have more than one ID that maps to the same object.</p>
+<p>DRS version 1.x does NOT support semantics around multiple versions of an object. (For example, there’s no notion of “get latest version” or “list all versions”.) Individual implementations MAY choose an ID scheme that includes version hints.</p>
 </li>
 </ul>
 </div>
@@ -606,10 +630,178 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sect2">
 <h3 id="_drs_uris"><a class="anchor" href="#_drs_uris"></a><a class="link" href="#_drs_uris">3.2. DRS URIs</a></h3>
 <div class="paragraph">
-<p>For convenience, including when passing content references to a WES server, we define a URI syntax for DRS-accessible content. Strings of the form <code>drs://&lt;server&gt;/&lt;id&gt;</code> mean <em>“you can fetch the content with DRS id <code>&lt;id&gt;</code> from the DRS server at <code>&lt;server&gt;</code> "</em>.</p>
+<p>For convenience, including when passing content references to a <a href="https://github.com/ga4gh/workflow-execution-service-schemas">WES server</a>, we define a <a href="https://en.wikipedia.org/wiki/Uniform_Resource_Identifier#Generic_syntax">URI scheme</a> for DRS-accessible content. This section documents the syntax of DRS URIs, and the rules clients follow for translating a DRS URI into a URL that they use for making the DRS API calls described in this spec.</p>
 </div>
 <div class="paragraph">
-<p>For example, if a WES server was asked to process <code>drs://drs.example.org/314159</code>, it would know that it could issue a GET request to <code><a href="http://drs.example.org/ga4gh/drs/v1/objects/314159" class="bare">http://drs.example.org/ga4gh/drs/v1/objects/314159</a></code> to learn how to fetch that object.</p>
+<p>There are two styles of DRS URIs, Hostname-based and Compact Identifier-based, both using the <code>drs://</code> URI scheme. DRS servers may choose either style when exposing references to their content;. DRS clients MUST support resolving both styles.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Tip</div>
+</td>
+<td class="content">
+See <a href="#_appendix_background_notes_on_drs_uris">Appendix: Background Notes on DRS URIs</a> for more information on our design motivations for DRS URIs.
+</td>
+</tr>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_hostname_based_drs_uris"><a class="anchor" href="#_hostname_based_drs_uris"></a><a class="link" href="#_hostname_based_drs_uris">3.2.1. Hostname-based DRS URIs</a></h4>
+<div class="paragraph">
+<p>Hostname-based DRS URIs are simpler than compact identifier-based URIs.  They contain the DRS server name and the DRS ID only and can be converted directly into a fetchable URL based on a simple rule.  They take the form:</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>drs://&lt;hostname&gt;/&lt;id&gt;</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>DRS URIs of this form mean <em>"you can fetch the content with DRS id &lt;id&gt; from the DRS server at &lt;hostname&gt;"</em>.<br>
+For example, here are the client resolution steps if the URI is:</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>drs://drs.example.org/314159</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>1) The client parses the string to extract the hostname of “drs.example.org” and the id of “314159”.<br>
+2) The client makes a GET request to the DRS server, using the standard DRS URL syntax:</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>GET https://drs.example.org/ga4gh/drs/v1/objects/314159</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The protocol is always https and the port is always the standard 443 SSL port. It is invalid to include a different port in a DRS hostname-based URI.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Tip</div>
+</td>
+<td class="content">
+See the <a href="#_appendix_hostname_based_uris">Appendix: Hostname-Based URIs</a> for information on how hostname-based DRS URI resolution to URLs is likely to change in the future, when the DRS v2 major release happens.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_compact_identifier_based_drs_uris"><a class="anchor" href="#_compact_identifier_based_drs_uris"></a><a class="link" href="#_compact_identifier_based_drs_uris">3.2.2. Compact Identifier-based DRS URIs</a></h4>
+<div class="paragraph">
+<p>Compact Identifier-based DRS URIs use resolver registry services (specifically, <a href="https://identifiers.org/">identifiers.org</a> and <a href="https://n2t.net/">n2t.net (Name-To-Thing)</a>) to provide a layer of indirection between the DRS URI and the DRS server name&#8201;&#8212;&#8201;the actual DNS name of the DRS server isn’t present in the URI.  This approach is based on the Joint Declaration of Data Citation Principles as detailed by <a href="https://doi.org/10.1038/sdata.2018.29">Wimalaratne et al (2018)</a>.</p>
+</div>
+<div class="paragraph">
+<p>For more information, see the document <a href="more_background_on_compact_identifiers">More Background on Compact Identifiers</a>.</p>
+</div>
+<div class="paragraph">
+<p>Compact Identifiers take the form:</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>drs://[provider_code/]namespace:accession</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Together, provider code and the namespace are referred to as the <em>prefix</em>. The provider code is optional and is used by identifiers.org/n2t.net for compact identifier resolver mirrors.  Both the <code>provider_code</code> and <code>namespace</code> disallow spaces or punctuation, only lowercase alphanumerical characters, underscores and dots are allowed (e.g. [A-Za-z0-9._]).</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<div class="title">Tip</div>
+</td>
+<td class="content">
+See the <a href="#_appendix_compact_identifier_based_uris">Appendix: Compact Identifier-Based URIs</a> for more background on Compact Identifiers and resolver registry services like identifiers.org/n2t.net (aka meta-resolvers), how to register prefixes, possible caching strategies, and security considerations.
+</td>
+</tr>
+</table>
+</div>
+<div class="sect4">
+<h5 id="_for_drs_servers"><a class="anchor" href="#_for_drs_servers"></a><a class="link" href="#_for_drs_servers">For DRS Servers</a></h5>
+<div class="paragraph">
+<p>If your DRS implementation will issue DRS URIs based on <em>your own</em> compact identifiers, you MUST first register a new prefix with identifiers.org (which is automatically mirrored to n2t.net). You will also need to include a provider resolver resource in this registration which links the prefix to your DRS server, so that DRS clients can get sufficient information to make a successful DRS GET request.  For clarity, we recommend you choose a namespace beginning with <code>drs.</code>.</p>
+</div>
+</div>
+<div class="sect4">
+<h5 id="_for_drs_clients"><a class="anchor" href="#_for_drs_clients"></a><a class="link" href="#_for_drs_clients">For DRS Clients</a></h5>
+<div class="paragraph">
+<p>A DRS client parses the DRS URI compact identifier components to extract the prefix and the accession, and then uses meta-resolver APIs to locate the actual DRS server. For example, here are the client resolution steps if the URI is:</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>drs://drs.42:314159</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>1) The client parses the string to extract the prefix of <code>drs.42</code> and the accession of <code>314159</code>, using the first occurrence of a colon (":") character after the initial <code>drs://</code> as a delimiter. (The colon character is not allowed in a Hostname-based DRS URI, making it easy to tell them apart.)</p>
+</div>
+<div class="paragraph">
+<p>2) The client makes API calls to a meta-resolver to look up the URL pattern for the namespace. (See <a href="#_calling_meta_resolver_apis_for_compact_identifier_based_drs_uris">Calling Meta-Resolver APIs for Compact Identifier-Based DRS URIs</a> for details.) The URL pattern is a string containing a <code>{$id}</code> parameter, such as:</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>https://drs.myexample.org/ga4gh/drs/v1/objects/{$id}</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>3) The client generates a DRS URL from the URL template by replacing {$id} with the accession it extracted in step 1. It then makes a GET request to the DRS server:</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>GET https://drs.myexample.org/ga4gh/drs/v1/objects/314159</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>4) The client follows any HTTP redirects returned in step 3, in case the resolver goes through an extra layer of redirection.</p>
+</div>
+<div class="paragraph">
+<p>For performance reasons, DRS clients SHOULD cache the URL pattern returned in step 2, with a suggested 24 hour cache life.</p>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_choosing_a_uri_style"><a class="anchor" href="#_choosing_a_uri_style"></a><a class="link" href="#_choosing_a_uri_style">3.2.3. Choosing a URI Style</a></h4>
+<div class="paragraph">
+<p>DRS servers can choose to issue either hostname-based or compact identifier-based DRS URIs, and can be confident that compliant DRS clients will support both.  DRS clients <strong>must</strong> be able to accommodate both URI types. Tradeoffs that DRS server builders, and third parties who need to cite DRS objects in datasets, workflows or elsewhere, may want to consider include:</p>
+</div>
+<table class="tableblock frame-all grid-all spread">
+<caption class="title">Table 1. Table Choosing a URI Style</caption>
+<colgroup>
+<col style="width: 33.3333%;">
+<col style="width: 33.3333%;">
+<col style="width: 33.3334%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-top"></th>
+<th class="tableblock halign-left valign-top">Hostname-based</th>
+<th class="tableblock halign-left valign-top">Compact Identifier-based</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">URI Durability</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">URIs are valid for as long as the server operator maintains ownership of the published DNS address. (They can of course point that address at different physical serving infrastructure as often as they’d like.)</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">URIs are valid for as long as the server operator maintains ownership of the published compact identifier resolver namespace. (They also depend on the meta-resolvers like identifiers.org/n2t.net remaining operational, which is intended to be essentially forever.)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Client Efficiency</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">URIs require minimal client logic, and no network requests, to resolve.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">URIs require small client logic, and 1-2 cacheable network requests, to resolve.</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Security</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Servers have full control over their own security practices.</p></td>
+<td class="tableblock halign-left valign-top"><p class="tableblock">Server operators, in addition to maintaining their own security practices, should confirm they are comfortable with the resolver registry security practices, including protection against denial of service and namespace-hijacking attacks. (See the <a href="#_appendix_compact_identifier_based_uris">Appendix: Compact Identifier-Based URIs</a> for more information on resolver registry security.)</p></td>
+</tr>
+</tbody>
+</table>
 </div>
 </div>
 <div class="sect2">
@@ -620,10 +812,10 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="ulist">
 <ul>
 <li>
-<p>a <em>blob</em> is like a file&#8201;&#8212;&#8201;it&#8217;s a single blob of bytes, represented by an <code>Object</code> without a <code>contents</code> array</p>
+<p>a <em>blob</em> is like a file&#8201;&#8212;&#8201;it&#8217;s a single blob of bytes, represented by a <code>DrsObject</code> without a <code>contents</code> array</p>
 </li>
 <li>
-<p>a <em>bundle</em> is like a folder&#8201;&#8212;&#8201;it&#8217;s a collection of other DRS content (either blobs or bundles), represented by an <code>Object</code> with a <code>contents</code> array</p>
+<p>a <em>bundle</em> is like a folder&#8201;&#8212;&#8201;it&#8217;s a collection of other DRS content (either blobs or bundles), represented by a <code>DrsObject</code> with a <code>contents</code> array</p>
 </li>
 </ul>
 </div>
@@ -637,7 +829,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sect2">
 <h3 id="_standards"><a class="anchor" href="#_standards"></a><a class="link" href="#_standards">3.5. Standards</a></h3>
 <div class="paragraph">
-<p>The DRS API specification is written in OpenAPI and embodies a RESTful service philosophy.  It uses JSON in requests and responses and standard HTTPS for information transport.</p>
+<p>The DRS API specification is written in OpenAPI and embodies a RESTful service philosophy.  It uses JSON in requests and responses and standard HTTPS on port 443 for information transport.</p>
 </div>
 </div>
 </div>
@@ -648,13 +840,13 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sect2">
 <h3 id="_making_drs_requests"><a class="anchor" href="#_making_drs_requests"></a><a class="link" href="#_making_drs_requests">4.1. Making DRS Requests</a></h3>
 <div class="paragraph">
-<p>The DRS implementation is responsible for defining and enforcing an authorization policy that determines which users are allowed to make which requests. We recommend that DRS implementations use an OAuth2 <a href="https://oauth.net/2/bearer-tokens/">bearer token</a>, although they can choose other mechanisms if appropriate.  The <code>service-info</code> endpoint should provide sufficient information for a user to figure out how to authenticate with a DRS implementation.</p>
+<p>The DRS implementation is responsible for defining and enforcing an authorization policy that determines which users are allowed to make which requests. GA4GH recommends that DRS implementations use an OAuth 2.0 <a href="https://oauth.net/2/bearer-tokens/">bearer token</a>, although they can choose other mechanisms if appropriate.</p>
 </div>
 </div>
 <div class="sect2">
 <h3 id="_fetching_drs_objects"><a class="anchor" href="#_fetching_drs_objects"></a><a class="link" href="#_fetching_drs_objects">4.2. Fetching DRS Objects</a></h3>
 <div class="paragraph">
-<p>The DRS API allows implementers to support a variety of different content access policies, depending on what <code>AccessMethod</code> s they return:</p>
+<p>The DRS API allows implementers to support a variety of different content access policies, depending on what <code>AccessMethod</code> records they return:</p>
 </div>
 <div class="ulist">
 <ul>
@@ -718,6 +910,9 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </li>
 </ul>
 </div>
+<div class="paragraph">
+<p>DRS implementers should ensure their solutions restrict access to targets as much as possible, detect attempts to exploit through log monitoring, and they are prepared to take action if an exploit in their DRS implementation is detected.</p>
+</div>
 </div>
 </div>
 </div>
@@ -725,7 +920,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h2 id="_paths"><a class="anchor" href="#_paths"></a><a class="link" href="#_paths">5. Paths</a></h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_getobject"><a class="anchor" href="#_getobject"></a><a class="link" href="#_getobject">5.1. Get info about an <code>Object</code>.</a></h3>
+<h3 id="_getobject"><a class="anchor" href="#_getobject"></a><a class="link" href="#_getobject">5.1. Get info about a <code>DrsObject</code>.</a></h3>
 <div class="literalblock">
 <div class="content">
 <pre>GET /objects/{object_id}</pre>
@@ -796,8 +991,8 @@ If the object_id refers to a blob, then the query parameter is ignored.</p></td>
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>200</strong></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">The <code>Object</code> was found successfully.</p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><a href="#_object">Object</a></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">The <code>DrsObject</code> was found successfully.</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><a href="#_drsobject">DrsObject</a></p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>202</strong></p></td>
@@ -823,7 +1018,7 @@ If the object_id refers to a blob, then the query parameter is ignored.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>404</strong></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">The requested <code>Object</code> wasn&#8217;t found</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">The requested <code>DrsObject</code> wasn&#8217;t found</p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><a href="#_error">Error</a></p></td>
 </tr>
 <tr>
@@ -855,7 +1050,7 @@ If the object_id refers to a blob, then the query parameter is ignored.</p></td>
 <div class="sect3">
 <h4 id="_description_2"><a class="anchor" href="#_description_2"></a><a class="link" href="#_description_2">5.2.1. Description</a></h4>
 <div class="paragraph">
-<p>Returns a URL that can be used to fetch the bytes of an <code>Object</code>.</p>
+<p>Returns a URL that can be used to fetch the bytes of a <code>DrsObject</code>.</p>
 </div>
 <div class="paragraph">
 <p>This method only needs to be called when using an <code>AccessMethod</code> that contains an <code>access_id</code> (e.g., for servers that use signed URLs for fetching object bytes).</p>
@@ -883,14 +1078,14 @@ If the object_id refers to a blob, then the query parameter is ignored.</p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>Path</strong></p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>access_id</strong><br>
 <em>required</em></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">An <code>access_id</code> from the <code>access_methods</code> list of an <code>Object</code></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">An <code>access_id</code> from the <code>access_methods</code> list of a <code>DrsObject</code></p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>Path</strong></p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>object_id</strong><br>
 <em>required</em></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">An <code>id</code> of an <code>Object</code></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">An <code>id</code> of a <code>DrsObject</code></p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
 </tr>
 </tbody>
@@ -963,54 +1158,6 @@ If the object_id refers to a blob, then the query parameter is ignored.</p></td>
 </div>
 </div>
 </div>
-<div class="sect2">
-<h3 id="_getserviceinfo"><a class="anchor" href="#_getserviceinfo"></a><a class="link" href="#_getserviceinfo">5.3. Get information about this implementation.</a></h3>
-<div class="literalblock">
-<div class="content">
-<pre>GET /service-info</pre>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_description_3"><a class="anchor" href="#_description_3"></a><a class="link" href="#_description_3">5.3.1. Description</a></h4>
-<div class="paragraph">
-<p>May return service version and other information.</p>
-</div>
-</div>
-<div class="sect3">
-<h4 id="_responses_3"><a class="anchor" href="#_responses_3"></a><a class="link" href="#_responses_3">5.3.2. Responses</a></h4>
-<table class="tableblock frame-all grid-all spread">
-<colgroup>
-<col style="width: 10%;">
-<col style="width: 70%;">
-<col style="width: 20%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-middle">HTTP Code</th>
-<th class="tableblock halign-left valign-middle">Description</th>
-<th class="tableblock halign-left valign-middle">Schema</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>200</strong></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">Service information returned successfully</p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><a href="#_serviceinfo">ServiceInfo</a></p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="sect3">
-<h4 id="_tags_4"><a class="anchor" href="#_tags_4"></a><a class="link" href="#_tags_4">5.3.3. Tags</a></h4>
-<div class="ulist">
-<ul>
-<li>
-<p>DataRepositoryService</p>
-</li>
-</ul>
-</div>
-</div>
-</div>
 </div>
 </div>
 <div class="sect1">
@@ -1035,7 +1182,7 @@ If the object_id refers to a blob, then the query parameter is ignored.</p></td>
 <tr>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>access_id</strong><br>
 <em>optional</em></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">An arbitrary string to be passed to the <code>/access</code> method to get an <code>AccessURL</code>. This string must be unique per object. Note that at least one of <code>access_url</code> and <code>access_id</code> must be provided.</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">An arbitrary string to be passed to the <code>/access</code> method to get an <code>AccessURL</code>. This string must be unique within the scope of a single object. Note that at least one of <code>access_url</code> and <code>access_id</code> must be provided.</p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
 </tr>
 <tr>
@@ -1118,15 +1265,13 @@ If the object_id refers to a blob, then the query parameter is ignored.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>type</strong><br>
-<em>optional</em></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">The digest method used to create the checksum. If left unspecified md5<br>
-will be assumed.<br>
+<em>required</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">The digest method used to create the checksum.<br>
 <br>
-possible values:<br>
-md5 # most blob stores provide a checksum using this<br>
-etag # multipart uploads to blob stores<br>
-sha256<br>
-sha512</p></td>
+The value (e.g. <code>sha-256</code>) SHOULD be listed as <code>Hash Name String</code> in the <a href="https://www.iana.org/assignments/named-information/named-information.xhtml#hash-alg">IANA Named Information Hash Algorithm Registry</a>. Other values MAY be used, as long as implementors are aware of the issues discussed in <a href="https://tools.ietf.org/html/rfc6920#section-9.4">RFC6920</a>.<br>
+<br>
+GA4GH may provide more explicit guidance for use of non-IANA-registered algorithms in the future. Until then, if implementors do choose such an algorithm (e.g. because it&#8217;s implemented by their storage provider), they SHOULD use an existing standard <code>type</code> value such as <code>md5</code>, <code>etag</code>, <code>crc32c</code>, <code>trunc512</code>, or <code>sha1</code>.<br>
+<strong>Example</strong> : <code>"sha-256"</code></p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
 </tr>
 </tbody>
@@ -1158,13 +1303,13 @@ sha512</p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>drs_uri</strong><br>
 <em>optional</em></p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">A list of full DRS identifier URI paths that may be used to obtain the object. These URIs may be external to this DRS instance.<br>
-<strong>Example</strong> : <code>"drs://example.com/ga4gh/drs/v1/objects/{object_id}"</code></p></td>
+<strong>Example</strong> : <code>"drs://drs.example.org/314159"</code></p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">&lt; string &gt; array</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>id</strong><br>
 <em>optional</em></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">A DRS identifier of an <code>Object</code> (either a single blob or a nested bundle). If this ContentsObject is an object within a nested bundle, then the id is optional. Otherwise, the id is required.</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">A DRS identifier of a <code>DrsObject</code> (either a single blob or a nested bundle). If this ContentsObject is an object within a nested bundle, then the id is optional. Otherwise, the id is required.</p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
 </tr>
 <tr>
@@ -1177,7 +1322,127 @@ sha512</p></td>
 </table>
 </div>
 <div class="sect2">
-<h3 id="_error"><a class="anchor" href="#_error"></a><a class="link" href="#_error">6.5. Error</a></h3>
+<h3 id="_drsobject"><a class="anchor" href="#_drsobject"></a><a class="link" href="#_drsobject">6.5. DrsObject</a></h3>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 16.6666%;">
+<col style="width: 61.1111%;">
+<col style="width: 22.2223%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-middle">Name</th>
+<th class="tableblock halign-left valign-middle">Description</th>
+<th class="tableblock halign-left valign-middle">Schema</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>access_methods</strong><br>
+<em>optional</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">The list of access methods that can be used to fetch the <code>DrsObject</code>.<br>
+Required for single blobs; optional for bundles.</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">&lt; <a href="#_accessmethod">AccessMethod</a> &gt; array</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>aliases</strong><br>
+<em>optional</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">A list of strings that can be used to find other metadata about this <code>DrsObject</code> from external metadata sources. These aliases can be used to represent secondary accession numbers or external GUIDs.</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">&lt; string &gt; array</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>checksums</strong><br>
+<em>required</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">The checksum of the <code>DrsObject</code>. At least one checksum must be provided.<br>
+For blobs, the checksum is computed over the bytes in the blob.<br>
+<br>
+For bundles, the checksum is computed over a sorted concatenation of the checksums of its top-level contained objects (not recursive, names not included). The list of checksums is sorted alphabetically (hex-code) before concatenation and a further checksum is performed on the concatenated checksum value.<br>
+<br>
+For example, if a bundle contains blobs with the following checksums:<br>
+md5(blob1) = 72794b6d<br>
+md5(blob2) = 5e089d29<br>
+<br>
+Then the checksum of the bundle is:<br>
+md5( concat( sort( md5(blob1), md5(blob2) ) ) )<br>
+= md5( concat( sort( 72794b6d, 5e089d29 ) ) )<br>
+= md5( concat( 5e089d29, 72794b6d ) )<br>
+= md5( 5e089d2972794b6d )<br>
+= f7a29a04</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">&lt; <a href="#_checksum">Checksum</a> &gt; array</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>contents</strong><br>
+<em>optional</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">If not set, this <code>DrsObject</code> is a single blob.<br>
+If set, this <code>DrsObject</code> is a bundle containing the listed <code>ContentsObject</code> s (some of which may be further nested).</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">&lt; <a href="#_contentsobject">ContentsObject</a> &gt; array</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>created_time</strong><br>
+<em>required</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">Timestamp of content creation in RFC3339.<br>
+(This is the creation time of the underlying content, not of the JSON object.)</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">string (date-time)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>description</strong><br>
+<em>optional</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">A human readable description of the <code>DrsObject</code>.</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>id</strong><br>
+<em>required</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">An identifier unique to this <code>DrsObject</code>.</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>mime_type</strong><br>
+<em>optional</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">A string providing the mime-type of the <code>DrsObject</code>.<br>
+<strong>Example</strong> : <code>"application/json"</code></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>name</strong><br>
+<em>optional</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">A string that can be used to name a <code>DrsObject</code>.<br>
+This string is made up of uppercase and lowercase letters, decimal digits, hypen, period, and underscore [A-Za-z0-9.-_]. See <a href="http://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap03.html#tag_03_282">portable filenames</a>.</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>self_uri</strong><br>
+<em>required</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">A drs:// hostname-based URI, as defined in the DRS documentation, that tells clients how to access this object.<br>
+The intent of this field is to make DRS objects self-contained, and therefore easier for clients to store and pass around. For example, if you arrive at this DRS JSON by resolving a compact identifier-based DRS URI, the <code>self_uri</code> presents you with a hostname and properly encoded DRS ID for use in subsequent <code>access</code> endpoint calls.<br>
+<strong>Example</strong> : <code>"drs://drs.example.org/314159"</code></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>size</strong><br>
+<em>required</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">For blobs, the blob size in bytes.<br>
+For bundles, the cumulative size, in bytes, of items in the <code>contents</code> field.</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">integer (int64)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>updated_time</strong><br>
+<em>optional</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">Timestamp of content update in RFC3339, identical to <code>created_time</code> in systems that do not support updates. (This is the update time of the underlying content, not of the JSON object.)</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">string (date-time)</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>version</strong><br>
+<em>optional</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">A string representing a version.<br>
+(Some systems may use checksum, a RFC3339 timestamp, or an incrementing version number.)</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect2">
+<h3 id="_error"><a class="anchor" href="#_error"></a><a class="link" href="#_error">6.6. Error</a></h3>
 <div class="paragraph">
 <p>An object that can optionally include information about the error.</p>
 </div>
@@ -1206,175 +1471,6 @@ sha512</p></td>
 <em>optional</em></p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">The integer representing the HTTP status code (e.g. 200, 404).</p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">integer</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="sect2">
-<h3 id="_object"><a class="anchor" href="#_object"></a><a class="link" href="#_object">6.6. Object</a></h3>
-<table class="tableblock frame-all grid-all spread">
-<colgroup>
-<col style="width: 16.6666%;">
-<col style="width: 61.1111%;">
-<col style="width: 22.2223%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-middle">Name</th>
-<th class="tableblock halign-left valign-middle">Description</th>
-<th class="tableblock halign-left valign-middle">Schema</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>access_methods</strong><br>
-<em>optional</em></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">The list of access methods that can be used to fetch the <code>Object</code>.<br>
-Required for single blobs; optional for bundles.</p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">&lt; <a href="#_accessmethod">AccessMethod</a> &gt; array</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>aliases</strong><br>
-<em>optional</em></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">A list of strings that can be used to find other metadata about this <code>Object</code> from external metadata sources. These aliases can be used to represent secondary accession numbers or external GUIDs.</p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">&lt; string &gt; array</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>checksums</strong><br>
-<em>required</em></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">The checksum of the <code>Object</code>. At least one checksum must be provided.<br>
-For blobs, the checksum is computed over the bytes in the blob.<br>
-<br>
-For bundles, the checksum is computed over a sorted concatenation of the checksums of its top-level contained objects (not recursive, names not included). The list of checksums is sorted alphabetically (hex-code) before concatenation and a further checksum is performed on the concatenated checksum value.<br>
-<br>
-For example, if a bundle contains blobs with the following checksums:<br>
-md5(blob1) = 72794b6d<br>
-md5(blob2) = 5e089d29<br>
-<br>
-Then the checksum of the bundle is:<br>
-md5( concat( sort( md5(blob1), md5(blob2) ) ) )<br>
-= md5( concat( sort( 72794b6d, 5e089d29 ) ) )<br>
-= md5( concat( 5e089d29, 72794b6d ) )<br>
-= md5( 5e089d2972794b6d )<br>
-= f7a29a04</p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">&lt; <a href="#_checksum">Checksum</a> &gt; array</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>contents</strong><br>
-<em>optional</em></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">If not set, this <code>Object</code> is a single blob.<br>
-If set, this <code>Object</code> is a bundle containing the listed <code>ContentsObject</code> s (some of which may be further nested).</p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">&lt; <a href="#_contentsobject">ContentsObject</a> &gt; array</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>created</strong><br>
-<em>required</em></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">Timestamp of object creation in RFC3339.</p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">string (date-time)</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>description</strong><br>
-<em>optional</em></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">A human readable description of the <code>Object</code>.</p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>id</strong><br>
-<em>required</em></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">An identifier unique to this <code>Object</code>.</p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>mime_type</strong><br>
-<em>optional</em></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">A string providing the mime-type of the <code>Object</code>.<br>
-<strong>Example</strong> : <code>"application/json"</code></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>name</strong><br>
-<em>optional</em></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">A string that can be used to name an <code>Object</code>.<br>
-This string is made up of uppercase and lowercase letters, decimal digits, hypen, period, and underscore [A-Za-z0-9.-_]. See <a href="http://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap03.html#tag_03_282">portable filenames</a>.</p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>size</strong><br>
-<em>required</em></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">For blobs, the blob size in bytes.<br>
-For bundles, the cumulative size, in bytes, of items in the <code>contents</code> field.</p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">integer (int64)</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>updated</strong><br>
-<em>optional</em></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">Timestamp of <code>Object</code> update in RFC3339, identical to create timestamp in systems that do not support updates.</p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">string (date-time)</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>version</strong><br>
-<em>optional</em></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">A string representing a version.<br>
-(Some systems may use checksum, a RFC3339 timestamp, or an incrementing version number.)</p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
-</tr>
-</tbody>
-</table>
-</div>
-<div class="sect2">
-<h3 id="_serviceinfo"><a class="anchor" href="#_serviceinfo"></a><a class="link" href="#_serviceinfo">6.7. ServiceInfo</a></h3>
-<div class="paragraph">
-<p>Useful information about the running service.</p>
-</div>
-<table class="tableblock frame-all grid-all spread">
-<colgroup>
-<col style="width: 16.6666%;">
-<col style="width: 61.1111%;">
-<col style="width: 22.2223%;">
-</colgroup>
-<thead>
-<tr>
-<th class="tableblock halign-left valign-middle">Name</th>
-<th class="tableblock halign-left valign-middle">Description</th>
-<th class="tableblock halign-left valign-middle">Schema</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>contactUrl</strong><br>
-<em>optional</em></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">URL of the contact for the host/maintainer of this service, e.g. a link to a contact form (RFC 3986 format), or an email (RFC 2368 format).</p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>description</strong><br>
-<em>optional</em></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">Description of the service.</p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>documentationUrl</strong><br>
-<em>optional</em></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">URL of the documentation of this service (RFC 3986 format).</p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>id</strong><br>
-<em>required</em></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">Unique ID of this service. Reverse domain name notation is recommended, though not required.</p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>name</strong><br>
-<em>required</em></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">Name of this specific service.</p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>version</strong><br>
-<em>required</em></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">Version of the service.</p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
 </tr>
 </tbody>
 </table>
@@ -1480,10 +1576,162 @@ For bundles, the cumulative size, in bytes, of items in the <code>contents</code
 </div>
 </div>
 </div>
+<div class="sect1">
+<h2 id="_appendix_background_notes_on_drs_uris"><a class="anchor" href="#_appendix_background_notes_on_drs_uris"></a><a class="link" href="#_appendix_background_notes_on_drs_uris">8. Appendix: Background Notes on DRS URIs</a></h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_design_motivation"><a class="anchor" href="#_design_motivation"></a><a class="link" href="#_design_motivation">8.1. Design Motivation</a></h3>
+<div class="paragraph">
+<p>DRS URIs are aligned with the <a href="https://www.nature.com/articles/sdata201618">FAIR data principles</a> and the <a href="https://doi.org/10.1038/sdata.2018.2">Joint Declaration of Data Citation Principles</a>&#8201;&#8212;&#8201;both hostname-based and compact identifier-based URIs provide globally unique, machine-resolvable, persistent identifiers for data.</p>
+</div>
+<div class="ulist">
+<ul>
+<li>
+<p>We require all URIs to begin with <code>drs://</code> as a signal to humans and  systems consuming these URIs that the response they will ultimately receive, after transforming the URI to a fetchable URL, will be a DRS JSON packet. This signal differentiates DRS URIs from the wide variety of other entities (HTML documents, PDFs, ontology notes, etc.) that can be represented by compact identifiers.</p>
+</li>
+<li>
+<p>We support hostname-based URIs because of their simplicity and efficiency for server and client implementers.</p>
+</li>
+<li>
+<p>We support compact identifier-based URIs, and the meta-resolver services of identifiers.org and n2t.net (Name-to-Thing), because of the wide adoption of compact identifiers in the research community. as detailed by <a href="https://doi.org/10.1038/sdata.2018.29">Wimalaratne et al (2018)</a> in "Uniform resolution of compact identifiers for biomedical data."</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_appendix_compact_identifier_based_uris"><a class="anchor" href="#_appendix_compact_identifier_based_uris"></a><a class="link" href="#_appendix_compact_identifier_based_uris">9. Appendix: Compact Identifier-Based URIs</a></h2>
+<div class="sectionbody">
+<div class="sidebarblock">
+<div class="content">
+<div class="title">Note: Identifiers.org/n2t.net API Changes</div>
+<div class="paragraph">
+<p>The examples below show the current API interactions with <a href="https://n2t.net/e/compact_ids.html">n2t.net</a> and <a href="https://docs.identifiers.org/">identifiers.org</a> which may change over time.  Please refer to the documentation from each site for the most up-to-date information.  We will make best efforts to keep the DRS specification current but DRS clients MUST maintain their ability to use either the identifiers.org or n2t.net APIs to resolve compact identifier-based DRS URIs.</p>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_registering_a_drs_server_on_a_meta_resolver"><a class="anchor" href="#_registering_a_drs_server_on_a_meta_resolver"></a><a class="link" href="#_registering_a_drs_server_on_a_meta_resolver">9.1. Registering a DRS Server on a Meta-Resolver</a></h3>
+<div class="paragraph">
+<p>See the documentation on the <a href="https://n2t.net/e/compact_ids.html">n2t.net</a> and <a href="https://docs.identifiers.org/">identifiers.org</a> meta-resolvers for adding your own compact identifier type and registering your DRS server as a resolver. You can register new prefixes (or mirrors by adding resource provider codes) for free using a simple online form.  For more information see <a href="more_background_on_compact_identifiers">More Background on Compact Identifiers</a>.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_calling_meta_resolver_apis_for_compact_identifier_based_drs_uris"><a class="anchor" href="#_calling_meta_resolver_apis_for_compact_identifier_based_drs_uris"></a><a class="link" href="#_calling_meta_resolver_apis_for_compact_identifier_based_drs_uris">9.2. Calling Meta-Resolver APIs for Compact Identifier-Based DRS URIs</a></h3>
+<div class="paragraph">
+<p>Clients resolving Compact Identifier-based URIs need to convert a prefix (e.g. “drs.42”) into an URL pattern. They can do so by calling either the identifiers.org or the n2t.net API, since the two meta-resolvers keep their mapping databases in sync.</p>
+</div>
+<div class="sect3">
+<h4 id="_calling_the_identifiers_org_api_as_a_client"><a class="anchor" href="#_calling_the_identifiers_org_api_as_a_client"></a><a class="link" href="#_calling_the_identifiers_org_api_as_a_client">9.2.1. Calling the identifiers.org API as a Client</a></h4>
+<div class="paragraph">
+<p>It takes two API calls to get the URL pattern.</p>
+</div>
+<div class="paragraph">
+<p>(i) The client makes a GET request to identifiers.org to find information about the prefix:</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>GET https://registry.api.identifiers.org/restApi/namespaces/search/findByPrefix?prefix=drs.42</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This request returns a JSON structure including various URLs containing an embedded namespace id, such as:</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>"namespace" : {
+ "href":"https://registry.api.identifiers.org/restApi/namespaces/1234"
+}</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>(ii) The client extracts the namespace id (in this example 1234), and uses it to make a second GET request to identifiers.org to find information about the namespace:</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>GET https://registry.api.identifiers.org/restApi/resources/search/findAllByNamespaceId?id=1234</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This request returns a JSON structure including an urlPattern field, whose value is an URL pattern containing a <code>${id}</code> parameter, such as:</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>"urlPattern" : "https://drs.myexample.org/ga4gh/drs/v1/objects/{$id}"</pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_calling_the_n2t_net_api_as_a_client"><a class="anchor" href="#_calling_the_n2t_net_api_as_a_client"></a><a class="link" href="#_calling_the_n2t_net_api_as_a_client">9.2.2. Calling the n2t.net API as a Client</a></h4>
+<div class="paragraph">
+<p>It takes one API call to get the URL pattern.</p>
+</div>
+<div class="paragraph">
+<p>The client makes a GET request to n2t.net to find information about the namespace. (Note the trailing colon.)</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>GET https://n2t.net/drs.42:</pre>
+</div>
+</div>
+<div class="paragraph">
+<p>This request returns a text structure including a redirect field, whose value is an URL pattern containing a <code>$id</code> parameter, such as:</p>
+</div>
+<div class="literalblock">
+<div class="content">
+<pre>redirect: https://drs.myexample.org/ga4gh/drs/v1/objects/$id</pre>
+</div>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_caching_with_compact_identifiers"><a class="anchor" href="#_caching_with_compact_identifiers"></a><a class="link" href="#_caching_with_compact_identifiers">9.3. Caching with Compact Identifiers</a></h3>
+<div class="paragraph">
+<p>Identifiers.org/n2t.net compact identifier resolver records do not change frequently.  This reality is  useful for caching resolver records and their URL patterns for performance reasons.  Builders of systems that use compact identifier-based DRS URIs should cache prefix resolver records from identifiers.org/n2t.net and occasionally refresh the records (such as every 24 hours).  This approach will reduce the burden on these community services since we anticipate many DRS URIs will be regularly resolved in workflow systems. Alternatively, system builders may decide to directly mirror the registries themselves, instructions are provided on the identifiers.org/n2t.net websites.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_security_with_compact_identifiers"><a class="anchor" href="#_security_with_compact_identifiers"></a><a class="link" href="#_security_with_compact_identifiers">9.4. Security with Compact Identifiers</a></h3>
+<div class="paragraph">
+<p>As mentioned earlier, identifiers.org/n2t.net performs some basic verification of new prefixes and provider code mirror registrations on their sites.  However, builders of systems that consume and resolve DRS URIs may have certain security compliance requirements and regulations that prohibit relying on an external site for resolving compact identifiers.  In this case, systems under these security and compliance constraints may wish to whitelist certain compact identifier resolvers and/or vet records from identifiers.org/n2t.net before enabling in their systems.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_accession_encoding_to_valid_drs_ids"><a class="anchor" href="#_accession_encoding_to_valid_drs_ids"></a><a class="link" href="#_accession_encoding_to_valid_drs_ids">9.5. Accession Encoding to Valid DRS IDs</a></h3>
+<div class="paragraph">
+<p>The compact identifier format used by identifiers.org/n2t.net does not percent-encode reserved URI characters but, instead, relies on the first ":" character to separate prefix from accession. Since these accessions can contain any characters, and characters like "/" will interfere with DRS API calls, you <em>must</em> percent encode the accessions extracted from DRS compact identifier-based URIs when using as DRS IDs in subsequent DRS GET requests.  An easy way for a DRS client to handle this is to get the initial DRS object JSON response from whatever redirects the compact identifier resolves to, then look for the <code>self_uri</code> in the JSON, which will give you the correctly percent-encoded DRS ID for subsequent DRS API calls such as the <code>access</code> method.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_additional_examples"><a class="anchor" href="#_additional_examples"></a><a class="link" href="#_additional_examples">9.6. Additional Examples</a></h3>
+<div class="paragraph">
+<p>For additional examples, see the document <a href="more_background_on_compact_identifiers">More Background on Compact Identifiers</a>.</p>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="_appendix_hostname_based_uris"><a class="anchor" href="#_appendix_hostname_based_uris"></a><a class="link" href="#_appendix_hostname_based_uris">10. Appendix: Hostname-Based URIs</a></h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="_encoding_drs_ids"><a class="anchor" href="#_encoding_drs_ids"></a><a class="link" href="#_encoding_drs_ids">10.1. Encoding DRS IDs</a></h3>
+<div class="paragraph">
+<p>In hostname-based DRS URIs, the ID is always percent-encoded to ensure special characters do not interfere with subsequent DRS endpoint calls.  As such, ":" is not allowed in the URI and is a convenient way of differentiating from a compact identifier-based DRS URI.  Also, if a given DRS service implementation uses compact identifier accessions as their DRS IDs, they must be percent encoded before using them as DRS IDs in hostname-based DRS URIs and subsequent GET requests to a DRS service endpoint.</p>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_future_drs_versions_and_service_registry_info"><a class="anchor" href="#_future_drs_versions_and_service_registry_info"></a><a class="link" href="#_future_drs_versions_and_service_registry_info">10.2. Future DRS Versions and Service Registry/Info</a></h3>
+<div class="paragraph">
+<p>In the future, as new major versions of DRS are released, a DRS server might support multiple API versions on different URL paths. At that point we expect to add support for <a href="https://github.com/ga4gh-discovery/ga4gh-service-registry">service-registry</a> and <a href="https://github.com/ga4gh-discovery/ga4gh-service-info">service-info</a> endpoints to the API, and to update the URI resolution logic to describe how to use those endpoints when translating hostname-based DRS URIs to URLs.</p>
+</div>
+</div>
+</div>
+</div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2019-06-21 20:45:28 UTC
+Last updated 2020-06-22 17:14:39 UTC
 </div>
 </div>
 </body>
