@@ -2,7 +2,7 @@
   "name": "Data-Repository-Service-openapi-spec",
   "version": "1.1.0",
   "dependencies": {
-    "bower": "^1.7.7",
+    "bower": "^1.8.8",
     "connect": "^3.4.1",
     "cors": "^2.7.1",
     "github-markdown": "^3.2.0",
