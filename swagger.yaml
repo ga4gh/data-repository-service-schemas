@@ -2,7 +2,7 @@ swagger: '2.0'
 basePath: /ga4gh/drs/v1
 info:
   title: Data Repository Service
-  version: 1.0.0
+  version: 1.1.0
   description: 'https://github.com/ga4gh/data-repository-service-schemas'
   termsOfService: 'https://www.ga4gh.org/terms-and-conditions/'
   contact:
@@ -180,8 +180,8 @@ definitions:
       self_uri:
         type: string
         description: |-
-          A drs:// URI, as defined in the DRS documentation, that tells clients how to access this object.
-          The intent of this field is to make DRS objects self-contained, and therefore easier for clients to store and pass around.
+          A drs:// hostname-based URI, as defined in the DRS documentation, that tells clients how to access this object.
+          The intent of this field is to make DRS objects self-contained, and therefore easier for clients to store and pass around.  For example, if you arrive at this DRS JSON by resolving a compact identifier-based DRS URI, the `self_uri` presents you with a hostname and properly encoded DRS ID for use in subsequent `access` endpoint calls.
         example: 'drs://drs.example.org/314159'
       size:
         type: integer
@@ -194,7 +194,7 @@ definitions:
         format: date-time
         description: |-
           Timestamp of content creation in RFC3339.
-          (This is the creation time of the underlying content, not of the JSON object.) 
+          (This is the creation time of the underlying content, not of the JSON object.)
       updated_time:
         type: string
         format: date-time
@@ -309,7 +309,7 @@ definitions:
     properties:
       name:
         type: string
-        description: 'A name declared by the bundle author that must be used when materialising this object, overriding any name directly associated with the object itself. The name must be unique with the containing bundle.  This string is made up of uppercase and lowercase letters, decimal digits, hypen, period, and underscore [A-Za-z0-9.-_]. See http://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap03.html#tag_03_282[portable filenames].'
+        description: 'A name declared by the bundle author that must be used when materialising this object, overriding any name directly associated with the object itself. The name must be unique with the containing bundle. This string is made up of uppercase and lowercase letters, decimal digits, hypen, period, and underscore [A-Za-z0-9.-_]. See http://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap03.html#tag_03_282[portable filenames].'
       id:
         type: string
         description: 'A DRS identifier of a `DrsObject` (either a single blob or a nested bundle). If this ContentsObject is an object within a nested bundle, then the id is optional. Otherwise, the id is required.'
