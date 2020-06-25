@@ -109,8 +109,8 @@ DRS servers can choose to issue either hostname-based or compact identifier-base
 
 DRS v1 supports two types of content:
 
-* a _blob_ is like a file -- it's a single blob of bytes, represented by a `DrsObject` without a `contents` array
-* a _bundle_ is like a folder -- it's a collection of other DRS content (either blobs or bundles), represented by a `DrsObject` with a `contents` array
+* _blob_ : A single blob of bytes, represented by a `DrsObject` without a `contents` array. When instantiated on a file system, this should instantiate as a file.
+* _bundle_ : A collection of other DRS content (either blobs or bundles), represented by a `DrsObject` with a `contents` array. When instantiated on a file system, this should instantiate as a directory (also called a folder), recursively if needed, to mirror the `contents` array.
 
 === Read-only
 
