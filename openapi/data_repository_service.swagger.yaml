@@ -21,6 +21,10 @@ security:
   - {}
   - authToken: []
 paths:
+  '/service-info':
+    # Links to the latest version of service-info.
+    $ref: 'https://raw.githubusercontent.com/ga4gh-discovery/ga4gh-service-info/v1.0.0/service-info.yaml'
+
   '/objects/{object_id}':
     get:
       summary: Get info about a `DrsObject`.
