@@ -1,0 +1,6 @@
+{
+    "apiSpecPath": "openapi/data_repository_service.swagger.yaml",
+    "docsRoot": "docs-new",
+    "defaultBranch": "master",
+    "branchPathBase": "preview-new"
+}
