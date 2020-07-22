@@ -1,8 +1,8 @@
-dist: trusty
-language: python
-python:
-- '2.7'
-- '3.6'
+#dist: trusty
+#language: python
+#python:
+#- '2.7'
+#- '3.6'
 
 # Specifying `branches.only = ['master']` can cause tagged builds to
 # not deploy. See travis-ci/travis-ci#2498 and travis-ci/travis-ci#1675.
