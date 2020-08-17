@@ -122,3 +122,11 @@ In hostname-based DRS URIs, the ID is always percent-encoded to ensure special c
 === Future DRS Versions and Service Registry/Info
 
 In the future, as new major versions of DRS are released, a DRS server might support multiple API versions on different URL paths. At that point we expect to add support for https://github.com/ga4gh-discovery/ga4gh-service-registry[service-registry] and https://github.com/ga4gh-discovery/ga4gh-service-info[service-info] endpoints to the API, and to update the URI resolution logic to describe how to use those endpoints when translating hostname-based DRS URIs to URLs.
+
+
+== Appendix: Bearer Tokens
+
+As mentioned in link:making_drs_requests[Making DRS Requests], the GA4GH recommends the use of the OAuth 2.0 framework ([RFC 6749](https://tools.ietf.org/html/rfc6749)) for authentication and authorization.  This means using a https://oauth.net/2/bearer-tokens/[bearer access token] (e.g. an HTTP header of `Authorization: Bearer <token>`).  The nature of that access token can be either an opaque access token or a JWT GA4GH Passport access token, either way these are obtained through a standard OAuth 2.0 flow with a broker.  If a GA4GH Passport access token is used then a clearinghouse can obtain a GA4GH Passport with embedded visas that can express access controls and these can be used by the DRS server to make decisions about data access.  How authentication and authorization specifically work for a given DRS server is outside of the scope of this specification but we strongly recommend adhering to the [GA4GH Passport standard](https://w3id.org/ga4gh/product-approval-support/aai).
+
+image::figure4.png[]
+_Figure 4: a example OAuth 2.0 flow showing the interfactions of a passport broker, client, GA4GH API and clearinghouse. For more information see the [webinar](https://www.youtube.com/watch?v=K7HID5KAhz0) and the [slides](https://drive.google.com/file/d/10I0uSLGch2n_LIZrRk-j40XKNbpn30wJ/view) this was taken from._
