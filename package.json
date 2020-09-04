@@ -10,7 +10,7 @@
     "help": "^3.0.2",
     "portfinder": "^1.0.3",
     "shelljs": "^0.7.0",
-    "showdown": "^1.8.6",
+    "showdown": "^1.9.1",
     "swagger-repo": "^1.5.1",
     "swagger-ui": "^2.1.4"
   },
