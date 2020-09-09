@@ -334,6 +334,7 @@ definitions:
         - htsget
         - https
         - file
+        - dicomweb
         description: >-
           Type of the access method.
       access_url:
