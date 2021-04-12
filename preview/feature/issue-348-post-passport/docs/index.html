@@ -476,7 +476,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_tags_3">5.2.4. Tags</a></li>
 </ul>
 </li>
-<li><a href="#_postgetaccessurl">5.3. POST&#8217;ing a JWT GA4GH Passport in order to authorize for getting a URL for fetching bytes.</a>
+<li><a href="#_postgetaccessurl">5.3. Get a URL for fetching bytes.</a>
 <ul class="sectlevel3">
 <li><a href="#_description_3">5.3.1. Description</a></li>
 <li><a href="#_parameters_3">5.3.2. Parameters</a></li>
@@ -949,6 +949,9 @@ See the <a href="#_appendix_compact_identifier_based_uris">Appendix: Compact Ide
 <div class="paragraph">
 <p>Returns object metadata, and a list of access methods that can be used to fetch object bytes.</p>
 </div>
+<div class="paragraph">
+<p>Method is a POST to accomodate a JWT GA4GH Passport sent in the formData in order to authorize access.</p>
+</div>
 </div>
 <div class="sect3">
 <h4 id="_parameters"><a class="anchor" href="#_parameters"></a><a class="link" href="#_parameters">5.1.2. Parameters</a></h4>
@@ -1198,7 +1201,7 @@ If the object_id refers to a blob, then the query parameter is ignored.</p></td>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_postgetaccessurl"><a class="anchor" href="#_postgetaccessurl"></a><a class="link" href="#_postgetaccessurl">5.3. POST&#8217;ing a JWT GA4GH Passport in order to authorize for getting a URL for fetching bytes.</a></h3>
+<h3 id="_postgetaccessurl"><a class="anchor" href="#_postgetaccessurl"></a><a class="link" href="#_postgetaccessurl">5.3. Get a URL for fetching bytes.</a></h3>
 <div class="literalblock">
 <div class="content">
 <pre>POST /objects/{object_id}/access/{access_id}</pre>
@@ -1208,6 +1211,9 @@ If the object_id refers to a blob, then the query parameter is ignored.</p></td>
 <h4 id="_description_3"><a class="anchor" href="#_description_3"></a><a class="link" href="#_description_3">5.3.1. Description</a></h4>
 <div class="paragraph">
 <p>Returns a URL that can be used to fetch the bytes of a <code>DrsObject</code>.</p>
+</div>
+<div class="paragraph">
+<p>Method is a POST to accomodate a JWT GA4GH Passport sent in the formData in order to authorize access.</p>
 </div>
 <div class="paragraph">
 <p>This method only needs to be called when using an <code>AccessMethod</code> that contains an <code>access_id</code> (e.g., for servers that use signed URLs for fetching object bytes).</p>
@@ -2023,7 +2029,7 @@ For bundles, the cumulative size, in bytes, of items in the <code>contents</code
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2021-04-12 05:02:25 UTC
+Last updated 2021-04-12 05:14:55 UTC
 </div>
 </div>
 </body>
