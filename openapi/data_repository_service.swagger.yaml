@@ -95,7 +95,8 @@ paths:
       summary: Get info about a `DrsObject`.
       description: >-
         Returns object metadata, and a list of access methods that can be used to fetch object bytes.
-      operationId: GetObject
+      operationId: PostGetObject
+      consumes: [application/x-www-form-urlencoded]
       responses:
         '200':
           description: The `DrsObject` was found successfully.
@@ -237,7 +238,8 @@ paths:
 
         This method only needs to be called when using an `AccessMethod` that contains an `access_id`
         (e.g., for servers that use signed URLs for fetching object bytes).
-      operationId: GetAccessURL
+      operationId: PostGetAccessURL
+      consumes: [application/x-www-form-urlencoded]
       responses:
         '200':
           description: The access URL was found successfully.
