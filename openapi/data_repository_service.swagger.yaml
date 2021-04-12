@@ -95,6 +95,9 @@ paths:
       summary: Get info about a `DrsObject`.
       description: >-
         Returns object metadata, and a list of access methods that can be used to fetch object bytes.
+
+
+        Method is a POST to accomodate a JWT GA4GH Passport sent in the formData in order to authorize access.
       operationId: PostGetObject
       consumes: [application/x-www-form-urlencoded]
       responses:
@@ -231,9 +234,12 @@ paths:
         - DataRepositoryService
       x-swagger-router-controller: ga4gh.drs.server
     post:
-      summary: POST'ing a JWT GA4GH Passport in order to authorize for getting a URL for fetching bytes.
+      summary: Get a URL for fetching bytes.
       description: >-
         Returns a URL that can be used to fetch the bytes of a `DrsObject`.
+
+
+        Method is a POST to accomodate a JWT GA4GH Passport sent in the formData in order to authorize access.
 
 
         This method only needs to be called when using an `AccessMethod` that contains an `access_id`
