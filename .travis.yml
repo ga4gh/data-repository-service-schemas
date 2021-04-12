@@ -1,8 +1,8 @@
-dist: trusty
+dist: xenial
 language: python
 python:
-- '2.7'
 - '3.6'
+#- '2.7'
 
 # Specifying `branches.only = ['master']` can cause tagged builds to
 # not deploy. See travis-ci/travis-ci#2498 and travis-ci/travis-ci#1675.
