@@ -467,7 +467,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_tags_2">5.1.4. Tags</a></li>
 </ul>
 </li>
-<li><a href="#_getaccessurl">5.2. POST&#8217;ing a JWT GA4GH Passport in order to authorize for getting a URL for fetching bytes.</a>
+<li><a href="#_getobject">5.2. Get info about a <code>DrsObject</code>.</a>
 <ul class="sectlevel3">
 <li><a href="#_description_2">5.2.1. Description</a></li>
 <li><a href="#_parameters_2">5.2.2. Parameters</a></li>
@@ -475,12 +475,20 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_tags_3">5.2.4. Tags</a></li>
 </ul>
 </li>
-<li><a href="#_getaccessurl">5.3. Get a URL for fetching bytes.</a>
+<li><a href="#_getaccessurl">5.3. POST&#8217;ing a JWT GA4GH Passport in order to authorize for getting a URL for fetching bytes.</a>
 <ul class="sectlevel3">
 <li><a href="#_description_3">5.3.1. Description</a></li>
 <li><a href="#_parameters_3">5.3.2. Parameters</a></li>
 <li><a href="#_responses_3">5.3.3. Responses</a></li>
 <li><a href="#_tags_4">5.3.4. Tags</a></li>
+</ul>
+</li>
+<li><a href="#_getaccessurl">5.4. Get a URL for fetching bytes.</a>
+<ul class="sectlevel3">
+<li><a href="#_description_4">5.4.1. Description</a></li>
+<li><a href="#_parameters_4">5.4.2. Parameters</a></li>
+<li><a href="#_responses_4">5.4.3. Responses</a></li>
+<li><a href="#_tags_5">5.4.4. Tags</a></li>
 </ul>
 </li>
 </ul>
@@ -931,7 +939,7 @@ See the <a href="#_appendix_compact_identifier_based_uris">Appendix: Compact Ide
 <h3 id="_getobject"><a class="anchor" href="#_getobject"></a><a class="link" href="#_getobject">5.1. Get info about a <code>DrsObject</code>.</a></h3>
 <div class="literalblock">
 <div class="content">
-<pre>GET /objects/{object_id}</pre>
+<pre>POST /objects/{object_id}</pre>
 </div>
 </div>
 <div class="sect3">
@@ -977,6 +985,14 @@ If true and the object_id refers to a bundle, then the entire set of objects in 
 If the object_id refers to a blob, then the query parameter is ignored.</p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">boolean</p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><code>"false"</code></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>FormData</strong></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>token</strong><br>
+<em>required</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">the encoded JWT GA4GH Passport that contains embedded Visas. The overall JWT is signed as are the individual Passport Visas.</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-middle"></td>
 </tr>
 </tbody>
 </table>
@@ -1049,29 +1065,27 @@ If the object_id refers to a blob, then the query parameter is ignored.</p></td>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_getaccessurl"><a class="anchor" href="#_getaccessurl"></a><a class="link" href="#_getaccessurl">5.2. POST&#8217;ing a JWT GA4GH Passport in order to authorize for getting a URL for fetching bytes.</a></h3>
+<h3 id="_getobject"><a class="anchor" href="#_getobject"></a><a class="link" href="#_getobject">5.2. Get info about a <code>DrsObject</code>.</a></h3>
 <div class="literalblock">
 <div class="content">
-<pre>POST /objects/{object_id}/access/{access_id}</pre>
+<pre>GET /objects/{object_id}</pre>
 </div>
 </div>
 <div class="sect3">
 <h4 id="_description_2"><a class="anchor" href="#_description_2"></a><a class="link" href="#_description_2">5.2.1. Description</a></h4>
 <div class="paragraph">
-<p>Returns a URL that can be used to fetch the bytes of a <code>DrsObject</code>.</p>
-</div>
-<div class="paragraph">
-<p>This method only needs to be called when using an <code>AccessMethod</code> that contains an <code>access_id</code> (e.g., for servers that use signed URLs for fetching object bytes).</p>
+<p>Returns object metadata, and a list of access methods that can be used to fetch object bytes.</p>
 </div>
 </div>
 <div class="sect3">
 <h4 id="_parameters_2"><a class="anchor" href="#_parameters_2"></a><a class="link" href="#_parameters_2">5.2.2. Parameters</a></h4>
 <table class="tableblock frame-all grid-all spread">
 <colgroup>
-<col style="width: 11.1111%;">
-<col style="width: 16.6666%;">
-<col style="width: 50%;">
-<col style="width: 22.2223%;">
+<col style="width: 10%;">
+<col style="width: 15%;">
+<col style="width: 45%;">
+<col style="width: 20%;">
+<col style="width: 10%;">
 </colgroup>
 <thead>
 <tr>
@@ -1079,29 +1093,27 @@ If the object_id refers to a blob, then the query parameter is ignored.</p></td>
 <th class="tableblock halign-left valign-middle">Name</th>
 <th class="tableblock halign-left valign-middle">Description</th>
 <th class="tableblock halign-left valign-middle">Schema</th>
+<th class="tableblock halign-left valign-middle">Default</th>
 </tr>
 </thead>
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>Path</strong></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>access_id</strong><br>
-<em>required</em></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">An <code>access_id</code> from the <code>access_methods</code> list of a <code>DrsObject</code></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
-</tr>
-<tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>Path</strong></p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>object_id</strong><br>
 <em>required</em></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">An <code>id</code> of a <code>DrsObject</code></p></td>
+<td class="tableblock halign-left valign-middle"></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-middle"></td>
 </tr>
 <tr>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>FormData</strong></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>token</strong><br>
-<em>required</em></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">the encoded JWT GA4GH Passport that contains embedded Visas. The overall JWT is signed as are the individual Passport Visas.</p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>Query</strong></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>expand</strong><br>
+<em>optional</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">If false and the object_id refers to a bundle, then the ContentsObject array contains only those objects directly contained in the bundle. That is, if the bundle contains other bundles, those other bundles are not recursively included in the result.<br>
+If true and the object_id refers to a bundle, then the entire set of objects in the bundle is expanded. That is, if the bundle contains aother bundles, then those other bundles are recursively expanded and included in the result. Recursion continues through the entire sub-tree of the bundle.<br>
+If the object_id refers to a blob, then the query parameter is ignored.</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">boolean</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><code>"false"</code></p></td>
 </tr>
 </tbody>
 </table>
@@ -1124,8 +1136,8 @@ If the object_id refers to a blob, then the query parameter is ignored.</p></td>
 <tbody>
 <tr>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>200</strong></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">The access URL was found successfully.</p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock"><a href="#_accessurl">AccessURL</a></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">The <code>DrsObject</code> was found successfully.</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><a href="#_drsobject">DrsObject</a></p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>202</strong></p></td>
@@ -1151,7 +1163,7 @@ If the object_id refers to a blob, then the query parameter is ignored.</p></td>
 </tr>
 <tr>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>404</strong></p></td>
-<td class="tableblock halign-left valign-middle"><p class="tableblock">The requested access URL wasn&#8217;t found</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">The requested <code>DrsObject</code> wasn&#8217;t found</p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><a href="#_error">Error</a></p></td>
 </tr>
 <tr>
@@ -1174,10 +1186,10 @@ If the object_id refers to a blob, then the query parameter is ignored.</p></td>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_getaccessurl"><a class="anchor" href="#_getaccessurl"></a><a class="link" href="#_getaccessurl">5.3. Get a URL for fetching bytes.</a></h3>
+<h3 id="_getaccessurl"><a class="anchor" href="#_getaccessurl"></a><a class="link" href="#_getaccessurl">5.3. POST&#8217;ing a JWT GA4GH Passport in order to authorize for getting a URL for fetching bytes.</a></h3>
 <div class="literalblock">
 <div class="content">
-<pre>GET /objects/{object_id}/access/{access_id}</pre>
+<pre>POST /objects/{object_id}/access/{access_id}</pre>
 </div>
 </div>
 <div class="sect3">
@@ -1219,6 +1231,13 @@ If the object_id refers to a blob, then the query parameter is ignored.</p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>object_id</strong><br>
 <em>required</em></p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">An <code>id</code> of a <code>DrsObject</code></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>FormData</strong></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>token</strong><br>
+<em>required</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">the encoded JWT GA4GH Passport that contains embedded Visas. The overall JWT is signed as are the individual Passport Visas.</p></td>
 <td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
 </tr>
 </tbody>
@@ -1282,6 +1301,124 @@ If the object_id refers to a blob, then the query parameter is ignored.</p></td>
 </div>
 <div class="sect3">
 <h4 id="_tags_4"><a class="anchor" href="#_tags_4"></a><a class="link" href="#_tags_4">5.3.4. Tags</a></h4>
+<div class="ulist">
+<ul>
+<li>
+<p>DataRepositoryService</p>
+</li>
+</ul>
+</div>
+</div>
+</div>
+<div class="sect2">
+<h3 id="_getaccessurl"><a class="anchor" href="#_getaccessurl"></a><a class="link" href="#_getaccessurl">5.4. Get a URL for fetching bytes.</a></h3>
+<div class="literalblock">
+<div class="content">
+<pre>GET /objects/{object_id}/access/{access_id}</pre>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_description_4"><a class="anchor" href="#_description_4"></a><a class="link" href="#_description_4">5.4.1. Description</a></h4>
+<div class="paragraph">
+<p>Returns a URL that can be used to fetch the bytes of a <code>DrsObject</code>.</p>
+</div>
+<div class="paragraph">
+<p>This method only needs to be called when using an <code>AccessMethod</code> that contains an <code>access_id</code> (e.g., for servers that use signed URLs for fetching object bytes).</p>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_parameters_4"><a class="anchor" href="#_parameters_4"></a><a class="link" href="#_parameters_4">5.4.2. Parameters</a></h4>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 11.1111%;">
+<col style="width: 16.6666%;">
+<col style="width: 50%;">
+<col style="width: 22.2223%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-middle">Type</th>
+<th class="tableblock halign-left valign-middle">Name</th>
+<th class="tableblock halign-left valign-middle">Description</th>
+<th class="tableblock halign-left valign-middle">Schema</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>Path</strong></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>access_id</strong><br>
+<em>required</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">An <code>access_id</code> from the <code>access_methods</code> list of a <code>DrsObject</code></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>Path</strong></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>object_id</strong><br>
+<em>required</em></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">An <code>id</code> of a <code>DrsObject</code></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">string</p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_responses_4"><a class="anchor" href="#_responses_4"></a><a class="link" href="#_responses_4">5.4.3. Responses</a></h4>
+<table class="tableblock frame-all grid-all spread">
+<colgroup>
+<col style="width: 10%;">
+<col style="width: 70%;">
+<col style="width: 20%;">
+</colgroup>
+<thead>
+<tr>
+<th class="tableblock halign-left valign-middle">HTTP Code</th>
+<th class="tableblock halign-left valign-middle">Description</th>
+<th class="tableblock halign-left valign-middle">Schema</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>200</strong></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">The access URL was found successfully.</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><a href="#_accessurl">AccessURL</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>202</strong></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">The operation is delayed and will continue asynchronously. The client should retry this same request after the delay specified by Retry-After header.<br>
+<strong>Headers</strong> : <br>
+<code>Retry-After</code> (integer (int64)) : Delay in seconds. The client should retry this same request after waiting for this duration. To simplify client response processing, this must be an integral relative time in seconds. This value SHOULD represent the minimum duration the client should wait before attempting the operation again with a reasonable expectation of success. When it is not feasible for the server to determine the actual expected delay, the server may return a brief, fixed value instead.</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">No Content</p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>400</strong></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">The request is malformed.</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><a href="#_error">Error</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>401</strong></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">The request is unauthorized.</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><a href="#_error">Error</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>403</strong></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">The requester is not authorized to perform this action.</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><a href="#_error">Error</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>404</strong></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">The requested access URL wasn&#8217;t found</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><a href="#_error">Error</a></p></td>
+</tr>
+<tr>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><strong>500</strong></p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock">An unexpected error occurred.</p></td>
+<td class="tableblock halign-left valign-middle"><p class="tableblock"><a href="#_error">Error</a></p></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="sect3">
+<h4 id="_tags_5"><a class="anchor" href="#_tags_5"></a><a class="link" href="#_tags_5">5.4.4. Tags</a></h4>
 <div class="ulist">
 <ul>
 <li>
@@ -1864,7 +2001,7 @@ For bundles, the cumulative size, in bytes, of items in the <code>contents</code
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2021-04-12 04:46:30 UTC
+Last updated 2021-04-12 04:54:13 UTC
 </div>
 </div>
 </body>

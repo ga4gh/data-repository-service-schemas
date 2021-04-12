@@ -91,6 +91,80 @@ paths:
       tags:
         - DataRepositoryService
       x-swagger-router-controller: ga4gh.drs.server
+    post:
+      summary: Get info about a `DrsObject`.
+      description: >-
+        Returns object metadata, and a list of access methods that can be used to fetch object bytes.
+      operationId: GetObject
+      responses:
+        '200':
+          description: The `DrsObject` was found successfully.
+          schema:
+            $ref: '#/definitions/DrsObject'
+        '202':
+          description: >
+            The operation is delayed and will continue asynchronously.
+            The client should retry this same request after the delay specified by Retry-After header.
+          headers:
+            Retry-After:
+              description: >
+                Delay in seconds. The client should retry this same request after waiting for this duration.
+                To simplify client response processing, this must be an integral relative time in seconds.
+                This value SHOULD represent the minimum duration the client should wait before attempting
+                the operation again with a reasonable expectation of success. When it is not feasible
+                for the server to determine the actual expected delay, the server may return a
+                brief, fixed value instead.
+              type: integer
+              format: int64
+        '400':
+          description: The request is malformed.
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: The request is unauthorized.
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: The requester is not authorized to perform this action.
+          schema:
+            $ref: '#/definitions/Error'
+        '404':
+          description: The requested `DrsObject` wasn't found
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: An unexpected error occurred.
+          schema:
+            $ref: '#/definitions/Error'
+      parameters:
+        - name: object_id
+          in: path
+          required: true
+          type: string
+        - in: query
+          name: expand
+          type: boolean
+          default: false
+          description: >-
+            If false and the object_id refers to a bundle, then the ContentsObject array
+            contains only those objects directly contained in the bundle. That is, if the
+            bundle contains other bundles, those other bundles are not recursively
+            included in the result.
+
+            If true and the object_id refers to a bundle, then the entire set of objects
+            in the bundle is expanded. That is, if the bundle contains aother bundles,
+            then those other bundles are recursively expanded and included in the result.
+            Recursion continues through the entire sub-tree of the bundle.
+
+            If the object_id refers to a blob, then the query parameter is ignored.
+        - name: token
+          in: formData
+          required: true
+          type: string
+          description: the encoded JWT GA4GH Passport that contains embedded Visas.  The overall JWT is signed as are the individual Passport Visas.
+      tags:
+        - DataRepositoryService
+      x-swagger-router-controller: ga4gh.drs.server
   '/objects/{object_id}/access/{access_id}':
     get:
       summary: Get a URL for fetching bytes.
