@@ -459,12 +459,13 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </li>
 <li><a href="#_paths">5. Paths</a>
 <ul class="sectlevel2">
-<li><a href="#_getobject">5.1. Get info about a <code>DrsObject</code>.</a>
+<li><a href="#_postgetobject">5.1. Get info about a <code>DrsObject</code>.</a>
 <ul class="sectlevel3">
 <li><a href="#_description">5.1.1. Description</a></li>
 <li><a href="#_parameters">5.1.2. Parameters</a></li>
 <li><a href="#_responses">5.1.3. Responses</a></li>
-<li><a href="#_tags_2">5.1.4. Tags</a></li>
+<li><a href="#_consumes_2">5.1.4. Consumes</a></li>
+<li><a href="#_tags_2">5.1.5. Tags</a></li>
 </ul>
 </li>
 <li><a href="#_getobject">5.2. Get info about a <code>DrsObject</code>.</a>
@@ -475,12 +476,13 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#_tags_3">5.2.4. Tags</a></li>
 </ul>
 </li>
-<li><a href="#_getaccessurl">5.3. POST&#8217;ing a JWT GA4GH Passport in order to authorize for getting a URL for fetching bytes.</a>
+<li><a href="#_postgetaccessurl">5.3. POST&#8217;ing a JWT GA4GH Passport in order to authorize for getting a URL for fetching bytes.</a>
 <ul class="sectlevel3">
 <li><a href="#_description_3">5.3.1. Description</a></li>
 <li><a href="#_parameters_3">5.3.2. Parameters</a></li>
 <li><a href="#_responses_3">5.3.3. Responses</a></li>
-<li><a href="#_tags_4">5.3.4. Tags</a></li>
+<li><a href="#_consumes_3">5.3.4. Consumes</a></li>
+<li><a href="#_tags_4">5.3.5. Tags</a></li>
 </ul>
 </li>
 <li><a href="#_getaccessurl">5.4. Get a URL for fetching bytes.</a>
@@ -936,7 +938,7 @@ See the <a href="#_appendix_compact_identifier_based_uris">Appendix: Compact Ide
 <h2 id="_paths"><a class="anchor" href="#_paths"></a><a class="link" href="#_paths">5. Paths</a></h2>
 <div class="sectionbody">
 <div class="sect2">
-<h3 id="_getobject"><a class="anchor" href="#_getobject"></a><a class="link" href="#_getobject">5.1. Get info about a <code>DrsObject</code>.</a></h3>
+<h3 id="_postgetobject"><a class="anchor" href="#_postgetobject"></a><a class="link" href="#_postgetobject">5.1. Get info about a <code>DrsObject</code>.</a></h3>
 <div class="literalblock">
 <div class="content">
 <pre>POST /objects/{object_id}</pre>
@@ -1054,7 +1056,17 @@ If the object_id refers to a blob, then the query parameter is ignored.</p></td>
 </table>
 </div>
 <div class="sect3">
-<h4 id="_tags_2"><a class="anchor" href="#_tags_2"></a><a class="link" href="#_tags_2">5.1.4. Tags</a></h4>
+<h4 id="_consumes_2"><a class="anchor" href="#_consumes_2"></a><a class="link" href="#_consumes_2">5.1.4. Consumes</a></h4>
+<div class="ulist">
+<ul>
+<li>
+<p><code>application/x-www-form-urlencoded</code></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_tags_2"><a class="anchor" href="#_tags_2"></a><a class="link" href="#_tags_2">5.1.5. Tags</a></h4>
 <div class="ulist">
 <ul>
 <li>
@@ -1186,7 +1198,7 @@ If the object_id refers to a blob, then the query parameter is ignored.</p></td>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_getaccessurl"><a class="anchor" href="#_getaccessurl"></a><a class="link" href="#_getaccessurl">5.3. POST&#8217;ing a JWT GA4GH Passport in order to authorize for getting a URL for fetching bytes.</a></h3>
+<h3 id="_postgetaccessurl"><a class="anchor" href="#_postgetaccessurl"></a><a class="link" href="#_postgetaccessurl">5.3. POST&#8217;ing a JWT GA4GH Passport in order to authorize for getting a URL for fetching bytes.</a></h3>
 <div class="literalblock">
 <div class="content">
 <pre>POST /objects/{object_id}/access/{access_id}</pre>
@@ -1300,7 +1312,17 @@ If the object_id refers to a blob, then the query parameter is ignored.</p></td>
 </table>
 </div>
 <div class="sect3">
-<h4 id="_tags_4"><a class="anchor" href="#_tags_4"></a><a class="link" href="#_tags_4">5.3.4. Tags</a></h4>
+<h4 id="_consumes_3"><a class="anchor" href="#_consumes_3"></a><a class="link" href="#_consumes_3">5.3.4. Consumes</a></h4>
+<div class="ulist">
+<ul>
+<li>
+<p><code>application/x-www-form-urlencoded</code></p>
+</li>
+</ul>
+</div>
+</div>
+<div class="sect3">
+<h4 id="_tags_4"><a class="anchor" href="#_tags_4"></a><a class="link" href="#_tags_4">5.3.5. Tags</a></h4>
 <div class="ulist">
 <ul>
 <li>
@@ -2001,7 +2023,7 @@ For bundles, the cumulative size, in bytes, of items in the <code>contents</code
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2021-04-12 04:54:13 UTC
+Last updated 2021-04-12 05:02:25 UTC
 </div>
 </div>
 </body>
