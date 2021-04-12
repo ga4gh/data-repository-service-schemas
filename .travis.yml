@@ -1,4 +1,4 @@
-dist: xenial
+dist: trusty
 language: python
 python:
 - '3.6'
@@ -41,7 +41,7 @@ jobs:
     # the build process from James Eddy adapted from the WES repo
     - stage: build_pages
       language: java
-      jdk: oraclejdk9
+      jdk: oraclejdk8
       before_install:
       - chmod +x gradlew
       - chmod +x scripts/fetchpages.sh
