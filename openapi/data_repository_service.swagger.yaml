@@ -21,6 +21,50 @@ security:
   - {}
   - authToken: []
 paths:
+  '/drsbybrokers':
+    post:
+      summary: Request visa information for each DRS object in the selection.
+      description: >-
+        Returns a response object that contains information on the brokers to communicate with and which visas are needed for each DRS object in the selection request.
+
+
+        Method is a POST to accomodate a JWT GA4GH Passport sent in the formData in order to authorize access.
+      operationId: PostGetDRSByBrokers
+      consumes: [application/x-www-form-urlencoded]
+      responses:
+        '200':
+          description: The mapping to broker/visas was successful.
+          schema:
+            $ref: '#/definitions/DrsBrokerByObject'
+        '400':
+          description: The request is malformed.
+          schema:
+            $ref: '#/definitions/Error'
+        '401':
+          description: The request is unauthorized.
+          schema:
+            $ref: '#/definitions/Error'
+        '403':
+          description: The requester is not authorized to perform this action.
+          schema:
+            $ref: '#/definitions/Error'
+        '404':
+          description: The requested `DrsObject` wasn't found
+          schema:
+            $ref: '#/definitions/Error'
+        '500':
+          description: An unexpected error occurred.
+          schema:
+            $ref: '#/definitions/Error'
+      parameters:
+        - name: token
+          in: formData
+          required: true
+          type: string
+          description: the encoded JWT GA4GH Passport that contains embedded Visas.  The overall JWT is signed as are the individual Passport Visas.
+      tags:
+        - DataRepositoryService
+      x-swagger-router-controller: ga4gh.drs.server
   '/objects/{object_id}':
     get:
       summary: Get info about a `DrsObject`.
@@ -337,6 +381,48 @@ definitions:
           standard `type` value such as `md5`, `etag`, `crc32c`, `trunc512`, or `sha1`.
         example:
           sha-256
+  DrsBrokerByObject:
+    type: object
+    required: ['mapped_brokers', 'unmapped_brokers', 'broker_descriptions']
+    properties:
+      mapped_brokers:
+        type: array
+        minItems: 1
+        items:
+          $ref: '#/definitions/Brokers'
+        description: >-
+          The mapped brokers
+
+      unmapped_brokers:
+        type: array
+        minItems: 1
+        items:
+          $ref: '#/definitions/Brokers'
+        description: |-
+          The unmapped brokers.
+
+      broker_descriptions:
+        type: array
+        description: >-
+          broker descriptions
+        items:
+          $ref: '#/definitions/BrokerDescriptions'
+  Brokers:
+    additionalProperties:
+      type: object
+      properties:
+        code:
+          type: integer
+        text:
+          type: string
+  BrokerDescriptions:
+    additionalProperties:
+      type: object
+      properties:
+        oidc:
+          type: string
+        passport:
+          type: string
   DrsObject:
     type: object
     required: ['id', 'self_uri', 'size', 'created_time', 'checksums']
