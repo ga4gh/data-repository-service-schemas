@@ -39,7 +39,7 @@ setup(
     long_description_content_type='text/markdown',
     install_requires=[
         'connexion==1.4.2',
-        'Flask-Cors==3.0.4',
+        'Flask-Cors==3.0.9',
         'bravado-core==4.13.4',
         'bravado==9.2.2',
         'jsonschema>=2.6.0,<3',
