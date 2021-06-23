@@ -1,0 +1,6 @@
+{
+    "apiSpecPath": "openapi/data_repository_service.openapi.yaml",
+    "docsRoot": "docs",
+    "defaultBranch": "master",
+    "branchPathBase": "preview"
+}
