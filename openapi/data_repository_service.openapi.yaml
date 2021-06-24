@@ -445,15 +445,15 @@ components:
 tags:
   # - name: DataRepositoryService
   - name: 'Paths: Objects API'
-  # - name: 'Appendix: Motivation'
-  #   description:
-  #     $ref: '../sources/md/appendix_motivation.md'
-  # - name: 'Appendix: Background Notes on DRS URIs'
-  #   description:
-  #     $ref: './docs/appendix_background_notes_on_drs_uris.md'
-  # - name: 'Appendix: Compact Identifier-Based URIs'
-  #   description:
-  #     $ref: './docs/appendix_compact_identifier_based_uris.md'
-  # - name: 'Appendix: Hostname-Based URIs'
-  #   description:
-  #     $ref: './docs/appendix_hostname_based_uris.md'
+  - name: 'Appendix: Motivation'
+    description:
+      $ref: '../sources/md/appendix_motivation.md'
+  - name: 'Appendix: Background Notes on DRS URIs'
+    description:
+      $ref: '../sources/md/appendix_background_notes_on_drs_uris.md'
+  - name: 'Appendix: Compact Identifier-Based URIs'
+    description:
+      $ref: '../sources/md/appendix_compact_identifier_based_uris.md'
+  - name: 'Appendix: Hostname-Based URIs'
+    description:
+      $ref: '../sources/md/appendix_hostname_based_uris.md'
