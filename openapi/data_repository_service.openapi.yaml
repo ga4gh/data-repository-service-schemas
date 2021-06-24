@@ -10,7 +10,11 @@ servers:
 info:
   title: Data Repository Service
   version: 1.1.0
-  description: 'https://github.com/ga4gh/data-repository-service-schemas'
+  x-logo:
+    url: 'https://www.ga4gh.org/wp-content/themes/ga4gh-theme/gfx/GA-logo-horizontal-tag-RGB.svg'
+  # description: 'https://github.com/ga4gh/data-repository-service-schemas'
+  description:
+    $ref: './docs/front_matter.md'
   termsOfService: 'https://www.ga4gh.org/terms-and-conditions/'
   contact:
     name: GA4GH Cloud Work Stream
