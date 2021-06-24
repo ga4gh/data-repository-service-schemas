@@ -75,7 +75,7 @@
           }
         },
         "tags": [
-          "DataRepositoryService"
+          "Paths: Objects API"
         ],
         "x-swagger-router-controller": "ga4gh.drs.server"
       }
@@ -117,7 +117,7 @@
           }
         },
         "tags": [
-          "DataRepositoryService"
+          "Paths: Objects API"
         ],
         "x-swagger-router-controller": "ga4gh.drs.server"
       }
@@ -465,7 +465,7 @@
   },
   "tags": [
     {
-      "name": "DataRepositoryService"
+      "name": "Paths: Objects API"
     }
   ]
 }
