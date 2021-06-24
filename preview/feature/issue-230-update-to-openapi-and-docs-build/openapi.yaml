@@ -792,7 +792,7 @@ tags:
       access.
 
 
-      ![Figure 1](../sources/img/figure1.png)
+      ![Figure 1](/sources/img/figure1.png)
 
       *Figure 1: there’s an ocean of data, with many different tools to drink
       from it, but no guarantee that any tool will work with any subset of the
@@ -807,7 +807,7 @@ tags:
       work with all the tools out there.
 
 
-      ![Figure 2](../sources/img/figure2.png)
+      ![Figure 2](/sources/img/figure2.png)
 
       *Figure 2: by defining a standard Data Repository API, and adapting tools
       to use it, every data publisher can now make their data useful to every
@@ -839,7 +839,7 @@ tags:
       as is appropriate
 
 
-      ![Figure 3](../sources/img/figure3.png)
+      ![Figure 3](/sources/img/figure3.png)
 
       *Figure 3: a standard Data Repository API enables an ecosystem of data
       producers and consumers*
