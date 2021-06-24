@@ -14,7 +14,7 @@ info:
     url: 'https://www.ga4gh.org/wp-content/themes/ga4gh-theme/gfx/GA-logo-horizontal-tag-RGB.svg'
   # description: 'https://github.com/ga4gh/data-repository-service-schemas'
   description:
-    $ref: './docs/front_matter.md'
+    $ref: '../sources/md/front_matter.md'
   termsOfService: 'https://www.ga4gh.org/terms-and-conditions/'
   contact:
     name: GA4GH Cloud Work Stream
@@ -53,7 +53,8 @@ paths:
         500:
           $ref: '#/components/responses/500InternalServerError'
       tags:
-        - DataRepositoryService
+        # - DataRepositoryService
+        - 'Paths: Objects API'
       x-swagger-router-controller: ga4gh.drs.server
   /objects/{object_id}/access/{access_id}:
     get:
@@ -84,7 +85,8 @@ paths:
         500:
           $ref: '#/components/responses/500InternalServerError'
       tags:
-        - DataRepositoryService
+        # - DataRepositoryService
+        - 'Paths: Objects API'
       x-swagger-router-controller: ga4gh.drs.server
 
 components:
@@ -441,4 +443,17 @@ components:
           schema:
             $ref: '#/components/schemas/Error'
 tags:
-  - name: DataRepositoryService
+  # - name: DataRepositoryService
+  - name: 'Paths: Objects API'
+  # - name: 'Appendix: Motivation'
+  #   description:
+  #     $ref: '../sources/md/appendix_motivation.md'
+  # - name: 'Appendix: Background Notes on DRS URIs'
+  #   description:
+  #     $ref: './docs/appendix_background_notes_on_drs_uris.md'
+  # - name: 'Appendix: Compact Identifier-Based URIs'
+  #   description:
+  #     $ref: './docs/appendix_compact_identifier_based_uris.md'
+  # - name: 'Appendix: Hostname-Based URIs'
+  #   description:
+  #     $ref: './docs/appendix_hostname_based_uris.md'
