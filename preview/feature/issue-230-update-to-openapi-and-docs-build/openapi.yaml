@@ -711,7 +711,7 @@ paths:
         - $ref: '#/components/parameters/expand'
       responses:
         '200':
-          $ref: '#/components/responses/200OkDrsObject'
+          $ref: '#/components/responses/200OkDrsObject-2'
         '202':
           $ref: '#/components/responses/202Accepted'
         '400':
@@ -743,7 +743,7 @@ paths:
         - $ref: '#/components/parameters/accessId'
       responses:
         '200':
-          $ref: '#/components/responses/200OkAccess'
+          $ref: '#/components/responses/200OkAccess-2'
         '202':
           $ref: '#/components/responses/202Accepted'
         '400':
@@ -773,6 +773,16 @@ components:
       $ref: '#/components/schemas/Error-2'
     ContentsObject:
       $ref: '#/components/schemas/ContentsObject-2'
+    Error-2:
+      type: object
+      description: An object that can optionally include information about the error.
+      properties:
+        msg:
+          type: string
+          description: A detailed error message.
+        status_code:
+          type: integer
+          description: 'The integer representing the HTTP status code (e.g. 200, 404).'
     Checksum-2:
       type: object
       required:
@@ -1026,16 +1036,6 @@ components:
             A list of strings that can be used to find other metadata about this
             `DrsObject` from external metadata sources. These aliases can be
             used to represent secondary accession numbers or external GUIDs.
-    Error-2:
-      type: object
-      description: An object that can optionally include information about the error.
-      properties:
-        msg:
-          type: string
-          description: A detailed error message.
-        status_code:
-          type: integer
-          description: 'The integer representing the HTTP status code (e.g. 200, 404).'
   parameters:
     objectId:
       in: path
@@ -1087,17 +1087,14 @@ components:
         header, e.g. "Bearer ${token_string}"
   responses:
     200OkDrsObject:
-      description: The `DrsObject` was found successfully
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/DrsObject-2'
+      $ref: '#/components/responses/200OkDrsObject-2'
     200OkAccess:
+      $ref: '#/components/responses/200OkAccess-2'
       description: The `AccessURL` was found successfully
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/AccessURL-2'
+            $ref: '#/components/schemas/AccessURL'
     202Accepted:
       description: >
         The operation is delayed and will continue asynchronously. The client
@@ -1153,3 +1150,15 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Error-2'
+    200OkDrsObject-2:
+      description: The `DrsObject` was found successfully
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/DrsObject'
+    200OkAccess-2:
+      description: The `AccessURL` was found successfully
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/AccessURL'
