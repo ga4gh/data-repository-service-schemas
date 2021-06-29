@@ -4,7 +4,7 @@ The examples below show the current API interactions with [n2t.net](https://n2t.
 
 ## Registering a DRS Server on a Meta-Resolver
 
-See the documentation on the [n2t.net](https://n2t.net/e/compact_ids.html) and [identifiers.org](https://docs.identifiers.org/) meta-resolvers for adding your own compact identifier type and registering your DRS server as a resolver. You can register new prefixes (or mirrors by adding resource provider codes) for free using a simple online form. For more information see [More Background on Compact Identifiers](#).
+See the documentation on the [n2t.net](https://n2t.net/e/compact_ids.html) and [identifiers.org](https://docs.identifiers.org/) meta-resolvers for adding your own compact identifier type and registering your DRS server as a resolver. You can register new prefixes (or mirrors by adding resource provider codes) for free using a simple online form. For more information see [More Background on Compact Identifiers](/data-repository-service-schemas/sources/md/more_background_on_compact_identifiers).
 
 ## Calling Meta-Resolver APIs for Compact Identifier-Based DRS URIs
 
@@ -70,4 +70,4 @@ The compact identifier format used by identifiers.org/n2t.net does not percent-e
 
 ## Additional Examples
 
-For additional examples, see the document [More Background on Compact Identifiers](#).
+For additional examples, see the document [More Background on Compact Identifiers](/data-repository-service-schemas/sources/md/more_background_on_compact_identifiers).
