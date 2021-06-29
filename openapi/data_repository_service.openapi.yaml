@@ -100,7 +100,6 @@ x-tagGroups:
       - Background Notes on DRS URIs
       - Compact Identifier-Based URIs
       - Hostname-Based URIs
-  
 
 paths:
   /objects/{object_id}:

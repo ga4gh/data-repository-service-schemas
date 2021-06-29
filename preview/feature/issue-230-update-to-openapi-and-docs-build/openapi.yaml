@@ -414,11 +414,17 @@ tags:
       access.
 
 
+      <PullRight>
+
+
       ![Figure 1](/data-repository-service-schemas/sources/img/figure1.png)
 
       *Figure 1: there’s an ocean of data, with many different tools to drink
       from it, but no guarantee that any tool will work with any subset of the
       data*
+
+
+      </PullRight>
 
 
       We need a standard way for data producers to make their data available to
@@ -429,11 +435,17 @@ tags:
       work with all the tools out there.
 
 
+      <PullRight>
+
+
       ![Figure 2](/data-repository-service-schemas/sources/img/figure2.png)
 
       *Figure 2: by defining a standard Data Repository API, and adapting tools
       to use it, every data publisher can now make their data useful to every
       data consumer*
+
+
+      </PullRight>
 
 
       We envision a world where:
@@ -461,10 +473,16 @@ tags:
       available as is appropriate
 
 
+      <PullRight>
+
+
       ![Figure 3](/data-repository-service-schemas/sources/img/figure3.png)
 
       *Figure 3: a standard Data Repository API enables an ecosystem of data
       producers and consumers*
+
+
+      </PullRight>
 
 
       This spec defines a standard **Data Repository Service (DRS) API** (“the
