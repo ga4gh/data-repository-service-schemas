@@ -12,7 +12,6 @@ info:
   version: 1.1.0
   x-logo:
     url: 'https://www.ga4gh.org/wp-content/themes/ga4gh-theme/gfx/GA-logo-horizontal-tag-RGB.svg'
-  # description: 'https://github.com/ga4gh/data-repository-service-schemas'
   description:
     $ref: '../sources/md/front_matter.md'
   termsOfService: 'https://www.ga4gh.org/terms-and-conditions/'
@@ -30,7 +29,7 @@ security:
 paths:
   /objects/{object_id}:
     get:
-      summary: Get info about a `DrsObject`.
+      summary: Get info about a DrsObject.
       description: >-
         Returns object metadata, and a list of access methods that can be used to fetch object bytes.
       operationId: GetObject
@@ -53,7 +52,6 @@ paths:
         500:
           $ref: '#/components/responses/500InternalServerError'
       tags:
-        # - DataRepositoryService
         - 'Paths: Objects API'
       x-swagger-router-controller: ga4gh.drs.server
   /objects/{object_id}/access/{access_id}:
@@ -85,7 +83,6 @@ paths:
         500:
           $ref: '#/components/responses/500InternalServerError'
       tags:
-        # - DataRepositoryService
         - 'Paths: Objects API'
       x-swagger-router-controller: ga4gh.drs.server
 
@@ -443,7 +440,6 @@ components:
           schema:
             $ref: '#/components/schemas/Error'
 tags:
-  # - name: DataRepositoryService
   - name: 'Paths: Objects API'
   - name: 'Appendix: Motivation'
     description:
@@ -457,6 +453,3 @@ tags:
   - name: 'Appendix: Hostname-Based URIs'
     description:
       $ref: '../sources/md/appendix_hostname_based_uris.md'
-  - name: 'Appendix: More Background on Compact Identifiers'
-    description:
-      $ref: '../sources/md/appendix_more_background_on_compact_identifiers.md'

@@ -12,16 +12,18 @@ We envision a world where:
 
 * there are many many **data consumers**, working in research and in care, who can use the tools of their choice to access any and all data that they have permission to see
 
-there are many **data access tools** and platforms, supporting discovery, visualization, analysis, and collaboration
+* there are many **data access tools** and platforms, supporting discovery, visualization, analysis, and collaboration
 
-there are many **data repositories**, each with their own policies and characteristics, which can be accessed by a variety of tools
+* there are many **data repositories**, each with their own policies and characteristics, which can be accessed by a variety of tools
 
-there are many **data publishing tools** and platforms, supporting a variety of data lifecycles and formats
+* there are many **data publishing tools** and platforms, supporting a variety of data lifecycles and formats
 
-there are many many **data producers**, generating data of all types, who can use the tools of their choice to make their data as widely available as is appropriate
+* there are many many **data producers**, generating data of all types, who can use the tools of their choice to make their data as widely available as is appropriate
 
 ![Figure 3](/data-repository-service-schemas/sources/img/figure3.png)
 *Figure 3: a standard Data Repository API enables an ecosystem of data producers and consumers*
+
+This spec defines a standard **Data Repository Service (DRS) API** (“the yellow box”), to enable that ecosystem of data producers and consumers. Our goal is that the only thing data consumers need to know about a data repo is *"here’s the DRS endpoint to access it"*, and the only thing data publishers need to know to tap into the world of consumption tools is *"here’s how to tell it where my DRS endpoint lives"*.
 
 ## Federation
 
