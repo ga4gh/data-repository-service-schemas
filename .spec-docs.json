@@ -2,5 +2,6 @@
     "apiSpecPath": "openapi/data_repository_service.openapi.yaml",
     "docsRoot": "docs",
     "defaultBranch": "master",
-    "branchPathBase": "preview"
+    "branchPathBase": "preview",
+    "redocTheme": "ga4gh"
 }
