@@ -23,7 +23,7 @@ We envision a world where:
 ![Figure 3](/data-repository-service-schemas/sources/img/figure3.png)
 *Figure 3: a standard Data Repository API enables an ecosystem of data producers and consumers*
 
-This spec defines a standard **Data Repository Service (DRS) API** (“the yellow box”), to enable that ecosystem of data producers and consumers. Our goal is that the only thing data consumers need to know about a data repo is *"here’s the DRS endpoint to access it"*, and the only thing data publishers need to know to tap into the world of consumption tools is *"here’s how to tell it where my DRS endpoint lives"*.
+This spec defines a standard **Data Repository Service (DRS) API** (“the yellow box”), to enable that ecosystem of data producers and consumers. Our goal is that the only thing data consumers need to know about a data repo is *\"here’s the DRS endpoint to access it\"*, and the only thing data publishers need to know to tap into the world of consumption tools is *\"here’s how to tell it where my DRS endpoint lives\"*.
 
 ## Federation
 
