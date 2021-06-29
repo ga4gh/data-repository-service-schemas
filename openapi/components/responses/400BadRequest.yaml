@@ -2,4 +2,4 @@ description: The request is malformed.
 content:
   application/json:
     schema:
-      $ref: '#/components/schemas/Error'
+      $ref: '../schemas/Error.yaml'

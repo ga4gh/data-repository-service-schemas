@@ -2,4 +2,4 @@ description: The requester is not authorized to perform this action.
 content:
   application/json:
     schema:
-      $ref: '#/components/schemas/Error'
+      $ref: '../schemas/Error.yaml'

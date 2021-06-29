@@ -2,4 +2,4 @@ description: The requested `DrsObject` wasn't found.
 content:
   application/json:
     schema:
-      $ref: '#/components/schemas/Error'
+      $ref: '../schemas/Error.yaml'

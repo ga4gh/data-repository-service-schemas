@@ -2,4 +2,4 @@ description: An unexpected error occurred.
 content:
   application/json:
     schema:
-      $ref: '#/components/schemas/Error'
+      $ref: '../schemas/Error.yaml'
