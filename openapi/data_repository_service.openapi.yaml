@@ -165,12 +165,10 @@ components:
 
   responses:
     200OkDrsObject:
-      description: The `DrsObject` was found successfully
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/DrsObject'
+      $ref: ./components/responses/200OkDrsObject.yaml
     200OkAccess:
+      $ref: ./components/responses/200OkAccess.yaml
+
       description: The `AccessURL` was found successfully
       content:
         application/json:
