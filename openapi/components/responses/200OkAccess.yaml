@@ -2,4 +2,4 @@ description: The `AccessURL` was found successfully
 content:
   application/json:
     schema:
-      $ref: '#/components/schemas/AccessURL'
+      $ref: '../schemas/AccessURL.yaml'

@@ -32,4 +32,4 @@ properties:
       "?expand=true" on the request, then this contents array must be present and
       describe the objects within the nested bundle.
     items:
-      $ref: '#/components/schemas/ContentsObject'
+      $ref: './ContentsObject.yaml'

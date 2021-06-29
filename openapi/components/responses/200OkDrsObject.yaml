@@ -2,4 +2,4 @@ description: The `DrsObject` was found successfully
 content:
   application/json:
     schema:
-      $ref: '#/components/schemas/DrsObject'
+      $ref: '../schemas/DrsObject.yaml'
