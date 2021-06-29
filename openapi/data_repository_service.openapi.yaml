@@ -4,8 +4,6 @@ info:
   version: 1.1.0
   x-logo:
     url: 'https://www.ga4gh.org/wp-content/themes/ga4gh-theme/gfx/GA-logo-horizontal-tag-RGB.svg'
-  description:
-    $ref: '../sources/md/front_matter.md'
   termsOfService: 'https://www.ga4gh.org/terms-and-conditions/'
   contact:
     name: GA4GH Cloud Work Stream
@@ -67,18 +65,18 @@ tags:
       <SchemaDefinition schemaRef="#/components/schemas/Error" />
 
   # Appendices
-  - name: 'Appendix: Motivation'
+  - name: Motivation
     description:
-      $ref: '../sources/md/appendix_motivation.md'
-  - name: 'Appendix: Background Notes on DRS URIs'
+      $ref: './tags/Motivation.md'
+  - name: Background Notes on DRS URIs
     description:
-      $ref: '../sources/md/appendix_background_notes_on_drs_uris.md'
-  - name: 'Appendix: Compact Identifier-Based URIs'
+      $ref: './tags/BackgroundNotesOnDRSURIs.md'
+  - name: Compact Identifier-Based URIs
     description:
-      $ref: '../sources/md/appendix_compact_identifier_based_uris.md'
-  - name: 'Appendix: Hostname-Based URIs'
+      $ref: './tags/CompactIdentifierBasedURIs.md'
+  - name: Hostname-Based URIs
     description:
-      $ref: '../sources/md/appendix_hostname_based_uris.md'
+      $ref: './tags/HostnameBasedURIs.md'
 x-tagGroups:
   - name: Overview
     tags:
@@ -96,6 +94,12 @@ x-tagGroups:
       - ContentsObjectModel
       - DrsObjectModel
       - ErrorModel
+  - name: Appendices
+    tags:
+      - Motivation
+      - Background Notes on DRS URIs
+      - Compact Identifier-Based URIs
+      - Hostname-Based URIs
   
 
 paths:
