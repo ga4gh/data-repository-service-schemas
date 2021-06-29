@@ -77,22 +77,22 @@
             "$ref": "#/components/responses/200OkDrsObject-2"
           },
           "202": {
-            "$ref": "#/components/responses/202Accepted"
+            "$ref": "#/components/responses/202Accepted-2"
           },
           "400": {
-            "$ref": "#/components/responses/400BadRequest"
+            "$ref": "#/components/responses/400BadRequest-2"
           },
           "401": {
-            "$ref": "#/components/responses/401Unauthorized"
+            "$ref": "#/components/responses/401Unauthorized-2"
           },
           "403": {
-            "$ref": "#/components/responses/403Forbidden"
+            "$ref": "#/components/responses/403Forbidden-2"
           },
           "404": {
-            "$ref": "#/components/responses/404NotFoundDrsObject"
+            "$ref": "#/components/responses/404NotFoundDrsObject-2"
           },
           "500": {
-            "$ref": "#/components/responses/500InternalServerError"
+            "$ref": "#/components/responses/500InternalServerError-2"
           }
         },
         "tags": [
@@ -119,22 +119,22 @@
             "$ref": "#/components/responses/200OkAccess-2"
           },
           "202": {
-            "$ref": "#/components/responses/202Accepted"
+            "$ref": "#/components/responses/202Accepted-2"
           },
           "400": {
-            "$ref": "#/components/responses/400BadRequest"
+            "$ref": "#/components/responses/400BadRequest-2"
           },
           "401": {
-            "$ref": "#/components/responses/401Unauthorized"
+            "$ref": "#/components/responses/401Unauthorized-2"
           },
           "403": {
-            "$ref": "#/components/responses/403Forbidden"
+            "$ref": "#/components/responses/403Forbidden-2"
           },
           "404": {
-            "$ref": "#/components/responses/404NotFoundAccess"
+            "$ref": "#/components/responses/404NotFoundAccess-2"
           },
           "500": {
-            "$ref": "#/components/responses/500InternalServerError"
+            "$ref": "#/components/responses/500InternalServerError-2"
           }
         },
         "tags": [
@@ -163,20 +163,6 @@
       },
       "ContentsObject": {
         "$ref": "#/components/schemas/ContentsObject-2"
-      },
-      "Error-2": {
-        "type": "object",
-        "description": "An object that can optionally include information about the error.",
-        "properties": {
-          "msg": {
-            "type": "string",
-            "description": "A detailed error message."
-          },
-          "status_code": {
-            "type": "integer",
-            "description": "The integer representing the HTTP status code (e.g. 200, 404)."
-          }
-        }
       },
       "Checksum-2": {
         "type": "object",
@@ -364,6 +350,20 @@
             "description": "A list of strings that can be used to find other metadata about this `DrsObject` from external metadata sources. These aliases can be used to represent secondary accession numbers or external GUIDs."
           }
         }
+      },
+      "Error-2": {
+        "type": "object",
+        "description": "An object that can optionally include information about the error.",
+        "properties": {
+          "msg": {
+            "type": "string",
+            "description": "A detailed error message."
+          },
+          "status_code": {
+            "type": "integer",
+            "description": "The integer representing the HTTP status code (e.g. 200, 404)."
+          }
+        }
       }
     },
     "parameters": {
@@ -412,87 +412,28 @@
         "$ref": "#/components/responses/200OkDrsObject-2"
       },
       "200OkAccess": {
-        "$ref": "#/components/responses/200OkAccess-2",
-        "description": "The `AccessURL` was found successfully",
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/AccessURL"
-            }
-          }
-        }
+        "$ref": "#/components/responses/200OkAccess-2"
       },
       "202Accepted": {
-        "description": "The operation is delayed and will continue asynchronously. The client should retry this same request after the delay specified by Retry-After header.\n",
-        "headers": {
-          "Retry-After": {
-            "description": "Delay in seconds. The client should retry this same request after waiting for this duration. To simplify client response processing, this must be an integral relative time in seconds. This value SHOULD represent the minimum duration the client should wait before attempting the operation again with a reasonable expectation of success. When it is not feasible for the server to determine the actual expected delay, the server may return a brief, fixed value instead.\n",
-            "schema": {
-              "type": "integer",
-              "format": "int64"
-            }
-          }
-        }
+        "$ref": "#/components/responses/202Accepted-2"
       },
       "400BadRequest": {
-        "description": "The request is malformed.",
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/Error-2"
-            }
-          }
-        }
+        "$ref": "#/components/responses/400BadRequest-2"
       },
       "401Unauthorized": {
-        "description": "The request is unauthorized.",
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/Error-2"
-            }
-          }
-        }
+        "$ref": "#/components/responses/401Unauthorized-2"
       },
       "403Forbidden": {
-        "description": "The requester is not authorized to perform this action.",
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/Error-2"
-            }
-          }
-        }
+        "$ref": "#/components/responses/403Forbidden-2"
       },
       "404NotFoundDrsObject": {
-        "description": "The requested `DrsObject` wasn't found.",
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/Error-2"
-            }
-          }
-        }
+        "$ref": "#/components/responses/404NotFoundDrsObject-2"
       },
       "404NotFoundAccess": {
-        "description": "The requested `DrsObject` or `AccessURL` wasn't found.",
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/Error-2"
-            }
-          }
-        }
+        "$ref": "#/components/responses/404NotFoundAccess-2"
       },
       "500InternalServerError": {
-        "description": "An unexpected error occurred.",
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/Error-2"
-            }
-          }
-        }
+        "$ref": "#/components/responses/500InternalServerError-2"
       },
       "200OkDrsObject-2": {
         "description": "The `DrsObject` was found successfully",
@@ -504,12 +445,84 @@
           }
         }
       },
+      "202Accepted-2": {
+        "description": "The operation is delayed and will continue asynchronously. The client should retry this same request after the delay specified by Retry-After header.\n",
+        "headers": {
+          "Retry-After": {
+            "description": "Delay in seconds. The client should retry this same request after waiting for this duration. To simplify client response processing, this must be an integral relative time in seconds. This value SHOULD represent the minimum duration the client should wait before attempting the operation again with a reasonable expectation of success. When it is not feasible for the server to determine the actual expected delay, the server may return a brief, fixed value instead.\n",
+            "schema": {
+              "type": "integer",
+              "format": "int64"
+            }
+          }
+        }
+      },
+      "400BadRequest-2": {
+        "description": "The request is malformed.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "401Unauthorized-2": {
+        "description": "The request is unauthorized.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "403Forbidden-2": {
+        "description": "The requester is not authorized to perform this action.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "404NotFoundDrsObject-2": {
+        "description": "The requested `DrsObject` wasn't found.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "500InternalServerError-2": {
+        "description": "An unexpected error occurred.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
       "200OkAccess-2": {
         "description": "The `AccessURL` was found successfully",
         "content": {
           "application/json": {
             "schema": {
               "$ref": "#/components/schemas/AccessURL"
+            }
+          }
+        }
+      },
+      "404NotFoundAccess-2": {
+        "description": "The requested `AccessURL` wasn't found.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
             }
           }
         }
