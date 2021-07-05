@@ -99,8 +99,8 @@ tags:
       Tip:
 
       > See [Appendix: Background Notes on DRS
-      URIs](#tag/Appendix:-Background-Notes-on-DRS-URIs) for more information on
-      our design motivations for DRS URIs.
+      URIs](#tag/Background-Notes-on-DRS-URIs) for more information on our
+      design motivations for DRS URIs.
 
 
       ### Hostname-based DRS URIs
@@ -152,10 +152,9 @@ tags:
 
       Tip:
 
-      > See the [Appendix: Hostname-Based
-      URIs](#tag/Appendix:-Hostname-Based-URIs) for information on how
-      hostname-based DRS URI resolution to URLs is likely to change in the
-      future, when the DRS v2 major release happens.
+      > See the [Appendix: Hostname-Based URIs](#tag/Hostname-Based-URIs) for
+      information on how hostname-based DRS URI resolution to URLs is likely to
+      change in the future, when the DRS v2 major release happens.
 
 
       ### Compact Identifier-based DRS URIs
@@ -171,7 +170,7 @@ tags:
 
 
       For more information, see the document [More Background on Compact
-      Identifiers](/data-repository-service-schemas/sources/md/more_background_on_compact_identifiers).
+      Identifiers](./more-background-on-compact-identifiers.html).
 
 
       Compact Identifiers take the form:
@@ -194,10 +193,10 @@ tags:
       Tip:
 
       > See the [Appendix: Compact Identifier-Based
-      URIs](#tag/Appendix:-Compact-Identifier-Based-URIs) for more background on
-      Compact Identifiers and resolver registry services like
-      identifiers.org/n2t.net (aka meta-resolvers), how to register prefixes,
-      possible caching strategies, and security considerations.
+      URIs](#tag/Compact-Identifier-Based-URIs) for more background on Compact
+      Identifiers and resolver registry services like identifiers.org/n2t.net
+      (aka meta-resolvers), how to register prefixes, possible caching
+      strategies, and security considerations.
 
 
       #### For DRS Servers
@@ -305,8 +304,8 @@ tags:
       security practices, should confirm they are comfortable with the resolver
       registry security practices, including protection against denial of
       service and namespace-hijacking attacks. (See the [Appendix: Compact
-      Identifier-Based URIs](#tag/Appendix:-Compact-Identifier-Based-URIs) for
-      more information on resolver registry security.) |
+      Identifier-Based URIs](#tag/Compact-Identifier-Based-URIs) for more
+      information on resolver registry security.) |
 
 
       ## DRS Datatypes
@@ -377,6 +376,37 @@ tags:
       as much as possible, detect attempts to exploit through log monitoring,
       and they are prepared to take action if an exploit in their DRS
       implementation is detected.
+
+
+      ## Authentication
+
+
+      ### BasicAuth
+
+
+      A valid authorization token must be passed in the 'Authorization' header,
+      e.g. "Basic ${token_string}"
+
+
+      | Security Scheme Type | HTTP |
+
+      |----------------------|------|
+
+      | **HTTP Authorization Scheme** | basic |
+
+
+      ### BearerAuth
+
+
+      A valid authorization token must be passed in the 'Authorization' header,
+      e.g. "Bearer ${token_string}"
+
+
+      | Security Scheme Type | HTTP |
+
+      |----------------------|------|
+
+      | **HTTP Authorization Scheme** | bearer |
   - name: Objects
   - name: AccessMethodModel
     x-displayName: AccessMethod
@@ -410,7 +440,7 @@ tags:
             Data sharing requires portable data, consistent with the FAIR data principles (findable, accessible, interoperable, reusable). Today’s researchers and clinicians are surrounded by potentially useful data, but often need bespoke tools and processes to work with each dataset. Today’s data publishers don’t have a reliable way to make their data useful to all (and only) the people they choose. And today’s data controllers are tasked with implementing standard controls of non-standard mechanisms for data access.
           </td>
           <td style="width:60%">
-              <img src="/data-repository-service-schemas/sources/img/figure1.png">
+              <img src="/data-repository-service-schemas/public/img/figure1.png">
               <em>
                 Figure 1: there’s an ocean of data, with many different tools to drink from it, but no guarantee that any tool will work with any subset of the data
               </em>
@@ -425,7 +455,7 @@ tags:
             We need a standard way for data producers to make their data available to data consumers, that supports the control needs of the former and the access needs of the latter. And we need it to be interoperable, so anyone who builds access tools and systems can be confident they’ll work with all the data out there, and anyone who publishes data can be confident it will work with all the tools out there.
           </td>
           <td style="width:60%">
-              <img src="/data-repository-service-schemas/sources/img/figure2.png">
+              <img src="/data-repository-service-schemas/public/img/figure2.png">
               <em>
                 Figure 2: by defining a standard Data Repository API, and adapting tools to use it, every data publisher can now make their data useful to every data consumer
               </em>
@@ -457,7 +487,7 @@ tags:
             </ul>
           </td>
           <td style="width:25%">
-              <img src="/data-repository-service-schemas/sources/img/figure3.png">
+              <img src="/data-repository-service-schemas/public/img/figure3.png">
               <em>
                 Figure 3: a standard Data Repository API enables an ecosystem of data producers and consumers
               </em>
@@ -546,7 +576,7 @@ tags:
       a resolver. You can register new prefixes (or mirrors by adding resource
       provider codes) for free using a simple online form. For more information
       see [More Background on Compact
-      Identifiers](/data-repository-service-schemas/sources/md/more_background_on_compact_identifiers).
+      Identifiers](./more-background-on-compact-identifiers.html).
 
 
       ## Calling Meta-Resolver APIs for Compact Identifier-Based DRS URIs
@@ -690,7 +720,7 @@ tags:
 
 
       For additional examples, see the document [More Background on Compact
-      Identifiers](/data-repository-service-schemas/sources/md/more_background_on_compact_identifiers).
+      Identifiers](./more-background-on-compact-identifiers.html).
   - name: Hostname-Based URIs
     description: >
       ## Encoding DRS IDs

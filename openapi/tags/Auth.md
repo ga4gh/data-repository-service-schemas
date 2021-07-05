@@ -22,3 +22,21 @@ The DRS API allows implementers to support a variety of different content access
     * caller fetches the object bytes from the `url` (passing auth info from the specified headers, if any)
 
 DRS implementers should ensure their solutions restrict access to targets as much as possible, detect attempts to exploit through log monitoring, and they are prepared to take action if an exploit in their DRS implementation is detected.
+
+## Authentication
+
+### BasicAuth
+
+A valid authorization token must be passed in the 'Authorization' header, e.g. "Basic ${token_string}"
+
+| Security Scheme Type | HTTP |
+|----------------------|------|
+| **HTTP Authorization Scheme** | basic |
+
+### BearerAuth
+
+A valid authorization token must be passed in the 'Authorization' header, e.g. "Bearer ${token_string}"
+
+| Security Scheme Type | HTTP |
+|----------------------|------|
+| **HTTP Authorization Scheme** | bearer |

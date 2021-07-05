@@ -4,7 +4,7 @@
       Data sharing requires portable data, consistent with the FAIR data principles (findable, accessible, interoperable, reusable). Today’s researchers and clinicians are surrounded by potentially useful data, but often need bespoke tools and processes to work with each dataset. Today’s data publishers don’t have a reliable way to make their data useful to all (and only) the people they choose. And today’s data controllers are tasked with implementing standard controls of non-standard mechanisms for data access.
     </td>
     <td style="width:60%">
-        <img src="/data-repository-service-schemas/sources/img/figure1.png">
+        <img src="/data-repository-service-schemas/public/img/figure1.png">
         <em>
           Figure 1: there’s an ocean of data, with many different tools to drink from it, but no guarantee that any tool will work with any subset of the data
         </em>
@@ -18,7 +18,7 @@
       We need a standard way for data producers to make their data available to data consumers, that supports the control needs of the former and the access needs of the latter. And we need it to be interoperable, so anyone who builds access tools and systems can be confident they’ll work with all the data out there, and anyone who publishes data can be confident it will work with all the tools out there.
     </td>
     <td style="width:60%">
-        <img src="/data-repository-service-schemas/sources/img/figure2.png">
+        <img src="/data-repository-service-schemas/public/img/figure2.png">
         <em>
           Figure 2: by defining a standard Data Repository API, and adapting tools to use it, every data publisher can now make their data useful to every data consumer
         </em>
@@ -49,7 +49,7 @@
       </ul>
     </td>
     <td style="width:25%">
-        <img src="/data-repository-service-schemas/sources/img/figure3.png">
+        <img src="/data-repository-service-schemas/public/img/figure3.png">
         <em>
           Figure 3: a standard Data Repository API enables an ecosystem of data producers and consumers
         </em>
