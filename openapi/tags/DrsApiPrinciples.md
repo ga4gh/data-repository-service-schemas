@@ -15,7 +15,7 @@ For convenience, including when passing content references to a [WES server](htt
 There are two styles of DRS URIs, Hostname-based and Compact Identifier-based, both using the `drs://` URI scheme. DRS servers may choose either style when exposing references to their content;. DRS clients MUST support resolving both styles.
 
 Tip:
-> See [Appendix: Background Notes on DRS URIs](#tag/Appendix:-Background-Notes-on-DRS-URIs) for more information on our design motivations for DRS URIs.
+> See [Appendix: Background Notes on DRS URIs](#tag/Background-Notes-on-DRS-URIs) for more information on our design motivations for DRS URIs.
 
 ### Hostname-based DRS URIs
 
@@ -42,13 +42,13 @@ GET https://drs.example.org/ga4gh/drs/v1/objects/314159
 The protocol is always https and the port is always the standard 443 SSL port. It is invalid to include a different port in a DRS hostname-based URI.
 
 Tip:
-> See the [Appendix: Hostname-Based URIs](#tag/Appendix:-Hostname-Based-URIs) for information on how hostname-based DRS URI resolution to URLs is likely to change in the future, when the DRS v2 major release happens.
+> See the [Appendix: Hostname-Based URIs](#tag/Hostname-Based-URIs) for information on how hostname-based DRS URI resolution to URLs is likely to change in the future, when the DRS v2 major release happens.
 
 ### Compact Identifier-based DRS URIs
 
 Compact Identifier-based DRS URIs use resolver registry services (specifically, [identifiers.org](https://identifiers.org/) and [n2t.net (Name-To-Thing)](https://n2t.net/)) to provide a layer of indirection between the DRS URI and the DRS server name — the actual DNS name of the DRS server isn’t present in the URI. This approach is based on the Joint Declaration of Data Citation Principles as detailed by [Wimalaratne et al (2018)](https://www.nature.com/articles/sdata201829).
 
-For more information, see the document [More Background on Compact Identifiers](/data-repository-service-schemas/sources/md/more_background_on_compact_identifiers).
+For more information, see the document [More Background on Compact Identifiers](./more-background-on-compact-identifiers.html).
 
 Compact Identifiers take the form:
 
@@ -59,7 +59,7 @@ drs://[provider_code/]namespace:accession
 Together, provider code and the namespace are referred to as the `prefix`. The provider code is optional and is used by identifiers.org/n2t.net for compact identifier resolver mirrors. Both the `provider_code` and `namespace` disallow spaces or punctuation, only lowercase alphanumerical characters, underscores and dots are allowed (e.g. [A-Za-z0-9._]).
 
 Tip:
-> See the [Appendix: Compact Identifier-Based URIs](#tag/Appendix:-Compact-Identifier-Based-URIs) for more background on Compact Identifiers and resolver registry services like identifiers.org/n2t.net (aka meta-resolvers), how to register prefixes, possible caching strategies, and security considerations.
+> See the [Appendix: Compact Identifier-Based URIs](#tag/Compact-Identifier-Based-URIs) for more background on Compact Identifiers and resolver registry services like identifiers.org/n2t.net (aka meta-resolvers), how to register prefixes, possible caching strategies, and security considerations.
 
 #### For DRS Servers
 
@@ -101,7 +101,7 @@ DRS servers can choose to issue either hostname-based or compact identifier-base
 |-------------------|----------------|--------------------------|
 | URI Durability    | URIs are valid for as long as the server operator maintains ownership of the published DNS address. (They can of course point that address at different physical serving infrastructure as often as they’d like.) | URIs are valid for as long as the server operator maintains ownership of the published compact identifier resolver namespace. (They also depend on the meta-resolvers like identifiers.org/n2t.net remaining operational, which is intended to be essentially forever.) |
 | Client Efficiency | URIs require minimal client logic, and no network requests, to resolve. | URIs require small client logic, and 1-2 cacheable network requests, to resolve. |
-| Security          | Servers have full control over their own security practices. | Server operators, in addition to maintaining their own security practices, should confirm they are comfortable with the resolver registry security practices, including protection against denial of service and namespace-hijacking attacks. (See the [Appendix: Compact Identifier-Based URIs](#tag/Appendix:-Compact-Identifier-Based-URIs) for more information on resolver registry security.) |
+| Security          | Servers have full control over their own security practices. | Server operators, in addition to maintaining their own security practices, should confirm they are comfortable with the resolver registry security practices, including protection against denial of service and namespace-hijacking attacks. (See the [Appendix: Compact Identifier-Based URIs](#tag/Compact-Identifier-Based-URIs) for more information on resolver registry security.) |
 
 ## DRS Datatypes
 

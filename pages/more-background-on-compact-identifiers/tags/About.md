@@ -1,0 +1,1 @@
+This document contains more examples of resolving compact identifier-based DRS URIs than we could fit in the DRS specification or appendix. It’s provided here for your reference as a supplement to the specification.

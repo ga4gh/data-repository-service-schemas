@@ -1,0 +1,29 @@
+openapi: 3.0.3
+info:
+  title: More Background on Compact Identifiers
+  version: 1.1.0
+  x-logo:
+    url: 'https://www.ga4gh.org/wp-content/themes/ga4gh-theme/gfx/GA-logo-horizontal-tag-RGB.svg'
+  termsOfService: 'https://www.ga4gh.org/terms-and-conditions/'
+  contact:
+    name: GA4GH Cloud Work Stream
+    email: ga4gh-cloud@ga4gh.org
+  license:
+    name: Apache 2.0
+    url: 'https://raw.githubusercontent.com/ga4gh/data-repository-service-schemas/master/LICENSE'
+tags:
+  - name: About
+    description:
+      $ref: ./tags/About.md
+  - name: Background on Compact Identifier-Based URIs
+    description:
+      $ref: ./tags/BackgroundOnCompactIdentiferBasedURIs.md
+  - name: Registering a DRS Server on a Meta-Resolver
+    description:
+      $ref: ./tags/RegisteringOnMetaResolver.md
+  - name: Example DRS Client Compact Identifier-Based URI Resolution Process - Existing Compact Identifier Provider
+    description:
+      $ref: ./tags/ExampleExistingProvider.md
+  - name: Example DRS Client Compact Identifier-Based URI Resolution Process - Registering a new Compact Identifier for Your DRS Server
+    description:
+      $ref: ./tags/ExampleRegisterIdentifier.md
