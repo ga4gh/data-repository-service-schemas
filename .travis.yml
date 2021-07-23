@@ -25,7 +25,7 @@ jobs:
         - gh-openapi-docs
       deploy:
         provider: pages
-        skip-cleanup: true
+        skip_cleanup: true
         keep_history: true
         github-token: $GITHUB_TOKEN
         on:
