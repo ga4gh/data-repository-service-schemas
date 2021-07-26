@@ -1,0 +1,5 @@
+description: The requested `DrsObject` wasn't found.
+content:
+  application/json:
+    schema:
+      $ref: '../schemas/Error.yaml'

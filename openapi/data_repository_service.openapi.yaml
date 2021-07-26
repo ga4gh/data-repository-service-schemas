@@ -1,0 +1,121 @@
+openapi: 3.0.3
+info:
+  title: Data Repository Service
+  version: 1.1.0
+  x-logo:
+    url: 'https://www.ga4gh.org/wp-content/themes/ga4gh-theme/gfx/GA-logo-horizontal-tag-RGB.svg'
+  termsOfService: 'https://www.ga4gh.org/terms-and-conditions/'
+  contact:
+    name: GA4GH Cloud Work Stream
+    email: ga4gh-cloud@ga4gh.org
+  license:
+    name: Apache 2.0
+    url: 'https://raw.githubusercontent.com/ga4gh/data-repository-service-schemas/master/LICENSE'
+servers:
+  - url: https://{serverURL}/ga4gh/drs/v1
+    variables:
+      serverURL:
+        default: drs.example.org
+        description: >
+          DRS server endpoints MUST be prefixed by the '/ga4gh/drs/v1' endpoint 
+          path
+security:
+  - {}
+  - BasicAuth: []
+  - BearerAuth: []
+tags:
+  # Overview
+  - name: Introduction
+    description:
+      $ref: ./tags/Introduction.md
+  - name: DRS API Principles
+    description:
+      $ref: ./tags/DrsApiPrinciples.md
+  - name: Authorization & Authentication
+    description:
+      $ref: ./tags/Auth.md
+
+  # Operations
+  - name: Objects
+
+  # Models
+  - name: AccessMethodModel
+    x-displayName: AccessMethod
+    description: |
+      <SchemaDefinition schemaRef="#/components/schemas/AccessMethod" />
+  - name: AccessURLModel
+    x-displayName: AccessURL
+    description: |
+      <SchemaDefinition schemaRef="#/components/schemas/AccessURL" />
+  - name: ChecksumModel
+    x-displayName: Checksum
+    description: |
+      <SchemaDefinition schemaRef="#/components/schemas/Checksum" />
+  - name: ContentsObjectModel
+    x-displayName: ContentsObject
+    description: |
+      <SchemaDefinition schemaRef="#/components/schemas/ContentsObject" />
+  - name: DrsObjectModel
+    x-displayName: DrsObject
+    description: |
+      <SchemaDefinition schemaRef="#/components/schemas/DrsObject" />
+  - name: ErrorModel
+    x-displayName: Error
+    description: |
+      <SchemaDefinition schemaRef="#/components/schemas/Error" />
+
+  # Appendices
+  - name: Motivation
+    description:
+      $ref: './tags/Motivation.md'
+  - name: Background Notes on DRS URIs
+    description:
+      $ref: './tags/BackgroundNotesOnDRSURIs.md'
+  - name: Compact Identifier-Based URIs
+    description:
+      $ref: './tags/CompactIdentifierBasedURIs.md'
+  - name: Hostname-Based URIs
+    description:
+      $ref: './tags/HostnameBasedURIs.md'
+x-tagGroups:
+  - name: Overview
+    tags:
+      - Introduction
+      - DRS API Principles
+      - Authorization & Authentication
+  - name: Operations
+    tags:
+      - Objects
+  - name: Models
+    tags:
+      - AccessMethodModel
+      - AccessURLModel
+      - ChecksumModel
+      - ContentsObjectModel
+      - DrsObjectModel
+      - ErrorModel
+  - name: Appendices
+    tags:
+      - Motivation
+      - Background Notes on DRS URIs
+      - Compact Identifier-Based URIs
+      - Hostname-Based URIs
+paths:
+  /objects/{object_id}:
+    $ref: ./paths/objects@{object_id}.yaml
+  /objects/{object_id}/access/{access_id}:
+    $ref: ./paths/objects@{object_id}@access@{access_id}.yaml
+components:
+  securitySchemes:
+    BasicAuth:
+      type: http
+      scheme: basic
+      description: |
+        A valid authorization token must be passed in the 'Authorization' header,
+        e.g. "Basic ${token_string}"
+    BearerAuth:
+      type: http
+      scheme: bearer
+      description:
+        A valid authorization token must be passed in the 'Authorization' header,
+        e.g. "Bearer ${token_string}"

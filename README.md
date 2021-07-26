@@ -5,11 +5,6 @@
 <sup>`develop` branch status: </sup>[![Build Status](https://travis-ci.org/ga4gh/data-repository-service-schemas.svg?branch=develop)](https://travis-ci.org/ga4gh/data-repository-service-schemas?branch=develop)
 <a href="https://ga4gh.github.io/data-repository-service-schemas/preview/develop/swagger.yaml"><img src="http://online.swagger.io/validator?url=https://ga4gh.github.io/data-repository-service-schemas/preview/develop/swagger.yaml" alt="Swagger Validator" height="20em" width="72em"></A> [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1405753.svg)](https://doi.org/10.5281/zenodo.1405753)
 
-<!--
-[![Read the Docs badge](https://readthedocs.org/projects/data-repository-service/badge/)](https://data-repository-service.readthedocs.io/en/latest)
-![PyPI - Python Version](https://img.shields.io/pypi/pyversions/ga4gh-drs-schemas.svg)-->
-
-
 The [Global Alliance for Genomics and Health](http://genomicsandhealth.org/) (GA4GH) is an international coalition, formed to enable the sharing of genomic and clinical data.
 
 # About the GA4GH Cloud Work Stream
@@ -28,14 +23,13 @@ For more information see our HTML documentation links in the table below.
 
 # API Definition
 
-|  **Branch** | **Reference Documentation** | **[OpenAPI YAML description](openapi/data_repository_service.swagger.yaml)** |
+|  **Branch** | **Reference Documentation** | Swagger Editor |
 | --- | --- | --- |
-| **master**: The current release | [HTML](https://ga4gh.github.io/data-repository-service-schemas/docs/) | [Swagger](https://ga4gh.github.io/data-repository-service-schemas/swagger-ui/#/DataRepositoryService/) |
-| **develop**: the stable development branch, into which feature branches are merged | [HTML](https://ga4gh.github.io/data-repository-service-schemas/preview/develop/docs/) | [Swagger](https://ga4gh.github.io/data-repository-service-schemas/preview/develop/swagger-ui/#/DataRepositoryService/) |
-| **release 1.1.0**: The 1.1.0 release of DRS that includes *no* API changes only documentation changes. This introduces a new URI convention using compact identifiers along with clear directions on how to use identifiers.org/n2t.net to resolve them. | [HTML](https://ga4gh.github.io/data-repository-service-schemas/preview/release/drs-1.1.0/docs/) | [Swagger](https://ga4gh.github.io/data-repository-service-schemas/preview/release/drs-1.1.0/swagger-ui/#/DataRepositoryService/) |
-| **release 1.0.0**: The 1.0.0 release of DRS that is now an approved GA4GH standard | [HTML](https://ga4gh.github.io/data-repository-service-schemas/preview/release/drs-1.0.0/docs/) | [Swagger](https://ga4gh.github.io/data-repository-service-schemas/preview/release/drs-1.0.0/swagger-ui/#/DataRepositoryService/) |
-| **release 0.1**: Simplifying DRS to core functionality | [HTML](https://ga4gh.github.io/data-repository-service-schemas/preview/release/drs-0.1.0/docs/) | [Swagger](https://ga4gh.github.io/data-repository-service-schemas/preview/release/drs-0.1.0/swagger-ui/#/DataRepositoryService/) |
-| **release 0.0.1**: The initial DRS after the rename from DOS | [HTML](https://ga4gh.github.io/data-repository-service-schemas/preview/release/0.0.1/docs/) | [Swagger](https://ga4gh.github.io/data-repository-service-schemas/preview/release/0.0.1/swagger-ui/#/DataRepositoryService/) |
+| **develop**: the stable development branch, into which feature branches are merged | [HTML](https://ga4gh.github.io/data-repository-service-schemas/preview/develop/docs/) | [Swagger Editor](https://editor.swagger.io?url=https://ga4gh.github.io/data-repository-service-schemas/preview/develop/openapi.yaml) |
+| **release 1.1.0**: The 1.1.0 release of DRS that includes *no* API changes only documentation changes. This introduces a new URI convention using compact identifiers along with clear directions on how to use identifiers.org/n2t.net to resolve them. | [HTML](https://ga4gh.github.io/data-repository-service-schemas/preview/release/drs-1.1.0/docs/) | [Swagger Editor](https://editor.swagger.io?url=https://ga4gh.github.io/data-repository-service-schemas/preview/release/drs-1.1.0/swagger.yaml) |
+| **release 1.0.0**: The 1.0.0 release of DRS that is now an approved GA4GH standard | [HTML](https://ga4gh.github.io/data-repository-service-schemas/preview/release/drs-1.0.0/docs/) | [Swagger Editor](https://editor.swagger.io?url=https://ga4gh.github.io/data-repository-service-schemas/preview/release/drs-1.0.0/swagger.yaml) |
+| **release 0.1**: Simplifying DRS to core functionality | [HTML](https://ga4gh.github.io/data-repository-service-schemas/preview/release/drs-0.1.0/docs/) | [Swagger Editor](https://editor.swagger.io?url=https://ga4gh.github.io/data-repository-service-schemas/preview/release/drs-0.1.0/swagger.yaml) |
+| **release 0.0.1**: The initial DRS after the rename from DOS | [HTML](https://ga4gh.github.io/data-repository-service-schemas/preview/release/0.0.1/docs/) | [Swagger Editor](https://editor.swagger.io?url=https://ga4gh.github.io/data-repository-service-schemas/preview/release/0.0.1/swagger.yaml) |
 
 To monitor development work on various branches, add 'preview/\<branch-name\>' to the master URLs above (e.g., 'https://ga4gh.github.io/data-repository-service-schemas/preview/\<branch-name\>/docs').
 
