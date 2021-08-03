@@ -5,10 +5,7 @@ get:
 
     This method only needs to be called when using an `AccessMethod` that contains an `access_id`
     (e.g., for servers that use signed URLs for fetching object bytes).
-  operationId: GetAccessURL
-  parameters:
-    - $ref: '../components/parameters/ObjectId.yaml'
-    - $ref: '../components/parameters/AccessId.yaml'
+  operationId: PostAccessURL
   responses:
     200:
       $ref: '../components/responses/200OkAccess.yaml'
@@ -27,3 +24,48 @@ get:
   tags:
     - Objects
   x-swagger-router-controller: ga4gh.drs.server
+  parameters:
+    - $ref: '../components/parameters/ObjectId.yaml'
+    - $ref: '../components/parameters/AccessId.yaml'
+post:
+  summary: Get a URL for fetching bytes through POST'ing a Passport
+  description: >-
+    Returns a URL that can be used to fetch the bytes of a `DrsObject`.
+
+    This method only needs to be called when using an `AccessMethod` that contains an `access_id`
+    (e.g., for servers that use signed URLs for fetching object bytes).
+
+    Method is a POST to accomodate a JWT GA4GH Passport sent in the formData in order to authorize access.
+  operationId: PostAccessURL
+  responses:
+    200:
+      $ref: '../components/responses/200OkAccess.yaml'
+    202:
+      $ref: '../components/responses/202Accepted.yaml'
+    400:
+      $ref: '../components/responses/400BadRequest.yaml'
+    401:
+      $ref: '../components/responses/401Unauthorized.yaml'
+    403:
+      $ref: '../components/responses/403Forbidden.yaml'
+    404:
+      $ref: '../components/responses/404NotFoundAccess.yaml'
+    500:
+      $ref: '../components/responses/500InternalServerError.yaml'
+  tags:
+    - Objects
+  x-swagger-router-controller: ga4gh.drs.server
+  parameters:
+    - $ref: '../components/parameters/ObjectId.yaml'
+    - $ref: '../components/parameters/AccessId.yaml'
+  requestBody:
+    required: true
+    content:
+      multipart/form-data:
+        schema:
+          - properties:
+            tokens[]:
+              type: array
+              items:
+                type: string
+              description: the encoded JWT GA4GH Passport that contains embedded Visas.  The overall JWT is signed as are the individual Passport Visas.
