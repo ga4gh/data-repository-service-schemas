@@ -1,0 +1,7 @@
+description: Retrieve info about the DRS service
+content:
+  application/json:
+    schema:
+      allOf:
+        - '$ref': https://raw.githubusercontent.com/ga4gh-discovery/ga4gh-service-info/v1.0.0/service-info.yaml#/components/schemas/Service
+        - '$ref': '../schemas/DrsServiceInfo.yaml'
