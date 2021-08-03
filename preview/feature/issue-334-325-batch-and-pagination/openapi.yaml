@@ -771,6 +771,58 @@ x-tagGroups:
       - Compact Identifier-Based URIs
       - Hostname-Based URIs
 paths:
+  /objects:
+    post:
+      summary: Get info about a batch of DrsObjects
+      description: TBD
+      operationId: DrsObjectBatch
+      parameters:
+        - in: header
+          name: Link
+          type: string
+          description: |-
+            # Link Header
+            ### For Pagination
+            ``` <https://drs.myexample.org/ga4gh/drs/v1/objects ```
+      requestBody:
+        description: TBD
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/DrsObjectBatchPayload'
+      responses:
+        '200':
+          $ref: ../components/responses/200OkDrsObjectBatch.yaml
+        '400':
+          $ref: '#/components/responses/400BadRequest'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+        '403':
+          $ref: '#/components/responses/403Forbidden'
+        '404':
+          $ref: '#/components/responses/404NotFoundDrsObject'
+        '500':
+          $ref: '#/components/responses/500InternalServerError'
+      tags:
+        - Objects
+    get:
+      summary: TBD
+      description: TBD
+      operationId: TBD
+      parameters:
+        - in: query
+          name: selection_id
+          required: true
+          description: TBD
+          schema:
+            type: string
+        - in: query
+          name: page
+          required: true
+          description: true
+          schema:
+            type: integer
   '/objects/{object_id}':
     get:
       summary: Get info about a DrsObject.
@@ -846,41 +898,27 @@ components:
       description: >-
         A valid authorization token must be passed in the 'Authorization'
         header, e.g. "Bearer ${token_string}"
-  parameters:
-    ObjectId:
-      in: path
-      name: object_id
-      required: true
-      description: '`DrsObject` identifier'
-      schema:
-        type: string
-    Expand:
-      in: query
-      name: expand
-      schema:
-        type: boolean
-      example: false
-      description: >-
-        If false and the object_id refers to a bundle, then the ContentsObject
-        array contains only those objects directly contained in the bundle. That
-        is, if the bundle contains other bundles, those other bundles are not
-        recursively included in the result.
-
-        If true and the object_id refers to a bundle, then the entire set of
-        objects in the bundle is expanded. That is, if the bundle contains
-        aother bundles, then those other bundles are recursively expanded and
-        included in the result. Recursion continues through the entire sub-tree
-        of the bundle.
-
-        If the object_id refers to a blob, then the query parameter is ignored.
-    AccessId:
-      in: path
-      name: access_id
-      required: true
-      description: An `access_id` from the `access_methods` list of a `DrsObject`
-      schema:
-        type: string
   schemas:
+    DrsObjectBatchPayload:
+      type: object
+      properties:
+        selection:
+          type: array
+          description: Array of DRS IDs
+          minItems: 1
+          items:
+            type: string
+            description: DRS ID
+    Error:
+      type: object
+      description: An object that can optionally include information about the error.
+      properties:
+        msg:
+          type: string
+          description: A detailed error message.
+        status_code:
+          type: integer
+          description: 'The integer representing the HTTP status code (e.g. 200, 404).'
     Checksum:
       type: object
       required:
@@ -1134,42 +1172,7 @@ components:
             A list of strings that can be used to find other metadata about this
             `DrsObject` from external metadata sources. These aliases can be
             used to represent secondary accession numbers or external GUIDs.
-    Error:
-      type: object
-      description: An object that can optionally include information about the error.
-      properties:
-        msg:
-          type: string
-          description: A detailed error message.
-        status_code:
-          type: integer
-          description: 'The integer representing the HTTP status code (e.g. 200, 404).'
   responses:
-    200OkDrsObject:
-      description: The `DrsObject` was found successfully
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/DrsObject'
-    202Accepted:
-      description: >
-        The operation is delayed and will continue asynchronously. The client
-        should retry this same request after the delay specified by Retry-After
-        header.
-      headers:
-        Retry-After:
-          description: >
-            Delay in seconds. The client should retry this same request after
-            waiting for this duration. To simplify client response processing,
-            this must be an integral relative time in seconds. This value SHOULD
-            represent the minimum duration the client should wait before
-            attempting the operation again with a reasonable expectation of
-            success. When it is not feasible for the server to determine the
-            actual expected delay, the server may return a brief, fixed value
-            instead.
-          schema:
-            type: integer
-            format: int64
     400BadRequest:
       description: The request is malformed.
       content:
@@ -1200,6 +1203,31 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
+    200OkDrsObject:
+      description: The `DrsObject` was found successfully
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/DrsObject'
+    202Accepted:
+      description: >
+        The operation is delayed and will continue asynchronously. The client
+        should retry this same request after the delay specified by Retry-After
+        header.
+      headers:
+        Retry-After:
+          description: >
+            Delay in seconds. The client should retry this same request after
+            waiting for this duration. To simplify client response processing,
+            this must be an integral relative time in seconds. This value SHOULD
+            represent the minimum duration the client should wait before
+            attempting the operation again with a reasonable expectation of
+            success. When it is not feasible for the server to determine the
+            actual expected delay, the server may return a brief, fixed value
+            instead.
+          schema:
+            type: integer
+            format: int64
     200OkAccess:
       description: The `AccessURL` was found successfully
       content:
@@ -1212,3 +1240,37 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
+  parameters:
+    ObjectId:
+      in: path
+      name: object_id
+      required: true
+      description: '`DrsObject` identifier'
+      schema:
+        type: string
+    Expand:
+      in: query
+      name: expand
+      schema:
+        type: boolean
+      example: false
+      description: >-
+        If false and the object_id refers to a bundle, then the ContentsObject
+        array contains only those objects directly contained in the bundle. That
+        is, if the bundle contains other bundles, those other bundles are not
+        recursively included in the result.
+
+        If true and the object_id refers to a bundle, then the entire set of
+        objects in the bundle is expanded. That is, if the bundle contains
+        aother bundles, then those other bundles are recursively expanded and
+        included in the result. Recursion continues through the entire sub-tree
+        of the bundle.
+
+        If the object_id refers to a blob, then the query parameter is ignored.
+    AccessId:
+      in: path
+      name: access_id
+      required: true
+      description: An `access_id` from the `access_methods` list of a `DrsObject`
+      schema:
+        type: string
