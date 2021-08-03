@@ -63,7 +63,8 @@ post:
     content:
       multipart/form-data:
         schema:
-          - properties:
+          type: object
+          properties:
             tokens[]:
               type: array
               items:
