@@ -58,10 +58,14 @@ post:
   parameters:
     - $ref: '../components/parameters/ObjectId.yaml'
     - $ref: '../components/parameters/AccessId.yaml'
-    - name: tokens[]
-      in: formData
-      required: true
-      type: array
-      items:
-        type: string
-      description: the encoded JWT GA4GH Passport that contains embedded Visas.  The overall JWT is signed as are the individual Passport Visas.
+  requestBody:
+    required: true
+    content:
+      multipart/form-data:
+        schema:
+          - properties:
+            tokens[]:
+              type: array
+              items:
+                type: string
+              description: the encoded JWT GA4GH Passport that contains embedded Visas.  The overall JWT is signed as are the individual Passport Visas.
