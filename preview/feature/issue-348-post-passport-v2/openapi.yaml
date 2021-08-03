@@ -800,14 +800,14 @@ paths:
         - Objects
       x-swagger-router-controller: ga4gh.drs.server
   '/objects/{object_id}/access/{access_id}':
-    summary: Get a URL for fetching bytes
-    description: >-
-      Returns a URL that can be used to fetch the bytes of a `DrsObject`.
-
-      This method only needs to be called when using an `AccessMethod` that
-      contains an `access_id` (e.g., for servers that use signed URLs for
-      fetching object bytes).
     get:
+      summary: Get a URL for fetching bytes
+      description: >-
+        Returns a URL that can be used to fetch the bytes of a `DrsObject`.
+
+        This method only needs to be called when using an `AccessMethod` that
+        contains an `access_id` (e.g., for servers that use signed URLs for
+        fetching object bytes).
       operationId: GetAccessURL
       responses:
         '200':
@@ -827,10 +827,39 @@ paths:
       tags:
         - Objects
       x-swagger-router-controller: ga4gh.drs.server
-      get:
-        parameters:
-          - $ref: ../components/parameters/ObjectId.yaml
-          - $ref: ../components/parameters/AccessId.yaml
+      parameters:
+        - $ref: '#/components/parameters/ObjectId'
+        - $ref: '#/components/parameters/AccessId'
+    post:
+      summary: Get a URL for fetching bytes
+      description: >-
+        Returns a URL that can be used to fetch the bytes of a `DrsObject`.
+
+        This method only needs to be called when using an `AccessMethod` that
+        contains an `access_id` (e.g., for servers that use signed URLs for
+        fetching object bytes).
+      operationId: GetAccessURL
+      responses:
+        '200':
+          $ref: '#/components/responses/200OkAccess'
+        '202':
+          $ref: '#/components/responses/202Accepted'
+        '400':
+          $ref: '#/components/responses/400BadRequest'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+        '403':
+          $ref: '#/components/responses/403Forbidden'
+        '404':
+          $ref: '#/components/responses/404NotFoundAccess'
+        '500':
+          $ref: '#/components/responses/500InternalServerError'
+      tags:
+        - Objects
+      x-swagger-router-controller: ga4gh.drs.server
+      parameters:
+        - $ref: '#/components/parameters/ObjectId'
+        - $ref: '#/components/parameters/AccessId'
 components:
   securitySchemes:
     BasicAuth:
@@ -874,6 +903,13 @@ components:
         of the bundle.
 
         If the object_id refers to a blob, then the query parameter is ignored.
+    AccessId:
+      in: path
+      name: access_id
+      required: true
+      description: An `access_id` from the `access_methods` list of a `DrsObject`
+      schema:
+        type: string
   schemas:
     Checksum:
       type: object
