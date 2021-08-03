@@ -4,30 +4,27 @@ description: >-
 
   This method only needs to be called when using an `AccessMethod` that contains an `access_id`
   (e.g., for servers that use signed URLs for fetching object bytes).
-operationId: GetAccessURL
-responses:
-  200:
-    $ref: '../components/responses/200OkAccess.yaml'
-  202:
-    $ref: '../components/responses/202Accepted.yaml'
-  400:
-    $ref: '../components/responses/400BadRequest.yaml'
-  401:
-    $ref: '../components/responses/401Unauthorized.yaml'
-  403:
-    $ref: '../components/responses/403Forbidden.yaml'
-  404:
-    $ref: '../components/responses/404NotFoundAccess.yaml'
-  500:
-    $ref: '../components/responses/500InternalServerError.yaml'
-tags:
-  - Objects
-x-swagger-router-controller: ga4gh.drs.server
+get:
+  operationId: GetAccessURL
+  responses:
+    200:
+      $ref: '../components/responses/200OkAccess.yaml'
+    202:
+      $ref: '../components/responses/202Accepted.yaml'
+    400:
+      $ref: '../components/responses/400BadRequest.yaml'
+    401:
+      $ref: '../components/responses/401Unauthorized.yaml'
+    403:
+      $ref: '../components/responses/403Forbidden.yaml'
+    404:
+      $ref: '../components/responses/404NotFoundAccess.yaml'
+    500:
+      $ref: '../components/responses/500InternalServerError.yaml'
+  tags:
+    - Objects
+  x-swagger-router-controller: ga4gh.drs.server
   get:
-    parameters:
-      - $ref: '../components/parameters/ObjectId.yaml'
-      - $ref: '../components/parameters/AccessId.yaml'
-  post:
     parameters:
       - $ref: '../components/parameters/ObjectId.yaml'
       - $ref: '../components/parameters/AccessId.yaml'
