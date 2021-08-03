@@ -1,9 +1,0 @@
-type: object
-properties:
-  selection:
-    type: array
-    description: Array of DRS IDs
-    minItems: 1
-    items:
-      type: string
-      description: DRS ID
