@@ -104,10 +104,7 @@ paths:
   /objects/{object_id}:
     $ref: ./paths/objects@{object_id}.yaml
   /objects/{object_id}/access/{access_id}:
-    get:
-      $ref: ./paths/objects@{object_id}@access@{access_id}.yaml
-    post:
-      $ref: ./paths/objects@{object_id}@access@{access_id}.yaml
+    $ref: ./paths/objects@{object_id}@access@{access_id}.yaml
 components:
   securitySchemes:
     BasicAuth:
