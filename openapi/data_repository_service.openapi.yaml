@@ -17,7 +17,7 @@ servers:
       serverURL:
         default: drs.example.org
         description: >
-          DRS server endpoints MUST be prefixed by the '/ga4gh/drs/v1' endpoint 
+          DRS server endpoints MUST be prefixed by the '/ga4gh/drs/v1' endpoint
           path
 security:
   - {}
