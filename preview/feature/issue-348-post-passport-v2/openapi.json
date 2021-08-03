@@ -264,8 +264,8 @@
             "multipart/form-data": {
               "schema": {
                 "type": "object",
-                "tokens": {
-                  "properties": {
+                "properties": {
+                  "tokens[]": {
                     "type": "array",
                     "items": {
                       "type": "string"
