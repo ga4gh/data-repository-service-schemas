@@ -799,6 +799,51 @@ paths:
       tags:
         - Objects
       x-swagger-router-controller: ga4gh.drs.server
+    post:
+      summary: Get info about a DrsObject through POST'ing a Passport.
+      description: >-
+        Returns object metadata, and a list of access methods that can be used
+        to fetch object bytes.
+
+        Method is a POST to accomodate a JWT GA4GH Passport sent in the formData
+        in order to authorize access.
+      operationId: PostObject
+      responses:
+        '200':
+          $ref: '#/components/responses/200OkAccess'
+        '202':
+          $ref: '#/components/responses/202Accepted'
+        '400':
+          $ref: '#/components/responses/400BadRequest'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+        '403':
+          $ref: '#/components/responses/403Forbidden'
+        '404':
+          $ref: '#/components/responses/404NotFoundAccess'
+        '500':
+          $ref: '#/components/responses/500InternalServerError'
+      tags:
+        - Objects
+      x-swagger-router-controller: ga4gh.drs.server
+      parameters:
+        - $ref: '#/components/parameters/ObjectId'
+        - $ref: '#/components/parameters/Expand'
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                'tokens[]':
+                  type: array
+                  items:
+                    type: string
+                  description: >-
+                    the encoded JWT GA4GH Passport that contains embedded
+                    Visas.  The overall JWT is signed as are the individual
+                    Passport Visas.
   '/objects/{object_id}/access/{access_id}':
     get:
       summary: Get a URL for fetching bytes
