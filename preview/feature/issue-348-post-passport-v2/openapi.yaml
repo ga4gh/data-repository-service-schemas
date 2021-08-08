@@ -25,6 +25,7 @@ security:
   - {}
   - BasicAuth: []
   - BearerAuth: []
+  - PassportAuth: []
 tags:
   - name: Introduction
     description: >
@@ -164,7 +165,7 @@ tags:
       (specifically, [identifiers.org](https://identifiers.org/) and [n2t.net
       (Name-To-Thing)](https://n2t.net/)) to provide a layer of indirection
       between the DRS URI and the DRS server name — the actual DNS name of the
-      DRS server isn’t present in the URI. This approach is based on the Joint
+      DRS server is not present in the URI. This approach is based on the Joint
       Declaration of Data Citation Principles as detailed by [Wimalaratne et al
       (2018)](https://www.nature.com/articles/sdata201829).
 
@@ -289,7 +290,7 @@ tags:
       | URI Durability    | URIs are valid for as long as the server operator
       maintains ownership of the published DNS address. (They can of course
       point that address at different physical serving infrastructure as often
-      as they’d like.) | URIs are valid for as long as the server operator
+      as they would like.) | URIs are valid for as long as the server operator
       maintains ownership of the published compact identifier resolver
       namespace. (They also depend on the meta-resolvers like
       identifiers.org/n2t.net remaining operational, which is intended to be
@@ -335,7 +336,11 @@ tags:
 
       The DRS API specification is written in OpenAPI and embodies a RESTful
       service philosophy. It uses JSON in requests and responses and standard
-      HTTPS on port 443 for information transport.
+      HTTPS on port 443 for information transport.  Optionally, it
+
+      supports authenitcation and authorization using the [GA4GH
+      Passport](https://github.com/ga4gh-duri/ga4gh-duri.github.io/tree/master/researcher_ids)
+      standard.
   - name: Authorization & Authentication
     description: >
       ## Making DRS Requests
@@ -344,15 +349,25 @@ tags:
       The DRS implementation is responsible for defining and enforcing an
       authorization policy that determines which users are allowed to make which
       requests. GA4GH recommends that DRS implementations use an OAuth 2.0
-      [bearer token](https://oauth.net/2/bearer-tokens/), although they can
-      choose other mechanisms if appropriate.
+      [bearer token](https://oauth.net/2/bearer-tokens/) or a [GA4GH
+      Passport](https://github.com/ga4gh-duri/ga4gh-duri.github.io/tree/master/researcher_ids),
+      although they can choose other mechanisms if appropriate.
 
 
       ## Fetching DRS Objects
 
 
       The DRS API allows implementers to support a variety of different content
-      access policies, depending on what `AccessMethod` records they return:
+      access policies, depending on what `AccessMethod` records they return. 
+      Implementers have a choice to make the
+
+      GET /objects/{object_id} and GET /objects/{object_id}/access/{access_id}
+      calls open or requiring a Basic, Bearer, or Passport token (Passport
+      requiring a POST).  The following describes the
+
+      various access approaches following a successful GET/POST
+      /objects/{object_id} request in order to them obtain access to the bytes
+      for a given object ID/access ID:
 
 
       * public content:
@@ -371,6 +386,15 @@ tags:
           * caller passes the `access_id` to the `/access` endpoint
           * server provides an `access_url` with the generated mechanism (e.g. a signed URL in the `url` field)
           * caller fetches the object bytes from the `url` (passing auth info from the specified headers, if any)
+
+      In the approaches above [GA4GH
+      Passports](https://github.com/ga4gh-duri/ga4gh-duri.github.io/tree/master/researcher_ids)
+      are not mentioned and that is on purpose.  A DRS server may return a
+      Bearer token or other platform-specific token in a header in response to a
+      valid Bearer token or GA4GH Passport (Option 3 above).  But it is not the
+      responsibility of a DRS server to return a Passport, that is the
+      responsibility of a Passport Broker and outside the scope of DRS.
+
 
       DRS implementers should ensure their solutions restrict access to targets
       as much as possible, detect attempts to exploit through log monitoring,
@@ -407,6 +431,21 @@ tags:
       |----------------------|------|
 
       | **HTTP Authorization Scheme** | bearer |
+
+
+      ### PassportAuth
+
+
+      A valid authorization [GA4GH
+      Passport](https://github.com/ga4gh-duri/ga4gh-duri.github.io/tree/master/researcher_ids)
+      token must be passed in the body of a POST request
+
+
+      | Security Scheme Type | HTTP |
+
+      |----------------------|------|
+
+      | **HTTP POST** | tokens[] |
   - name: Objects
   - name: AccessMethodModel
     x-displayName: AccessMethod
@@ -939,6 +978,14 @@ components:
       description: >-
         A valid authorization token must be passed in the 'Authorization'
         header, e.g. "Bearer ${token_string}"
+    PassportAuth:
+      type: http
+      scheme: bearer
+      x-in: body
+      bearerFormat: JWT
+      description: >-
+        A valid GA4GH Passport must be passed in the body of an HTTP POST
+        request as a tokens[] array.
   parameters:
     ObjectId:
       in: path

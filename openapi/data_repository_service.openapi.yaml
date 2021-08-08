@@ -23,6 +23,7 @@ security:
   - {}
   - BasicAuth: []
   - BearerAuth: []
+  - PassportAuth: []
 tags:
   # Overview
   - name: Introduction
@@ -119,3 +120,10 @@ components:
       description:
         A valid authorization token must be passed in the 'Authorization' header,
         e.g. "Bearer ${token_string}"
+    PassportAuth:
+      type: http
+      scheme: bearer
+      x-in: body
+      bearerFormat: JWT
+      description:
+        A valid GA4GH Passport must be passed in the body of an HTTP POST request as a tokens[] array.
