@@ -23,7 +23,6 @@ security:
   - {}
   - BasicAuth: []
   - BearerAuth: []
-  - PassportAuth: []
 tags:
   # Overview
   - name: Introduction

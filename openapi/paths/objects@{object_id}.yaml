@@ -32,6 +32,8 @@ post:
 
     Method is a POST to accomodate a JWT GA4GH Passport sent in the formData in order to authorize access.
   operationId: PostObject
+  security:
+    - PassportAuth: []
   responses:
     200:
       $ref: '../components/responses/200OkAccess.yaml'
