@@ -374,7 +374,7 @@
           }
         }
       },
-      "DrsServiceInfo": {
+      "DrsService": {
         "type": "object",
         "required": [
           "type"
@@ -610,7 +610,7 @@
                   "$ref": "#/components/schemas/Service"
                 },
                 {
-                  "$ref": "#/components/schemas/DrsServiceInfo"
+                  "$ref": "#/components/schemas/DrsService"
                 }
               ]
             }
