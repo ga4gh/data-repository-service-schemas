@@ -78,6 +78,9 @@ tags:
   - name: Hostname-Based URIs
     description:
       $ref: './tags/HostnameBasedURIs.md'
+  - name: GA4GH Service Registry
+    description:
+      $ref: './tags/ServiceRegistry.md'
 x-tagGroups:
   - name: Overview
     tags:
@@ -102,6 +105,7 @@ x-tagGroups:
       - Background Notes on DRS URIs
       - Compact Identifier-Based URIs
       - Hostname-Based URIs
+      - GA4GH Service Registry
 paths:
   /service-info:
     $ref: ./paths/service-info.yaml

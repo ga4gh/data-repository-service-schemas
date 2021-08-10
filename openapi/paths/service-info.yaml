@@ -27,6 +27,8 @@ get:
         ...
     }
     ```
+
+    See the [Service Registry Appendix](#tag/GA4GH-Service-Registry) for more information on how to register a DRS service with a service registry.
   operationId: GetServiceInfo
   responses:
     200:
