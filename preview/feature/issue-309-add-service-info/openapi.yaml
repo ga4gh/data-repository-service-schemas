@@ -735,19 +735,63 @@ tags:
       IDs, they must be percent encoded before using them as DRS IDs in
       hostname-based DRS URIs and subsequent GET requests to a DRS service
       endpoint.
+  - name: GA4GH Service Registry
+    description: >
+      The [GA4GH Service Registry API
+      specification](https://github.com/ga4gh-discovery/ga4gh-service-registry)
+      allows information about GA4GH-compliant web services, including DRS
+      services, to be aggregated into registries and made available via a
+      standard API. The following considerations should be followed when
+      registering DRS services within a service registry.
 
 
-      ## Future DRS Versions and Service Registry/Info
+      * The DRS service attributes returned by `/service-info` (i.e. `id`,
+      `name`, `description`, etc.) should have the same values as the registry
+      entry for that service.
+
+      * The value of the `type` object's `artifact` property should be `drs`
+      (i.e. the same as it appears in `service-info`)
+
+      * Each entry in a Service Registry must have a `url`, indicating the base
+      URL to the web service. For DRS services, the registered `url` must
+      include everything up to
+
+      the standardized `/ga4gh/drs/v1` path. Clients should be able to assume
+      that:
+          + Adding `/ga4gh/drs/v1/objects/{object_id}` to the registered `url` will hit the `DrsObject` endpoint
+          + Adding `/ga4gh/drs/v1/service-info` to the the registered `url` will hit the Service Info endpoint
+
+      Example listing of a DRS API registration from a service registry's
+      `/services` endpoint:
 
 
-      In the future, as new major versions of DRS are released, a DRS server
-      might support multiple API versions on different URL paths. At that point
-      we expect to add support for
-      [service-registry](https://github.com/ga4gh-discovery/ga4gh-service-registry)
-      and [service-info](https://github.com/ga4gh-discovery/ga4gh-service-info)
-      endpoints to the API, and to update the URI resolution logic to describe
-      how to use those endpoints when translating hostname-based DRS URIs to
-      URLs.
+      ```
+
+      [
+          {
+              "id": "com.example.drs",
+              "name": "Example DRS API",
+              "type": {
+                  "group": "org.ga4gh",
+                  "artifact": "drs",
+                  "version": "1.2.0"
+              },
+              "description": "The Data Repository Service (DRS) API ...",
+              "organization": {
+                  "id": "com.example",
+                  "name": "Example Company"
+              },
+              "contactUrl": "mailto:support@example.com",
+              "documentationUrl": "https://docs.example.com/docs/drs",
+              "createdAt": "2021-08-09T00:00:00Z",
+              "updatedAt": "2021-08-09T12:30:00Z",
+              "environment": "production",
+              "version": "1.13.4",
+              "url": "https://drs-service.example.com"
+          }
+      ]
+
+      ```
 x-tagGroups:
   - name: Overview
     tags:
@@ -772,6 +816,7 @@ x-tagGroups:
       - Background Notes on DRS URIs
       - Compact Identifier-Based URIs
       - Hostname-Based URIs
+      - GA4GH Service Registry
 paths:
   /service-info:
     get:
@@ -816,6 +861,11 @@ paths:
         }
 
         ```
+
+
+        See the [Service Registry Appendix](#tag/GA4GH-Service-Registry) for
+        more information on how to register a DRS service with a service
+        registry.
       operationId: GetServiceInfo
       responses:
         '200':

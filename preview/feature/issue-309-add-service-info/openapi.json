@@ -99,7 +99,11 @@
     },
     {
       "name": "Hostname-Based URIs",
-      "description": "## Encoding DRS IDs\n\nIn hostname-based DRS URIs, the ID is always percent-encoded to ensure special characters do not interfere with subsequent DRS endpoint calls. As such, \":\" is not allowed in the URI and is a convenient way of differentiating from a compact identifier-based DRS URI. Also, if a given DRS service implementation uses compact identifier accessions as their DRS IDs, they must be percent encoded before using them as DRS IDs in hostname-based DRS URIs and subsequent GET requests to a DRS service endpoint.\n\n## Future DRS Versions and Service Registry/Info\n\nIn the future, as new major versions of DRS are released, a DRS server might support multiple API versions on different URL paths. At that point we expect to add support for [service-registry](https://github.com/ga4gh-discovery/ga4gh-service-registry) and [service-info](https://github.com/ga4gh-discovery/ga4gh-service-info) endpoints to the API, and to update the URI resolution logic to describe how to use those endpoints when translating hostname-based DRS URIs to URLs.\n"
+      "description": "## Encoding DRS IDs\n\nIn hostname-based DRS URIs, the ID is always percent-encoded to ensure special characters do not interfere with subsequent DRS endpoint calls. As such, \":\" is not allowed in the URI and is a convenient way of differentiating from a compact identifier-based DRS URI. Also, if a given DRS service implementation uses compact identifier accessions as their DRS IDs, they must be percent encoded before using them as DRS IDs in hostname-based DRS URIs and subsequent GET requests to a DRS service endpoint.\n"
+    },
+    {
+      "name": "GA4GH Service Registry",
+      "description": "The [GA4GH Service Registry API specification](https://github.com/ga4gh-discovery/ga4gh-service-registry) allows information about GA4GH-compliant web services, including DRS services, to be aggregated into registries and made available via a standard API. The following considerations should be followed when registering DRS services within a service registry.\n\n* The DRS service attributes returned by `/service-info` (i.e. `id`, `name`, `description`, etc.) should have the same values as the registry entry for that service.\n* The value of the `type` object's `artifact` property should be `drs` (i.e. the same as it appears in `service-info`)\n* Each entry in a Service Registry must have a `url`, indicating the base URL to the web service. For DRS services, the registered `url` must include everything up to\nthe standardized `/ga4gh/drs/v1` path. Clients should be able to assume that:\n    + Adding `/ga4gh/drs/v1/objects/{object_id}` to the registered `url` will hit the `DrsObject` endpoint\n    + Adding `/ga4gh/drs/v1/service-info` to the the registered `url` will hit the Service Info endpoint\n\nExample listing of a DRS API registration from a service registry's `/services` endpoint:\n\n```\n[\n    {\n        \"id\": \"com.example.drs\",\n        \"name\": \"Example DRS API\",\n        \"type\": {\n            \"group\": \"org.ga4gh\",\n            \"artifact\": \"drs\",\n            \"version\": \"1.2.0\"\n        },\n        \"description\": \"The Data Repository Service (DRS) API ...\",\n        \"organization\": {\n            \"id\": \"com.example\",\n            \"name\": \"Example Company\"\n        },\n        \"contactUrl\": \"mailto:support@example.com\",\n        \"documentationUrl\": \"https://docs.example.com/docs/drs\",\n        \"createdAt\": \"2021-08-09T00:00:00Z\",\n        \"updatedAt\": \"2021-08-09T12:30:00Z\",\n        \"environment\": \"production\",\n        \"version\": \"1.13.4\",\n        \"url\": \"https://drs-service.example.com\"\n    }\n]\n```\n"
     }
   ],
   "x-tagGroups": [
@@ -135,7 +139,8 @@
         "Motivation",
         "Background Notes on DRS URIs",
         "Compact Identifier-Based URIs",
-        "Hostname-Based URIs"
+        "Hostname-Based URIs",
+        "GA4GH Service Registry"
       ]
     }
   ],
@@ -143,7 +148,7 @@
     "/service-info": {
       "get": {
         "summary": "Retrieve information about this service",
-        "description": "Returns information about the DRS service\n\nExtends the\n[v1.0.0 GA4GH Service Info specification](https://github.com/ga4gh-discovery/ga4gh-service-info)\nas the standardized format for GA4GH web services to self-describe.\n\nAccording to the \n[service-info type registry](https://github.com/ga4gh/TASC/blob/master/service-info/ga4gh-service-info.json)\nmaintained by the [Technical Alignment Sub Committee (TASC)](https://github.com/ga4gh/TASC),\na DRS service MUST have:\n  * a `type.group` value of `org.ga4gh`\n  * a `type.artifact` value of `drs`\n\ne.g.\n```\n{\n    \"id\": \"com.example.drs\",\n    \"description\": \"Serves data according to DRS specification\",\n    ...\n    \"type\": {\n        \"group\": \"org.ga4gh\",\n        \"artifact\": \"drs\"\n    }\n    ...\n}\n```",
+        "description": "Returns information about the DRS service\n\nExtends the\n[v1.0.0 GA4GH Service Info specification](https://github.com/ga4gh-discovery/ga4gh-service-info)\nas the standardized format for GA4GH web services to self-describe.\n\nAccording to the \n[service-info type registry](https://github.com/ga4gh/TASC/blob/master/service-info/ga4gh-service-info.json)\nmaintained by the [Technical Alignment Sub Committee (TASC)](https://github.com/ga4gh/TASC),\na DRS service MUST have:\n  * a `type.group` value of `org.ga4gh`\n  * a `type.artifact` value of `drs`\n\ne.g.\n```\n{\n    \"id\": \"com.example.drs\",\n    \"description\": \"Serves data according to DRS specification\",\n    ...\n    \"type\": {\n        \"group\": \"org.ga4gh\",\n        \"artifact\": \"drs\"\n    }\n    ...\n}\n```\n\nSee the [Service Registry Appendix](#tag/GA4GH-Service-Registry) for more information on how to register a DRS service with a service registry.",
         "operationId": "GetServiceInfo",
         "responses": {
           "200": {
