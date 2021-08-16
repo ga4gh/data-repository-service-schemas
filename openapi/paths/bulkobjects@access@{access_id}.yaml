@@ -34,7 +34,4 @@ post:
           type: object
           properties:
             object_ids:
-              type: array
-              items:
-                $ref: '../components/parameters/BulkObjectId.yaml'
-              description: An array of ObjectIDs
+              type: string
