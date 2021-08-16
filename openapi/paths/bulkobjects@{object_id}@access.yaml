@@ -1,4 +1,4 @@
-get:
+post:
   summary: Get a URL for fetching bytes
   description: >-
     Returns a URL that can be used to fetch the bytes of a `DrsObject`.
