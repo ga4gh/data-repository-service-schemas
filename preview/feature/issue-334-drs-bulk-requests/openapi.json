@@ -178,7 +178,7 @@
         "x-swagger-router-controller": "ga4gh.drs.server"
       }
     },
-    "/bulk/objects/{object_id}": {
+    "/bulk/objects": {
       "post": {
         "summary": "Get info about multiple DrsObjects.",
         "description": "Returns an array of object metadata, and a list of access methods that can be used to fetch objects' bytes.",
@@ -225,7 +225,7 @@
                   "objectids": {
                     "type": "array",
                     "items": {
-                      "$ref": "#/components/schemas/ObjectId"
+                      "$ref": "#/components/schemas/BulkObjectId"
                     },
                     "description": "An array of ObjectIds"
                   }
@@ -565,9 +565,8 @@
           }
         }
       },
-      "ObjectId": {
-        "in": "path",
-        "name": "object_id",
+      "BulkObjectId": {
+        "name": "bulk_object_id",
         "required": true,
         "description": "`DrsObject` identifier",
         "schema": {

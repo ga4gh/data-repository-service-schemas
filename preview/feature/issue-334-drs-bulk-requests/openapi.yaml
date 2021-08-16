@@ -799,7 +799,7 @@ paths:
       tags:
         - Objects
       x-swagger-router-controller: ga4gh.drs.server
-  '/bulk/objects/{object_id}':
+  /bulk/objects:
     post:
       summary: Get info about multiple DrsObjects.
       description: >-
@@ -836,7 +836,7 @@ paths:
                 objectids:
                   type: array
                   items:
-                    $ref: '#/components/schemas/ObjectId'
+                    $ref: '#/components/schemas/BulkObjectId'
                   description: An array of ObjectIds
   '/objects/{object_id}/access/{access_id}':
     get:
@@ -1214,9 +1214,8 @@ components:
         status_code:
           type: integer
           description: 'The integer representing the HTTP status code (e.g. 200, 404).'
-    ObjectId:
-      in: path
-      name: object_id
+    BulkObjectId:
+      name: bulk_object_id
       required: true
       description: '`DrsObject` identifier'
       schema:
