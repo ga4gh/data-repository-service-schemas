@@ -222,7 +222,7 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "objectids": {
+                  "object_ids": {
                     "type": "array",
                     "items": {
                       "$ref": "#/components/schemas/BulkObjectId"
@@ -278,10 +278,10 @@
         "x-swagger-router-controller": "ga4gh.drs.server"
       }
     },
-    "/bulk/objects/{object_id}/access": {
+    "/bulk/objects/access/{access_id}": {
       "post": {
-        "summary": "Get a URL for fetching bytes",
-        "description": "Returns a URL that can be used to fetch the bytes of a `DrsObject`.\nThis method only needs to be called when using an `AccessMethod` that contains an `access_id` (e.g., for servers that use signed URLs for fetching object bytes).",
+        "summary": "Get a URLs for fetching bytes from multiple objects",
+        "description": "Returns an array of URL objects that can be used to fetch the bytes of multiple `DrsObject`s.\nThis method only needs to be called when using an `AccessMethod` that contains an `access_id` (e.g., for servers that use signed URLs for fetching object bytes).",
         "operationId": "GetBulkAccessURL",
         "parameters": [
           {
@@ -293,7 +293,7 @@
         ],
         "responses": {
           "200": {
-            "$ref": "#/components/responses/200OkAccess"
+            "$ref": "#/components/responses/200OkAccesses"
           },
           "202": {
             "$ref": "#/components/responses/202Accepted"
@@ -317,7 +317,26 @@
         "tags": [
           "Objects"
         ],
-        "x-swagger-router-controller": "ga4gh.drs.server"
+        "x-swagger-router-controller": "ga4gh.drs.server",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "object_ids": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/BulkObjectId"
+                    },
+                    "description": "An array of ObjectIDs"
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     }
   },
@@ -572,6 +591,29 @@
         "schema": {
           "type": "string"
         }
+      },
+      "BulkAccessURL": {
+        "type": "object",
+        "required": [
+          "url"
+        ],
+        "properties": {
+          "object_id": {
+            "$ref": "../components/parameters/BulkObjectId.yaml"
+          },
+          "url": {
+            "type": "string",
+            "description": "A fully resolvable URL that can be used to fetch the actual object bytes."
+          },
+          "headers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "An optional list of headers to include in the HTTP request to `url`. These headers can be used to provide auth tokens required to fetch the object bytes.",
+            "example": "Authorization: Basic Z2E0Z2g6ZHJz"
+          }
+        }
       }
     },
     "responses": {
@@ -681,6 +723,24 @@
           "application/json": {
             "schema": {
               "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "200OkAccesses": {
+        "description": "The `AccessURL` was found successfully",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "access_urls": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BulkAccessURL"
+                  }
+                }
+              }
             }
           }
         }
