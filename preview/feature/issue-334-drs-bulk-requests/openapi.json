@@ -285,9 +285,6 @@
         "operationId": "GetBulkAccessURL",
         "parameters": [
           {
-            "$ref": "#/components/parameters/ObjectId"
-          },
-          {
             "$ref": "#/components/parameters/AccessId"
           }
         ],
