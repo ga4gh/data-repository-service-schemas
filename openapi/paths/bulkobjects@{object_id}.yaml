@@ -1,0 +1,39 @@
+post:
+  summary: Get info about multiple DrsObjects.
+  description: >-
+    Returns an array of object metadata, and a list of access methods that can be used to fetch objects' bytes.
+  operationId: GetObject
+  parameters:
+    - $ref: '../components/parameters/ObjectId.yaml'
+    - $ref: '../components/parameters/Expand.yaml'
+  responses:
+    200:
+      $ref: '../components/responses/200OkDrsObject.yaml'
+    202:
+      $ref: '../components/responses/202Accepted.yaml'
+    400:
+      $ref: '../components/responses/400BadRequest.yaml'
+    401:
+      $ref: '../components/responses/401Unauthorized.yaml'
+    403:
+      $ref: '../components/responses/403Forbidden.yaml'
+    404:
+      $ref: '../components/responses/404NotFoundDrsObject.yaml'
+    500:
+      $ref: '../components/responses/500InternalServerError.yaml'
+  tags:
+    - Objects
+  x-swagger-router-controller: ga4gh.drs.server
+  requestBody:
+    required: true
+    content:
+      application/json:
+        schema:
+          type: object
+          properties:
+            objectids:
+              type: array
+              items:
+                type:
+                  $ref: '../components/parameters/ObjectId.yaml'
+              description: An array of ObjectIds
