@@ -30,7 +30,7 @@ post:
         schema:
           type: object
           properties:
-            objectids:
+            object_ids:
               type: array
               items:
                 $ref: '../components/parameters/BulkObjectId.yaml'
