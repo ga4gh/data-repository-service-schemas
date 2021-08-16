@@ -7,7 +7,6 @@ post:
     (e.g., for servers that use signed URLs for fetching object bytes).
   operationId: GetBulkAccessURL
   parameters:
-    - $ref: '../components/parameters/ObjectId.yaml'
     - $ref: '../components/parameters/AccessId.yaml'
   responses:
     200:
