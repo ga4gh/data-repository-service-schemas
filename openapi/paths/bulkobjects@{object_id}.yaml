@@ -8,7 +8,7 @@ post:
     - $ref: '../components/parameters/Expand.yaml'
   responses:
     200:
-      $ref: '../components/responses/200OkDrsObject.yaml'
+      $ref: '../components/responses/200OkDrsObjects.yaml'
     202:
       $ref: '../components/responses/202Accepted.yaml'
     400:
