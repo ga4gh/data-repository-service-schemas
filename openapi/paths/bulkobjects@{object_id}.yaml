@@ -33,5 +33,5 @@ post:
             objectids:
               type: array
               items:
-                type: string
+                $ref: '../components/parameters/ObjectId.yaml'
               description: An array of ObjectIds
