@@ -22,7 +22,7 @@
       "variables": {
         "serverURL": {
           "default": "drs.example.org",
-          "description": "DRS server endpoints MUST be prefixed by the '/ga4gh/drs/v1' endpoint  path\n"
+          "description": "DRS server endpoints MUST be prefixed by the '/ga4gh/drs/v1' endpoint path\n"
         }
       }
     }
@@ -178,6 +178,75 @@
         "x-swagger-router-controller": "ga4gh.drs.server"
       }
     },
+    "/bulk/objects/{object_id}": {
+      "post": {
+        "summary": "Get info about multiple DrsObjects.",
+        "description": "Returns an array of object metadata, and a list of access methods that can be used to fetch objects' bytes.",
+        "operationId": "GetObject",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ObjectId"
+          },
+          {
+            "$ref": "#/components/parameters/Expand"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/200OkDrsObject"
+          },
+          "202": {
+            "$ref": "#/components/responses/202Accepted"
+          },
+          "400": {
+            "$ref": "#/components/responses/400BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/401Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/403Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/404NotFoundDrsObject"
+          },
+          "500": {
+            "$ref": "#/components/responses/500InternalServerError"
+          }
+        },
+        "tags": [
+          "Objects"
+        ],
+        "x-swagger-router-controller": "ga4gh.drs.server",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "objectids": {
+                    "type": "array",
+                    "items": {
+                      "type": {
+                        "in": "path",
+                        "name": "object_id",
+                        "required": true,
+                        "description": "`DrsObject` identifier",
+                        "schema": {
+                          "type": "string"
+                        }
+                      }
+                    },
+                    "description": "An array of ObjectIds"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/objects/{object_id}/access/{access_id}": {
       "get": {
         "summary": "Get a URL for fetching bytes",
@@ -219,6 +288,9 @@
         ],
         "x-swagger-router-controller": "ga4gh.drs.server"
       }
+    },
+    "/bulk/objects/{object_id}/access": {
+      "$ref": "./paths/objects@{object_id}@access.yaml"
     }
   },
   "components": {
