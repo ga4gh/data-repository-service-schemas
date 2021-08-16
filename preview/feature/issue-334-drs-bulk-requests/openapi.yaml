@@ -871,7 +871,7 @@ paths:
       x-swagger-router-controller: ga4gh.drs.server
   '/bulk/objects/access/{access_id}':
     post:
-      summary: Get a URLs for fetching bytes from multiple objects
+      summary: Get URLs for fetching bytes from multiple objects
       description: >-
         Returns an array of URL objects that can be used to fetch the bytes of
         multiple `DrsObject`s.
@@ -908,7 +908,10 @@ paths:
               type: object
               properties:
                 object_ids:
-                  type: string
+                  type: array
+                  items:
+                    $ref: '#/components/schemas/BulkObjectId'
+                  description: An array of ObjectIDs
 components:
   securitySchemes:
     BasicAuth:
