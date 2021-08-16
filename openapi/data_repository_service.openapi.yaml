@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
   title: Data Repository Service
-  version: 1.2.0
+  version: 1.1.0
   x-logo:
     url: 'https://www.ga4gh.org/wp-content/themes/ga4gh-theme/gfx/GA-logo-horizontal-tag-RGB.svg'
   termsOfService: 'https://www.ga4gh.org/terms-and-conditions/'
@@ -37,7 +37,6 @@ tags:
 
   # Operations
   - name: Objects
-  - name: Service Info
 
   # Models
   - name: AccessMethodModel
@@ -78,9 +77,6 @@ tags:
   - name: Hostname-Based URIs
     description:
       $ref: './tags/HostnameBasedURIs.md'
-  - name: GA4GH Service Registry
-    description:
-      $ref: './tags/ServiceRegistry.md'
 x-tagGroups:
   - name: Overview
     tags:
@@ -90,7 +86,6 @@ x-tagGroups:
   - name: Operations
     tags:
       - Objects
-      - Service Info
   - name: Models
     tags:
       - AccessMethodModel
@@ -105,10 +100,7 @@ x-tagGroups:
       - Background Notes on DRS URIs
       - Compact Identifier-Based URIs
       - Hostname-Based URIs
-      - GA4GH Service Registry
 paths:
-  /service-info:
-    $ref: ./paths/service-info.yaml
   /objects/{object_id}:
     $ref: ./paths/objects@{object_id}.yaml
   /objects/{object_id}/access/{access_id}:
