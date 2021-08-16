@@ -323,11 +323,7 @@
                 "type": "object",
                 "properties": {
                   "object_ids": {
-                    "type": "array",
-                    "items": {
-                      "$ref": "#/components/schemas/BulkObjectId"
-                    },
-                    "description": "An array of ObjectIDs"
+                    "type": "string"
                   }
                 }
               }
