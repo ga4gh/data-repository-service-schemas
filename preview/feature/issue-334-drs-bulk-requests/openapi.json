@@ -225,7 +225,7 @@
                   "objectids": {
                     "type": "array",
                     "items": {
-                      "type": "string"
+                      "$ref": "#/components/schemas/ObjectId"
                     },
                     "description": "An array of ObjectIds"
                   }
@@ -564,6 +564,15 @@
             "description": "The integer representing the HTTP status code (e.g. 200, 404)."
           }
         }
+      },
+      "ObjectId": {
+        "in": "path",
+        "name": "object_id",
+        "required": true,
+        "description": "`DrsObject` identifier",
+        "schema": {
+          "type": "string"
+        }
       }
     },
     "responses": {
@@ -649,7 +658,7 @@
                 "drsobjects": {
                   "type": "array",
                   "items": {
-                    "type": "string"
+                    "$ref": "#/components/schemas/DrsObject"
                   }
                 }
               }

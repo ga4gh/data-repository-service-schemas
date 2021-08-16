@@ -836,7 +836,7 @@ paths:
                 objectids:
                   type: array
                   items:
-                    type: string
+                    $ref: '#/components/schemas/ObjectId'
                   description: An array of ObjectIds
   '/objects/{object_id}/access/{access_id}':
     get:
@@ -1214,6 +1214,13 @@ components:
         status_code:
           type: integer
           description: 'The integer representing the HTTP status code (e.g. 200, 404).'
+    ObjectId:
+      in: path
+      name: object_id
+      required: true
+      description: '`DrsObject` identifier'
+      schema:
+        type: string
   responses:
     200OkDrsObject:
       description: The `DrsObject` was found successfully
@@ -1280,7 +1287,7 @@ components:
               drsobjects:
                 type: array
                 items:
-                  type: string
+                  $ref: '#/components/schemas/DrsObject'
     200OkAccess:
       description: The `AccessURL` was found successfully
       content:
