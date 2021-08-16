@@ -2,7 +2,7 @@ post:
   summary: Get info about multiple DrsObjects.
   description: >-
     Returns an array of object metadata, and a list of access methods that can be used to fetch objects' bytes.
-  operationId: GetObject
+  operationId: GetBulkObject
   parameters:
     - $ref: '../components/parameters/ObjectId.yaml'
     - $ref: '../components/parameters/Expand.yaml'

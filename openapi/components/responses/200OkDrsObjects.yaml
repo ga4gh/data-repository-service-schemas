@@ -1,4 +1,4 @@
-description: The `DrsObject` was found successfully
+description: The `DrsObjects` were found successfully
 content:
   application/json:
     schema:
