@@ -182,11 +182,8 @@
       "post": {
         "summary": "Get info about multiple DrsObjects.",
         "description": "Returns an array of object metadata, and a list of access methods that can be used to fetch objects' bytes.",
-        "operationId": "GetBulkObject",
+        "operationId": "GetBulkObjects",
         "parameters": [
-          {
-            "$ref": "#/components/parameters/ObjectId"
-          },
           {
             "$ref": "#/components/parameters/Expand"
           }
