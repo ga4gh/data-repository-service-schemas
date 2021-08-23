@@ -876,7 +876,7 @@ paths:
             schema:
               type: object
               properties:
-                tokens:
+                passports:
                   type: array
                   items:
                     type: string
@@ -957,7 +957,7 @@ paths:
             schema:
               type: object
               properties:
-                tokens:
+                passports:
                   type: array
                   items:
                     type: string

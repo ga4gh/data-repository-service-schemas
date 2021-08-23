@@ -228,7 +228,7 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "tokens": {
+                  "passports": {
                     "type": "array",
                     "items": {
                       "type": "string"
@@ -334,7 +334,7 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "tokens": {
+                  "passports": {
                     "type": "array",
                     "items": {
                       "type": "string"
