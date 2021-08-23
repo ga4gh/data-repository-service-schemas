@@ -63,11 +63,11 @@ post:
   requestBody:
     required: true
     content:
-      multipart/form-data:
+      application/json:
         schema:
           type: object
           properties:
-            tokens[]:
+            tokens:
               type: array
               items:
                 type: string
