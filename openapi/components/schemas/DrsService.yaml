@@ -1,0 +1,13 @@
+type: object
+required:
+  - type
+properties:
+  type:
+    type: object
+    required:
+      - artifact
+    properties:
+      artifact:
+        type: string
+        enum: [drs]
+        example: drs
