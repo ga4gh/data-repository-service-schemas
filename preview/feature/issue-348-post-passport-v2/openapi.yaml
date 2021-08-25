@@ -973,20 +973,7 @@ paths:
         - $ref: '#/components/parameters/ObjectId'
         - $ref: '#/components/parameters/Expand'
       requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                passports:
-                  type: array
-                  items:
-                    type: string
-                  description: >-
-                    the encoded JWT GA4GH Passport that contains embedded
-                    Visas.  The overall JWT is signed as are the individual
-                    Passport Visas.
+        $ref: '#/components/requestBodies/Passports'
   '/objects/{object_id}/access/{access_id}':
     get:
       summary: Get a URL for fetching bytes
@@ -1054,20 +1041,7 @@ paths:
         - $ref: '#/components/parameters/ObjectId'
         - $ref: '#/components/parameters/AccessId'
       requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                passports:
-                  type: array
-                  items:
-                    type: string
-                  description: >-
-                    the encoded JWT GA4GH Passport that contains embedded
-                    Visas.  The overall JWT is signed as are the individual
-                    Passport Visas.
+        $ref: '#/components/requestBodies/Passports'
 components:
   securitySchemes:
     BasicAuth:
@@ -1602,3 +1576,21 @@ components:
       description: An `access_id` from the `access_methods` list of a `DrsObject`
       schema:
         type: string
+  requestBodies:
+    Passports:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              passports:
+                type: array
+                items:
+                  type: string
+                  example: >-
+                    eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJnYTRnaF9wYXNzcG9ydF92MSI6W119.JJ5rN0ktP0qwyZmIPpxmF_p7JsxAZH6L6brUxtad3CM
+                description: >-
+                  the encoded JWT GA4GH Passport that contains embedded Visas. 
+                  The overall JWT is signed as are the individual Passport
+                  Visas.
