@@ -53,6 +53,9 @@
       "name": "Objects"
     },
     {
+      "name": "Service Info"
+    },
+    {
       "name": "AccessMethodModel",
       "x-displayName": "AccessMethod",
       "description": "<SchemaDefinition schemaRef=\"#/components/schemas/AccessMethod\" />\n"
@@ -96,7 +99,11 @@
     },
     {
       "name": "Hostname-Based URIs",
-      "description": "## Encoding DRS IDs\n\nIn hostname-based DRS URIs, the ID is always percent-encoded to ensure special characters do not interfere with subsequent DRS endpoint calls. As such, \":\" is not allowed in the URI and is a convenient way of differentiating from a compact identifier-based DRS URI. Also, if a given DRS service implementation uses compact identifier accessions as their DRS IDs, they must be percent encoded before using them as DRS IDs in hostname-based DRS URIs and subsequent GET requests to a DRS service endpoint.\n\n## Future DRS Versions and Service Registry/Info\n\nIn the future, as new major versions of DRS are released, a DRS server might support multiple API versions on different URL paths. At that point we expect to add support for [service-registry](https://github.com/ga4gh-discovery/ga4gh-service-registry) and [service-info](https://github.com/ga4gh-discovery/ga4gh-service-info) endpoints to the API, and to update the URI resolution logic to describe how to use those endpoints when translating hostname-based DRS URIs to URLs.\n"
+      "description": "## Encoding DRS IDs\n\nIn hostname-based DRS URIs, the ID is always percent-encoded to ensure special characters do not interfere with subsequent DRS endpoint calls. As such, \":\" is not allowed in the URI and is a convenient way of differentiating from a compact identifier-based DRS URI. Also, if a given DRS service implementation uses compact identifier accessions as their DRS IDs, they must be percent encoded before using them as DRS IDs in hostname-based DRS URIs and subsequent GET requests to a DRS service endpoint.\n"
+    },
+    {
+      "name": "GA4GH Service Registry",
+      "description": "The [GA4GH Service Registry API specification](https://github.com/ga4gh-discovery/ga4gh-service-registry) allows information about GA4GH-compliant web services, including DRS services, to be aggregated into registries and made available via a standard API. The following considerations should be followed when registering DRS services within a service registry.\n\n* The DRS service attributes returned by `/service-info` (i.e. `id`, `name`, `description`, etc.) should have the same values as the registry entry for that service.\n* The value of the `type` object's `artifact` property should be `drs` (i.e. the same as it appears in `service-info`)\n* Each entry in a Service Registry must have a `url`, indicating the base URL to the web service. For DRS services, the registered `url` must include everything up to\nthe standardized `/ga4gh/drs/v1` path. Clients should be able to assume that:\n    + Adding `/ga4gh/drs/v1/objects/{object_id}` to the registered `url` will hit the `DrsObject` endpoint\n    + Adding `/ga4gh/drs/v1/service-info` to the the registered `url` will hit the Service Info endpoint\n\nExample listing of a DRS API registration from a service registry's `/services` endpoint:\n\n```\n[\n    {\n        \"id\": \"com.example.drs\",\n        \"name\": \"Example DRS API\",\n        \"type\": {\n            \"group\": \"org.ga4gh\",\n            \"artifact\": \"drs\",\n            \"version\": \"1.2.0\"\n        },\n        \"description\": \"The Data Repository Service (DRS) API ...\",\n        \"organization\": {\n            \"id\": \"com.example\",\n            \"name\": \"Example Company\"\n        },\n        \"contactUrl\": \"mailto:support@example.com\",\n        \"documentationUrl\": \"https://docs.example.com/docs/drs\",\n        \"createdAt\": \"2021-08-09T00:00:00Z\",\n        \"updatedAt\": \"2021-08-09T12:30:00Z\",\n        \"environment\": \"production\",\n        \"version\": \"1.13.4\",\n        \"url\": \"https://drs-service.example.com\"\n    }\n]\n```\n"
     }
   ],
   "x-tagGroups": [
@@ -111,7 +118,8 @@
     {
       "name": "Operations",
       "tags": [
-        "Objects"
+        "Objects",
+        "Service Info"
       ]
     },
     {
@@ -131,11 +139,30 @@
         "Motivation",
         "Background Notes on DRS URIs",
         "Compact Identifier-Based URIs",
-        "Hostname-Based URIs"
+        "Hostname-Based URIs",
+        "GA4GH Service Registry"
       ]
     }
   ],
   "paths": {
+    "/service-info": {
+      "get": {
+        "summary": "Retrieve information about this service",
+        "description": "Returns information about the DRS service\n\nExtends the\n[v1.0.0 GA4GH Service Info specification](https://github.com/ga4gh-discovery/ga4gh-service-info)\nas the standardized format for GA4GH web services to self-describe.\n\nAccording to the \n[service-info type registry](https://github.com/ga4gh/TASC/blob/master/service-info/ga4gh-service-info.json)\nmaintained by the [Technical Alignment Sub Committee (TASC)](https://github.com/ga4gh/TASC),\na DRS service MUST have:\n  * a `type.group` value of `org.ga4gh`\n  * a `type.artifact` value of `drs`\n\ne.g.\n```\n{\n    \"id\": \"com.example.drs\",\n    \"description\": \"Serves data according to DRS specification\",\n    ...\n    \"type\": {\n        \"group\": \"org.ga4gh\",\n        \"artifact\": \"drs\"\n    }\n    ...\n}\n```\n\nSee the [Service Registry Appendix](#tag/GA4GH-Service-Registry) for more information on how to register a DRS service with a service registry.",
+        "operationId": "GetServiceInfo",
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/200ServiceInfo"
+          },
+          "500": {
+            "$ref": "#/components/responses/500InternalServerError"
+          }
+        },
+        "tags": [
+          "Service Info"
+        ]
+      }
+    },
     "/objects/{object_id}": {
       "get": {
         "summary": "Get info about a DrsObject.",
@@ -369,36 +396,156 @@
         "description": "A valid GA4GH Passport must be passed in the body of an HTTP POST request as a tokens[] array."
       }
     },
-    "parameters": {
-      "ObjectId": {
-        "in": "path",
-        "name": "object_id",
-        "required": true,
-        "description": "`DrsObject` identifier",
-        "schema": {
-          "type": "string"
-        }
-      },
-      "Expand": {
-        "in": "query",
-        "name": "expand",
-        "schema": {
-          "type": "boolean"
-        },
-        "example": false,
-        "description": "If false and the object_id refers to a bundle, then the ContentsObject array contains only those objects directly contained in the bundle. That is, if the bundle contains other bundles, those other bundles are not recursively included in the result.\nIf true and the object_id refers to a bundle, then the entire set of objects in the bundle is expanded. That is, if the bundle contains aother bundles, then those other bundles are recursively expanded and included in the result. Recursion continues through the entire sub-tree of the bundle.\nIf the object_id refers to a blob, then the query parameter is ignored."
-      },
-      "AccessId": {
-        "in": "path",
-        "name": "access_id",
-        "required": true,
-        "description": "An `access_id` from the `access_methods` list of a `DrsObject`",
-        "schema": {
-          "type": "string"
-        }
-      }
-    },
     "schemas": {
+      "ServiceType": {
+        "description": "Type of a GA4GH service",
+        "type": "object",
+        "required": [
+          "group",
+          "artifact",
+          "version"
+        ],
+        "properties": {
+          "group": {
+            "type": "string",
+            "description": "Namespace in reverse domain name format. Use `org.ga4gh` for implementations compliant with official GA4GH specifications. For services with custom APIs not standardized by GA4GH, or implementations diverging from official GA4GH specifications, use a different namespace (e.g. your organization's reverse domain name).",
+            "example": "org.ga4gh"
+          },
+          "artifact": {
+            "type": "string",
+            "description": "Name of the API or GA4GH specification implemented. Official GA4GH types should be assigned as part of standards approval process. Custom artifacts are supported.",
+            "example": "beacon"
+          },
+          "version": {
+            "type": "string",
+            "description": "Version of the API or specification. GA4GH specifications use semantic versioning.",
+            "example": "1.0.0"
+          }
+        }
+      },
+      "Service": {
+        "description": "GA4GH service",
+        "type": "object",
+        "required": [
+          "id",
+          "name",
+          "type",
+          "organization",
+          "version"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Unique ID of this service. Reverse domain name notation is recommended, though not required. The identifier should attempt to be globally unique so it can be used in downstream aggregator services e.g. Service Registry.",
+            "example": "org.ga4gh.myservice"
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of this service. Should be human readable.",
+            "example": "My project"
+          },
+          "type": {
+            "$ref": "#/components/schemas/ServiceType"
+          },
+          "description": {
+            "type": "string",
+            "description": "Description of the service. Should be human readable and provide information about the service.",
+            "example": "This service provides..."
+          },
+          "organization": {
+            "type": "object",
+            "description": "Organization providing the service",
+            "required": [
+              "name",
+              "url"
+            ],
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Name of the organization responsible for the service",
+                "example": "My organization"
+              },
+              "url": {
+                "type": "string",
+                "format": "uri",
+                "description": "URL of the website of the organization (RFC 3986 format)",
+                "example": "https://example.com"
+              }
+            }
+          },
+          "contactUrl": {
+            "type": "string",
+            "format": "uri",
+            "description": "URL of the contact for the provider of this service, e.g. a link to a contact form (RFC 3986 format), or an email (RFC 2368 format).",
+            "example": "mailto:support@example.com"
+          },
+          "documentationUrl": {
+            "type": "string",
+            "format": "uri",
+            "description": "URL of the documentation of this service (RFC 3986 format). This should help someone learn how to use your service, including any specifics required to access data, e.g. authentication.",
+            "example": "https://docs.myservice.example.com"
+          },
+          "createdAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp describing when the service was first deployed and available (RFC 3339 format)",
+            "example": "2019-06-04T12:58:19Z"
+          },
+          "updatedAt": {
+            "type": "string",
+            "format": "date-time",
+            "description": "Timestamp describing when the service was last updated (RFC 3339 format)",
+            "example": "2019-06-04T12:58:19Z"
+          },
+          "environment": {
+            "type": "string",
+            "description": "Environment the service is running in. Use this to distinguish between production, development and testing/staging deployments. Suggested values are prod, test, dev, staging. However this is advised and not enforced.",
+            "example": "test"
+          },
+          "version": {
+            "type": "string",
+            "description": "Version of the service being described. Semantic versioning is recommended, but other identifiers, such as dates or commit hashes, are also allowed. The version should be changed whenever the service is updated.",
+            "example": "1.0.0"
+          }
+        }
+      },
+      "DrsService": {
+        "type": "object",
+        "required": [
+          "type"
+        ],
+        "properties": {
+          "type": {
+            "type": "object",
+            "required": [
+              "artifact"
+            ],
+            "properties": {
+              "artifact": {
+                "type": "string",
+                "enum": [
+                  "drs"
+                ],
+                "example": "drs"
+              }
+            }
+          }
+        }
+      },
+      "Error": {
+        "type": "object",
+        "description": "An object that can optionally include information about the error.",
+        "properties": {
+          "msg": {
+            "type": "string",
+            "description": "A detailed error message."
+          },
+          "status_code": {
+            "type": "integer",
+            "description": "The integer representing the HTTP status code (e.g. 200, 404)."
+          }
+        }
+      },
       "Checksum": {
         "type": "object",
         "required": [
@@ -585,23 +732,36 @@
             "description": "A list of strings that can be used to find other metadata about this `DrsObject` from external metadata sources. These aliases can be used to represent secondary accession numbers or external GUIDs."
           }
         }
-      },
-      "Error": {
-        "type": "object",
-        "description": "An object that can optionally include information about the error.",
-        "properties": {
-          "msg": {
-            "type": "string",
-            "description": "A detailed error message."
-          },
-          "status_code": {
-            "type": "integer",
-            "description": "The integer representing the HTTP status code (e.g. 200, 404)."
-          }
-        }
       }
     },
     "responses": {
+      "200ServiceInfo": {
+        "description": "Retrieve info about the DRS service",
+        "content": {
+          "application/json": {
+            "schema": {
+              "allOf": [
+                {
+                  "$ref": "#/components/schemas/Service"
+                },
+                {
+                  "$ref": "#/components/schemas/DrsService"
+                }
+              ]
+            }
+          }
+        }
+      },
+      "500InternalServerError": {
+        "description": "An unexpected error occurred.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
       "200OkDrsObject": {
         "description": "The `DrsObject` was found successfully",
         "content": {
@@ -664,16 +824,6 @@
           }
         }
       },
-      "500InternalServerError": {
-        "description": "An unexpected error occurred.",
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/Error"
-            }
-          }
-        }
-      },
       "200OkAccess": {
         "description": "The `AccessURL` was found successfully",
         "content": {
@@ -692,6 +842,35 @@
               "$ref": "#/components/schemas/Error"
             }
           }
+        }
+      }
+    },
+    "parameters": {
+      "ObjectId": {
+        "in": "path",
+        "name": "object_id",
+        "required": true,
+        "description": "`DrsObject` identifier",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "Expand": {
+        "in": "query",
+        "name": "expand",
+        "schema": {
+          "type": "boolean"
+        },
+        "example": false,
+        "description": "If false and the object_id refers to a bundle, then the ContentsObject array contains only those objects directly contained in the bundle. That is, if the bundle contains other bundles, those other bundles are not recursively included in the result.\nIf true and the object_id refers to a bundle, then the entire set of objects in the bundle is expanded. That is, if the bundle contains aother bundles, then those other bundles are recursively expanded and included in the result. Recursion continues through the entire sub-tree of the bundle.\nIf the object_id refers to a blob, then the query parameter is ignored."
+      },
+      "AccessId": {
+        "in": "path",
+        "name": "access_id",
+        "required": true,
+        "description": "An `access_id` from the `access_methods` list of a `DrsObject`",
+        "schema": {
+          "type": "string"
         }
       }
     }
