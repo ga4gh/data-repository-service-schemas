@@ -56,14 +56,4 @@ post:
     - $ref: '../components/parameters/ObjectId.yaml'
     - $ref: '../components/parameters/Expand.yaml'
   requestBody:
-    required: true
-    content:
-      application/json:
-        schema:
-          type: object
-          properties:
-            passports:
-              type: array
-              items:
-                type: string
-              description: the encoded JWT GA4GH Passport that contains embedded Visas.  The overall JWT is signed as are the individual Passport Visas.
+    $ref: '../components/requestBodies/Passports.yaml'
