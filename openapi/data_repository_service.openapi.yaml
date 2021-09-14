@@ -17,7 +17,7 @@ servers:
       serverURL:
         default: drs.example.org
         description: >
-          DRS server endpoints MUST be prefixed by the '/ga4gh/drs/v1' endpoint
+          DRS server endpoints MUST be prefixed by the '/ga4gh/drs/v1' endpoint 
           path
 security:
   - {}
@@ -127,10 +127,3 @@ components:
       description:
         A valid authorization token must be passed in the 'Authorization' header,
         e.g. "Bearer ${token_string}"
-    PassportAuth:
-      type: http
-      scheme: bearer
-      x-in: body
-      bearerFormat: JWT
-      description:
-        A valid GA4GH Passport must be passed in the body of an HTTP POST request as a tokens[] array.
