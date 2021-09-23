@@ -54,6 +54,5 @@ post:
   x-swagger-router-controller: ga4gh.drs.server
   parameters:
     - $ref: '../components/parameters/ObjectId.yaml'
-    - $ref: '../components/parameters/Expand.yaml'
   requestBody:
-    $ref: '../components/requestBodies/Passports.yaml'
+    $ref: '../components/requestBodies/PostObjectBody.yaml'
