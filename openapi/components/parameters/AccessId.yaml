@@ -1,0 +1,6 @@
+in: path
+name: access_id
+required: true
+description: An `access_id` from the `access_methods` list of a `DrsObject`
+schema:
+  type: string

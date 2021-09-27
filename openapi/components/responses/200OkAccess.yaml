@@ -1,0 +1,5 @@
+description: The `AccessURL` was found successfully
+content:
+  application/json:
+    schema:
+      $ref: '../schemas/AccessURL.yaml'

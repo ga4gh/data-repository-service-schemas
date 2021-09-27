@@ -1,0 +1,5 @@
+description: The requested `AccessURL` wasn't found.
+content:
+  application/json:
+    schema:
+      $ref: '../schemas/Error.yaml'

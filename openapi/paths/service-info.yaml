@@ -1,0 +1,39 @@
+get:
+  summary: Retrieve information about this service
+  description: |-
+    Returns information about the DRS service
+
+    Extends the
+    [v1.0.0 GA4GH Service Info specification](https://github.com/ga4gh-discovery/ga4gh-service-info)
+    as the standardized format for GA4GH web services to self-describe.
+
+    According to the 
+    [service-info type registry](https://github.com/ga4gh/TASC/blob/master/service-info/ga4gh-service-info.json)
+    maintained by the [Technical Alignment Sub Committee (TASC)](https://github.com/ga4gh/TASC),
+    a DRS service MUST have:
+      * a `type.group` value of `org.ga4gh`
+      * a `type.artifact` value of `drs`
+    
+    e.g.
+    ```
+    {
+        "id": "com.example.drs",
+        "description": "Serves data according to DRS specification",
+        ...
+        "type": {
+            "group": "org.ga4gh",
+            "artifact": "drs"
+        }
+        ...
+    }
+    ```
+
+    See the [Service Registry Appendix](#tag/GA4GH-Service-Registry) for more information on how to register a DRS service with a service registry.
+  operationId: GetServiceInfo
+  responses:
+    200:
+      $ref: '../components/responses/200ServiceInfo.yaml'
+    500:
+      $ref: '../components/responses/500InternalServerError.yaml'
+  tags:
+    - Service Info

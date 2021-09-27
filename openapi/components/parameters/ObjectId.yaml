@@ -1,0 +1,6 @@
+in: path
+name: object_id
+required: true
+description: '`DrsObject` identifier'
+schema:
+  type: string

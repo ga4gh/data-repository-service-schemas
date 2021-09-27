@@ -1,0 +1,58 @@
+get:
+  summary: Get info about a DrsObject.
+  description: >-
+    Returns object metadata, and a list of access methods that can be used to fetch object bytes.
+  operationId: GetObject
+  parameters:
+    - $ref: '../components/parameters/ObjectId.yaml'
+    - $ref: '../components/parameters/Expand.yaml'
+  responses:
+    200:
+      $ref: '../components/responses/200OkDrsObject.yaml'
+    202:
+      $ref: '../components/responses/202Accepted.yaml'
+    400:
+      $ref: '../components/responses/400BadRequest.yaml'
+    401:
+      $ref: '../components/responses/401Unauthorized.yaml'
+    403:
+      $ref: '../components/responses/403Forbidden.yaml'
+    404:
+      $ref: '../components/responses/404NotFoundDrsObject.yaml'
+    500:
+      $ref: '../components/responses/500InternalServerError.yaml'
+  tags:
+    - Objects
+  x-swagger-router-controller: ga4gh.drs.server
+
+post:
+  summary: Get info about a DrsObject through POST'ing a Passport.
+  description: >-
+    Returns object metadata, and a list of access methods that can be used to fetch object bytes.
+
+    Method is a POST to accomodate a JWT GA4GH Passport sent in the formData in order to authorize access.
+  operationId: PostObject
+  security:
+    - PassportAuth: []
+  responses:
+    200:
+      $ref: '../components/responses/200OkAccess.yaml'
+    202:
+      $ref: '../components/responses/202Accepted.yaml'
+    400:
+      $ref: '../components/responses/400BadRequest.yaml'
+    401:
+      $ref: '../components/responses/401Unauthorized.yaml'
+    403:
+      $ref: '../components/responses/403Forbidden.yaml'
+    404:
+      $ref: '../components/responses/404NotFoundAccess.yaml'
+    500:
+      $ref: '../components/responses/500InternalServerError.yaml'
+  tags:
+    - Objects
+  x-swagger-router-controller: ga4gh.drs.server
+  parameters:
+    - $ref: '../components/parameters/ObjectId.yaml'
+  requestBody:
+    $ref: '../components/requestBodies/PostObjectBody.yaml'
