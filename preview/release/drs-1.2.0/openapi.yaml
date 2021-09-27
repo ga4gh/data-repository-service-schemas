@@ -971,9 +971,8 @@ paths:
       x-swagger-router-controller: ga4gh.drs.server
       parameters:
         - $ref: '#/components/parameters/ObjectId'
-        - $ref: '#/components/parameters/Expand'
       requestBody:
-        $ref: '#/components/requestBodies/Passports'
+        $ref: '#/components/requestBodies/PostObjectBody'
   '/objects/{object_id}/access/{access_id}':
     get:
       summary: Get a URL for fetching bytes
@@ -1577,6 +1576,30 @@ components:
       schema:
         type: string
   requestBodies:
+    PostObjectBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              expand:
+                type:
+                  $ref: '#/components/parameters/Expand/schema/type'
+                example:
+                  $ref: '#/components/parameters/Expand/example'
+                description:
+                  $ref: '#/components/parameters/Expand/description'
+              passports:
+                type: array
+                items:
+                  type: string
+                  example: >-
+                    eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJnYTRnaF9wYXNzcG9ydF92MSI6W119.JJ5rN0ktP0qwyZmIPpxmF_p7JsxAZH6L6brUxtad3CM
+                description: >-
+                  the encoded JWT GA4GH Passport that contains embedded Visas. 
+                  The overall JWT is signed as are the individual Passport
+                  Visas.
     Passports:
       required: true
       content:
