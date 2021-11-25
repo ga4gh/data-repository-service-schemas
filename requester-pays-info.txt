@@ -1,0 +1,11 @@
+https://github.com/ga4gh/data-repository-service-schemas/issues/343
+
+https://swagger.io/specification/
+
+https://cloud.google.com/storage/docs/gsutil/commands/signurl
+
+https://docs.aws.amazon.com/AmazonCloudFront/latest/DeveloperGuide/private-content-signed-urls.html
+
+https://dev.to/aws/s3-pre-signed-urls-for-requester-pays-buckets-55nc
+
+
