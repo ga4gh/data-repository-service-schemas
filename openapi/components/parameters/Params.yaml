@@ -1,0 +1,6 @@
+in: path
+name: params
+required: false
+description: 'additional params like account credentials needed to sign a URL'
+schema:
+  type: string
