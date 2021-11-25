@@ -333,6 +333,9 @@
           },
           {
             "$ref": "#/components/parameters/AccessId"
+          },
+          {
+            "$ref": "#/components/parameters/Params"
           }
         ],
         "requestBody": {
@@ -834,6 +837,15 @@
         "name": "access_id",
         "required": true,
         "description": "An `access_id` from the `access_methods` list of a `DrsObject`",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "Params": {
+        "in": "path",
+        "name": "params",
+        "required": false,
+        "description": "additional params like account credentials needed to sign a URL",
         "schema": {
           "type": "string"
         }
