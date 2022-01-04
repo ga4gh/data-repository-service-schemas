@@ -60,6 +60,5 @@ post:
   parameters:
     - $ref: '../components/parameters/ObjectId.yaml'
     - $ref: '../components/parameters/AccessId.yaml'
-    - $ref: '../components/parameters/Params.yaml'
   requestBody:
     $ref: '../components/requestBodies/Passports.yaml'
