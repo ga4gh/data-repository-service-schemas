@@ -45,8 +45,6 @@ headers:
 
       **Note:** Pagination in DRS is modeled after [Github's approach and documentation](https://docs.github.com/en/rest/guides/traversing-with-pagination).
 
-
-
     schema:
       type: string
 content:
