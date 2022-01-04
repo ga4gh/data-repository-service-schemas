@@ -1507,7 +1507,7 @@ components:
             The correct format for a pagination link is as follows: 
 
 
-            `<{url}>; rel="${rel_keyword}"`
+            `<{url}>; rel="{rel_keyword}"`
 
 
             i.e.:
@@ -1529,7 +1529,7 @@ components:
             keywords and what they mean:
 
 
-            | `rel` value | description |
+            | `rel` keyword | description |
 
             |-------------|-------------|
 
