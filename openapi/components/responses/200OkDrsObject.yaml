@@ -12,7 +12,7 @@ headers:
 
       The correct format for a pagination link is as follows: 
 
-      `<{url}>; rel="${rel_keyword}"`
+      `<{url}>; rel="{rel_keyword}"`
 
       i.e.:
       * The URL must be encapsulated in angle brackets
@@ -23,7 +23,7 @@ headers:
 
       Standardized `rel` keywords inform the client of the traversal direction of each URL in the `Link` header, enabling dynamic traversal. The following table outlines the acceptable `rel` keywords and what they mean:
 
-      | `rel` value | description |
+      | `rel` keyword | description |
       |-------------|-------------|
       | next | URL retrieves the next page of `contents` objects compared to the current page the client is on |
       | prev | URL retrieves the previous page of `contents` objects compared to the current page the client is on |
