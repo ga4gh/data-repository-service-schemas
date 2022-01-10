@@ -103,11 +103,11 @@ x-tagGroups:
 paths:
   /objects/{object_id}:
     $ref: ./paths/objects@{object_id}.yaml
-  /bulk/objects:
+  /objects:
     $ref: ./paths/bulkobjects@{object_id}.yaml
   /objects/{object_id}/access/{access_id}:
     $ref: ./paths/objects@{object_id}@access@{access_id}.yaml
-  /bulk/objects/access/{access_id}:
+  /objects/access:
     $ref: ./paths/bulkobjects@access@{access_id}.yaml
 components:
   securitySchemes:
