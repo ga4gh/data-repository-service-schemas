@@ -1,0 +1,10 @@
+description: The `DrsObjects` were found successfully
+content:
+  application/json:
+    schema:
+      type: object
+      properties:
+        drsobjects:
+          type: array
+          items:
+            $ref: '../schemas/DrsObject.yaml'

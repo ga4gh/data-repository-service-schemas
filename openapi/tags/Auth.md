@@ -1,12 +1,10 @@
 ## Making DRS Requests
 
-The DRS implementation is responsible for defining and enforcing an authorization policy that determines which users are allowed to make which requests. GA4GH recommends that DRS implementations use an OAuth 2.0 [bearer token](https://oauth.net/2/bearer-tokens/) or a [GA4GH Passport](https://github.com/ga4gh-duri/ga4gh-duri.github.io/tree/master/researcher_ids), although they can choose other mechanisms if appropriate.
+The DRS implementation is responsible for defining and enforcing an authorization policy that determines which users are allowed to make which requests. GA4GH recommends that DRS implementations use an OAuth 2.0 [bearer token](https://oauth.net/2/bearer-tokens/), although they can choose other mechanisms if appropriate.
 
 ## Fetching DRS Objects
 
-The DRS API allows implementers to support a variety of different content access policies, depending on what `AccessMethod` records they return.  Implementers have a choice to make the
-GET /objects/{object_id} and GET /objects/{object_id}/access/{access_id} calls open or requiring a Basic, Bearer, or Passport token (Passport requiring a POST).  The following describes the
-various access approaches following a successful GET/POST /objects/{object_id} request in order to them obtain access to the bytes for a given object ID/access ID:
+The DRS API allows implementers to support a variety of different content access policies, depending on what `AccessMethod` records they return:
 
 * public content:
     * server provides an `access_url` with a `url` and no `headers`
@@ -22,8 +20,6 @@ various access approaches following a successful GET/POST /objects/{object_id} r
     * caller passes the `access_id` to the `/access` endpoint
     * server provides an `access_url` with the generated mechanism (e.g. a signed URL in the `url` field)
     * caller fetches the object bytes from the `url` (passing auth info from the specified headers, if any)
-
-In the approaches above [GA4GH Passports](https://github.com/ga4gh-duri/ga4gh-duri.github.io/tree/master/researcher_ids) are not mentioned and that is on purpose.  A DRS server may return a Bearer token or other platform-specific token in a header in response to a valid Bearer token or GA4GH Passport (Option 3 above).  But it is not the responsibility of a DRS server to return a Passport, that is the responsibility of a Passport Broker and outside the scope of DRS.
 
 DRS implementers should ensure their solutions restrict access to targets as much as possible, detect attempts to exploit through log monitoring, and they are prepared to take action if an exploit in their DRS implementation is detected.
 
@@ -44,11 +40,3 @@ A valid authorization token must be passed in the 'Authorization' header, e.g. "
 | Security Scheme Type | HTTP |
 |----------------------|------|
 | **HTTP Authorization Scheme** | bearer |
-
-### PassportAuth
-
-A valid authorization [GA4GH Passport](https://github.com/ga4gh-duri/ga4gh-duri.github.io/tree/master/researcher_ids) token must be passed in the body of a POST request
-
-| Security Scheme Type | HTTP |
-|----------------------|------|
-| **HTTP POST** | tokens[] |

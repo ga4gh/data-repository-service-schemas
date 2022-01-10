@@ -1,0 +1,5 @@
+name: bulk_object_id
+required: true
+description: '`DrsObject` identifier'
+schema:
+  type: string
