@@ -51,10 +51,6 @@ tags:
     x-displayName: Checksum
     description: |
       <SchemaDefinition schemaRef="#/components/schemas/Checksum" />
-  - name: ContentsObjectModel
-    x-displayName: ContentsObject
-    description: |
-      <SchemaDefinition schemaRef="#/components/schemas/ContentsObject" />
   - name: DrsObjectModel
     x-displayName: DrsObject
     description: |
@@ -91,7 +87,6 @@ x-tagGroups:
       - AccessMethodModel
       - AccessURLModel
       - ChecksumModel
-      - ContentsObjectModel
       - DrsObjectModel
       - ErrorModel
   - name: Appendices

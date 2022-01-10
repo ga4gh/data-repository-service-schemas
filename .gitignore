@@ -99,3 +99,6 @@ docs/asciidoc/swagger2markup/
 spec/
 web_deploy/
 node_modules/
+
+# OS X
+.DS_Store
