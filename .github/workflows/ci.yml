@@ -1,0 +1,26 @@
+name: Foo 
+on:
+  push:
+    branches:
+      - master
+      - develop
+      - "feature/issue-*"
+      - "fix/issue-*"
+      - "support/issue-*"
+  pull_request:
+    branches:
+      - master
+      - develop
+      - "feature/issue-*"
+      - "fix/issue-*"
+      - "support/issue-*"
+jobs:
+  buildDocs:
+    runs-on: ubuntu-latest
+    steps:
+      - name: HelloWorld
+        run: "echo hello world"
+      - name: Node
+        run: |
+          node -v
+          npm -v
