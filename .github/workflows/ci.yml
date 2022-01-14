@@ -18,9 +18,14 @@ jobs:
   buildDocs:
     runs-on: ubuntu-latest
     steps:
-      - name: HelloWorld
-        run: "echo hello world"
-      - name: Node
+      - name: preflight check
         run: |
           node -v
           npm -v
+      - name: install gh-openapi-docs
+        run: |
+          npm install -g @redocly/openapi-cli && npm install -g redoc-cli
+          npm install -g @ga4gh/gh-openapi-docs@0.2.2-rc3
+      - name: run gh-openapi-docs
+        run: |
+          gh-openapi-docs
