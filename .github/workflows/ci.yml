@@ -30,6 +30,9 @@ jobs:
           pwd
           ls
           ls preview
+          ls preview/support
+          ls preview/support/issue-378-migrate-to-github-actions
+          ls preview/support/issue-378-migrate-to-github-actions/docs
           git status
           git add -A
           git status
