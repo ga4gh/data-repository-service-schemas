@@ -32,8 +32,14 @@ jobs:
           git status
           git add -A
           git status
-      - name: Deploy 🚀
-        uses: JamesIves/github-pages-deploy-action@v4.2.2
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3.7.3
         with:
-          branch: gh-pages
-          folder: preview
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: .
+      # - name: Deploy 🚀
+      #   uses: JamesIves/github-pages-deploy-action@v4.2.2
+      #   with:
+      #     branch: gh-pages
+      #     folder: preview
+
