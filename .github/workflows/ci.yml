@@ -1,4 +1,4 @@
-name: Foo 
+name: docs-build-publish
 on:
   push:
     branches:
@@ -15,9 +15,13 @@ on:
       - "fix/issue-*"
       - "support/issue-*"
 jobs:
-  buildDocs:
+  docs-build:
     runs-on: ubuntu-latest
     steps:
+      - name: pre-flight testing
+        run: |
+            pwd
+            ls
       - name: pull docker image
         run: |
           docker pull ga4gh/gh-openapi-docs:0.2.2-rc3
