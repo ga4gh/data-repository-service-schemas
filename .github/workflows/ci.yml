@@ -25,6 +25,11 @@ jobs:
       - name: Build Docs 🔧
         run: |
           docker run --name docs-builder --rm -v `pwd`:/docs ga4gh/gh-openapi-docs:0.2.2-rc3
+      - name: Inspect Test
+        run: |
+          pwd
+          ls
+          git status
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@v4.2.2
         with:
