@@ -18,14 +18,9 @@ jobs:
   buildDocs:
     runs-on: ubuntu-latest
     steps:
-      - name: preflight check
+      - name: pull docker image
         run: |
-          node -v
-          npm -v
-      - name: install gh-openapi-docs
-        run: |
-          npm install -g @redocly/openapi-cli && npm install -g redoc-cli
-          npm install -g @ga4gh/gh-openapi-docs@0.2.2-rc3
+          docker pull ga4gh/gh-openapi-docs:0.2.2-rc3
       - name: run gh-openapi-docs
         run: |
-          gh-openapi-docs
+          docker run --name docs-builder --rm -v `pwd`:/docs ga4gh/gh-openapi-docs:0.2.2-rc3
