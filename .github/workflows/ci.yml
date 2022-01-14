@@ -30,6 +30,8 @@ jobs:
           pwd
           ls
           git status
+          git add -A
+          git status
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@v4.2.2
         with:
