@@ -24,7 +24,7 @@ jobs:
           docker pull ga4gh/gh-openapi-docs:0.2.3-rc1
       - name: Build Docs 🔧
         run: |
-          docker run --name docs-builder --rm -v `pwd`:/docs ga4gh/gh-openapi-docs:0.2.2-rc3
+          docker run --name docs-builder --rm -v `pwd`:/docs ga4gh/gh-openapi-docs:0.2.3-rc1
       - name: Inspect Test
         run: |
           pwd
