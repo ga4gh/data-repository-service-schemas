@@ -21,7 +21,7 @@ jobs:
       - uses: actions/checkout@v2
       - name: Docker Pull 🐳
         run: |
-          docker pull ga4gh/gh-openapi-docs:0.2.2-rc3
+          docker pull ga4gh/gh-openapi-docs:0.2.3-rc1
       - name: Build Docs 🔧
         run: |
           docker run --name docs-builder --rm -v `pwd`:/docs ga4gh/gh-openapi-docs:0.2.2-rc3
@@ -29,10 +29,10 @@ jobs:
         run: |
           pwd
           ls
-          ls preview
-          ls preview/support
-          ls preview/support/issue-378-migrate-to-github-actions
-          ls preview/support/issue-378-migrate-to-github-actions/docs
+          ls publish
+          ls publish/preview/support
+          ls publish/preview/support/issue-378-migrate-to-github-actions
+          ls publish/preview/support/issue-378-migrate-to-github-actions/docs
           git status
           git add -A
           git status
@@ -40,8 +40,8 @@ jobs:
         uses: peaceiris/actions-gh-pages@v3.7.3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: .
-          keep_files: true
+          publish_dir: publish
+          # keep_files: true
       # - name: Deploy 🚀
       #   uses: JamesIves/github-pages-deploy-action@v4.2.2
       #   with:
