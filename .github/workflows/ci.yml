@@ -19,39 +19,14 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-      - name: Inspect Pre-Build
-        run: |
-          pwd
-          ls -a
       - name: Docker Pull 🐳
         run: |
           docker pull ga4gh/gh-openapi-docs:0.2.3-rc1
       - name: Build Docs 🔧
         run: |
           docker run --name docs-builder --rm -v `pwd`:/docs ga4gh/gh-openapi-docs:0.2.3-rc1
-      - name: Inspect Post-Build
-        run: |
-          pwd
-          ls
-          echo "***"
-          ls publish
-          echo "***"
-          ls publish/preview/support
-          echo "***"
-          ls publish/preview/support/issue-378-migrate-to-github-actions
-          echo "***"
-          ls publish/preview/support/issue-378-migrate-to-github-actions/docs
-          echo "***"
       - name: Deploy 🚀
         uses: JamesIves/github-pages-deploy-action@v4.2.2
         with:
           branch: gh-pages
           folder: publish
-      # - name: Deploy
-      #   uses: peaceiris/actions-gh-pages@v3.7.3
-      #   with:
-      #     github_token: ${{ secrets.GITHUB_TOKEN }}
-      #     publish_dir: publish
-      #     # keep_files: true
-      
-
