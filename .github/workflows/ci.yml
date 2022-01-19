@@ -7,6 +7,13 @@ on:
       - "feature/issue-*"
       - "fix/issue-*"
       - "support/issue-*"
+  pull_request:
+    branches:
+      - master
+      - develop
+      - "feature/issue-*"
+      - "fix/issue-*"
+      - "support/issue-*"
 jobs:
   docs-build:
     runs-on: ubuntu-latest
