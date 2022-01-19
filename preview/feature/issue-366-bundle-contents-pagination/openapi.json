@@ -174,9 +174,6 @@
           },
           {
             "$ref": "#/components/parameters/Expand"
-          },
-          {
-            "$ref": "#/components/parameters/ContentsPage"
           }
         ],
         "responses": {
@@ -214,9 +211,6 @@
         "parameters": [
           {
             "$ref": "#/components/parameters/ObjectId"
-          },
-          {
-            "$ref": "#/components/parameters/ContentsPage"
           }
         ],
         "requestBody": {
@@ -344,6 +338,96 @@
         "requestBody": {
           "$ref": "#/components/requestBodies/Passports"
         }
+      }
+    },
+    "/objects/{object_id}/contents": {
+      "get": {
+        "summary": "Get contents array of a DrsObject bundle",
+        "description": "Returns the `contents` array of a DrsObject bundle. Large arrays may be paginated for efficient transfer, in which case, a `Link` header will be provided to support client page traversal.",
+        "operationId": "GetObjectContents",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ObjectId"
+          },
+          {
+            "$ref": "#/components/parameters/Expand"
+          },
+          {
+            "$ref": "#/components/parameters/ContentsPage"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/200OkContentsArray"
+          },
+          "202": {
+            "$ref": "#/components/responses/202Accepted"
+          },
+          "400": {
+            "$ref": "#/components/responses/400BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/401Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/403Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/404NotFoundDrsObject"
+          },
+          "500": {
+            "$ref": "#/components/responses/500InternalServerError"
+          }
+        },
+        "tags": [
+          "Objects"
+        ],
+        "x-swagger-router-controller": "ga4gh.drs.server"
+      },
+      "post": {
+        "summary": "Get contents array of a DrsObject bundle",
+        "description": "Returns the `contents` array of a DrsObject bundle. Large arrays may be paginated for efficient transfer, in which case, a `Link` header will be provided to support client page traversal.\nPOST method accomodates JWT GA4GH Passport sent in the request body in order to authorize access.",
+        "operationId": "GetObjectContentsPost",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ObjectId"
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/PostObjectBody"
+        },
+        "security": [
+          {
+            "PassportAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/200OkContentsArray"
+          },
+          "202": {
+            "$ref": "#/components/responses/202Accepted"
+          },
+          "400": {
+            "$ref": "#/components/responses/400BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/401Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/403Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/404NotFoundDrsObject"
+          },
+          "500": {
+            "$ref": "#/components/responses/500InternalServerError"
+          }
+        },
+        "tags": [
+          "Objects"
+        ],
+        "x-swagger-router-controller": "ga4gh.drs.server"
       }
     }
   },
@@ -735,14 +819,6 @@
       },
       "200OkDrsObject": {
         "description": "The `DrsObject` was found successfully",
-        "headers": {
-          "Link": {
-            "description": "Pagination links to retrieve the `contents` array of a DRS Object bundle via paginated traversal.\n\n#### Link header structure\n\nThe value of the `Link` header is a **comma-delimited** list of entries. Each entry in the list contains:\n1. A URL that clients can request to obtain a new subset of `contents` for the same DRS Object\n2. A `rel` (relation) keyword, indicating the direction of traversal (e.g. next page, previous page, etc.)\n\nThe correct format for a pagination link is as follows: \n\n`<{url}>; rel=\"{rel_keyword}\"`\n\ni.e.:\n* The URL must be encapsulated in angle brackets\n* The `rel` keyword must be preceded by an explicit `rel=` indicator and encapsulated in double quotes\n* The URL and `rel` keyword must be separated by `; `\n\n#### `rel` keywords\n\nStandardized `rel` keywords inform the client of the traversal direction of each URL in the `Link` header, enabling dynamic traversal. The following table outlines the acceptable `rel` keywords and what they mean:\n\n| `rel` keyword | description |\n|-------------|-------------|\n| next | URL retrieves the next page of `contents` objects compared to the current page the client is on |\n| prev | URL retrieves the previous page of `contents` objects compared to the current page the client is on |\n| first | URL jumps to the first page of `contents` objects |\n| last | URL jumps to the final page of `contents` objects |\n\nOnly `rel=\"next\"` links are mandatory for unidirectional traversal. The other `rel` links are optional, and can be left up to individual implementers if they wish to enable multidirectional traversal for their DRS service.\n\n#### Example Link header\n\nThe following snippet displays an example `Link` header value for paginated traversal. In the example, the client most recently obtained page `14` of `contents` objects for the DRS Object with an ID of `314159`, out of a total `34` pages.\n\n```\nLink: <https://drs.example.org/ga4gh/drs/v1/objects/314159?page=15>; rel=\"next\",\n<https://drs.example.org/ga4gh/drs/v1/objects/314159?page=34>; rel=\"last\",\n<https://drs.example.org/ga4gh/drs/v1/objects/314159?page=1>; rel=\"first\",\n<https://drs.example.org/ga4gh/drs/v1/objects/314159?page=13>; rel=\"prev\"\n```\n\n**Note:** Pagination in DRS is modeled after [Github's approach and documentation](https://docs.github.com/en/rest/guides/traversing-with-pagination).\n",
-            "schema": {
-              "type": "string"
-            }
-          }
-        },
         "content": {
           "application/json": {
             "schema": {
@@ -822,6 +898,27 @@
             }
           }
         }
+      },
+      "200OkContentsArray": {
+        "description": "The `contents` array for the requested `DrsObject` was returned successfully",
+        "headers": {
+          "Link": {
+            "description": "Pagination links to retrieve the `contents` array of a DRS Object bundle via paginated traversal.\n\n#### Link header structure\n\nThe value of the `Link` header is a **comma-delimited** list of entries. Each entry in the list contains:\n1. A URL that clients can request to obtain a new subset of `contents` for the same DRS Object\n2. A `rel` (relation) keyword, indicating the direction of traversal (e.g. next page, previous page, etc.)\n\nThe correct format for a pagination link is as follows: \n\n`<{url}>; rel=\"{rel_keyword}\"`\n\ni.e.:\n* The URL must be encapsulated in angle brackets\n* The `rel` keyword must be preceded by an explicit `rel=` indicator and encapsulated in double quotes\n* The URL and `rel` keyword must be separated by `; `\n\n#### `rel` keywords\n\nStandardized `rel` keywords inform the client of the traversal direction of each URL in the `Link` header, enabling dynamic traversal. The following table outlines the acceptable `rel` keywords and what they mean:\n\n| `rel` keyword | description |\n|-------------|-------------|\n| next | URL retrieves the next page of `contents` objects compared to the current page the client is on |\n| prev | URL retrieves the previous page of `contents` objects compared to the current page the client is on |\n| first | URL jumps to the first page of `contents` objects |\n| last | URL jumps to the final page of `contents` objects |\n\nOnly `rel=\"next\"` links are mandatory for unidirectional traversal. The other `rel` links are optional, and can be left up to individual implementers if they wish to enable multidirectional traversal for their DRS service.\n\n#### Example Link header\n\nThe following snippet displays an example `Link` header value for paginated traversal. In the example, the client most recently obtained page `14` of `contents` objects for the DRS Object with an ID of `314159`, out of a total `34` pages.\n\n```\nLink: <https://drs.example.org/ga4gh/drs/v1/objects/314159/contents?page=15>; rel=\"next\",\n<https://drs.example.org/ga4gh/drs/v1/objects/314159/contents?page=34>; rel=\"last\",\n<https://drs.example.org/ga4gh/drs/v1/objects/314159/contents?page=1>; rel=\"first\",\n<https://drs.example.org/ga4gh/drs/v1/objects/314159/contents?page=13>; rel=\"prev\"\n```\n\n**Note:** Pagination in DRS is modeled after [Github's approach and documentation](https://docs.github.com/en/rest/guides/traversing-with-pagination).\n",
+            "schema": {
+              "type": "string"
+            }
+          }
+        },
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/ContentsObject"
+              }
+            }
+          }
+        }
       }
     },
     "parameters": {
@@ -843,15 +940,6 @@
         "example": false,
         "description": "If false and the object_id refers to a bundle, then the ContentsObject array contains only those objects directly contained in the bundle. That is, if the bundle contains other bundles, those other bundles are not recursively included in the result.\nIf true and the object_id refers to a bundle, then the entire set of objects in the bundle is expanded. That is, if the bundle contains aother bundles, then those other bundles are recursively expanded and included in the result. Recursion continues through the entire sub-tree of the bundle.\nIf the object_id refers to a blob, then the query parameter is ignored."
       },
-      "ContentsPage": {
-        "in": "query",
-        "name": "page",
-        "schema": {
-          "type": "integer"
-        },
-        "example": 5,
-        "description": "For paginated traversal of the `contents` array of a DRS Object bundle. Indicates the requested \"page\" or subset of `contents` objects. "
-      },
       "AccessId": {
         "in": "path",
         "name": "access_id",
@@ -860,6 +948,15 @@
         "schema": {
           "type": "string"
         }
+      },
+      "ContentsPage": {
+        "in": "query",
+        "name": "page",
+        "schema": {
+          "type": "integer"
+        },
+        "example": 5,
+        "description": "For paginated traversal of the `contents` array of a DRS Object bundle. Indicates the requested \"page\" or subset of `contents` objects. "
       }
     },
     "requestBodies": {

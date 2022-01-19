@@ -922,7 +922,6 @@ paths:
       parameters:
         - $ref: '#/components/parameters/ObjectId'
         - $ref: '#/components/parameters/Expand'
-        - $ref: '#/components/parameters/ContentsPage'
       responses:
         '200':
           $ref: '#/components/responses/200OkDrsObject'
@@ -952,7 +951,6 @@ paths:
       operationId: PostObject
       parameters:
         - $ref: '#/components/parameters/ObjectId'
-        - $ref: '#/components/parameters/ContentsPage'
       requestBody:
         $ref: '#/components/requestBodies/PostObjectBody'
       security:
@@ -1043,6 +1041,70 @@ paths:
         - $ref: '#/components/parameters/AccessId'
       requestBody:
         $ref: '#/components/requestBodies/Passports'
+  /objects/{object_id}/contents:
+    get:
+      summary: Get contents array of a DrsObject bundle
+      description: >-
+        Returns the `contents` array of a DrsObject bundle. Large arrays may be
+        paginated for efficient transfer, in which case, a `Link` header will be
+        provided to support client page traversal.
+      operationId: GetObjectContents
+      parameters:
+        - $ref: '#/components/parameters/ObjectId'
+        - $ref: '#/components/parameters/Expand'
+        - $ref: '#/components/parameters/ContentsPage'
+      responses:
+        '200':
+          $ref: '#/components/responses/200OkContentsArray'
+        '202':
+          $ref: '#/components/responses/202Accepted'
+        '400':
+          $ref: '#/components/responses/400BadRequest'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+        '403':
+          $ref: '#/components/responses/403Forbidden'
+        '404':
+          $ref: '#/components/responses/404NotFoundDrsObject'
+        '500':
+          $ref: '#/components/responses/500InternalServerError'
+      tags:
+        - Objects
+      x-swagger-router-controller: ga4gh.drs.server
+    post:
+      summary: Get contents array of a DrsObject bundle
+      description: >-
+        Returns the `contents` array of a DrsObject bundle. Large arrays may be
+        paginated for efficient transfer, in which case, a `Link` header will be
+        provided to support client page traversal.
+
+        POST method accomodates JWT GA4GH Passport sent in the request body in
+        order to authorize access.
+      operationId: GetObjectContentsPost
+      parameters:
+        - $ref: '#/components/parameters/ObjectId'
+      requestBody:
+        $ref: '#/components/requestBodies/PostObjectBody'
+      security:
+        - PassportAuth: []
+      responses:
+        '200':
+          $ref: '#/components/responses/200OkContentsArray'
+        '202':
+          $ref: '#/components/responses/202Accepted'
+        '400':
+          $ref: '#/components/responses/400BadRequest'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+        '403':
+          $ref: '#/components/responses/403Forbidden'
+        '404':
+          $ref: '#/components/responses/404NotFoundDrsObject'
+        '500':
+          $ref: '#/components/responses/500InternalServerError'
+      tags:
+        - Objects
+      x-swagger-router-controller: ga4gh.drs.server
 components:
   securitySchemes:
     BasicAuth:
@@ -1484,6 +1546,69 @@ components:
             $ref: '#/components/schemas/Error'
     200OkDrsObject:
       description: The `DrsObject` was found successfully
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/DrsObject'
+    202Accepted:
+      description: >
+        The operation is delayed and will continue asynchronously. The client
+        should retry this same request after the delay specified by Retry-After
+        header.
+      headers:
+        Retry-After:
+          description: >
+            Delay in seconds. The client should retry this same request after
+            waiting for this duration. To simplify client response processing,
+            this must be an integral relative time in seconds. This value SHOULD
+            represent the minimum duration the client should wait before
+            attempting the operation again with a reasonable expectation of
+            success. When it is not feasible for the server to determine the
+            actual expected delay, the server may return a brief, fixed value
+            instead.
+          schema:
+            type: integer
+            format: int64
+    400BadRequest:
+      description: The request is malformed.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    401Unauthorized:
+      description: The request is unauthorized.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    403Forbidden:
+      description: The requester is not authorized to perform this action.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    404NotFoundDrsObject:
+      description: The requested `DrsObject` wasn't found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    404NotFoundAccess:
+      description: The requested `AccessURL` wasn't found.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+    200OkAccess:
+      description: The `AccessURL` was found successfully
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/AccessURL'
+    200OkContentsArray:
+      description: >-
+        The `contents` array for the requested `DrsObject` was returned
+        successfully
       headers:
         Link:
           description: >
@@ -1561,16 +1686,17 @@ components:
 
             ```
 
-            Link: <https://drs.example.org/ga4gh/drs/v1/objects/314159?page=15>;
+            Link:
+            <https://drs.example.org/ga4gh/drs/v1/objects/314159/contents?page=15>;
             rel="next",
 
-            <https://drs.example.org/ga4gh/drs/v1/objects/314159?page=34>;
+            <https://drs.example.org/ga4gh/drs/v1/objects/314159/contents?page=34>;
             rel="last",
 
-            <https://drs.example.org/ga4gh/drs/v1/objects/314159?page=1>;
+            <https://drs.example.org/ga4gh/drs/v1/objects/314159/contents?page=1>;
             rel="first",
 
-            <https://drs.example.org/ga4gh/drs/v1/objects/314159?page=13>;
+            <https://drs.example.org/ga4gh/drs/v1/objects/314159/contents?page=13>;
             rel="prev"
 
             ```
@@ -1583,62 +1709,9 @@ components:
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/DrsObject'
-    202Accepted:
-      description: >
-        The operation is delayed and will continue asynchronously. The client
-        should retry this same request after the delay specified by Retry-After
-        header.
-      headers:
-        Retry-After:
-          description: >
-            Delay in seconds. The client should retry this same request after
-            waiting for this duration. To simplify client response processing,
-            this must be an integral relative time in seconds. This value SHOULD
-            represent the minimum duration the client should wait before
-            attempting the operation again with a reasonable expectation of
-            success. When it is not feasible for the server to determine the
-            actual expected delay, the server may return a brief, fixed value
-            instead.
-          schema:
-            type: integer
-            format: int64
-    400BadRequest:
-      description: The request is malformed.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    401Unauthorized:
-      description: The request is unauthorized.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    403Forbidden:
-      description: The requester is not authorized to perform this action.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    404NotFoundDrsObject:
-      description: The requested `DrsObject` wasn't found.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    404NotFoundAccess:
-      description: The requested `AccessURL` wasn't found.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    200OkAccess:
-      description: The `AccessURL` was found successfully
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/AccessURL'
+            type: array
+            items:
+              $ref: '#/components/schemas/ContentsObject'
   parameters:
     ObjectId:
       in: path
@@ -1666,6 +1739,13 @@ components:
         of the bundle.
 
         If the object_id refers to a blob, then the query parameter is ignored.
+    AccessId:
+      in: path
+      name: access_id
+      required: true
+      description: An `access_id` from the `access_methods` list of a `DrsObject`
+      schema:
+        type: string
     ContentsPage:
       in: query
       name: page
@@ -1675,13 +1755,6 @@ components:
       description: >-
         For paginated traversal of the `contents` array of a DRS Object bundle.
         Indicates the requested "page" or subset of `contents` objects. 
-    AccessId:
-      in: path
-      name: access_id
-      required: true
-      description: An `access_id` from the `access_methods` list of a `DrsObject`
-      schema:
-        type: string
   requestBodies:
     PostObjectBody:
       required: true

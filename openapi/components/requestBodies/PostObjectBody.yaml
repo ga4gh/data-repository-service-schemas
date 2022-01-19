@@ -1,0 +1,27 @@
+required: true
+content:
+  application/json:
+    schema:
+      type: object
+      properties:
+        expand:
+          type: boolean
+          example: false
+          description: >-
+            If false and the object_id refers to a bundle, then the ContentsObject array
+            contains only those objects directly contained in the bundle. That is, if the
+            bundle contains other bundles, those other bundles are not recursively
+            included in the result.
+
+            If true and the object_id refers to a bundle, then the entire set of objects
+            in the bundle is expanded. That is, if the bundle contains aother bundles,
+            then those other bundles are recursively expanded and included in the result.
+            Recursion continues through the entire sub-tree of the bundle.
+
+            If the object_id refers to a blob, then the query parameter is ignored.
+        passports:
+          type: array
+          items:
+            type: string
+            example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJnYTRnaF9wYXNzcG9ydF92MSI6W119.JJ5rN0ktP0qwyZmIPpxmF_p7JsxAZH6L6brUxtad3CM
+          description: the encoded JWT GA4GH Passport that contains embedded Visas.  The overall JWT is signed as are the individual Passport Visas.
