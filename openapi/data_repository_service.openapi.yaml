@@ -113,6 +113,8 @@ paths:
     $ref: ./paths/objects@{object_id}.yaml
   /objects/{object_id}/access/{access_id}:
     $ref: ./paths/objects@{object_id}@access@{access_id}.yaml
+  /objects/{object_id}/contents:
+    $ref: ./paths/objects@{object_id}@contents.yaml
 components:
   securitySchemes:
     BasicAuth:
