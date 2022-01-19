@@ -391,6 +391,9 @@
         "parameters": [
           {
             "$ref": "#/components/parameters/ObjectId"
+          },
+          {
+            "$ref": "#/components/parameters/ContentsPage"
           }
         ],
         "requestBody": {

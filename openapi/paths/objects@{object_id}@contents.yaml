@@ -40,6 +40,7 @@ post:
   operationId: GetObjectContentsPost
   parameters:
     - $ref: '../components/parameters/ObjectId.yaml'
+    - $ref: '../components/parameters/ContentsPage.yaml'
   requestBody:
     $ref: '../components/requestBodies/PostObjectBody.yaml'
   security:
