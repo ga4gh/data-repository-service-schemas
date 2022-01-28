@@ -1,0 +1,5 @@
+description: `Authorizations` were found successfully
+content:
+  application/json:
+    schema:
+      $ref: '../schemas/Authorizations.yaml'

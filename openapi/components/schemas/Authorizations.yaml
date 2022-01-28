@@ -1,0 +1,21 @@
+type: object
+properties:
+  authorizations:
+    type: array
+    items:
+      type: string
+      enum:
+        - None
+        - BasicAuth
+        - BearerAuth
+        - PassportAuth
+    description: >-
+      An Optional list of support authorization types. More than one can be supported and tried in sequence.
+      Defaults to `None` if empty or missing.
+  passport_issuers:
+    type: array
+    items:
+      type: string
+    description: >-
+      If authorizations contains `PassportAuth` this is a required list of passport issuers
+      (as found in a passport's `iss` claim) that may authorize access to this object.
