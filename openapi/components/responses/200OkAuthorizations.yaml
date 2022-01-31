@@ -1,4 +1,4 @@
-description: `Authorizations` were found successfully
+description: "`Authorizations` were found successfully"
 content:
   application/json:
     schema:
