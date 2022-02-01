@@ -1,5 +1,7 @@
 options:
   summary: Get Authorization info about a DrsObject.
+  security:
+    - {}
   description: >-
     Returns a list of `Authorizations` that can be used to determine how to resolve and fetch object bytes.
   operationId: OptionsObject
