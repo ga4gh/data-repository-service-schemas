@@ -1,0 +1,10 @@
+name: bulk_object_access_id
+required: true
+description: '`DrsObject` identifier and access ids'
+schema:
+  type: object
+  properties:
+    object_id:
+      type: string
+    access_id:
+      type: string

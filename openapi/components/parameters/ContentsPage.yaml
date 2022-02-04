@@ -1,7 +1,0 @@
-in: query
-name: page
-schema:
-  type: integer
-example: 5
-description: >-
-  For paginated traversal of the `contents` array of a DRS Object bundle. Indicates the requested "page" or subset of `contents` objects. 
