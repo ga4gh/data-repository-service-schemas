@@ -4,7 +4,15 @@ content:
     schema:
       type: object
       properties:
-        drsobjects:
+        summary:
+          type: object
+          items:
+            $ref: '../schemas/summary.yaml'
+        unresolved_drs_object:
+          type: object
+          items:
+            $ref: '../schemas/unresolved.yaml'
+        resolved_drs_object:
           type: array
           items:
             $ref: '../schemas/DrsObject.yaml'

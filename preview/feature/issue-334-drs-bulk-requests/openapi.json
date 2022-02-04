@@ -589,6 +589,24 @@
           "type": "string"
         }
       },
+      "summary": {
+        "type": "object",
+        "description": "A summary of what was resolved.",
+        "properties": {
+          "requested": {
+            "type": "integer",
+            "description": "Number of items requested."
+          },
+          "resolved": {
+            "type": "integer",
+            "description": "Number of objects resolved."
+          },
+          "unresolved": {
+            "type": "integer",
+            "description": "Number of objects not resolved."
+          }
+        }
+      },
       "BulkObjectAccessId": {
         "name": "bulk_object_access_id",
         "required": true,
@@ -709,7 +727,19 @@
             "schema": {
               "type": "object",
               "properties": {
-                "drsobjects": {
+                "summary": {
+                  "type": "object",
+                  "items": {
+                    "$ref": "#/components/schemas/summary"
+                  }
+                },
+                "unresolved_drs_object": {
+                  "type": "object",
+                  "items": {
+                    "$ref": "../schemas/unresolved.yaml"
+                  }
+                },
+                "resolved_drs_object": {
                   "type": "array",
                   "items": {
                     "$ref": "#/components/schemas/DrsObject"
