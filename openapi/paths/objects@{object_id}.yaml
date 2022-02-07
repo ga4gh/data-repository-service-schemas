@@ -10,12 +10,14 @@ options:
   responses:
     200:
       $ref: '../components/responses/200OkAuthorizations.yaml'
+    204:
+      $ref: '../components/responses/AuthorizationsNotSupported.yaml'
     400:
       $ref: '../components/responses/400BadRequest.yaml'
     404:
       $ref: '../components/responses/404NotFoundDrsObject.yaml'
     405:
-      $ref: '../components/responses/405NotSupportedAuthorizations.yaml'
+      $ref: '../components/responses/AuthorizationsNotSupported.yaml'
     500:
       $ref: '../components/responses/500InternalServerError.yaml'
   tags:
