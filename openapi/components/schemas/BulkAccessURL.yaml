@@ -3,7 +3,7 @@ required:
   - url
 properties:
   object_id:
-    $ref: '../components/parameters/BulkObjectId.yaml'
+    $ref: '../parameters/BulkObjectId.yaml'
   url:
     type: string
     description: A fully resolvable URL that can be used to fetch the actual object bytes.
