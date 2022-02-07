@@ -831,13 +831,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                selection:
-                  type: array
-                  items:
-                    $ref: '#/components/schemas/BulkObjectId'
-                  description: An array of ObjectIds
+              $ref: '#/components/schemas/BulkObjectId'
   /objects/{object_id}/access/{access_id}:
     get:
       summary: Get a URL for fetching bytes
@@ -880,8 +874,6 @@ paths:
         contains an `access_id` (e.g., for servers that use signed URLs for
         fetching object bytes).
       operationId: GetBulkAccessURL
-      parameters:
-        - $ref: '#/components/parameters/AccessId'
       responses:
         '200':
           $ref: '#/components/responses/200OkAccesses'
@@ -905,13 +897,7 @@ paths:
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                selection:
-                  type: array
-                  items:
-                    $ref: '#/components/schemas/BulkObjectAccessId'
-                  description: An array of ObjectIDs paired with their access IDs
+              $ref: '#/components/schemas/BulkObjectAccessId'
 components:
   securitySchemes:
     BasicAuth:
@@ -1227,11 +1213,13 @@ components:
           type: integer
           description: The integer representing the HTTP status code (e.g. 200, 404).
     BulkObjectId:
-      name: bulk_object_id
-      required: true
-      description: '`DrsObject` identifier'
-      schema:
-        type: string
+      type: object
+      description: The object that contains the DRS object IDs array
+      properties:
+        bulk_object_ids:
+          type: array
+          items:
+            type: string
     summary:
       type: object
       description: A summary of what was resolved.
@@ -1246,16 +1234,20 @@ components:
           type: integer
           description: Number of objects not resolved.
     BulkObjectAccessId:
-      name: bulk_object_access_id
-      required: true
-      description: '`DrsObject` identifier and access ids'
-      schema:
-        type: object
-        properties:
-          object_id:
-            type: string
-          access_id:
-            type: string
+      type: object
+      description: The object that contains object_id/access_id tuples
+      properties:
+        bulk_object_access_ids:
+          type: array
+          items:
+            type: object
+            properties:
+              bulk_object_id:
+                type: string
+              bulk_access_ids:
+                type: array
+                items:
+                  type: string
     BulkAccessURL:
       type: object
       required:

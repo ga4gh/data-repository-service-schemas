@@ -1,5 +1,7 @@
-name: bulk_object_id
-required: true
-description: '`DrsObject` identifier'
-schema:
-  type: string
+type: object
+description: The object that contains the DRS object IDs array
+properties:
+  bulk_object_ids:
+    type: array
+    items:
+      type: string

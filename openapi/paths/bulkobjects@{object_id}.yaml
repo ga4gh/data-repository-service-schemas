@@ -28,10 +28,4 @@ post:
     content:
       application/json:
         schema:
-          type: object
-          properties:
-            selection:
-              type: array
-              items:
-                $ref: '../components/parameters/BulkObjectId.yaml'
-              description: An array of ObjectIds
+          $ref: '../components/parameters/BulkObjectId.yaml'
