@@ -588,6 +588,27 @@
           }
         }
       },
+      "unresolved": {
+        "type": "object",
+        "description": "Error codes for each unresolved drs objects.",
+        "properties": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "error_code": {
+                "type": "integer"
+              },
+              "object_ids": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      },
       "BulkObjectAccessId": {
         "type": "object",
         "description": "The object that contains object_id/access_id tuples",
@@ -724,7 +745,7 @@
                 "unresolved_drs_object": {
                   "type": "object",
                   "items": {
-                    "$ref": "../schemas/unresolved.yaml"
+                    "$ref": "#/components/schemas/unresolved"
                   }
                 },
                 "resolved_drs_object": {
