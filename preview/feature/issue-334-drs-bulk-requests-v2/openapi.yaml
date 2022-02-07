@@ -1234,19 +1234,17 @@ components:
           type: integer
           description: Number of objects not resolved.
     unresolved:
-      type: object
+      type: array
       description: Error codes for each unresolved drs objects.
-      properties:
-        type: array
-        items:
-          type: object
-          properties:
-            error_code:
-              type: integer
-            object_ids:
-              type: array
-              items:
-                type: string
+      items:
+        type: object
+        properties:
+          error_code:
+            type: integer
+          object_ids:
+            type: array
+            items:
+              type: string
     BulkObjectAccessId:
       type: object
       description: The object that contains object_id/access_id tuples
@@ -1268,7 +1266,7 @@ components:
         - url
       properties:
         object_id:
-          $ref: ../components/parameters/BulkObjectId.yaml
+          $ref: '#/components/schemas/BulkObjectId'
         url:
           type: string
           description: >-

@@ -589,21 +589,18 @@
         }
       },
       "unresolved": {
-        "type": "object",
+        "type": "array",
         "description": "Error codes for each unresolved drs objects.",
-        "properties": {
-          "type": "array",
-          "items": {
-            "type": "object",
-            "properties": {
-              "error_code": {
-                "type": "integer"
-              },
-              "object_ids": {
-                "type": "array",
-                "items": {
-                  "type": "string"
-                }
+        "items": {
+          "type": "object",
+          "properties": {
+            "error_code": {
+              "type": "integer"
+            },
+            "object_ids": {
+              "type": "array",
+              "items": {
+                "type": "string"
               }
             }
           }
@@ -639,7 +636,7 @@
         ],
         "properties": {
           "object_id": {
-            "$ref": "../components/parameters/BulkObjectId.yaml"
+            "$ref": "#/components/schemas/BulkObjectId"
           },
           "url": {
             "type": "string",
