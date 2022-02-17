@@ -10,10 +10,11 @@ authorizations:
   description: >-
     An Optional list of support authorization types. More than one can be supported and tried in sequence.
     Defaults to `None` if empty or missing.
-passport_issuers:
+visa_issuers:
   type: array
   items:
     type: string
   description: >-
-    If authorizations contains `PassportAuth` this is a required list of passport issuers
-    (as found in a passport's `iss` claim) that may authorize access to this object.
+    If authorizations contains `PassportAuth` this is a required list of visa issuers
+    (as found in a visa's `iss` claim) that may authorize access to this object. The caller must
+    only provide passports that contain visas from this list.
