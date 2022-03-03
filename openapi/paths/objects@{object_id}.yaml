@@ -3,7 +3,7 @@ options:
   security:
     - {}
   description: >-
-    Returns a list of `Authorizations` that can be used to determine how to resolve and fetch object bytes.
+    Returns a list of `Authorizations` that can be used to determine how to authorize requests to `GetObject` or `PostObject`.
   operationId: OptionsObject
   parameters:
     - $ref: '../components/parameters/ObjectId.yaml'
