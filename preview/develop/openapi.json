@@ -215,7 +215,7 @@
         ],
         "responses": {
           "200": {
-            "$ref": "#/components/responses/200OkAccess"
+            "$ref": "#/components/responses/200OkDrsObject"
           },
           "202": {
             "$ref": "#/components/responses/202Accepted"
@@ -789,22 +789,22 @@
           }
         }
       },
-      "200OkAccess": {
-        "description": "The `AccessURL` was found successfully",
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/AccessURL"
-            }
-          }
-        }
-      },
       "404NotFoundAccess": {
         "description": "The requested `AccessURL` wasn't found.",
         "content": {
           "application/json": {
             "schema": {
               "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "200OkAccess": {
+        "description": "The `AccessURL` was found successfully",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/AccessURL"
             }
           }
         }
