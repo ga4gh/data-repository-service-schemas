@@ -1260,27 +1260,6 @@ components:
                 type: array
                 items:
                   type: string
-    BulkAccessURL:
-      type: object
-      required:
-        - url
-      properties:
-        object_id:
-          $ref: '#/components/schemas/BulkObjectId'
-        url:
-          type: string
-          description: >-
-            A fully resolvable URL that can be used to fetch the actual object
-            bytes.
-        headers:
-          type: array
-          items:
-            type: string
-          description: >-
-            An optional list of headers to include in the HTTP request to `url`.
-            These headers can be used to provide auth tokens required to fetch
-            the object bytes.
-          example: 'Authorization: Basic Z2E0Z2g6ZHJz'
   responses:
     200OkDrsObject:
       description: The `DrsObject` was found successfully
@@ -1374,4 +1353,4 @@ components:
               access_urls:
                 type: array
                 items:
-                  $ref: '#/components/schemas/BulkAccessURL'
+                  $ref: ../schemas/BulkObjectSingleAccessURL.yaml
