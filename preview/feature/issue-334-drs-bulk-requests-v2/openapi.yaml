@@ -1345,13 +1345,9 @@ components:
             type: object
             properties:
               summary:
-                type: object
-                items:
-                  $ref: '#/components/schemas/summary'
-              unresolved_drs_object:
-                type: object
-                items:
-                  $ref: '#/components/schemas/unresolved'
+                $ref: '#/components/schemas/summary'
+              unresolved_drs_objects:
+                $ref: '#/components/schemas/unresolved'
               resolved_drs_object:
                 type: array
                 items:
