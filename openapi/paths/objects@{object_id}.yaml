@@ -1,3 +1,29 @@
+options:
+  summary: Get Authorization info about a DrsObject.
+  security:
+    - {}
+  description: >-
+    Returns a list of `Authorizations` that can be used to determine how to authorize requests to `GetObject` or `PostObject`.
+  operationId: OptionsObject
+  parameters:
+    - $ref: '../components/parameters/ObjectId.yaml'
+  responses:
+    200:
+      $ref: '../components/responses/200OkAuthorizations.yaml'
+    204:
+      $ref: '../components/responses/AuthorizationsNotSupported.yaml'
+    400:
+      $ref: '../components/responses/400BadRequest.yaml'
+    404:
+      $ref: '../components/responses/404NotFoundDrsObject.yaml'
+    405:
+      $ref: '../components/responses/AuthorizationsNotSupported.yaml'
+    500:
+      $ref: '../components/responses/500InternalServerError.yaml'
+  tags:
+    - Objects
+  x-swagger-router-controller: ga4gh.drs.server
+
 get:
   summary: Get info about a DrsObject.
   description: >-
@@ -24,3 +50,35 @@ get:
   tags:
     - Objects
   x-swagger-router-controller: ga4gh.drs.server
+
+post:
+  summary: Get info about a DrsObject through POST'ing a Passport.
+  description: >-
+    Returns object metadata, and a list of access methods that can be used to fetch object bytes.
+
+    Method is a POST to accomodate a JWT GA4GH Passport sent in the formData in order to authorize access.
+  operationId: PostObject
+  security:
+    - PassportAuth: []
+  responses:
+    200:
+      $ref: '../components/responses/200OkDrsObject.yaml'
+    202:
+      $ref: '../components/responses/202Accepted.yaml'
+    400:
+      $ref: '../components/responses/400BadRequest.yaml'
+    401:
+      $ref: '../components/responses/401Unauthorized.yaml'
+    403:
+      $ref: '../components/responses/403Forbidden.yaml'
+    404:
+      $ref: '../components/responses/404NotFoundAccess.yaml'
+    500:
+      $ref: '../components/responses/500InternalServerError.yaml'
+  tags:
+    - Objects
+  x-swagger-router-controller: ga4gh.drs.server
+  parameters:
+    - $ref: '../components/parameters/ObjectId.yaml'
+  requestBody:
+    $ref: '../components/requestBodies/PostObjectBody.yaml'

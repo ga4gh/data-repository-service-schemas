@@ -47,7 +47,7 @@
     },
     {
       "name": "Authorization & Authentication",
-      "description": "## Making DRS Requests\n\nThe DRS implementation is responsible for defining and enforcing an authorization policy that determines which users are allowed to make which requests. GA4GH recommends that DRS implementations use an OAuth 2.0 [bearer token](https://oauth.net/2/bearer-tokens/) or a [GA4GH Passport](https://github.com/ga4gh-duri/ga4gh-duri.github.io/tree/master/researcher_ids), although they can choose other mechanisms if appropriate.\n\n## Fetching DRS Objects\n\nThe DRS API allows implementers to support a variety of different content access policies, depending on what `AccessMethod` records they return.  Implementers have a choice to make the\nGET /objects/{object_id} and GET /objects/{object_id}/access/{access_id} calls open or requiring a Basic, Bearer, or Passport token (Passport requiring a POST).  The following describes the\nvarious access approaches following a successful GET/POST /objects/{object_id} request in order to them obtain access to the bytes for a given object ID/access ID:\n\n* public content:\n    * server provides an `access_url` with a `url` and no `headers`\n    * caller fetches the object bytes without providing any auth info\n* private content that requires the caller to have out-of-band auth knowledge (e.g. service account credentials):\n    * server provides an `access_url` with a `url` and no `headers`\n    * caller fetches the object bytes, passing the auth info they obtained out-of-band\n* private content that requires the caller to pass an Authorization token:\n    * server provides an `access_url` with a `url` and `headers`\n    * caller fetches the object bytes, passing auth info via the specified header(s)\n* private content that uses an expensive-to-generate auth mechanism (e.g. a signed URL):\n    * server provides an `access_id`\n    * caller passes the `access_id` to the `/access` endpoint\n    * server provides an `access_url` with the generated mechanism (e.g. a signed URL in the `url` field)\n    * caller fetches the object bytes from the `url` (passing auth info from the specified headers, if any)\n\nIn the approaches above [GA4GH Passports](https://github.com/ga4gh-duri/ga4gh-duri.github.io/tree/master/researcher_ids) are not mentioned and that is on purpose.  A DRS server may return a Bearer token or other platform-specific token in a header in response to a valid Bearer token or GA4GH Passport (Option 3 above).  But it is not the responsibility of a DRS server to return a Passport, that is the responsibility of a Passport Broker and outside the scope of DRS.\n\nDRS implementers should ensure their solutions restrict access to targets as much as possible, detect attempts to exploit through log monitoring, and they are prepared to take action if an exploit in their DRS implementation is detected.\n\n## Authentication\n\n### BasicAuth\n\nA valid authorization token must be passed in the 'Authorization' header, e.g. \"Basic ${token_string}\"\n\n| Security Scheme Type | HTTP |\n|----------------------|------|\n| **HTTP Authorization Scheme** | basic |\n\n### BearerAuth\n\nA valid authorization token must be passed in the 'Authorization' header, e.g. \"Bearer ${token_string}\"\n\n| Security Scheme Type | HTTP |\n|----------------------|------|\n| **HTTP Authorization Scheme** | bearer |\n\n### PassportAuth\n\nA valid authorization [GA4GH Passport](https://github.com/ga4gh-duri/ga4gh-duri.github.io/tree/master/researcher_ids) token must be passed in the body of a POST request\n\n| Security Scheme Type | HTTP |\n|----------------------|------|\n| **HTTP POST** | tokens[] |\n"
+      "description": "## Making DRS Requests\n\nThe DRS implementation is responsible for defining and enforcing an authorization policy that determines which users are allowed to make which requests. GA4GH recommends that DRS implementations use an OAuth 2.0 [bearer token](https://oauth.net/2/bearer-tokens/) or a [GA4GH Passport](https://github.com/ga4gh-duri/ga4gh-duri.github.io/tree/master/researcher_ids), although they can choose other mechanisms if appropriate.\n\n## Fetching DRS Objects\n\nThe DRS API allows implementers to support a variety of different content access policies, depending on what `AccessMethod` records they return.  Implementers have a choice to make the\nGET /objects/{object_id} and GET /objects/{object_id}/access/{access_id} calls open or requiring a Basic, Bearer, or Passport token (Passport requiring a POST).  The following describes the\nvarious access approaches following a successful GET/POST /objects/{object_id} request in order to them obtain access to the bytes for a given object ID/access ID:\n\n* public content:\n    * server provides an `access_url` with a `url` and no `headers`\n    * caller fetches the object bytes without providing any auth info\n* private content that requires the caller to have out-of-band auth knowledge (e.g. service account credentials):\n    * server provides an `access_url` with a `url` and no `headers`\n    * caller fetches the object bytes, passing the auth info they obtained out-of-band\n* private content that requires the caller to pass an Authorization token:\n    * server provides an `access_url` with a `url` and `headers`\n    * caller fetches the object bytes, passing auth info via the specified header(s)\n* private content that uses an expensive-to-generate auth mechanism (e.g. a signed URL):\n    * server provides an `access_id`\n    * caller passes the `access_id` to the `/access` endpoint\n    * server provides an `access_url` with the generated mechanism (e.g. a signed URL in the `url` field)\n    * caller fetches the object bytes from the `url` (passing auth info from the specified headers, if any)\n\nIn the approaches above [GA4GH Passports](https://github.com/ga4gh-duri/ga4gh-duri.github.io/tree/master/researcher_ids) are not mentioned and that is on purpose.  A DRS server may return a Bearer token or other platform-specific token in a header in response to a valid Bearer token or GA4GH Passport (Option 3 above).  But it is not the responsibility of a DRS server to return a Passport, that is the responsibility of a Passport Broker and outside the scope of DRS.\n\nDRS implementers should ensure their solutions restrict access to targets as much as possible, detect attempts to exploit through log monitoring, and they are prepared to take action if an exploit in their DRS implementation is detected.\n\n## Authentication\n\n### Discovery\n\nThe APIs to fetch [DrsObjects](l#tag/DrsObjectModel) and [AccessURLs](#tag/AccessURLModel) may require authorization. The authorization mode may vary between DRS objects hosted by a service. The authorization mode may vary between the APIs to fetch a [DrsObject](l#tag/DrsObjectModel) and an associated [AccessURL](#tag/AccessURLModel). Implementers should indicate how to authenticate to fetch a [DrsObject](l#tag/DrsObjectModel) by implementing the [OptionsOjbect](#operation/OptionsObject) API. Implementers should indicate how to authenticate to fetch an [AccessURL](#tag/AccessURLModel) within a [DrsObject](l#tag/DrsObjectModel). \n\n### Modes\n\n#### BasicAuth\n\nA valid authorization token must be passed in the 'Authorization' header, e.g. \"Basic ${token_string}\"\n\n| Security Scheme Type | HTTP |\n|----------------------|------|\n| **HTTP Authorization Scheme** | basic |\n\n#### BearerAuth\n\nA valid authorization token must be passed in the 'Authorization' header, e.g. \"Bearer ${token_string}\"\n\n| Security Scheme Type | HTTP |\n|----------------------|------|\n| **HTTP Authorization Scheme** | bearer |\n\n#### PassportAuth\n\nA valid authorization [GA4GH Passport](https://github.com/ga4gh-duri/ga4gh-duri.github.io/tree/master/researcher_ids) token must be passed in the body of a POST request\n\n| Security Scheme Type | HTTP |\n|----------------------|------|\n| **HTTP POST** | tokens[] |\n"
     },
     {
       "name": "Objects"
@@ -164,6 +164,43 @@
       }
     },
     "/objects/{object_id}": {
+      "options": {
+        "summary": "Get Authorization info about a DrsObject.",
+        "security": [
+          {}
+        ],
+        "description": "Returns a list of `Authorizations` that can be used to determine how to authorize requests to `GetObject` or `PostObject`.",
+        "operationId": "OptionsObject",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ObjectId"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/200OkAuthorizations"
+          },
+          "204": {
+            "$ref": "#/components/responses/AuthorizationsNotSupported"
+          },
+          "400": {
+            "$ref": "#/components/responses/400BadRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/404NotFoundDrsObject"
+          },
+          "405": {
+            "$ref": "#/components/responses/AuthorizationsNotSupported"
+          },
+          "500": {
+            "$ref": "#/components/responses/500InternalServerError"
+          }
+        },
+        "tags": [
+          "Objects"
+        ],
+        "x-swagger-router-controller": "ga4gh.drs.server"
+      },
       "get": {
         "summary": "Get info about a DrsObject.",
         "description": "Returns object metadata, and a list of access methods that can be used to fetch object bytes.",
@@ -549,6 +586,38 @@
           }
         }
       },
+      "Authorizations": {
+        "type": "object",
+        "properties": {
+          "supported_types": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": [
+                "None",
+                "BasicAuth",
+                "BearerAuth",
+                "PassportAuth"
+              ]
+            },
+            "description": "An Optional list of support authorization types. More than one can be supported and tried in sequence. Defaults to `None` if empty or missing."
+          },
+          "passport_auth_issuers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "If authorizations contains `PassportAuth` this is a required list of visa issuers (as found in a visa's `iss` claim) that may authorize access to this object. The caller must only provide passports that contain visas from this list. It is strongly recommended that the caller validate that it is appropriate to send the requested passport/visa to the DRS server to mitigate attacks by malicious DRS servers requesting credentials they should not have."
+          },
+          "bearer_auth_issuers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "If authorizations contains `BearerAuth` this is an optional list of issuers that may authorize access to this object. The caller must provide a token from one of these issuers. If this is empty or missing it assumed the caller knows which token to send via other means. It is strongly recommended that the caller validate that it is appropriate to send the requested token to the DRS server to mitigate attacks by malicious DRS servers requesting credentials they should not have."
+          }
+        }
+      },
       "AccessMethod": {
         "type": "object",
         "required": [
@@ -570,8 +639,14 @@
             "description": "Type of the access method."
           },
           "access_url": {
-            "$ref": "#/components/schemas/AccessURL",
-            "description": "An `AccessURL` that can be used to fetch the actual object bytes. Note that at least one of `access_url` and `access_id` must be provided."
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/AccessURL"
+              },
+              {
+                "description": "An `AccessURL` that can be used to fetch the actual object bytes. Note that at least one of `access_url` and `access_id` must be provided."
+              }
+            ]
           },
           "access_id": {
             "type": "string",
@@ -581,6 +656,16 @@
             "type": "string",
             "description": "Name of the region in the cloud service provider that the object belongs to.",
             "example": "us-east-1"
+          },
+          "authorizations": {
+            "allOf": [
+              {
+                "$ref": "#/components/schemas/Authorizations"
+              },
+              {
+                "description": "When `access_id` is provided, `authorizations` provides information about how to authorize the `/access` method."
+              }
+            ]
           }
         }
       },
@@ -798,6 +883,19 @@
             }
           }
         }
+      },
+      "200OkAuthorizations": {
+        "description": "`Authorizations` were found successfully",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Authorizations"
+            }
+          }
+        }
+      },
+      "AuthorizationsNotSupported": {
+        "description": "`Authorizations` are not supported for this object. Default to `None`."
       },
       "200OkAccess": {
         "description": "The `AccessURL` was found successfully",
