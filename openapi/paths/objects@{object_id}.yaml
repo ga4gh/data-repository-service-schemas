@@ -1,3 +1,29 @@
+options:
+  summary: Get Authorization info about a DrsObject.
+  security:
+    - {}
+  description: >-
+    Returns a list of `Authorizations` that can be used to determine how to authorize requests to `GetObject` or `PostObject`.
+  operationId: OptionsObject
+  parameters:
+    - $ref: '../components/parameters/ObjectId.yaml'
+  responses:
+    200:
+      $ref: '../components/responses/200OkAuthorizations.yaml'
+    204:
+      $ref: '../components/responses/AuthorizationsNotSupported.yaml'
+    400:
+      $ref: '../components/responses/400BadRequest.yaml'
+    404:
+      $ref: '../components/responses/404NotFoundDrsObject.yaml'
+    405:
+      $ref: '../components/responses/AuthorizationsNotSupported.yaml'
+    500:
+      $ref: '../components/responses/500InternalServerError.yaml'
+  tags:
+    - Objects
+  x-swagger-router-controller: ga4gh.drs.server
+
 get:
   summary: Get info about a DrsObject.
   description: >-
