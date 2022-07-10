@@ -31,7 +31,6 @@ get:
   operationId: GetObject
   parameters:
     - $ref: '../components/parameters/ObjectId.yaml'
-    - $ref: '../components/parameters/Expand.yaml'
   responses:
     200:
       $ref: '../components/responses/200OkDrsObject.yaml'

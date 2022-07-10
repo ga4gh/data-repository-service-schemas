@@ -52,10 +52,6 @@ tags:
     x-displayName: Checksum
     description: |
       <SchemaDefinition schemaRef="#/components/schemas/Checksum" />
-  - name: ContentsObjectModel
-    x-displayName: ContentsObject
-    description: |
-      <SchemaDefinition schemaRef="#/components/schemas/ContentsObject" />
   - name: DrsObjectModel
     x-displayName: DrsObject
     description: |
@@ -96,7 +92,6 @@ x-tagGroups:
       - AccessMethodModel
       - AccessURLModel
       - ChecksumModel
-      - ContentsObjectModel
       - DrsObjectModel
       - ErrorModel
   - name: Appendices
@@ -111,8 +106,12 @@ paths:
     $ref: ./paths/service-info.yaml
   /objects/{object_id}:
     $ref: ./paths/objects@{object_id}.yaml
+  /objects:
+    $ref: ./paths/bulkobjects@{object_id}.yaml
   /objects/{object_id}/access/{access_id}:
     $ref: ./paths/objects@{object_id}@access@{access_id}.yaml
+  /objects/access:
+    $ref: ./paths/bulkobjects@access@{access_id}.yaml
 components:
   securitySchemes:
     BasicAuth:
