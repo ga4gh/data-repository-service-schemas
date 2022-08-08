@@ -104,7 +104,7 @@ DRS servers can choose to issue either hostname-based or compact identifier-base
 | Security          | Servers have full control over their own security practices. | Server operators, in addition to maintaining their own security practices, should confirm they are comfortable with the resolver registry security practices, including protection against denial of service and namespace-hijacking attacks. (See the [Appendix: Compact Identifier-Based URIs](#tag/Compact-Identifier-Based-URIs) for more information on resolver registry security.) |
 
 ## DRS Datatypes
-DRS's job is data acccess, period. Therefore, the DRS API supports a simple flat content model -- every `DrsObject` represents a single opaque blob of bytes, which (like a file) has no inherent semantic meeting and only simple domain-agnostic metadata. Data organization, discovery, and understanding are left to higher levels of the stack.
+DRS's job is data acccess, period. Therefore, the DRS API supports a simple flat content model -- every `DrsObject` represents a single opaque blob of bytes, which (like a file) has no inherent semantic meaning and only simple domain-agnostic metadata. Data organization, discovery, and understanding are left to higher levels of the stack.
 
 ### Simple Objects
 DRS can be used to access objects of all kinds, stored in type-specific formats (e.g. BAM files, VCF files, CSV files). At the API level these are all the same; at the application level, DRS clients and servers are expected to agree on the semantics of individual objects using non-DRS mechansisms, including but not limited to the GA4GH Data Connect API.
@@ -121,7 +121,7 @@ As with simple objects, DRS clients and servers are expected to agree on the sem
 3. Document the expected client logic for processing compound objects of interest. This logic typically consists of using standard DRS mechanisms to fetch the manifest, parsing its syntax, extracting the DRS IDs of leaf objects, and using standard DRS mechanisms to fetch relevant leaf objects.
 
 ### [DEPRECATED] Bundles
-Previous versions of the DRS API spec included support for a *bundle* content type, which like a folder  was a collection of other DRS content (either blobs or bundles), represented by a `DrsObject` with a `contents` array. As of v1.*TODO*, bundles have been deprecated in favor of the Compound Object best practice documented above. A future version of the API spec may remove bundle support entirely.
+Previous versions of the DRS API spec included support for a *bundle* content type, which was a folder-like collection of other DRS objects (either blobs or bundles), represented by a `DrsObject` with a `contents` array. As of v1.*TODO*, bundles have been deprecated in favor of the Compound Object best practice documented above. A future version of the API spec may remove bundle support entirely.
 
 ## Read-only
 

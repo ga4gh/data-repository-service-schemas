@@ -312,7 +312,7 @@ tags:
 
       DRS's job is data acccess, period. Therefore, the DRS API supports a
       simple flat content model -- every `DrsObject` represents a single opaque
-      blob of bytes, which (like a file) has no inherent semantic meeting and
+      blob of bytes, which (like a file) has no inherent semantic meaning and
       only simple domain-agnostic metadata. Data organization, discovery, and
       understanding are left to higher levels of the stack.
 
@@ -366,7 +366,7 @@ tags:
       ### [DEPRECATED] Bundles
 
       Previous versions of the DRS API spec included support for a *bundle*
-      content type, which like a folder  was a collection of other DRS content
+      content type, which was a folder-like collection of other DRS objects
       (either blobs or bundles), represented by a `DrsObject` with a `contents`
       array. As of v1.*TODO*, bundles have been deprecated in favor of the
       Compound Object best practice documented above. A future version of the
