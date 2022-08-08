@@ -104,24 +104,24 @@ DRS servers can choose to issue either hostname-based or compact identifier-base
 | Security          | Servers have full control over their own security practices. | Server operators, in addition to maintaining their own security practices, should confirm they are comfortable with the resolver registry security practices, including protection against denial of service and namespace-hijacking attacks. (See the [Appendix: Compact Identifier-Based URIs](#tag/Compact-Identifier-Based-URIs) for more information on resolver registry security.) |
 
 ## DRS Datatypes
+DRS's job is data acccess, period. Therefore, the DRS API supports a simple flat content model -- every `DrsObject` represents a single opaque blob of bytes, which (like a file) has no inherent semantic meeting and only simple domain-agnostic metadata. Data organization, discovery, and understanding are left to higher levels of the stack.
 
 ### Simple Objects
-At the API level, DRS v1 has a simple flat content model -- every `DrsObject` represents a single opaque blob of bytes, which (like a file) has no inherent semantic meeting and only simple domain-agnostic metadata. At the application level, DRS clients and servers are expected to agree on the semantics of individual objects using non-DRS mechansisms, including but not limited to the GA4GH Data Connect API. A simple unchanging DRS API can thus support the data access needs of all object types, leaving data discovery and understanding to higher levels of the stack.
+DRS can be used to access objects of all kinds, stored in type-specific formats (e.g. BAM files, VCF files, CSV files). At the API level these are all the same; at the application level, DRS clients and servers are expected to agree on the semantics of individual objects using non-DRS mechansisms, including but not limited to the GA4GH Data Connect API.
 
 ### Compound Objects
-Much biomedical data is represented as compound objects consisting of two or more simple objects related to each other in a well-specified way. Examples incluide:
+DRS can also be used to access compound objects, consisting of two or more simple 'leaf' objects related to each other in a well-specified way. Common examples of compound objects in biomedicine incluide:
 * BAM+BAI genomic reads, with a small index (the BAI object) to large data (the BAM object), each object using a well-defined file format.
-* DICOM images, with a contents object pointing to one or more raw image content objects, each containing different aspects of a single logical biomedical image (e.g. different z-coordinates or different pixel resolutions)
-* studies, TODO
+* DICOM images, with a contents object pointing to one or more raw image objects, each containing pixels from different aspects of a single logical biomedical image (e.g. different z-coordinates) <== TODO: check this
+* studies, with a single table of contents listing multiple objects of various types that were generated together and are meant to be processed together
 
-<WIP>
 As with simple objects, DRS clients and servers are expected to agree on the semantics of individual compound objects using non-DRS mechanisms. The recommended best practice for representing a particular compound object type is:
-1. define the syntax of a manifest file, which contains object-specific information about the relationship between the 'leaf' objects, referred to by their DRS IDs
-2. make manifest files available to fetch using standard DRS mechanisms
-3. make leaf objects avilable to fetch using standard DRS mechanisms
-</WIP>
+1. Define a manifest file syntax, which contains a list of the DRS IDs of the leaf objects, plus type-specific information about the relationship between the different elements of the compound object.
+2. Make manifest objects, and each of their referenced leaf objects, available using standard DRS mechanisms -- each manifest and each leaf are referenced via their own DRS IDs, just like any other simple object.
+3. Document the expected client logic for processing compound objects of interest. This logic typically consists of using standard DRS mechanisms to fetch the manifest, parsing its syntax, extracting the DRS IDs of leaf objects, and using standard DRS mechanisms to fetch relevant leaf objects.
 
-There is also deprecated support for a *bundle* content type, which like a folder is a collection of other DRS content (either blobs or bundles), represented by a `DrsObject` with a `contents` array.
+### [DEPRECATED] Bundles
+Previous versions of the DRS API spec included support for a *bundle* content type, which like a folder  was a collection of other DRS content (either blobs or bundles), represented by a `DrsObject` with a `contents` array. As of v1.*TODO*, bundles have been deprecated in favor of the Compound Object best practice documented above. A future version of the API spec may remove bundle support entirely.
 
 ## Read-only
 
