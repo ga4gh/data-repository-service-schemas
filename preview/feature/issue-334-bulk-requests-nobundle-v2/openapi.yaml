@@ -286,7 +286,7 @@ tags:
 
       |-------------------|----------------|--------------------------|
 
-      | UR \I Durability    | URIs are valid for as long as the server operator
+      | URI Durability    | URIs are valid for as long as the server operator
       maintains ownership of the published DNS address. (They can of course
       point that address at different physical serving infrastructure as often
       as they would like.) | URIs are valid for as long as the server operator
@@ -368,9 +368,9 @@ tags:
       Previous versions of the DRS API spec included support for a *bundle*
       content type, which was a folder-like collection of other DRS objects
       (either blobs or bundles), represented by a `DrsObject` with a `contents`
-      array. As of v1.*TODO*, bundles have been deprecated in favor of the
-      Compound Object best practice documented above. A future version of the
-      API spec may remove bundle support entirely.
+      array. As of v1.3, bundles have been deprecated in favor of the Compound
+      Object best practice documented above. A future version of the API spec
+      may remove bundle support entirely.
 
 
       ## Read-only
