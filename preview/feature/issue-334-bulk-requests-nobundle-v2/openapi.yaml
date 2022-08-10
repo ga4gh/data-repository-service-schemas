@@ -330,14 +330,14 @@ tags:
 
       DRS can also be used to access compound objects, consisting of two or more
       simple 'leaf' objects related to each other in a well-specified way.
-      Common examples of compound objects in biomedicine incluide:
+      Common examples of compound objects in biomedicine include:
 
       * BAM+BAI genomic reads, with a small index (the BAI object) to large data
       (the BAM object), each object using a well-defined file format.
 
       * DICOM images, with a contents object pointing to one or more raw image
       objects, each containing pixels from different aspects of a single logical
-      biomedical image (e.g. different z-coordinates) <== TODO: check this
+      biomedical image (e.g. different z-coordinates)
 
       * studies, with a single table of contents listing multiple objects of
       various types that were generated together and are meant to be processed
@@ -369,7 +369,7 @@ tags:
       content type, which was a folder-like collection of other DRS objects
       (either blobs or bundles), represented by a `DrsObject` with a `contents`
       array. As of v1.3, bundles have been deprecated in favor of the Compound
-      Object best practice documented above. A future version of the API spec
+      Objects best practice documented above. A future version of the API spec
       may remove bundle support entirely.
 
 

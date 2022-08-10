@@ -110,9 +110,9 @@ DRS's job is data acccess, period. Therefore, the DRS API supports a simple flat
 DRS can be used to access objects of all kinds, stored in type-specific formats (e.g. BAM files, VCF files, CSV files). At the API level these are all the same; at the application level, DRS clients and servers are expected to agree on the semantics of individual objects using non-DRS mechansisms, including but not limited to the GA4GH Data Connect API.
 
 ### Compound Objects
-DRS can also be used to access compound objects, consisting of two or more simple 'leaf' objects related to each other in a well-specified way. Common examples of compound objects in biomedicine incluide:
+DRS can also be used to access compound objects, consisting of two or more simple 'leaf' objects related to each other in a well-specified way. Common examples of compound objects in biomedicine include:
 * BAM+BAI genomic reads, with a small index (the BAI object) to large data (the BAM object), each object using a well-defined file format.
-* DICOM images, with a contents object pointing to one or more raw image objects, each containing pixels from different aspects of a single logical biomedical image (e.g. different z-coordinates) <== TODO: check this
+* DICOM images, with a contents object pointing to one or more raw image objects, each containing pixels from different aspects of a single logical biomedical image (e.g. different z-coordinates)
 * studies, with a single table of contents listing multiple objects of various types that were generated together and are meant to be processed together
 
 As with simple objects, DRS clients and servers are expected to agree on the semantics of individual compound objects using non-DRS mechanisms. The recommended best practice for representing a particular compound object type is:
@@ -121,7 +121,7 @@ As with simple objects, DRS clients and servers are expected to agree on the sem
 3. Document the expected client logic for processing compound objects of interest. This logic typically consists of using standard DRS mechanisms to fetch the manifest, parsing its syntax, extracting the DRS IDs of leaf objects, and using standard DRS mechanisms to fetch relevant leaf objects.
 
 ### [DEPRECATED] Bundles
-Previous versions of the DRS API spec included support for a *bundle* content type, which was a folder-like collection of other DRS objects (either blobs or bundles), represented by a `DrsObject` with a `contents` array. As of v1.3, bundles have been deprecated in favor of the Compound Object best practice documented above. A future version of the API spec may remove bundle support entirely.
+Previous versions of the DRS API spec included support for a *bundle* content type, which was a folder-like collection of other DRS objects (either blobs or bundles), represented by a `DrsObject` with a `contents` array. As of v1.3, bundles have been deprecated in favor of the Compound Objects best practice documented above. A future version of the API spec may remove bundle support entirely.
 
 ## Read-only
 
