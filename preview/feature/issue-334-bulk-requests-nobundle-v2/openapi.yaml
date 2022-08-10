@@ -55,8 +55,8 @@ tags:
 
 
       * DRS IDs are strings made up of uppercase and lowercase letters, decimal
-      digits, hypen, period, underscore and tilde [A-Za-z0-9.-_~]. See [RFC 3986
-      § 2.3](https://datatracker.ietf.org/doc/html/rfc3986#section-2.3).
+      digits, hyphen, period, underscore and tilde [A-Za-z0-9.-_~]. See [RFC
+      3986 § 2.3](https://datatracker.ietf.org/doc/html/rfc3986#section-2.3).
 
       * DRS IDs can contain other characters, but they MUST be encoded into
       valid DRS IDs whenever they are used in API calls. This is because
@@ -310,10 +310,10 @@ tags:
 
       ## DRS Datatypes
 
-      DRS's job is data acccess, period. Therefore, the DRS API supports a
-      simple flat content model -- every `DrsObject` represents a single opaque
-      blob of bytes, which (like a file) has no inherent semantic meaning and
-      only simple domain-agnostic metadata. Data organization, discovery, and
+      DRS's job is data access, period. Therefore, the DRS API supports a simple
+      flat content model -- every `DrsObject` represents a single opaque blob of
+      bytes, which (like a file) has no inherent semantic meaning and only
+      simple domain-agnostic metadata. Data organization, discovery, and
       understanding are left to higher levels of the stack.
 
 
@@ -323,7 +323,7 @@ tags:
       formats (e.g. BAM files, VCF files, CSV files). At the API level these are
       all the same; at the application level, DRS clients and servers are
       expected to agree on the semantics of individual objects using non-DRS
-      mechansisms, including but not limited to the GA4GH Data Connect API.
+      mechanisms, including but not limited to the GA4GH Data Connect API.
 
 
       ### Compound Objects
@@ -388,7 +388,7 @@ tags:
       service philosophy. It uses JSON in requests and responses and standard
       HTTPS on port 443 for information transport.  Optionally, it
 
-      supports authenitcation and authorization using the [GA4GH
+      supports authentication and authorization using the [GA4GH
       Passport](https://github.com/ga4gh-duri/ga4gh-duri.github.io/tree/master/researcher_ids)
       standard.
   - name: Authorization & Authentication

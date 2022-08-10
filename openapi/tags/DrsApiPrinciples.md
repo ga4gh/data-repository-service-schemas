@@ -2,7 +2,7 @@
 
 Each implementation of DRS can choose its own id scheme, as long as it follows these guidelines:
 
-* DRS IDs are strings made up of uppercase and lowercase letters, decimal digits, hypen, period, underscore and tilde [A-Za-z0-9.-_~]. See [RFC 3986 § 2.3](https://datatracker.ietf.org/doc/html/rfc3986#section-2.3).
+* DRS IDs are strings made up of uppercase and lowercase letters, decimal digits, hyphen, period, underscore and tilde [A-Za-z0-9.-_~]. See [RFC 3986 § 2.3](https://datatracker.ietf.org/doc/html/rfc3986#section-2.3).
 * DRS IDs can contain other characters, but they MUST be encoded into valid DRS IDs whenever they are used in API calls. This is because non-encoded IDs may interfere with the interpretation of the objects/{id}/access endpoint. To overcome this limitation use percent-encoding of the ID, see [RFC 3986 § 2.4](https://datatracker.ietf.org/doc/html/rfc3986#section-2.4)
 * One DRS ID MUST always return the same object data (or, in the case of a collection, the same set of objects). This constraint aids with reproducibility.
 * DRS implementations MAY have more than one ID that maps to the same object.
@@ -104,10 +104,10 @@ DRS servers can choose to issue either hostname-based or compact identifier-base
 | Security          | Servers have full control over their own security practices. | Server operators, in addition to maintaining their own security practices, should confirm they are comfortable with the resolver registry security practices, including protection against denial of service and namespace-hijacking attacks. (See the [Appendix: Compact Identifier-Based URIs](#tag/Compact-Identifier-Based-URIs) for more information on resolver registry security.) |
 
 ## DRS Datatypes
-DRS's job is data acccess, period. Therefore, the DRS API supports a simple flat content model -- every `DrsObject` represents a single opaque blob of bytes, which (like a file) has no inherent semantic meaning and only simple domain-agnostic metadata. Data organization, discovery, and understanding are left to higher levels of the stack.
+DRS's job is data access, period. Therefore, the DRS API supports a simple flat content model -- every `DrsObject` represents a single opaque blob of bytes, which (like a file) has no inherent semantic meaning and only simple domain-agnostic metadata. Data organization, discovery, and understanding are left to higher levels of the stack.
 
 ### Simple Objects
-DRS can be used to access objects of all kinds, stored in type-specific formats (e.g. BAM files, VCF files, CSV files). At the API level these are all the same; at the application level, DRS clients and servers are expected to agree on the semantics of individual objects using non-DRS mechansisms, including but not limited to the GA4GH Data Connect API.
+DRS can be used to access objects of all kinds, stored in type-specific formats (e.g. BAM files, VCF files, CSV files). At the API level these are all the same; at the application level, DRS clients and servers are expected to agree on the semantics of individual objects using non-DRS mechanisms, including but not limited to the GA4GH Data Connect API.
 
 ### Compound Objects
 DRS can also be used to access compound objects, consisting of two or more simple 'leaf' objects related to each other in a well-specified way. Common examples of compound objects in biomedicine include:
@@ -130,4 +130,4 @@ DRS v1 is a read-only API. We expect that each implementation will define its ow
 ## Standards
 
 The DRS API specification is written in OpenAPI and embodies a RESTful service philosophy. It uses JSON in requests and responses and standard HTTPS on port 443 for information transport.  Optionally, it
-supports authenitcation and authorization using the [GA4GH Passport](https://github.com/ga4gh-duri/ga4gh-duri.github.io/tree/master/researcher_ids) standard.
+supports authentication and authorization using the [GA4GH Passport](https://github.com/ga4gh-duri/ga4gh-duri.github.io/tree/master/researcher_ids) standard.
