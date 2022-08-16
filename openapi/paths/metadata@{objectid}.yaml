@@ -1,0 +1,26 @@
+get:
+  summary: Get metadata about a DrsObject.
+  description: >-
+    Returns arbitrary object metadata
+  operationId: GetObjectMetadata
+  parameters:
+    - $ref: '../components/parameters/ObjectId.yaml'
+  responses:
+    200:
+      $ref: '../components/responses/200OkDrsMetadata.yaml'
+    202:
+      $ref: '../components/responses/202Accepted.yaml'
+    400:
+      $ref: '../components/responses/400BadRequest.yaml'
+    401:
+      $ref: '../components/responses/401Unauthorized.yaml'
+    403:
+      $ref: '../components/responses/403Forbidden.yaml'
+    404:
+      $ref: '../components/responses/404NotFoundDrsObject.yaml'
+    500:
+      $ref: '../components/responses/500InternalServerError.yaml'
+  tags:
+    - Objects
+  x-swagger-router-controller: ga4gh.drs.server
+

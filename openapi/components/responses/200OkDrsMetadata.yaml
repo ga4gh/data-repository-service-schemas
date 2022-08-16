@@ -1,0 +1,5 @@
+description: The `DrsObject` metadata was found successfully
+content:
+  application/json:
+    schema:
+      $ref: '../schemas/DrsObject.yaml'
