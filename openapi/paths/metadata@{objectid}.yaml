@@ -1,7 +1,7 @@
 get:
   summary: Get metadata about a DrsObject.
   description: >-
-    Returns arbitrary object metadata
+    Returns additional object metadata in an arbitrary json format
   operationId: GetObjectMetadata
   parameters:
     - $ref: '../components/parameters/ObjectId.yaml'
@@ -23,4 +23,3 @@ get:
   tags:
     - Objects
   x-swagger-router-controller: ga4gh.drs.server
-
