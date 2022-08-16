@@ -1,0 +1,6 @@
+type: metadata
+properties:
+  id:
+    type: string
+    description: An identifier unique to this `DrsObject`
+
