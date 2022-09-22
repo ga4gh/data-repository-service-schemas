@@ -288,7 +288,70 @@
       }
     },
     "/objects": {
-      "$ref": "./paths/bulkobjects@{object_id}.yaml"
+      "post": {
+        "summary": "Get info about multiple DrsObjects.",
+        "description": "Returns an array of object metadata, and a list of access methods that can be used to fetch objects' bytes.",
+        "operationId": "GetBulkObjects",
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Expand"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/200OkDrsObjects"
+          },
+          "202": {
+            "$ref": "#/components/responses/202Accepted"
+          },
+          "400": {
+            "$ref": "#/components/responses/400BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/401Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/403Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/404NotFoundDrsObject"
+          },
+          "500": {
+            "$ref": "#/components/responses/500InternalServerError"
+          }
+        },
+        "tags": [
+          "Objects"
+        ],
+        "x-swagger-router-controller": "ga4gh.drs.server",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "selection": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/BulkObjectId"
+                    },
+                    "description": "An array of ObjectIds"
+                  },
+                  "passports": {
+                    "type": "array",
+                    "items": {
+                      "type": "string",
+                      "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJnYTRnaF9wYXNzcG9ydF92MSI6W119.JJ5rN0ktP0qwyZmIPpxmF_p7JsxAZH6L6brUxtad3CM"
+                    },
+                    "description": "the encoded JWT GA4GH Passport that contains embedded Visas.  The overall JWT is signed as are the individual Passport Visas."
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
     },
     "/objects/{object_id}/access/{access_id}": {
       "get": {
@@ -788,6 +851,32 @@
             "description": "A list of strings that can be used to find other metadata about this `DrsObject` from external metadata sources. These aliases can be used to represent secondary accession numbers or external GUIDs."
           }
         }
+      },
+      "BulkObjectId": {
+        "name": "bulk_object_id",
+        "required": true,
+        "description": "`DrsObject` identifier",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "summary": {
+        "type": "object",
+        "description": "A summary of what was resolved.",
+        "properties": {
+          "requested": {
+            "type": "integer",
+            "description": "Number of items requested."
+          },
+          "resolved": {
+            "type": "integer",
+            "description": "Number of objects resolved."
+          },
+          "unresolved": {
+            "type": "integer",
+            "description": "Number of objects not resolved."
+          }
+        }
       }
     },
     "responses": {
@@ -902,6 +991,36 @@
       },
       "AuthorizationsNotSupported": {
         "description": "`Authorizations` are not supported for this object. Default to `None`."
+      },
+      "200OkDrsObjects": {
+        "description": "The `DrsObjects` were found successfully",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "summary": {
+                  "type": "object",
+                  "items": {
+                    "$ref": "#/components/schemas/summary"
+                  }
+                },
+                "unresolved_drs_object": {
+                  "type": "object",
+                  "items": {
+                    "$ref": "../schemas/unresolved.yaml"
+                  }
+                },
+                "resolved_drs_object": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DrsObject"
+                  }
+                }
+              }
+            }
+          }
+        }
       },
       "200OkAccess": {
         "description": "The `AccessURL` was found successfully",
