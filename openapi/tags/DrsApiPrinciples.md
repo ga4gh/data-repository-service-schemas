@@ -2,7 +2,7 @@
 
 Each implementation of DRS can choose its own id scheme, as long as it follows these guidelines:
 
-* DRS IDs are strings made up of uppercase and lowercase letters, decimal digits, hypen, period, underscore and tilde [A-Za-z0-9.-_~]. See [RFC 3986 § 2.3](https://datatracker.ietf.org/doc/html/rfc3986#section-2.3).
+* DRS IDs are strings made up of uppercase and lowercase letters, decimal digits, hyphen, period, underscore and tilde [A-Za-z0-9.-_~]. See [RFC 3986 § 2.3](https://datatracker.ietf.org/doc/html/rfc3986#section-2.3).
 * DRS IDs can contain other characters, but they MUST be encoded into valid DRS IDs whenever they are used in API calls. This is because non-encoded IDs may interfere with the interpretation of the objects/{id}/access endpoint. To overcome this limitation use percent-encoding of the ID, see [RFC 3986 § 2.4](https://datatracker.ietf.org/doc/html/rfc3986#section-2.4)
 * One DRS ID MUST always return the same object data (or, in the case of a collection, the same set of objects). This constraint aids with reproducibility.
 * DRS implementations MAY have more than one ID that maps to the same object.
@@ -46,7 +46,7 @@ Tip:
 
 ### Compact Identifier-based DRS URIs
 
-Compact Identifier-based DRS URIs use resolver registry services (specifically, [identifiers.org](https://identifiers.org/) and [n2t.net (Name-To-Thing)](https://n2t.net/)) to provide a layer of indirection between the DRS URI and the DRS server name — the actual DNS name of the DRS server isn’t present in the URI. This approach is based on the Joint Declaration of Data Citation Principles as detailed by [Wimalaratne et al (2018)](https://www.nature.com/articles/sdata201829).
+Compact Identifier-based DRS URIs use resolver registry services (specifically, [identifiers.org](https://identifiers.org/) and [n2t.net (Name-To-Thing)](https://n2t.net/)) to provide a layer of indirection between the DRS URI and the DRS server name — the actual DNS name of the DRS server is not present in the URI. This approach is based on the Joint Declaration of Data Citation Principles as detailed by [Wimalaratne et al (2018)](https://www.nature.com/articles/sdata201829).
 
 For more information, see the document [More Background on Compact Identifiers](./more-background-on-compact-identifiers.html).
 
@@ -99,7 +99,7 @@ DRS servers can choose to issue either hostname-based or compact identifier-base
 
 |                   | Hostname-based | Compact Identifier-based |
 |-------------------|----------------|--------------------------|
-| URI Durability    | URIs are valid for as long as the server operator maintains ownership of the published DNS address. (They can of course point that address at different physical serving infrastructure as often as they’d like.) | URIs are valid for as long as the server operator maintains ownership of the published compact identifier resolver namespace. (They also depend on the meta-resolvers like identifiers.org/n2t.net remaining operational, which is intended to be essentially forever.) |
+| URI Durability    | URIs are valid for as long as the server operator maintains ownership of the published DNS address. (They can of course point that address at different physical serving infrastructure as often as they would like.) | URIs are valid for as long as the server operator maintains ownership of the published compact identifier resolver namespace. (They also depend on the meta-resolvers like identifiers.org/n2t.net remaining operational, which is intended to be essentially forever.) |
 | Client Efficiency | URIs require minimal client logic, and no network requests, to resolve. | URIs require small client logic, and 1-2 cacheable network requests, to resolve. |
 | Security          | Servers have full control over their own security practices. | Server operators, in addition to maintaining their own security practices, should confirm they are comfortable with the resolver registry security practices, including protection against denial of service and namespace-hijacking attacks. (See the [Appendix: Compact Identifier-Based URIs](#tag/Compact-Identifier-Based-URIs) for more information on resolver registry security.) |
 
@@ -116,4 +116,5 @@ DRS v1 is a read-only API. We expect that each implementation will define its ow
 
 ## Standards
 
-The DRS API specification is written in OpenAPI and embodies a RESTful service philosophy. It uses JSON in requests and responses and standard HTTPS on port 443 for information transport.
+The DRS API specification is written in OpenAPI and embodies a RESTful service philosophy. It uses JSON in requests and responses and standard HTTPS on port 443 for information transport.  Optionally, it
+supports authentication and authorization using the [GA4GH Passport](https://github.com/ga4gh-duri/ga4gh-duri.github.io/tree/master/researcher_ids) standard.
