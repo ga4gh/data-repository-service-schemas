@@ -1051,7 +1051,7 @@ paths:
             schema:
               type: object
               properties:
-                selection:
+                bulk_object_ids:
                   type: array
                   items:
                     $ref: '#/components/schemas/BulkObjectId'
