@@ -1,4 +1,0 @@
-type: object
- description: Error codes for each unresolved drs objects.
- additionalProperties:
-   type: integer
