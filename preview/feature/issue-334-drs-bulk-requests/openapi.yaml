@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
   title: Data Repository Service
-  version: 1.1.0
+  version: 1.2.0
   x-logo:
     url: >-
       https://www.ga4gh.org/wp-content/themes/ga4gh-theme/gfx/GA-logo-horizontal-tag-RGB.svg
@@ -55,8 +55,8 @@ tags:
 
 
       * DRS IDs are strings made up of uppercase and lowercase letters, decimal
-      digits, hypen, period, underscore and tilde [A-Za-z0-9.-_~]. See [RFC 3986
-      § 2.3](https://datatracker.ietf.org/doc/html/rfc3986#section-2.3).
+      digits, hyphen, period, underscore and tilde [A-Za-z0-9.-_~]. See [RFC
+      3986 § 2.3](https://datatracker.ietf.org/doc/html/rfc3986#section-2.3).
 
       * DRS IDs can contain other characters, but they MUST be encoded into
       valid DRS IDs whenever they are used in API calls. This is because
@@ -164,7 +164,7 @@ tags:
       (specifically, [identifiers.org](https://identifiers.org/) and [n2t.net
       (Name-To-Thing)](https://n2t.net/)) to provide a layer of indirection
       between the DRS URI and the DRS server name — the actual DNS name of the
-      DRS server isn’t present in the URI. This approach is based on the Joint
+      DRS server is not present in the URI. This approach is based on the Joint
       Declaration of Data Citation Principles as detailed by [Wimalaratne et al
       (2018)](https://www.nature.com/articles/sdata201829).
 
@@ -289,7 +289,7 @@ tags:
       | URI Durability    | URIs are valid for as long as the server operator
       maintains ownership of the published DNS address. (They can of course
       point that address at different physical serving infrastructure as often
-      as they’d like.) | URIs are valid for as long as the server operator
+      as they would like.) | URIs are valid for as long as the server operator
       maintains ownership of the published compact identifier resolver
       namespace. (They also depend on the meta-resolvers like
       identifiers.org/n2t.net remaining operational, which is intended to be
@@ -335,7 +335,11 @@ tags:
 
       The DRS API specification is written in OpenAPI and embodies a RESTful
       service philosophy. It uses JSON in requests and responses and standard
-      HTTPS on port 443 for information transport.
+      HTTPS on port 443 for information transport.  Optionally, it
+
+      supports authentication and authorization using the [GA4GH
+      Passport](https://github.com/ga4gh-duri/ga4gh-duri.github.io/tree/master/researcher_ids)
+      standard.
   - name: Authorization & Authentication
     description: >
       ## Making DRS Requests
@@ -344,15 +348,25 @@ tags:
       The DRS implementation is responsible for defining and enforcing an
       authorization policy that determines which users are allowed to make which
       requests. GA4GH recommends that DRS implementations use an OAuth 2.0
-      [bearer token](https://oauth.net/2/bearer-tokens/), although they can
-      choose other mechanisms if appropriate.
+      [bearer token](https://oauth.net/2/bearer-tokens/) or a [GA4GH
+      Passport](https://github.com/ga4gh-duri/ga4gh-duri.github.io/tree/master/researcher_ids),
+      although they can choose other mechanisms if appropriate.
 
 
       ## Fetching DRS Objects
 
 
       The DRS API allows implementers to support a variety of different content
-      access policies, depending on what `AccessMethod` records they return:
+      access policies, depending on what `AccessMethod` records they return. 
+      Implementers have a choice to make the
+
+      GET /objects/{object_id} and GET /objects/{object_id}/access/{access_id}
+      calls open or requiring a Basic, Bearer, or Passport token (Passport
+      requiring a POST).  The following describes the
+
+      various access approaches following a successful GET/POST
+      /objects/{object_id} request in order to them obtain access to the bytes
+      for a given object ID/access ID:
 
 
       * public content:
@@ -372,6 +386,15 @@ tags:
           * server provides an `access_url` with the generated mechanism (e.g. a signed URL in the `url` field)
           * caller fetches the object bytes from the `url` (passing auth info from the specified headers, if any)
 
+      In the approaches above [GA4GH
+      Passports](https://github.com/ga4gh-duri/ga4gh-duri.github.io/tree/master/researcher_ids)
+      are not mentioned and that is on purpose.  A DRS server may return a
+      Bearer token or other platform-specific token in a header in response to a
+      valid Bearer token or GA4GH Passport (Option 3 above).  But it is not the
+      responsibility of a DRS server to return a Passport, that is the
+      responsibility of a Passport Broker and outside the scope of DRS.
+
+
       DRS implementers should ensure their solutions restrict access to targets
       as much as possible, detect attempts to exploit through log monitoring,
       and they are prepared to take action if an exploit in their DRS
@@ -381,7 +404,25 @@ tags:
       ## Authentication
 
 
-      ### BasicAuth
+      ### Discovery
+
+
+      The APIs to fetch [DrsObjects](#tag/DrsObjectModel) and
+      [AccessURLs](#tag/AccessURLModel) may require authorization. The
+      authorization mode may vary between DRS objects hosted by a service. The
+      authorization mode may vary between the APIs to fetch a
+      [DrsObject](#tag/DrsObjectModel) and an associated
+      [AccessURL](#tag/AccessURLModel). Implementers should indicate how to
+      authenticate to fetch a [DrsObject](#tag/DrsObjectModel) by implementing
+      the [OptionsOjbect](#operation/OptionsObject) API. Implementers should
+      indicate how to authenticate to fetch an [AccessURL](#tag/AccessURLModel)
+      within a [DrsObject](#tag/DrsObjectModel). 
+
+
+      ### Modes
+
+
+      #### BasicAuth
 
 
       A valid authorization token must be passed in the 'Authorization' header,
@@ -395,7 +436,7 @@ tags:
       | **HTTP Authorization Scheme** | basic |
 
 
-      ### BearerAuth
+      #### BearerAuth
 
 
       A valid authorization token must be passed in the 'Authorization' header,
@@ -407,7 +448,23 @@ tags:
       |----------------------|------|
 
       | **HTTP Authorization Scheme** | bearer |
+
+
+      #### PassportAuth
+
+
+      A valid authorization [GA4GH
+      Passport](https://github.com/ga4gh-duri/ga4gh-duri.github.io/tree/master/researcher_ids)
+      token must be passed in the body of a POST request
+
+
+      | Security Scheme Type | HTTP |
+
+      |----------------------|------|
+
+      | **HTTP POST** | tokens[] |
   - name: Objects
+  - name: Service Info
   - name: AccessMethodModel
     x-displayName: AccessMethod
     description: |
@@ -583,7 +640,7 @@ tags:
 
 
       Clients resolving Compact Identifier-based URIs need to convert a prefix
-      (e.g. “drs.42”) into an URL pattern. They can do so by calling either the
+      (e.g. “drs.42”) into a URL pattern. They can do so by calling either the
       identifiers.org or the n2t.net API, since the two meta-resolvers keep
       their mapping databases in sync.
 
@@ -633,7 +690,7 @@ tags:
 
 
       This request returns a JSON structure including an urlPattern field, whose
-      value is an URL pattern containing a ${id} parameter, such as:
+      value is a URL pattern containing a ${id} parameter, such as:
 
 
       ```
@@ -661,7 +718,7 @@ tags:
 
 
       This request returns a text structure including a redirect field, whose
-      value is an URL pattern containing a `$id` parameter, such as:
+      value is a URL pattern containing an `$id` parameter, such as:
 
 
       ```
@@ -734,19 +791,63 @@ tags:
       IDs, they must be percent encoded before using them as DRS IDs in
       hostname-based DRS URIs and subsequent GET requests to a DRS service
       endpoint.
+  - name: GA4GH Service Registry
+    description: >
+      The [GA4GH Service Registry API
+      specification](https://github.com/ga4gh-discovery/ga4gh-service-registry)
+      allows information about GA4GH-compliant web services, including DRS
+      services, to be aggregated into registries and made available via a
+      standard API. The following considerations should be followed when
+      registering DRS services within a service registry.
 
 
-      ## Future DRS Versions and Service Registry/Info
+      * The DRS service attributes returned by `/service-info` (i.e. `id`,
+      `name`, `description`, etc.) should have the same values as the registry
+      entry for that service.
+
+      * The value of the `type` object's `artifact` property should be `drs`
+      (i.e. the same as it appears in `service-info`)
+
+      * Each entry in a Service Registry must have a `url`, indicating the base
+      URL to the web service. For DRS services, the registered `url` must
+      include everything up to
+
+      the standardized `/ga4gh/drs/v1` path. Clients should be able to assume
+      that:
+          + Adding `/ga4gh/drs/v1/objects/{object_id}` to the registered `url` will hit the `DrsObject` endpoint
+          + Adding `/ga4gh/drs/v1/service-info` to the registered `url` will hit the Service Info endpoint
+
+      Example listing of a DRS API registration from a service registry's
+      `/services` endpoint:
 
 
-      In the future, as new major versions of DRS are released, a DRS server
-      might support multiple API versions on different URL paths. At that point
-      we expect to add support for
-      [service-registry](https://github.com/ga4gh-discovery/ga4gh-service-registry)
-      and [service-info](https://github.com/ga4gh-discovery/ga4gh-service-info)
-      endpoints to the API, and to update the URI resolution logic to describe
-      how to use those endpoints when translating hostname-based DRS URIs to
-      URLs.
+      ```
+
+      [
+          {
+              "id": "com.example.drs",
+              "name": "Example DRS API",
+              "type": {
+                  "group": "org.ga4gh",
+                  "artifact": "drs",
+                  "version": "1.2.0"
+              },
+              "description": "The Data Repository Service (DRS) API ...",
+              "organization": {
+                  "id": "com.example",
+                  "name": "Example Company"
+              },
+              "contactUrl": "mailto:support@example.com",
+              "documentationUrl": "https://docs.example.com/docs/drs",
+              "createdAt": "2021-08-09T00:00:00Z",
+              "updatedAt": "2021-08-09T12:30:00Z",
+              "environment": "production",
+              "version": "1.13.4",
+              "url": "https://drs-service.example.com"
+          }
+      ]
+
+      ```
 x-tagGroups:
   - name: Overview
     tags:
@@ -756,6 +857,7 @@ x-tagGroups:
   - name: Operations
     tags:
       - Objects
+      - Service Info
   - name: Models
     tags:
       - AccessMethodModel
@@ -770,8 +872,91 @@ x-tagGroups:
       - Background Notes on DRS URIs
       - Compact Identifier-Based URIs
       - Hostname-Based URIs
+      - GA4GH Service Registry
 paths:
+  /service-info:
+    get:
+      summary: Retrieve information about this service
+      description: >-
+        Returns information about the DRS service
+
+
+        Extends the
+
+        [v1.0.0 GA4GH Service Info
+        specification](https://github.com/ga4gh-discovery/ga4gh-service-info)
+
+        as the standardized format for GA4GH web services to self-describe.
+
+
+        According to the 
+
+        [service-info type
+        registry](https://github.com/ga4gh/TASC/blob/master/service-info/ga4gh-service-info.json)
+
+        maintained by the [Technical Alignment Sub Committee
+        (TASC)](https://github.com/ga4gh/TASC),
+
+        a DRS service MUST have:
+          * a `type.group` value of `org.ga4gh`
+          * a `type.artifact` value of `drs`
+
+        e.g.
+
+        ```
+
+        {
+            "id": "com.example.drs",
+            "description": "Serves data according to DRS specification",
+            ...
+            "type": {
+                "group": "org.ga4gh",
+                "artifact": "drs"
+            }
+            ...
+        }
+
+        ```
+
+
+        See the [Service Registry Appendix](#tag/GA4GH-Service-Registry) for
+        more information on how to register a DRS service with a service
+        registry.
+      operationId: GetServiceInfo
+      responses:
+        '200':
+          $ref: '#/components/responses/200ServiceInfo'
+        '500':
+          $ref: '#/components/responses/500InternalServerError'
+      tags:
+        - Service Info
   /objects/{object_id}:
+    options:
+      summary: Get Authorization info about a DrsObject.
+      security:
+        - {}
+      description: >-
+        Returns a list of `Authorizations` that can be used to determine how to
+        authorize requests to `GetObject` or `PostObject`.
+      operationId: OptionsObject
+      parameters:
+        - $ref: '#/components/parameters/ObjectId'
+      responses:
+        '200':
+          $ref: '#/components/responses/200OkAuthorizations'
+        '204':
+          $ref: '#/components/responses/AuthorizationsNotSupported'
+        '400':
+          $ref: '#/components/responses/400BadRequest'
+        '404':
+          $ref: '#/components/responses/404NotFoundDrsObject'
+        '405':
+          $ref: '#/components/responses/AuthorizationsNotSupported'
+        '500':
+          $ref: '#/components/responses/500InternalServerError'
+      tags:
+        - Objects
+      x-swagger-router-controller: ga4gh.drs.server
     get:
       summary: Get info about a DrsObject.
       description: >-
@@ -799,18 +984,20 @@ paths:
       tags:
         - Objects
       x-swagger-router-controller: ga4gh.drs.server
-  /objects:
     post:
-      summary: Get info about multiple DrsObjects.
+      summary: Get info about a DrsObject through POST'ing a Passport.
       description: >-
-        Returns an array of object metadata, and a list of access methods that
-        can be used to fetch objects' bytes.
-      operationId: GetBulkObjects
-      parameters:
-        - $ref: '#/components/parameters/Expand'
+        Returns object metadata, and a list of access methods that can be used
+        to fetch object bytes.
+
+        Method is a POST to accommodate a JWT GA4GH Passport sent in the
+        formData in order to authorize access.
+      operationId: PostObject
+      security:
+        - PassportAuth: []
       responses:
         '200':
-          $ref: '#/components/responses/200OkDrsObjects'
+          $ref: '#/components/responses/200OkDrsObject'
         '202':
           $ref: '#/components/responses/202Accepted'
         '400':
@@ -820,24 +1007,18 @@ paths:
         '403':
           $ref: '#/components/responses/403Forbidden'
         '404':
-          $ref: '#/components/responses/404NotFoundDrsObject'
+          $ref: '#/components/responses/404NotFoundAccess'
         '500':
           $ref: '#/components/responses/500InternalServerError'
       tags:
         - Objects
       x-swagger-router-controller: ga4gh.drs.server
+      parameters:
+        - $ref: '#/components/parameters/ObjectId'
       requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                selection:
-                  type: array
-                  items:
-                    $ref: '#/components/schemas/BulkObjectId'
-                  description: An array of ObjectIds
+        $ref: '#/components/requestBodies/PostObjectBody'
+  /objects:
+    $ref: ./paths/bulkobjects@{object_id}.yaml
   /objects/{object_id}/access/{access_id}:
     get:
       summary: Get a URL for fetching bytes
@@ -848,9 +1029,6 @@ paths:
         contains an `access_id` (e.g., for servers that use signed URLs for
         fetching object bytes).
       operationId: GetAccessURL
-      parameters:
-        - $ref: '#/components/parameters/ObjectId'
-        - $ref: '#/components/parameters/AccessId'
       responses:
         '200':
           $ref: '#/components/responses/200OkAccess'
@@ -869,22 +1047,26 @@ paths:
       tags:
         - Objects
       x-swagger-router-controller: ga4gh.drs.server
-  /objects/access:
+      parameters:
+        - $ref: '#/components/parameters/ObjectId'
+        - $ref: '#/components/parameters/AccessId'
     post:
-      summary: Get URLs for fetching bytes from multiple objects
+      summary: Get a URL for fetching bytes through POST'ing a Passport
       description: >-
-        Returns an array of URL objects that can be used to fetch the bytes of
-        multiple `DrsObject`s.
+        Returns a URL that can be used to fetch the bytes of a `DrsObject`.
 
         This method only needs to be called when using an `AccessMethod` that
         contains an `access_id` (e.g., for servers that use signed URLs for
         fetching object bytes).
-      operationId: GetBulkAccessURL
-      parameters:
-        - $ref: '#/components/parameters/AccessId'
+
+        Method is a POST to accommodate a JWT GA4GH Passport sent in the
+        formData in order to authorize access.
+      operationId: PostAccessURL
+      security:
+        - PassportAuth: []
       responses:
         '200':
-          $ref: '#/components/responses/200OkAccesses'
+          $ref: '#/components/responses/200OkAccess'
         '202':
           $ref: '#/components/responses/202Accepted'
         '400':
@@ -900,18 +1082,13 @@ paths:
       tags:
         - Objects
       x-swagger-router-controller: ga4gh.drs.server
+      parameters:
+        - $ref: '#/components/parameters/ObjectId'
+        - $ref: '#/components/parameters/AccessId'
       requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                selection:
-                  type: array
-                  items:
-                    $ref: '#/components/schemas/BulkObjectAccessId'
-                  description: An array of ObjectIDs paired with their access IDs
+        $ref: '#/components/requestBodies/Passports'
+  /objects/access:
+    $ref: ./paths/bulkobjects@access@{access_id}.yaml
 components:
   securitySchemes:
     BasicAuth:
@@ -928,41 +1105,161 @@ components:
       description: >-
         A valid authorization token must be passed in the 'Authorization'
         header, e.g. "Bearer ${token_string}"
-  parameters:
-    ObjectId:
-      in: path
-      name: object_id
-      required: true
-      description: '`DrsObject` identifier'
-      schema:
-        type: string
-    Expand:
-      in: query
-      name: expand
-      schema:
-        type: boolean
-      example: false
+    PassportAuth:
+      type: http
+      scheme: bearer
+      x-in: body
+      bearerFormat: JWT
       description: >-
-        If false and the object_id refers to a bundle, then the ContentsObject
-        array contains only those objects directly contained in the bundle. That
-        is, if the bundle contains other bundles, those other bundles are not
-        recursively included in the result.
-
-        If true and the object_id refers to a bundle, then the entire set of
-        objects in the bundle is expanded. That is, if the bundle contains
-        aother bundles, then those other bundles are recursively expanded and
-        included in the result. Recursion continues through the entire sub-tree
-        of the bundle.
-
-        If the object_id refers to a blob, then the query parameter is ignored.
-    AccessId:
-      in: path
-      name: access_id
-      required: true
-      description: An `access_id` from the `access_methods` list of a `DrsObject`
-      schema:
-        type: string
+        A valid GA4GH Passport must be passed in the body of an HTTP POST
+        request as a tokens[] array.
   schemas:
+    ServiceType:
+      description: Type of a GA4GH service
+      type: object
+      required:
+        - group
+        - artifact
+        - version
+      properties:
+        group:
+          type: string
+          description: >-
+            Namespace in reverse domain name format. Use `org.ga4gh` for
+            implementations compliant with official GA4GH specifications. For
+            services with custom APIs not standardized by GA4GH, or
+            implementations diverging from official GA4GH specifications, use a
+            different namespace (e.g. your organization's reverse domain name).
+          example: org.ga4gh
+        artifact:
+          type: string
+          description: >-
+            Name of the API or GA4GH specification implemented. Official GA4GH
+            types should be assigned as part of standards approval process.
+            Custom artifacts are supported.
+          example: beacon
+        version:
+          type: string
+          description: >-
+            Version of the API or specification. GA4GH specifications use
+            semantic versioning.
+          example: 1.0.0
+    Service:
+      description: GA4GH service
+      type: object
+      required:
+        - id
+        - name
+        - type
+        - organization
+        - version
+      properties:
+        id:
+          type: string
+          description: >-
+            Unique ID of this service. Reverse domain name notation is
+            recommended, though not required. The identifier should attempt to
+            be globally unique so it can be used in downstream aggregator
+            services e.g. Service Registry.
+          example: org.ga4gh.myservice
+        name:
+          type: string
+          description: Name of this service. Should be human readable.
+          example: My project
+        type:
+          $ref: '#/components/schemas/ServiceType'
+        description:
+          type: string
+          description: >-
+            Description of the service. Should be human readable and provide
+            information about the service.
+          example: This service provides...
+        organization:
+          type: object
+          description: Organization providing the service
+          required:
+            - name
+            - url
+          properties:
+            name:
+              type: string
+              description: Name of the organization responsible for the service
+              example: My organization
+            url:
+              type: string
+              format: uri
+              description: URL of the website of the organization (RFC 3986 format)
+              example: https://example.com
+        contactUrl:
+          type: string
+          format: uri
+          description: >-
+            URL of the contact for the provider of this service, e.g. a link to
+            a contact form (RFC 3986 format), or an email (RFC 2368 format).
+          example: mailto:support@example.com
+        documentationUrl:
+          type: string
+          format: uri
+          description: >-
+            URL of the documentation of this service (RFC 3986 format). This
+            should help someone learn how to use your service, including any
+            specifics required to access data, e.g. authentication.
+          example: https://docs.myservice.example.com
+        createdAt:
+          type: string
+          format: date-time
+          description: >-
+            Timestamp describing when the service was first deployed and
+            available (RFC 3339 format)
+          example: '2019-06-04T12:58:19Z'
+        updatedAt:
+          type: string
+          format: date-time
+          description: >-
+            Timestamp describing when the service was last updated (RFC 3339
+            format)
+          example: '2019-06-04T12:58:19Z'
+        environment:
+          type: string
+          description: >-
+            Environment the service is running in. Use this to distinguish
+            between production, development and testing/staging deployments.
+            Suggested values are prod, test, dev, staging. However this is
+            advised and not enforced.
+          example: test
+        version:
+          type: string
+          description: >-
+            Version of the service being described. Semantic versioning is
+            recommended, but other identifiers, such as dates or commit hashes,
+            are also allowed. The version should be changed whenever the service
+            is updated.
+          example: 1.0.0
+    DrsService:
+      type: object
+      required:
+        - type
+      properties:
+        type:
+          type: object
+          required:
+            - artifact
+          properties:
+            artifact:
+              type: string
+              enum:
+                - drs
+              example: drs
+    Error:
+      type: object
+      description: An object that can optionally include information about the error.
+      properties:
+        msg:
+          type: string
+          description: A detailed error message.
+        status_code:
+          type: integer
+          description: The integer representing the HTTP status code (e.g. 200, 404).
     Checksum:
       type: object
       required:
@@ -986,7 +1283,7 @@ components:
 
             GA4GH may provide more explicit guidance for use of
             non-IANA-registered algorithms in the future. Until then, if
-            implementors do choose such an algorithm (e.g. because it's
+            implementers do choose such an algorithm (e.g. because it's
             implemented by their storage provider), they SHOULD use an existing
             standard `type` value such as `md5`, `etag`, `crc32c`, `trunc512`,
             or `sha1`.
@@ -1010,6 +1307,47 @@ components:
             These headers can be used to provide auth tokens required to fetch
             the object bytes.
           example: 'Authorization: Basic Z2E0Z2g6ZHJz'
+    Authorizations:
+      type: object
+      properties:
+        supported_types:
+          type: array
+          items:
+            type: string
+            enum:
+              - None
+              - BasicAuth
+              - BearerAuth
+              - PassportAuth
+          description: >-
+            An Optional list of support authorization types. More than one can
+            be supported and tried in sequence. Defaults to `None` if empty or
+            missing.
+        passport_auth_issuers:
+          type: array
+          items:
+            type: string
+          description: >-
+            If authorizations contain `PassportAuth` this is a required list of
+            visa issuers (as found in a visa's `iss` claim) that may authorize
+            access to this object. The caller must only provide passports that
+            contain visas from this list. It is strongly recommended that the
+            caller validate that it is appropriate to send the requested
+            passport/visa to the DRS server to mitigate attacks by malicious DRS
+            servers requesting credentials they should not have.
+        bearer_auth_issuers:
+          type: array
+          items:
+            type: string
+          description: >-
+            If authorizations contain `BearerAuth` this is an optional list of
+            issuers that may authorize access to this object. The caller must
+            provide a token from one of these issuers. If this is empty or
+            missing it assumed the caller knows which token to send via other
+            means. It is strongly recommended that the caller validate that it
+            is appropriate to send the requested token to the DRS server to
+            mitigate attacks by malicious DRS servers requesting credentials
+            they should not have.
     AccessMethod:
       type: object
       required:
@@ -1028,11 +1366,12 @@ components:
             - file
           description: Type of the access method.
         access_url:
-          $ref: '#/components/schemas/AccessURL'
-          description: >-
-            An `AccessURL` that can be used to fetch the actual object bytes.
-            Note that at least one of `access_url` and `access_id` must be
-            provided.
+          allOf:
+            - $ref: '#/components/schemas/AccessURL'
+            - description: >-
+                An `AccessURL` that can be used to fetch the actual object
+                bytes. Note that at least one of `access_url` and `access_id`
+                must be provided.
         access_id:
           type: string
           description: >-
@@ -1046,6 +1385,12 @@ components:
             Name of the region in the cloud service provider that the object
             belongs to.
           example: us-east-1
+        authorizations:
+          allOf:
+            - $ref: '#/components/schemas/Authorizations'
+            - description: >-
+                When `access_id` is provided, `authorizations` provides
+                information about how to authorize the `/access` method.
     ContentsObject:
       type: object
       required:
@@ -1056,9 +1401,10 @@ components:
           description: >-
             A name declared by the bundle author that must be used when
             materialising this object, overriding any name directly associated
-            with the object itself. The name must be unique with the containing
-            bundle. This string is made up of uppercase and lowercase letters,
-            decimal digits, hypen, period, and underscore [A-Za-z0-9.-_]. See
+            with the object itself. The name must be unique within the
+            containing bundle. This string is made up of uppercase and lowercase
+            letters, decimal digits, hyphen, period, and underscore
+            [A-Za-z0-9.-_]. See
             http://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap03.html#tag_03_282[portable
             filenames].
         id:
@@ -1101,7 +1447,7 @@ components:
             A string that can be used to name a `DrsObject`.
 
             This string is made up of uppercase and lowercase letters, decimal
-            digits, hypen, period, and underscore [A-Za-z0-9.-_]. See
+            digits, hyphen, period, and underscore [A-Za-z0-9.-_]. See
             http://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap03.html#tag_03_282[portable
             filenames].
         self_uri:
@@ -1216,68 +1562,21 @@ components:
             A list of strings that can be used to find other metadata about this
             `DrsObject` from external metadata sources. These aliases can be
             used to represent secondary accession numbers or external GUIDs.
-    Error:
-      type: object
-      description: An object that can optionally include information about the error.
-      properties:
-        msg:
-          type: string
-          description: A detailed error message.
-        status_code:
-          type: integer
-          description: The integer representing the HTTP status code (e.g. 200, 404).
-    BulkObjectId:
-      name: bulk_object_id
-      required: true
-      description: '`DrsObject` identifier'
-      schema:
-        type: string
-    summary:
-      type: object
-      description: A summary of what was resolved.
-      properties:
-        requested:
-          type: integer
-          description: Number of items requested.
-        resolved:
-          type: integer
-          description: Number of objects resolved.
-        unresolved:
-          type: integer
-          description: Number of objects not resolved.
-    BulkObjectAccessId:
-      name: bulk_object_access_id
-      required: true
-      description: '`DrsObject` identifier and access ids'
-      schema:
-        type: object
-        properties:
-          object_id:
-            type: string
-          access_id:
-            type: string
-    BulkAccessURL:
-      type: object
-      required:
-        - url
-      properties:
-        object_id:
-          $ref: ../components/parameters/BulkObjectId.yaml
-        url:
-          type: string
-          description: >-
-            A fully resolvable URL that can be used to fetch the actual object
-            bytes.
-        headers:
-          type: array
-          items:
-            type: string
-          description: >-
-            An optional list of headers to include in the HTTP request to `url`.
-            These headers can be used to provide auth tokens required to fetch
-            the object bytes.
-          example: 'Authorization: Basic Z2E0Z2g6ZHJz'
   responses:
+    200ServiceInfo:
+      description: Retrieve info about the DRS service
+      content:
+        application/json:
+          schema:
+            allOf:
+              - $ref: '#/components/schemas/Service'
+              - $ref: '#/components/schemas/DrsService'
+    500InternalServerError:
+      description: An unexpected error occurred.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
     200OkDrsObject:
       description: The `DrsObject` was found successfully
       content:
@@ -1327,51 +1626,110 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
-    500InternalServerError:
-      description: An unexpected error occurred.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-    200OkDrsObjects:
-      description: The `DrsObjects` were found successfully
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              summary:
-                type: object
-                items:
-                  $ref: '#/components/schemas/summary'
-              unresolved_drs_object:
-                type: object
-                items:
-                  $ref: ../schemas/unresolved.yaml
-              resolved_drs_object:
-                type: array
-                items:
-                  $ref: '#/components/schemas/DrsObject'
-    200OkAccess:
-      description: The `AccessURL` was found successfully
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/AccessURL'
     404NotFoundAccess:
       description: The requested `AccessURL` wasn't found.
       content:
         application/json:
           schema:
             $ref: '#/components/schemas/Error'
-    200OkAccesses:
+    200OkAuthorizations:
+      description: '`Authorizations` were found successfully'
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Authorizations'
+    AuthorizationsNotSupported:
+      description: '`Authorizations` are not supported for this object. Default to `None`.'
+    200OkAccess:
       description: The `AccessURL` was found successfully
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/AccessURL'
+  parameters:
+    ObjectId:
+      in: path
+      name: object_id
+      required: true
+      description: '`DrsObject` identifier'
+      schema:
+        type: string
+    Expand:
+      in: query
+      name: expand
+      schema:
+        type: boolean
+      example: false
+      description: >-
+        If false and the object_id refers to a bundle, then the ContentsObject
+        array contains only those objects directly contained in the bundle. That
+        is, if the bundle contains other bundles, those other bundles are not
+        recursively included in the result.
+
+        If true and the object_id refers to a bundle, then the entire set of
+        objects in the bundle is expanded. That is, if the bundle contains other
+        bundles, then those other bundles are recursively expanded and included
+        in the result. Recursion continues through the entire sub-tree of the
+        bundle.
+
+        If the object_id refers to a blob, then the query parameter is ignored.
+    AccessId:
+      in: path
+      name: access_id
+      required: true
+      description: An `access_id` from the `access_methods` list of a `DrsObject`
+      schema:
+        type: string
+  requestBodies:
+    PostObjectBody:
+      required: true
       content:
         application/json:
           schema:
             type: object
             properties:
-              access_urls:
+              expand:
+                type: boolean
+                example: false
+                description: >-
+                  If false and the object_id refers to a bundle, then the
+                  ContentsObject array contains only those objects directly
+                  contained in the bundle. That is, if the bundle contains other
+                  bundles, those other bundles are not recursively included in
+                  the result.
+
+                  If true and the object_id refers to a bundle, then the entire
+                  set of objects in the bundle is expanded. That is, if the
+                  bundle contains other bundles, then those other bundles are
+                  recursively expanded and included in the result. Recursion
+                  continues through the entire sub-tree of the bundle.
+
+                  If the object_id refers to a blob, then the query parameter is
+                  ignored.
+              passports:
                 type: array
                 items:
-                  $ref: '#/components/schemas/BulkAccessURL'
+                  type: string
+                  example: >-
+                    eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJnYTRnaF9wYXNzcG9ydF92MSI6W119.JJ5rN0ktP0qwyZmIPpxmF_p7JsxAZH6L6brUxtad3CM
+                description: >-
+                  the encoded JWT GA4GH Passport that contains embedded Visas. 
+                  The overall JWT is signed as are the individual Passport
+                  Visas.
+    Passports:
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            properties:
+              passports:
+                type: array
+                items:
+                  type: string
+                  example: >-
+                    eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJnYTRnaF9wYXNzcG9ydF92MSI6W119.JJ5rN0ktP0qwyZmIPpxmF_p7JsxAZH6L6brUxtad3CM
+                description: >-
+                  the encoded JWT GA4GH Passport that contains embedded Visas. 
+                  The overall JWT is signed as are the individual Passport
+                  Visas.
