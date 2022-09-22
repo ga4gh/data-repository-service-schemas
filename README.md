@@ -1,4 +1,4 @@
-<img src="https://www.ga4gh.org/wp-content/themes/ga4gh-theme/gfx/GA-logo-horizontal-tag-RGB.svg" alt="GA4GH Logo" style="width: 400px;"/>
+/<img src="https://www.ga4gh.org/wp-content/themes/ga4gh-theme/gfx/GA-logo-horizontal-tag-RGB.svg" alt="GA4GH Logo" style="width: 400px;"/>
 
 # Data Repository Service (DRS) API
 
@@ -26,6 +26,7 @@ For more information see our HTML documentation links in the table below.
 |  **Branch** | **Reference Documentation** | Swagger Editor |
 | --- | --- | --- |
 | **develop**: the stable development branch, into which feature branches are merged | [HTML](https://ga4gh.github.io/data-repository-service-schemas/preview/develop/docs/) | [Swagger Editor](https://editor.swagger.io?url=https://ga4gh.github.io/data-repository-service-schemas/preview/develop/openapi.yaml) |
+| **release 1.3.0**: The 1.3.0 release of DRS adds the ability to use the options request method to return the auth issuers for a specific DRS object. | [HTML](https://ga4gh.github.io/data-repository-service-schemas/preview/release/drs-1.3.0/docs/) | [Swagger Editor](https://editor.swagger.io?url=https://ga4gh.github.io/data-repository-service-schemas/preview/release/drs-1.3.0/openapi.yaml) |
 | **release 1.2.0**: The 1.2.0 release of DRS adds the standardized `/service-info` endpoint, and 2 `POST` endpoints that are functionally equivalent to the current `GET` endpoints, but they enable the submission of large passport tokens in the request body. | [HTML](https://ga4gh.github.io/data-repository-service-schemas/preview/release/drs-1.2.0/docs/) | [Swagger Editor](https://editor.swagger.io?url=https://ga4gh.github.io/data-repository-service-schemas/preview/release/drs-1.2.0/openapi.yaml) |
 | **release 1.1.0**: The 1.1.0 release of DRS that includes *no* API changes only documentation changes. This introduces a new URI convention using compact identifiers along with clear directions on how to use identifiers.org/n2t.net to resolve them. | [HTML](https://ga4gh.github.io/data-repository-service-schemas/preview/release/drs-1.1.0/docs/) | [Swagger Editor](https://editor.swagger.io?url=https://ga4gh.github.io/data-repository-service-schemas/preview/release/drs-1.1.0/swagger.yaml) |
 | **release 1.0.0**: The 1.0.0 release of DRS that is now an approved GA4GH standard | [HTML](https://ga4gh.github.io/data-repository-service-schemas/preview/release/drs-1.0.0/docs/) | [Swagger Editor](https://editor.swagger.io?url=https://ga4gh.github.io/data-repository-service-schemas/preview/release/drs-1.0.0/swagger.yaml) |
