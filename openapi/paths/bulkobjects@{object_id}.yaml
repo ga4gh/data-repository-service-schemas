@@ -35,9 +35,8 @@ post:
               items:
                 $ref: '../components/parameters/BulkObjectId.yaml'
               description: An array of ObjectIds
-            selection:
+            passports:
               type: array
-              name: passports
               items:
                 type: string
                 example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJnYTRnaF9wYXNzcG9ydF92MSI6W119.JJ5rN0ktP0qwyZmIPpxmF_p7JsxAZH6L6brUxtad3CM
