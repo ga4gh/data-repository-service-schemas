@@ -331,13 +331,6 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "bulk_object_ids": {
-                    "type": "array",
-                    "items": {
-                      "$ref": "#/components/schemas/BulkObjectId"
-                    },
-                    "description": "An array of ObjectIds"
-                  },
                   "passports": {
                     "type": "array",
                     "items": {
@@ -850,14 +843,6 @@
             },
             "description": "A list of strings that can be used to find other metadata about this `DrsObject` from external metadata sources. These aliases can be used to represent secondary accession numbers or external GUIDs."
           }
-        }
-      },
-      "BulkObjectId": {
-        "name": "bulk_object_id",
-        "required": true,
-        "description": "`DrsObject` identifier",
-        "schema": {
-          "type": "string"
         }
       },
       "summary": {

@@ -30,11 +30,6 @@ post:
         schema:
           type: object
           properties:
-            bulk_object_ids:
-              type: array
-              items:
-                $ref: '../components/parameters/BulkObjectId.yaml'
-              description: An array of ObjectIds
             passports:
               type: array
               items:
