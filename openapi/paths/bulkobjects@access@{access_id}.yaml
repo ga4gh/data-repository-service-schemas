@@ -38,3 +38,9 @@ post:
               items:
                 $ref: '../components/parameters/BulkObjectAccessId.yaml'
               description: An array of ObjectIDs paired with their access IDs
+            selection:
+              type: array
+              items:
+                type: string
+                example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJnYTRnaF9wYXNzcG9ydF92MSI6W119.JJ5rN0ktP0qwyZmIPpxmF_p7JsxAZH6L6brUxtad3CM
+              description: the encoded JWT GA4GH Passport that contains embedded Visas.  The overall JWT is signed as are the individual Passport Visas.
