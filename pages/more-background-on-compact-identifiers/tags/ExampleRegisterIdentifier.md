@@ -16,7 +16,7 @@ With a namespace of "mydrsprefix", the following GET request will return informa
 GET https://registry.api.identifiers.org/restApi/namespaces/search/findByPrefix?prefix=mydrsprefix
 ```
 
-*Of course, this is a hypothetical example so the actual API call won’t work but you can see the GET request is identical to "DRS Client Compact Identifier-Based URI Resolution Process - Existing Compact Identifier Provider".*
+*Of course, this is a hypothetical example so the actual API call won’t work, but you can see the GET request is identical to "DRS Client Compact Identifier-Based URI Resolution Process - Existing Compact Identifier Provider".*
 
 This information then points to resolvers for the "mydrsprefix" namespace. Hypothetically, this "mydrsprefix" namespace was assigned a namespace ID of 1829 by identifiers.org. This "id" has nothing to do with compact identifier accessions (which are used in the URL pattern as `{$id}` below) or DRS IDs. This namespace ID (1829 below) is purely an identifiers.org internal ID for use with their APIs:
 
@@ -32,7 +32,7 @@ This returns enough information to, ultimately, identify one or more resolvers a
 urlPattern: "https://mydrs.server.org/ga4gh/drs/v1/objects/{$id}"
 ```
 
-And the `{$id}` here refers to the accession from the compact identifier (in this example the accession is `12345`). If applicable, a provide code can be supplied in the above requests to specify a particular mirror if there are multiple resolvers for this namespace.
+And the `{$id}` here refers to the accession from the compact identifier (in this example the accession is `12345`). If applicable, a provider code can be supplied in the above requests to specify a particular mirror if there are multiple resolvers for this namespace.
 
 Given this information you now know you can make a GET on the URL:
 

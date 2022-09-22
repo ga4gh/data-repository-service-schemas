@@ -32,7 +32,7 @@ For more information see our HTML documentation links in the table below.
 | **release 0.1**: Simplifying DRS to core functionality | [HTML](https://ga4gh.github.io/data-repository-service-schemas/preview/release/drs-0.1.0/docs/) | [Swagger Editor](https://editor.swagger.io?url=https://ga4gh.github.io/data-repository-service-schemas/preview/release/drs-0.1.0/swagger.yaml) |
 | **release 0.0.1**: The initial DRS after the rename from DOS | [HTML](https://ga4gh.github.io/data-repository-service-schemas/preview/release/0.0.1/docs/) | [Swagger Editor](https://editor.swagger.io?url=https://ga4gh.github.io/data-repository-service-schemas/preview/release/0.0.1/swagger.yaml) |
 
-To monitor development work on various branches, add 'preview/\<branch-name\>' to the master URLs above (e.g., `https://ga4gh.github.io/data-repository-service-schemas/preview/<branch-name>/docs`).
+To monitor development work on various branches, add 'preview/\<branch-name\>' to the master URLs above (e.g., 'https://ga4gh.github.io/data-repository-service-schemas/preview/\<branch-name\>/docs').
 
 # How to Contribute Changes
 

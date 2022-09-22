@@ -41,10 +41,10 @@ tags:
       We use a DRS URI scheme rather than [Compact URIs
       (CURIEs)](https://en.wikipedia.org/wiki/CURIE) directly since we feel that
       systems consuming DRS objects will be able to better differentiate a DRS
-      URI. CURIEs are widely used in the research community and we feel the fact
-      that they can point to a wide variety of entities (HTML documents, PDFs,
-      identities in data models, etc) makes it more difficult for systems to
-      unambiguously identify entities as DRS objects.
+      URI. CURIEs are widely used in the research community, and we feel the
+      fact that they can point to a wide variety of entities (HTML documents,
+      PDFs, identities in data models, etc) makes it more difficult for systems
+      to unambiguously identify entities as DRS objects.
 
 
       Still, to make compact identifiers work in DRS URIs we leverage the CURIE
@@ -60,7 +60,7 @@ tags:
 
       The prefix can be divided into a `provider_code` (optional) and
       `namespace`. The `accession` here is an Ark, DOI, Data GUID, or another
-      issuers’s local ID for the object being pointed to:
+      issuer's local ID for the object being pointed to:
 
 
       ```
@@ -138,8 +138,8 @@ tags:
       Example DRS Client Compact Identifier-Based URI Resolution Process -
       Existing Compact Identifier Provider
     description: >
-      A DRS client identifies the a DRS URI compact identifier components using
-      the first occurance of "/" (optional) and ":" characters. These are not
+      A DRS client identifies the DRS URI compact identifier components using
+      the first occurrence of "/" (optional) and ":" characters. These are not
       allowed inside the provider_code (optional) or the namespace. The ":"
       character is not allowed in a Hostname-based DRS URI, providing a
       convenient mechanism to differentiate them. Once the provider_code
@@ -209,9 +209,9 @@ tags:
 
       And the `{$id}` here refers to the accession from the compact identifier
       (in this example the accession is `10.5072/FK2805660V`). If applicable, a
-      provide code can be supplied in the above requests to specify a particular
-      mirror if there are multiple resolvers for this namespace. In the case of
-      DOIs, you only get a single resolver.
+      provider code can be supplied in the above requests to specify a
+      particular mirror if there are multiple resolvers for this namespace. In
+      the case of DOIs, you only get a single resolver.
 
 
       Given this information you now know you can make a GET on the URL:
@@ -230,10 +230,10 @@ tags:
       identifiers like DOIs or ARKs. Regardless, the redirect should eventually
       lead to a DRS URL that percent-encodes the accession as a DRS ID in a DRS
       object API call. For a **hypothetical** example, here’s what a redirect to
-      a DRS API URL might ultimately look. A client doesn’t have to do anything
-      other than follow the HTTPS redirects. The link between the DOI resolver
-      on doi.org and the DRS server URL below is the result of the DRS server
-      registering their data objects with a DOI issuer.*
+      a DRS API URL might ultimately look like. A client doesn't have to do
+      anything other than follow the HTTPS redirects. The link between the DOI
+      resolver on doi.org and the DRS server URL below is the result of the DRS
+      server registering their data objects with a DOI issuer.*
 
 
       ```
@@ -245,8 +245,8 @@ tags:
 
       IDs in DRS hostname-based URIs/URLs are always percent-encoded to
       eliminate ambiguity even though the DRS compact identifier-based URIs and
-      the identifier.orgs API do not percent-encode accessions. This was done in
-      order to 1) follow the CURIE conventions of identifiers.org/n2t.net for
+      the identifier.org's API do not percent-encode accessions. This was done
+      in order to 1) follow the CURIE conventions of identifiers.org/n2t.net for
       compact identifier-based DRS URIs and 2) to aid in readability for users
       who understand they are working with compact identifiers. **The general
       rule of thumb, when using a compact identifier accession as a DRS ID in a
@@ -307,7 +307,7 @@ tags:
 
 
       *Of course, this is a hypothetical example so the actual API call won’t
-      work but you can see the GET request is identical to "DRS Client Compact
+      work, but you can see the GET request is identical to "DRS Client Compact
       Identifier-Based URI Resolution Process - Existing Compact Identifier
       Provider".*
 
@@ -347,7 +347,7 @@ tags:
 
 
       And the `{$id}` here refers to the accession from the compact identifier
-      (in this example the accession is `12345`). If applicable, a provide code
+      (in this example the accession is `12345`). If applicable, a provider code
       can be supplied in the above requests to specify a particular mirror if
       there are multiple resolvers for this namespace.
 

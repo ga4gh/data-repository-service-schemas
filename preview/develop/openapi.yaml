@@ -55,8 +55,8 @@ tags:
 
 
       * DRS IDs are strings made up of uppercase and lowercase letters, decimal
-      digits, hypen, period, underscore and tilde [A-Za-z0-9.-_~]. See [RFC 3986
-      § 2.3](https://datatracker.ietf.org/doc/html/rfc3986#section-2.3).
+      digits, hyphen, period, underscore and tilde [A-Za-z0-9.-_~]. See [RFC
+      3986 § 2.3](https://datatracker.ietf.org/doc/html/rfc3986#section-2.3).
 
       * DRS IDs can contain other characters, but they MUST be encoded into
       valid DRS IDs whenever they are used in API calls. This is because
@@ -337,7 +337,7 @@ tags:
       service philosophy. It uses JSON in requests and responses and standard
       HTTPS on port 443 for information transport.  Optionally, it
 
-      supports authenitcation and authorization using the [GA4GH
+      supports authentication and authorization using the [GA4GH
       Passport](https://github.com/ga4gh-duri/ga4gh-duri.github.io/tree/master/researcher_ids)
       standard.
   - name: Authorization & Authentication
@@ -407,16 +407,16 @@ tags:
       ### Discovery
 
 
-      The APIs to fetch [DrsObjects](l#tag/DrsObjectModel) and
+      The APIs to fetch [DrsObjects](#tag/DrsObjectModel) and
       [AccessURLs](#tag/AccessURLModel) may require authorization. The
       authorization mode may vary between DRS objects hosted by a service. The
       authorization mode may vary between the APIs to fetch a
-      [DrsObject](l#tag/DrsObjectModel) and an associated
+      [DrsObject](#tag/DrsObjectModel) and an associated
       [AccessURL](#tag/AccessURLModel). Implementers should indicate how to
-      authenticate to fetch a [DrsObject](l#tag/DrsObjectModel) by implementing
+      authenticate to fetch a [DrsObject](#tag/DrsObjectModel) by implementing
       the [OptionsOjbect](#operation/OptionsObject) API. Implementers should
       indicate how to authenticate to fetch an [AccessURL](#tag/AccessURLModel)
-      within a [DrsObject](l#tag/DrsObjectModel). 
+      within a [DrsObject](#tag/DrsObjectModel). 
 
 
       ### Modes
@@ -640,7 +640,7 @@ tags:
 
 
       Clients resolving Compact Identifier-based URIs need to convert a prefix
-      (e.g. “drs.42”) into an URL pattern. They can do so by calling either the
+      (e.g. “drs.42”) into a URL pattern. They can do so by calling either the
       identifiers.org or the n2t.net API, since the two meta-resolvers keep
       their mapping databases in sync.
 
@@ -690,7 +690,7 @@ tags:
 
 
       This request returns a JSON structure including an urlPattern field, whose
-      value is an URL pattern containing a ${id} parameter, such as:
+      value is a URL pattern containing a ${id} parameter, such as:
 
 
       ```
@@ -718,7 +718,7 @@ tags:
 
 
       This request returns a text structure including a redirect field, whose
-      value is an URL pattern containing a `$id` parameter, such as:
+      value is a URL pattern containing an `$id` parameter, such as:
 
 
       ```
@@ -815,7 +815,7 @@ tags:
       the standardized `/ga4gh/drs/v1` path. Clients should be able to assume
       that:
           + Adding `/ga4gh/drs/v1/objects/{object_id}` to the registered `url` will hit the `DrsObject` endpoint
-          + Adding `/ga4gh/drs/v1/service-info` to the the registered `url` will hit the Service Info endpoint
+          + Adding `/ga4gh/drs/v1/service-info` to the registered `url` will hit the Service Info endpoint
 
       Example listing of a DRS API registration from a service registry's
       `/services` endpoint:
@@ -990,8 +990,8 @@ paths:
         Returns object metadata, and a list of access methods that can be used
         to fetch object bytes.
 
-        Method is a POST to accomodate a JWT GA4GH Passport sent in the formData
-        in order to authorize access.
+        Method is a POST to accommodate a JWT GA4GH Passport sent in the
+        formData in order to authorize access.
       operationId: PostObject
       security:
         - PassportAuth: []
@@ -1057,8 +1057,8 @@ paths:
         contains an `access_id` (e.g., for servers that use signed URLs for
         fetching object bytes).
 
-        Method is a POST to accomodate a JWT GA4GH Passport sent in the formData
-        in order to authorize access.
+        Method is a POST to accommodate a JWT GA4GH Passport sent in the
+        formData in order to authorize access.
       operationId: PostAccessURL
       security:
         - PassportAuth: []
@@ -1279,7 +1279,7 @@ components:
 
             GA4GH may provide more explicit guidance for use of
             non-IANA-registered algorithms in the future. Until then, if
-            implementors do choose such an algorithm (e.g. because it's
+            implementers do choose such an algorithm (e.g. because it's
             implemented by their storage provider), they SHOULD use an existing
             standard `type` value such as `md5`, `etag`, `crc32c`, `trunc512`,
             or `sha1`.
@@ -1324,7 +1324,7 @@ components:
           items:
             type: string
           description: >-
-            If authorizations contains `PassportAuth` this is a required list of
+            If authorizations contain `PassportAuth` this is a required list of
             visa issuers (as found in a visa's `iss` claim) that may authorize
             access to this object. The caller must only provide passports that
             contain visas from this list. It is strongly recommended that the
@@ -1336,7 +1336,7 @@ components:
           items:
             type: string
           description: >-
-            If authorizations contains `BearerAuth` this is an optional list of
+            If authorizations contain `BearerAuth` this is an optional list of
             issuers that may authorize access to this object. The caller must
             provide a token from one of these issuers. If this is empty or
             missing it assumed the caller knows which token to send via other
@@ -1397,9 +1397,10 @@ components:
           description: >-
             A name declared by the bundle author that must be used when
             materialising this object, overriding any name directly associated
-            with the object itself. The name must be unique with the containing
-            bundle. This string is made up of uppercase and lowercase letters,
-            decimal digits, hypen, period, and underscore [A-Za-z0-9.-_]. See
+            with the object itself. The name must be unique within the
+            containing bundle. This string is made up of uppercase and lowercase
+            letters, decimal digits, hyphen, period, and underscore
+            [A-Za-z0-9.-_]. See
             http://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap03.html#tag_03_282[portable
             filenames].
         id:
@@ -1442,7 +1443,7 @@ components:
             A string that can be used to name a `DrsObject`.
 
             This string is made up of uppercase and lowercase letters, decimal
-            digits, hypen, period, and underscore [A-Za-z0-9.-_]. See
+            digits, hyphen, period, and underscore [A-Za-z0-9.-_]. See
             http://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap03.html#tag_03_282[portable
             filenames].
         self_uri:
@@ -1662,10 +1663,10 @@ components:
         recursively included in the result.
 
         If true and the object_id refers to a bundle, then the entire set of
-        objects in the bundle is expanded. That is, if the bundle contains
-        aother bundles, then those other bundles are recursively expanded and
-        included in the result. Recursion continues through the entire sub-tree
-        of the bundle.
+        objects in the bundle is expanded. That is, if the bundle contains other
+        bundles, then those other bundles are recursively expanded and included
+        in the result. Recursion continues through the entire sub-tree of the
+        bundle.
 
         If the object_id refers to a blob, then the query parameter is ignored.
     AccessId:
@@ -1695,7 +1696,7 @@ components:
 
                   If true and the object_id refers to a bundle, then the entire
                   set of objects in the bundle is expanded. That is, if the
-                  bundle contains aother bundles, then those other bundles are
+                  bundle contains other bundles, then those other bundles are
                   recursively expanded and included in the result. Recursion
                   continues through the entire sub-tree of the bundle.
 
