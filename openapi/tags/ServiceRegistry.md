@@ -5,7 +5,7 @@ The [GA4GH Service Registry API specification](https://github.com/ga4gh-discover
 * Each entry in a Service Registry must have a `url`, indicating the base URL to the web service. For DRS services, the registered `url` must include everything up to
 the standardized `/ga4gh/drs/v1` path. Clients should be able to assume that:
     + Adding `/ga4gh/drs/v1/objects/{object_id}` to the registered `url` will hit the `DrsObject` endpoint
-    + Adding `/ga4gh/drs/v1/service-info` to the registered `url` will hit the Service Info endpoint
+    + Adding `/ga4gh/drs/v1/service-info` to the the registered `url` will hit the Service Info endpoint
 
 Example listing of a DRS API registration from a service registry's `/services` endpoint:
 
@@ -17,7 +17,7 @@ Example listing of a DRS API registration from a service registry's `/services` 
         "type": {
             "group": "org.ga4gh",
             "artifact": "drs",
-            "version": "1.3.0"
+            "version": "1.2.0"
         },
         "description": "The Data Repository Service (DRS) API ...",
         "organization": {

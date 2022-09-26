@@ -56,7 +56,7 @@ post:
   description: >-
     Returns object metadata, and a list of access methods that can be used to fetch object bytes.
 
-    Method is a POST to accommodate a JWT GA4GH Passport sent in the formData in order to authorize access.
+    Method is a POST to accomodate a JWT GA4GH Passport sent in the formData in order to authorize access.
   operationId: PostObject
   security:
     - PassportAuth: []
