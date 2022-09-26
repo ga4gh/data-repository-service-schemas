@@ -632,6 +632,9 @@ tags:
       copy of the data. For example, if I have appropriate permissions, I can
       run a pooled analysis where I run a single tool across data managed by
       different DRS servers, potentially in different locations.
+  - name: Best Practices for Working with Compund Objects
+    description: |
+      TODO: insert best practices here
   - name: Background Notes on DRS URIs
     description: >
       ## Design Motivation

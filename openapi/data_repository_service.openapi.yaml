@@ -69,6 +69,9 @@ tags:
   - name: Motivation
     description:
       $ref: './tags/Motivation.md'
+  - name: Best Practices for Working with Compund Objects
+    description:
+      $ref: './tags/CompoundObjects.md'
   - name: Background Notes on DRS URIs
     description:
       $ref: './tags/BackgroundNotesOnDRSURIs.md'
