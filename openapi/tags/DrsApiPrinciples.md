@@ -110,10 +110,10 @@ DRS's job is data access, period. Therefore, the DRS API supports a simple flat 
 DRS can be used to access individual objects of all kinds, simple or complex, large or small, stored in type-specific formats (e.g. BAM files, VCF files, CSV files). At the API level these are all the same; at the application level, DRS clients and servers are expected to agree on object semantics using non-DRS mechanisms, including but not limited to the GA4GH Data Connect API.
 
 ### Compound Objects
-DRS can also be used to access compound objects, consisting of two or more atomic objects related to each other in a well-specified way. See the [Appendix: Compound Objects](#tag/Compound-Objects) for suggested best practices for working with Compound Objects. 
+DRS can also be used to access compound objects, consisting of two or more atomic objects related to each other in a well-specified way. See the [Appendix: Compound Objects](#tag/Working-With-Compound-Objects) for suggested best practices for working with Compound Objects. 
 
 ### [DEPRECATED] Bundles
-Previous versions of the DRS API spec included support for a *bundle* content type, which was a folder-like collection of other DRS objects (either blobs or bundles), represented by a `DrsObject` with a `contents` array. As of v1.3, bundles have been deprecated in favor of the best practices documented in the [Appendix: Compound Objects](#tag/Compound-Objects). A future version of the API spec may remove bundle support entirely.
+Previous versions of the DRS API spec included support for a *bundle* content type, which was a folder-like collection of other DRS objects (either blobs or bundles), represented by a `DrsObject` with a `contents` array. As of v1.3, bundles have been deprecated in favor of the best practices documented in the [Appendix: Compound Objects](#tag/Working-With-Compound-Objects). A future version of the API spec may remove bundle support entirely.
 
 ## Read-only
 
