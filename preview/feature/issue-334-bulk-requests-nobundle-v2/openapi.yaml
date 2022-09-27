@@ -334,7 +334,7 @@ tags:
       DRS can also be used to access compound objects, consisting of two or more
       atomic objects related to each other in a well-specified way. See the
       [Appendix: Compound Objects](#tag/Working-With-Compound-Objects) for
-      suggested best practices for working with Compound Objects. 
+      suggested best practices for working with compound objects. 
 
 
       ### [DEPRECATED] Bundles
