@@ -607,7 +607,7 @@ tags:
       copy of the data. For example, if I have appropriate permissions, I can
       run a pooled analysis where I run a single tool across data managed by
       different DRS servers, potentially in different locations.
-  - name: Working with Compound Objects
+  - name: Working With Compound Objects
     description: >
       ## Compound Objects
 
@@ -946,7 +946,7 @@ x-tagGroups:
   - name: Appendices
     tags:
       - Motivation
-      - Working with Compound Objects
+      - Working With Compound Objects
       - Background Notes on DRS URIs
       - Compact Identifier-Based URIs
       - Hostname-Based URIs
