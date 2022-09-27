@@ -314,26 +314,26 @@ tags:
       flat content model -- every `DrsObject`, like a file, represents a single
       opaque blob of bytes. DRS has no understanding of the meaning of objects
       and only provides simple domain-agnostic metadata. Understanding the
-      semantics of specific object types remains the responsibility of the
+      semantics of specific object types is the responsibility of the
       applications that use DRS to fetch those objects (e.g. samtools for BAM
       files, DICOM viewers for DICOM objects).
 
 
-      ### Single Objects
+      ### Atomic Objects
 
-      DRS can be used to access objects of all kinds, simple or complex, large
-      or small, stored in type-specific formats (e.g. BAM files, VCF files, CSV
-      files). At the API level these are all the same; at the application level,
-      DRS clients and servers are expected to agree on the semantics of
-      individual objects using non-DRS mechanisms, including but not limited to
-      the GA4GH Data Connect API.
+      DRS can be used to access individual objects of all kinds, simple or
+      complex, large or small, stored in type-specific formats (e.g. BAM files,
+      VCF files, CSV files). At the API level these are all the same; at the
+      application level, DRS clients and servers are expected to agree on object
+      semantics using non-DRS mechanisms, including but not limited to the GA4GH
+      Data Connect API.
 
 
       ### Compound Objects
 
       DRS can also be used to access compound objects, consisting of two or more
-      single 'leaf' objects related to each other in a well-specified way. See
-      the [Appendix: Compound Objects](#tag/Compound-Objects) for suggested best
+      atomic objects related to each other in a well-specified way. See the
+      [Appendix: Compound Objects](#tag/Compound-Objects) for suggested best
       practices for working with Compound Objects. 
 
 
