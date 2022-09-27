@@ -614,9 +614,9 @@ tags:
 
       The DRS API supports access to data objects, with each `DrsObject`
       representing a single opaque blob of bytes. Much content (e.g. VCF files)
-      is well represented as a single `DrsObject`. Some content, however (e.g.
-      DICOM images) is best represented as a compound object consisting of a
-      structured collection of 'leaf' `DrsObject`s. In both cases, DRS isn't
+      is well represented as a single atomic `DrsObject`. Some content, however
+      (e.g. DICOM images) is best represented as a compound object consisting of
+      a structured collection of atomic `DrsObject`s. In both cases, DRS isn't
       aware of the semantics of the objects it serves -- understanding those
       semantics is the responsibility of the applications that call DRS.
 
@@ -635,26 +635,29 @@ tags:
       together
 
 
-      As with single objects, DRS applications and servers are expected to agree
-      on the semantics of individual compound objects using non-DRS mechanisms.
-      The recommended best practice for representing a particular compound
-      object type is:
+      ## Best Practice: Manifests
 
-      1. Define a manifest file syntax, which contains a list of the DRS IDs of
-      the leaf objects, plus type-specific information about the relationship
-      between the different elements of the compound object. Manifest file
-      syntax isn't prescribed by the spec, but we expect they will often be JSON
-      files.
 
-      2. Make manifest objects, and each of their referenced leaf objects,
-      available using standard DRS mechanisms -- each manifest object and each
-      leaf object are referenced via their own DRS IDs, just like any other
-      single object.
+      As with atomic objects, DRS applications and servers are expected to agree
+      on the semantics of compound objects using non-DRS mechanisms. The
+      recommended best practice for representing a particular compound object
+      type is:
 
-      3. Document the expected client logic for processing compound objects of
+      1. Define a manifest file syntax, which contains the DRS IDs of the
+      constituent atomic objects, plus type-specific information about the
+      relationship between those constituents.
+          * Manifest file syntax isn't prescribed by the spec, but we expect they will often be JSON files.
+          * For example, for a BAM+BAI pair the manifest file could contain two key-value pairs mapping the type of each constituent file to its DRS ID.
+      3. Make manifest objects and their constituent objects available using
+      standard DRS mechanisms -- each object is referenced via its own DRS ID,
+      just like any other atomic object.
+          * For example, for a BAM+BAI pair, there would be three DRS IDs -- one for the manifest, one for the BAM, and one for the BAI.
+      5. Document the expected client logic for processing compound objects of
       interest. This logic typically consists of using standard DRS mechanisms
-      to fetch the manifest, parsing its syntax, extracting the DRS IDs of leaf
-      objects, and using standard DRS mechanisms to fetch relevant leaf objects.
+      to fetch the manifest, parsing its syntax, extracting the DRS IDs of
+      constituent objects, and using standard DRS mechanisms to fetch the
+      constituents as needed.
+          * In some cases the application will always want to fetch all of the constituents; in other cases it may want to initially fetch a subset, and only fetch the others on demand. For example, a DICOM image viewer may only want to fetch the layers that are being rendered.
   - name: Background Notes on DRS URIs
     description: >
       ## Design Motivation
