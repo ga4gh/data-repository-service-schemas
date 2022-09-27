@@ -104,13 +104,13 @@ DRS servers can choose to issue either hostname-based or compact identifier-base
 | Security          | Servers have full control over their own security practices. | Server operators, in addition to maintaining their own security practices, should confirm they are comfortable with the resolver registry security practices, including protection against denial of service and namespace-hijacking attacks. (See the [Appendix: Compact Identifier-Based URIs](#tag/Compact-Identifier-Based-URIs) for more information on resolver registry security.) |
 
 ## DRS Datatypes
-DRS's job is data access, period. Therefore, the DRS API supports a simple flat content model -- every `DrsObject`, like a file, represents a single opaque blob of bytes. DRS has no understanding of the meaning of objects and only provides simple domain-agnostic metadata. Understanding the semantics of specific object types remains the responsibility of the applications that use DRS to fetch those objects (e.g. samtools for BAM files, DICOM viewers for DICOM objects).
+DRS's job is data access, period. Therefore, the DRS API supports a simple flat content model -- every `DrsObject`, like a file, represents a single opaque blob of bytes. DRS has no understanding of the meaning of objects and only provides simple domain-agnostic metadata. Understanding the semantics of specific object types is the responsibility of the applications that use DRS to fetch those objects (e.g. samtools for BAM files, DICOM viewers for DICOM objects).
 
-### Single Objects
-DRS can be used to access objects of all kinds, simple or complex, large or small, stored in type-specific formats (e.g. BAM files, VCF files, CSV files). At the API level these are all the same; at the application level, DRS clients and servers are expected to agree on the semantics of individual objects using non-DRS mechanisms, including but not limited to the GA4GH Data Connect API.
+### Atomic Objects
+DRS can be used to access individual objects of all kinds, simple or complex, large or small, stored in type-specific formats (e.g. BAM files, VCF files, CSV files). At the API level these are all the same; at the application level, DRS clients and servers are expected to agree on object semantics using non-DRS mechanisms, including but not limited to the GA4GH Data Connect API.
 
 ### Compound Objects
-DRS can also be used to access compound objects, consisting of two or more single 'leaf' objects related to each other in a well-specified way. See the [Appendix: Compound Objects](#tag/Compound-Objects) for suggested best practices for working with Compound Objects. 
+DRS can also be used to access compound objects, consisting of two or more atomic objects related to each other in a well-specified way. See the [Appendix: Compound Objects](#tag/Compound-Objects) for suggested best practices for working with Compound Objects. 
 
 ### [DEPRECATED] Bundles
 Previous versions of the DRS API spec included support for a *bundle* content type, which was a folder-like collection of other DRS objects (either blobs or bundles), represented by a `DrsObject` with a `contents` array. As of v1.3, bundles have been deprecated in favor of the best practices documented in the [Appendix: Compound Objects](#tag/Compound-Objects). A future version of the API spec may remove bundle support entirely.
