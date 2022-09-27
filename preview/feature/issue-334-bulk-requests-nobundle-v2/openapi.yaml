@@ -930,6 +930,7 @@ x-tagGroups:
   - name: Appendices
     tags:
       - Motivation
+      - Compound Objects
       - Background Notes on DRS URIs
       - Compact Identifier-Based URIs
       - Hostname-Based URIs
