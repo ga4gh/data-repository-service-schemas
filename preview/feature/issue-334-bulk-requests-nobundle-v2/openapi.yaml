@@ -334,7 +334,7 @@ tags:
       DRS can also be used to access compound objects, consisting of two or more
       single 'leaf' objects related to each other in a well-specified way. See
       the [Appendix: Compound Objects](#tag/Compound-Objects) for suggested best
-      pracitces for working with Compound Objects. 
+      practices for working with Compound Objects. 
 
 
       ### [DEPRECATED] Bundles
@@ -342,9 +342,10 @@ tags:
       Previous versions of the DRS API spec included support for a *bundle*
       content type, which was a folder-like collection of other DRS objects
       (either blobs or bundles), represented by a `DrsObject` with a `contents`
-      array. As of v1.3, bundles have been deprecated in favor of the Compound
-      Objects best practice documented above. A future version of the API spec
-      may remove bundle support entirely.
+      array. As of v1.3, bundles have been deprecated in favor of the best
+      practices documented in the [Appendix: Compound
+      Objects](#tag/Compound-Objects). A future version of the API spec may
+      remove bundle support entirely.
 
 
       ## Read-only
@@ -611,6 +612,15 @@ tags:
       ## Compound Objects
 
 
+      The DRS API supports access to data objects, with each `DrsObject`
+      representing a single opaque blob of bytes. Much content (e.g. VCF files)
+      is well represented as a single `DrsObject`. Some content, however (e.g.
+      DICOM images) is best represented as a compound object consisting of a
+      structured collection of 'leaf' `DrsObject`s. In both cases, DRS isn't
+      aware of the semantics of the objects it serves -- understanding those
+      semantics is the responsibility of the applications that call DRS.
+
+
       Common examples of compound objects in biomedicine include:
 
       * BAM+BAI genomic reads, with a small index (the BAI object) to large data
@@ -625,18 +635,21 @@ tags:
       together
 
 
-      As with single objects, DRS clients and servers are expected to agree on
-      the semantics of individual compound objects using non-DRS mechanisms. The
-      recommended best practice for representing a particular compound object
-      type is:
+      As with single objects, DRS applications and servers are expected to agree
+      on the semantics of individual compound objects using non-DRS mechanisms.
+      The recommended best practice for representing a particular compound
+      object type is:
 
       1. Define a manifest file syntax, which contains a list of the DRS IDs of
       the leaf objects, plus type-specific information about the relationship
-      between the different elements of the compound object.
+      between the different elements of the compound object. Manifest file
+      syntax isn't prescribed by the spec, but we expect they will often be JSON
+      files.
 
       2. Make manifest objects, and each of their referenced leaf objects,
-      available using standard DRS mechanisms -- each manifest and each leaf are
-      referenced via their own DRS IDs, just like any other single object.
+      available using standard DRS mechanisms -- each manifest object and each
+      leaf object are referenced via their own DRS IDs, just like any other
+      single object.
 
       3. Document the expected client logic for processing compound objects of
       interest. This logic typically consists of using standard DRS mechanisms
