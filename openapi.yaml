@@ -5,7 +5,7 @@ info:
   x-logo:
     url: >-
       https://www.ga4gh.org/wp-content/themes/ga4gh-theme/gfx/GA-logo-horizontal-tag-RGB.svg
-  termsOfService: 'https://www.ga4gh.org/terms-and-conditions/'
+  termsOfService: https://www.ga4gh.org/terms-and-conditions/
   contact:
     name: GA4GH Cloud Work Stream
     email: ga4gh-cloud@ga4gh.org
@@ -14,7 +14,7 @@ info:
     url: >-
       https://raw.githubusercontent.com/ga4gh/data-repository-service-schemas/master/LICENSE
 servers:
-  - url: 'https://{serverURL}/ga4gh/drs/v1'
+  - url: https://{serverURL}/ga4gh/drs/v1
     variables:
       serverURL:
         default: drs.example.org
@@ -912,7 +912,7 @@ paths:
           $ref: '#/components/responses/500InternalServerError'
       tags:
         - Service Info
-  '/objects/{object_id}':
+  /objects/{object_id}:
     get:
       summary: Get info about a DrsObject.
       description: >-
@@ -973,7 +973,7 @@ paths:
         - $ref: '#/components/parameters/ObjectId'
       requestBody:
         $ref: '#/components/requestBodies/PostObjectBody'
-  '/objects/{object_id}/access/{access_id}':
+  /objects/{object_id}/access/{access_id}:
     get:
       summary: Get a URL for fetching bytes
       description: >-
@@ -1141,14 +1141,14 @@ components:
               type: string
               format: uri
               description: URL of the website of the organization (RFC 3986 format)
-              example: 'https://example.com'
+              example: https://example.com
         contactUrl:
           type: string
           format: uri
           description: >-
             URL of the contact for the provider of this service, e.g. a link to
             a contact form (RFC 3986 format), or an email (RFC 2368 format).
-          example: 'mailto:support@example.com'
+          example: mailto:support@example.com
         documentationUrl:
           type: string
           format: uri
@@ -1156,7 +1156,7 @@ components:
             URL of the documentation of this service (RFC 3986 format). This
             should help someone learn how to use your service, including any
             specifics required to access data, e.g. authentication.
-          example: 'https://docs.myservice.example.com'
+          example: https://docs.myservice.example.com
         createdAt:
           type: string
           format: date-time
@@ -1211,7 +1211,7 @@ components:
           description: A detailed error message.
         status_code:
           type: integer
-          description: 'The integer representing the HTTP status code (e.g. 200, 404).'
+          description: The integer representing the HTTP status code (e.g. 200, 404).
     Checksum:
       type: object
       required:
@@ -1321,7 +1321,7 @@ components:
           description: >-
             A list of full DRS identifier URI paths that may be used to obtain
             the object. These URIs may be external to this DRS instance.
-          example: 'drs://drs.example.org/314159'
+          example: drs://drs.example.org/314159
           items:
             type: string
         contents:
@@ -1365,7 +1365,7 @@ components:
             identifier-based DRS URI, the `self_uri` presents you with a
             hostname and properly encoded DRS ID for use in subsequent `access`
             endpoint calls.
-          example: 'drs://drs.example.org/314159'
+          example: drs://drs.example.org/314159
         size:
           type: integer
           format: int64
