@@ -29,7 +29,13 @@ DRS implementers should ensure their solutions restrict access to targets as muc
 
 ## Authentication
 
-### BasicAuth
+### Discovery
+
+The APIs to fetch [DrsObjects](#tag/DrsObjectModel) and [AccessURLs](#tag/AccessURLModel) may require authorization. The authorization mode may vary between DRS objects hosted by a service. The authorization mode may vary between the APIs to fetch a [DrsObject](#tag/DrsObjectModel) and an associated [AccessURL](#tag/AccessURLModel). Implementers should indicate how to authenticate to fetch a [DrsObject](#tag/DrsObjectModel) by implementing the [OptionsOjbect](#operation/OptionsObject) API. Implementers should indicate how to authenticate to fetch an [AccessURL](#tag/AccessURLModel) within a [DrsObject](#tag/DrsObjectModel). 
+
+### Modes
+
+#### BasicAuth
 
 A valid authorization token must be passed in the 'Authorization' header, e.g. "Basic ${token_string}"
 
@@ -37,7 +43,7 @@ A valid authorization token must be passed in the 'Authorization' header, e.g. "
 |----------------------|------|
 | **HTTP Authorization Scheme** | basic |
 
-### BearerAuth
+#### BearerAuth
 
 A valid authorization token must be passed in the 'Authorization' header, e.g. "Bearer ${token_string}"
 
@@ -45,7 +51,7 @@ A valid authorization token must be passed in the 'Authorization' header, e.g. "
 |----------------------|------|
 | **HTTP Authorization Scheme** | bearer |
 
-### PassportAuth
+#### PassportAuth
 
 A valid authorization [GA4GH Passport](https://github.com/ga4gh-duri/ga4gh-duri.github.io/tree/master/researcher_ids) token must be passed in the body of a POST request
 

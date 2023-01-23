@@ -2,7 +2,7 @@
 
 Each implementation of DRS can choose its own id scheme, as long as it follows these guidelines:
 
-* DRS IDs are strings made up of uppercase and lowercase letters, decimal digits, hypen, period, underscore and tilde [A-Za-z0-9.-_~]. See [RFC 3986 § 2.3](https://datatracker.ietf.org/doc/html/rfc3986#section-2.3).
+* DRS IDs are strings made up of uppercase and lowercase letters, decimal digits, hyphen, period, underscore and tilde [A-Za-z0-9.-_~]. See [RFC 3986 § 2.3](https://datatracker.ietf.org/doc/html/rfc3986#section-2.3).
 * DRS IDs can contain other characters, but they MUST be encoded into valid DRS IDs whenever they are used in API calls. This is because non-encoded IDs may interfere with the interpretation of the objects/{id}/access endpoint. To overcome this limitation use percent-encoding of the ID, see [RFC 3986 § 2.4](https://datatracker.ietf.org/doc/html/rfc3986#section-2.4)
 * One DRS ID MUST always return the same object data (or, in the case of a collection, the same set of objects). This constraint aids with reproducibility.
 * DRS implementations MAY have more than one ID that maps to the same object.
@@ -117,4 +117,4 @@ DRS v1 is a read-only API. We expect that each implementation will define its ow
 ## Standards
 
 The DRS API specification is written in OpenAPI and embodies a RESTful service philosophy. It uses JSON in requests and responses and standard HTTPS on port 443 for information transport.  Optionally, it
-supports authenitcation and authorization using the [GA4GH Passport](https://github.com/ga4gh-duri/ga4gh-duri.github.io/tree/master/researcher_ids) standard.
+supports authentication and authorization using the [GA4GH Passport](https://github.com/ga4gh-duri/ga4gh-duri.github.io/tree/master/researcher_ids) standard.
