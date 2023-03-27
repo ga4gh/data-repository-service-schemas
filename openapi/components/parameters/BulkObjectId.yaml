@@ -5,3 +5,7 @@ properties:
     type: array
     items:
       type: string
+  passports:
+    type: array
+    items:
+      type: string
