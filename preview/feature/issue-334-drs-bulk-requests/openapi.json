@@ -329,7 +329,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "../components/parameters/BulkObjectIdPassport.yaml"
+                "$ref": "#/components/schemas/BulkObjectId"
               }
             }
           }
@@ -427,7 +427,48 @@
       }
     },
     "/objects/access": {
-      "$ref": "./paths/bulkobjects@access@{access_id}.yaml"
+      "post": {
+        "summary": "Get URLs for fetching bytes from multiple objects",
+        "description": "Returns an array of URL objects that can be used to fetch the bytes of multiple `DrsObject`s.\nThis method only needs to be called when using an `AccessMethod` that contains an `access_id` (e.g., for servers that use signed URLs for fetching object bytes).",
+        "operationId": "GetBulkAccessURL",
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/200OkAccesses"
+          },
+          "202": {
+            "$ref": "#/components/responses/202Accepted"
+          },
+          "400": {
+            "$ref": "#/components/responses/400BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/401Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/403Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/404NotFoundAccess"
+          },
+          "500": {
+            "$ref": "#/components/responses/500InternalServerError"
+          }
+        },
+        "tags": [
+          "Objects"
+        ],
+        "x-swagger-router-controller": "ga4gh.drs.server",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BulkObjectAccessId"
+              }
+            }
+          }
+        }
+      }
     }
   },
   "components": {
@@ -835,6 +876,27 @@
           }
         }
       },
+      "BulkObjectId": {
+        "type": "object",
+        "description": "The object that contains the DRS object IDs array",
+        "properties": {
+          "passports": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJnYTRnaF9wYXNzcG9ydF92MSI6W119.JJ5rN0ktP0qwyZmIPpxmF_p7JsxAZH6L6brUxtad3CM"
+            },
+            "description": "the encoded JWT GA4GH Passport that contains embedded Visas.  The overall JWT is signed as are the individual Passport Visas."
+          },
+          "bulk_object_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "An array of ObjectIDs."
+          }
+        }
+      },
       "summary": {
         "type": "object",
         "description": "A summary of what was resolved.",
@@ -850,6 +912,79 @@
           "unresolved": {
             "type": "integer",
             "description": "Number of objects not resolved."
+          }
+        }
+      },
+      "unresolved": {
+        "type": "array",
+        "description": "Error codes for each unresolved drs objects.",
+        "items": {
+          "type": "object",
+          "properties": {
+            "error_code": {
+              "type": "integer"
+            },
+            "object_ids": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "BulkObjectAccessId": {
+        "type": "object",
+        "description": "The object that contains object_id/access_id tuples",
+        "properties": {
+          "passports": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "bulk_object_access_ids": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "bulk_object_id": {
+                  "type": "string"
+                },
+                "bulk_access_ids": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "BulkAccessURL": {
+        "type": "object",
+        "required": [
+          "url"
+        ],
+        "properties": {
+          "drs_object_id": {
+            "type": "string"
+          },
+          "drs_access_id": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string",
+            "description": "A fully resolvable URL that can be used to fetch the actual object bytes."
+          },
+          "headers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "An optional list of headers to include in the HTTP request to `url`. These headers can be used to provide auth tokens required to fetch the object bytes.",
+            "example": "Authorization: Basic Z2E0Z2g6ZHJz"
           }
         }
       }
@@ -975,16 +1110,10 @@
               "type": "object",
               "properties": {
                 "summary": {
-                  "type": "object",
-                  "items": {
-                    "$ref": "#/components/schemas/summary"
-                  }
+                  "$ref": "#/components/schemas/summary"
                 },
-                "unresolved_drs_object": {
-                  "type": "object",
-                  "items": {
-                    "$ref": "../schemas/unresolved.yaml"
-                  }
+                "unresolved_drs_objects": {
+                  "$ref": "#/components/schemas/unresolved"
                 },
                 "resolved_drs_object": {
                   "type": "array",
@@ -1003,6 +1132,30 @@
           "application/json": {
             "schema": {
               "$ref": "#/components/schemas/AccessURL"
+            }
+          }
+        }
+      },
+      "200OkAccesses": {
+        "description": "The `AccessURL` was found successfully",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "summary": {
+                  "$ref": "#/components/schemas/summary"
+                },
+                "unresolved_drs_objects": {
+                  "$ref": "#/components/schemas/unresolved"
+                },
+                "resolved_drs_object_access_urls": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BulkAccessURL"
+                  }
+                }
+              }
             }
           }
         }
