@@ -69,6 +69,9 @@ tags:
   - name: Motivation
     description:
       $ref: './tags/Motivation.md'
+  - name: Working With Compound Objects
+    description:
+      $ref: './tags/CompoundObjects.md'
   - name: Background Notes on DRS URIs
     description:
       $ref: './tags/BackgroundNotesOnDRSURIs.md'
@@ -102,6 +105,7 @@ x-tagGroups:
   - name: Appendices
     tags:
       - Motivation
+      - Working With Compound Objects
       - Background Notes on DRS URIs
       - Compact Identifier-Based URIs
       - Hostname-Based URIs
