@@ -1,0 +1,65 @@
+get:
+  summary: Get contents array of a DrsObject bundle
+  description: >-
+    Returns the `contents` array of a DrsObject bundle. Large arrays may be
+    paginated for efficient transfer, in which case, a `Link` header will be
+    provided to support client page traversal.
+  operationId: GetObjectContents
+  parameters:
+    - $ref: '../components/parameters/ObjectId.yaml'
+    - $ref: '../components/parameters/Expand.yaml'
+    - $ref: '../components/parameters/ContentsPage.yaml'
+  responses:
+    200:
+      $ref: '../components/responses/200OkContentsArray.yaml'
+    202:
+      $ref: '../components/responses/202Accepted.yaml'
+    400:
+      $ref: '../components/responses/400BadRequest.yaml'
+    401:
+      $ref: '../components/responses/401Unauthorized.yaml'
+    403:
+      $ref: '../components/responses/403Forbidden.yaml'
+    404:
+      $ref: '../components/responses/404NotFoundDrsObject.yaml'
+    500:
+      $ref: '../components/responses/500InternalServerError.yaml'
+  tags:
+    - Objects
+  x-swagger-router-controller: ga4gh.drs.server
+
+post:
+  summary: Get contents array of a DrsObject bundle
+  description: >-
+    Returns the `contents` array of a DrsObject bundle. Large arrays may be
+    paginated for efficient transfer, in which case, a `Link` header will be
+    provided to support client page traversal.
+
+    POST method accomodates JWT GA4GH Passport sent in the request body in order
+    to authorize access.
+  operationId: GetObjectContentsPost
+  parameters:
+    - $ref: '../components/parameters/ObjectId.yaml'
+    - $ref: '../components/parameters/ContentsPage.yaml'
+  requestBody:
+    $ref: '../components/requestBodies/PostObjectBody.yaml'
+  security:
+    - PassportAuth: []
+  responses:
+    200:
+      $ref: '../components/responses/200OkContentsArray.yaml'
+    202:
+      $ref: '../components/responses/202Accepted.yaml'
+    400:
+      $ref: '../components/responses/400BadRequest.yaml'
+    401:
+      $ref: '../components/responses/401Unauthorized.yaml'
+    403:
+      $ref: '../components/responses/403Forbidden.yaml'
+    404:
+      $ref: '../components/responses/404NotFoundDrsObject.yaml'
+    500:
+      $ref: '../components/responses/500InternalServerError.yaml'
+  tags:
+    - Objects
+  x-swagger-router-controller: ga4gh.drs.server

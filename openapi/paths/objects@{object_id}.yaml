@@ -58,6 +58,10 @@ post:
 
     Method is a POST to accommodate a JWT GA4GH Passport sent in the formData in order to authorize access.
   operationId: PostObject
+  parameters:
+    - $ref: '../components/parameters/ObjectId.yaml'
+  requestBody:
+    $ref: '../components/requestBodies/PostObjectBody.yaml'
   security:
     - PassportAuth: []
   responses:
@@ -78,7 +82,4 @@ post:
   tags:
     - Objects
   x-swagger-router-controller: ga4gh.drs.server
-  parameters:
-    - $ref: '../components/parameters/ObjectId.yaml'
-  requestBody:
-    $ref: '../components/requestBodies/PostObjectBody.yaml'
+
