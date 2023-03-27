@@ -2,8 +2,10 @@ type: object
 required:
   - url
 properties:
-  object_id:
-    $ref: '../components/parameters/BulkObjectId.yaml'
+  drs_object_id:
+    type: string
+  drs_access_id:
+    type: string
   url:
     type: string
     description: A fully resolvable URL that can be used to fetch the actual object bytes.

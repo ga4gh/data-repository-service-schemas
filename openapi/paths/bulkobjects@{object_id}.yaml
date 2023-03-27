@@ -28,4 +28,4 @@ post:
     content:
       application/json:
         schema:
-          $ref: '../components/parameters/BulkObjectIdPassport.yaml'
+          $ref: '../components/parameters/BulkObjectId.yaml'
