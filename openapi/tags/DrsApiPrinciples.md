@@ -2,7 +2,7 @@
 
 Each implementation of DRS can choose its own id scheme, as long as it follows these guidelines:
 
-* DRS IDs are strings made up of uppercase and lowercase letters, decimal digits, hyphen, period, underscore and tilde [A-Za-z0-9.-_~]. See [RFC 3986 § 2.3](https://datatracker.ietf.org/doc/html/rfc3986#section-2.3).
+* DRS IDs are strings made up of uppercase and lowercase letters, decimal digits, hypen, period, underscore and tilde [A-Za-z0-9.-_~]. See [RFC 3986 § 2.3](https://datatracker.ietf.org/doc/html/rfc3986#section-2.3).
 * DRS IDs can contain other characters, but they MUST be encoded into valid DRS IDs whenever they are used in API calls. This is because non-encoded IDs may interfere with the interpretation of the objects/{id}/access endpoint. To overcome this limitation use percent-encoding of the ID, see [RFC 3986 § 2.4](https://datatracker.ietf.org/doc/html/rfc3986#section-2.4)
 * One DRS ID MUST always return the same object data (or, in the case of a collection, the same set of objects). This constraint aids with reproducibility.
 * DRS implementations MAY have more than one ID that maps to the same object.
@@ -46,7 +46,7 @@ Tip:
 
 ### Compact Identifier-based DRS URIs
 
-Compact Identifier-based DRS URIs use resolver registry services (specifically, [identifiers.org](https://identifiers.org/) and [n2t.net (Name-To-Thing)](https://n2t.net/)) to provide a layer of indirection between the DRS URI and the DRS server name — the actual DNS name of the DRS server is not present in the URI. This approach is based on the Joint Declaration of Data Citation Principles as detailed by [Wimalaratne et al (2018)](https://www.nature.com/articles/sdata201829).
+Compact Identifier-based DRS URIs use resolver registry services (specifically, [identifiers.org](https://identifiers.org/) and [n2t.net (Name-To-Thing)](https://n2t.net/)) to provide a layer of indirection between the DRS URI and the DRS server name — the actual DNS name of the DRS server isn’t present in the URI. This approach is based on the Joint Declaration of Data Citation Principles as detailed by [Wimalaratne et al (2018)](https://www.nature.com/articles/sdata201829).
 
 For more information, see the document [More Background on Compact Identifiers](./more-background-on-compact-identifiers.html).
 
@@ -99,21 +99,16 @@ DRS servers can choose to issue either hostname-based or compact identifier-base
 
 |                   | Hostname-based | Compact Identifier-based |
 |-------------------|----------------|--------------------------|
-| URI Durability    | URIs are valid for as long as the server operator maintains ownership of the published DNS address. (They can of course point that address at different physical serving infrastructure as often as they would like.) | URIs are valid for as long as the server operator maintains ownership of the published compact identifier resolver namespace. (They also depend on the meta-resolvers like identifiers.org/n2t.net remaining operational, which is intended to be essentially forever.) |
+| URI Durability    | URIs are valid for as long as the server operator maintains ownership of the published DNS address. (They can of course point that address at different physical serving infrastructure as often as they’d like.) | URIs are valid for as long as the server operator maintains ownership of the published compact identifier resolver namespace. (They also depend on the meta-resolvers like identifiers.org/n2t.net remaining operational, which is intended to be essentially forever.) |
 | Client Efficiency | URIs require minimal client logic, and no network requests, to resolve. | URIs require small client logic, and 1-2 cacheable network requests, to resolve. |
 | Security          | Servers have full control over their own security practices. | Server operators, in addition to maintaining their own security practices, should confirm they are comfortable with the resolver registry security practices, including protection against denial of service and namespace-hijacking attacks. (See the [Appendix: Compact Identifier-Based URIs](#tag/Compact-Identifier-Based-URIs) for more information on resolver registry security.) |
 
 ## DRS Datatypes
-DRS's job is data access, period. Therefore, the DRS API supports a simple flat content model -- every `DrsObject`, like a file, represents a single opaque blob of bytes. DRS has no understanding of the meaning of objects and only provides simple domain-agnostic metadata. Understanding the semantics of specific object types is the responsibility of the applications that use DRS to fetch those objects (e.g. samtools for BAM files, DICOM viewers for DICOM objects).
 
-### Atomic Objects
-DRS can be used to access individual objects of all kinds, simple or complex, large or small, stored in type-specific formats (e.g. BAM files, VCF files, CSV files). At the API level these are all the same; at the application level, DRS clients and servers are expected to agree on object semantics using non-DRS mechanisms, including but not limited to the GA4GH Data Connect API.
+DRS v1 supports two types of content:
 
-### Compound Objects
-DRS can also be used to access compound objects, consisting of two or more atomic objects related to each other in a well-specified way. See the [Appendix: Compound Objects](#tag/Working-With-Compound-Objects) for suggested best practices for working with compound objects.
-
-### [DEPRECATED] Bundles
-Previous versions of the DRS API spec included support for a *bundle* content type, which was a folder-like collection of other DRS objects (either blobs or bundles), represented by a `DrsObject` with a `contents` array. As of v1.3, bundles have been deprecated in favor of the best practices documented in the [Appendix: Compound Objects](#tag/Working-With-Compound-Objects). A future version of the API spec may remove bundle support entirely and/or replace bundles with a scalable approach based on the needs of our driver projects.
+* a *blob* is like a file — it’s a single blob of bytes, represented by a `DrsObject` without a `contents` array
+* a *bundle* is like a folder — it’s a collection of other DRS content (either blobs or bundles), represented by a `DrsObject` with a `contents` array
 
 ## Read-only
 
@@ -121,5 +116,4 @@ DRS v1 is a read-only API. We expect that each implementation will define its ow
 
 ## Standards
 
-The DRS API specification is written in OpenAPI and embodies a RESTful service philosophy. It uses JSON in requests and responses and standard HTTPS on port 443 for information transport.  Optionally, it
-supports authentication and authorization using the [GA4GH Passport](https://github.com/ga4gh-duri/ga4gh-duri.github.io/tree/master/researcher_ids) standard.
+The DRS API specification is written in OpenAPI and embodies a RESTful service philosophy. It uses JSON in requests and responses and standard HTTPS on port 443 for information transport.

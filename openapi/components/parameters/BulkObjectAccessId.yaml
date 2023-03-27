@@ -1,0 +1,14 @@
+type: object
+description: The object that contains object_id/access_id tuples
+properties:
+  bulk_object_access_ids:
+    type: array
+    items:
+      type: object
+      properties:
+        bulk_object_id:
+          type: string
+        bulk_access_ids:
+          type: array
+          items:
+            type: string

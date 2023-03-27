@@ -1,0 +1,10 @@
+description: The `AccessURL` was found successfully
+content:
+  application/json:
+    schema:
+      type: object
+      properties:
+        access_urls:
+          type: array
+          items:
+            $ref: '../schemas/BulkObjectSingleAccessURL.yaml'

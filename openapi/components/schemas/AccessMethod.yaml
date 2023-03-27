@@ -15,9 +15,10 @@ properties:
       - file
     description: Type of the access method.
   access_url:
-    allOf:
-      - $ref: './AccessURL.yaml'
-      - description: An `AccessURL` that can be used to fetch the actual object bytes. Note that at least one of `access_url` and `access_id` must be provided.
+    $ref: './AccessURL.yaml'
+    description: >-
+      An `AccessURL` that can be used to fetch the actual object bytes.
+      Note that at least one of `access_url` and `access_id` must be provided.
   access_id:
     type: string
     description: >-
@@ -29,7 +30,3 @@ properties:
     description: >-
       Name of the region in the cloud service provider that the object belongs to.
     example: us-east-1
-  authorizations:
-    allOf:
-      - $ref: './Authorizations.yaml'
-      - description: When `access_id` is provided, `authorizations` provides information about how to authorize the `/access` method.
