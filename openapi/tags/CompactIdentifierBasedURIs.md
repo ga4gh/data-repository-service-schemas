@@ -8,7 +8,7 @@ See the documentation on the [n2t.net](https://n2t.net/e/compact_ids.html) and [
 
 ## Calling Meta-Resolver APIs for Compact Identifier-Based DRS URIs
 
-Clients resolving Compact Identifier-based URIs need to convert a prefix (e.g. “drs.42”) into a URL pattern. They can do so by calling either the identifiers.org or the n2t.net API, since the two meta-resolvers keep their mapping databases in sync.
+Clients resolving Compact Identifier-based URIs need to convert a prefix (e.g. “drs.42”) into an URL pattern. They can do so by calling either the identifiers.org or the n2t.net API, since the two meta-resolvers keep their mapping databases in sync.
 
 ### Calling the identifiers.org API as a Client
 
@@ -34,7 +34,7 @@ This request returns a JSON structure including various URLs containing an embed
 GET https://registry.api.identifiers.org/restApi/resources/search/findAllByNamespaceId?id=1234
 ```
 
-This request returns a JSON structure including an urlPattern field, whose value is a URL pattern containing a ${id} parameter, such as:
+This request returns a JSON structure including an urlPattern field, whose value is an URL pattern containing a ${id} parameter, such as:
 
 ```
 "urlPattern" : "https://drs.myexample.org/ga4gh/drs/v1/objects/{$id}"
@@ -50,7 +50,7 @@ The client makes a GET request to n2t.net to find information about the namespac
 GET https://n2t.net/drs.42:
 ```
 
-This request returns a text structure including a redirect field, whose value is a URL pattern containing an `$id` parameter, such as:
+This request returns a text structure including a redirect field, whose value is an URL pattern containing a `$id` parameter, such as:
 
 ```
 redirect: https://drs.myexample.org/ga4gh/drs/v1/objects/$id

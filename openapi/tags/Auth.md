@@ -31,7 +31,7 @@ DRS implementers should ensure their solutions restrict access to targets as muc
 
 ### Discovery
 
-The APIs to fetch [DrsObjects](#tag/DrsObjectModel) and [AccessURLs](#tag/AccessURLModel) may require authorization. The authorization mode may vary between DRS objects hosted by a service. The authorization mode may vary between the APIs to fetch a [DrsObject](#tag/DrsObjectModel) and an associated [AccessURL](#tag/AccessURLModel). Implementers should indicate how to authenticate to fetch a [DrsObject](#tag/DrsObjectModel) by implementing the [OptionsOjbect](#operation/OptionsObject) API. Implementers should indicate how to authenticate to fetch an [AccessURL](#tag/AccessURLModel) within a [DrsObject](#tag/DrsObjectModel). 
+The APIs to fetch [DrsObjects](l#tag/DrsObjectModel) and [AccessURLs](#tag/AccessURLModel) may require authorization. The authorization mode may vary between DRS objects hosted by a service. The authorization mode may vary between the APIs to fetch a [DrsObject](l#tag/DrsObjectModel) and an associated [AccessURL](#tag/AccessURLModel). Implementers should indicate how to authenticate to fetch a [DrsObject](l#tag/DrsObjectModel) by implementing the [OptionsOjbect](#operation/OptionsObject) API. Implementers should indicate how to authenticate to fetch an [AccessURL](#tag/AccessURLModel) within a [DrsObject](l#tag/DrsObjectModel). 
 
 ### Modes
 

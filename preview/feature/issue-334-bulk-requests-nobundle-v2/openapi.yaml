@@ -334,7 +334,7 @@ tags:
       DRS can also be used to access compound objects, consisting of two or more
       atomic objects related to each other in a well-specified way. See the
       [Appendix: Compound Objects](#tag/Working-With-Compound-Objects) for
-      suggested best practices for working with compound objects. 
+      suggested best practices for working with compound objects.
 
 
       ### [DEPRECATED] Bundles
@@ -345,7 +345,8 @@ tags:
       array. As of v1.3, bundles have been deprecated in favor of the best
       practices documented in the [Appendix: Compound
       Objects](#tag/Working-With-Compound-Objects). A future version of the API
-      spec may remove bundle support entirely.
+      spec may remove bundle support entirely and/or replace bundles with a
+      scalable approach based on the needs of our driver projects.
 
 
       ## Read-only
