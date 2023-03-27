@@ -1039,6 +1039,8 @@ paths:
           $ref: '#/components/responses/403Forbidden'
         '404':
           $ref: '#/components/responses/404NotFoundDrsObject'
+        '413':
+          $ref: '#/components/responses/413RequestTooLarge'
         '500':
           $ref: '#/components/responses/500InternalServerError'
       tags:
@@ -1142,6 +1144,8 @@ paths:
           $ref: '#/components/responses/403Forbidden'
         '404':
           $ref: '#/components/responses/404NotFoundAccess'
+        '413':
+          $ref: '#/components/responses/413RequestTooLarge'
         '500':
           $ref: '#/components/responses/500InternalServerError'
       tags:
@@ -1804,6 +1808,12 @@ components:
                 type: array
                 items:
                   $ref: '#/components/schemas/DrsObject'
+    413RequestTooLarge:
+      description: The bulk request is too large.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
     200OkAccess:
       description: The `AccessURL` was found successfully
       content:

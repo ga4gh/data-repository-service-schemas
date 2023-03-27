@@ -316,6 +316,9 @@
           "404": {
             "$ref": "#/components/responses/404NotFoundDrsObject"
           },
+          "413": {
+            "$ref": "#/components/responses/413RequestTooLarge"
+          },
           "500": {
             "$ref": "#/components/responses/500InternalServerError"
           }
@@ -449,6 +452,9 @@
           },
           "404": {
             "$ref": "#/components/responses/404NotFoundAccess"
+          },
+          "413": {
+            "$ref": "#/components/responses/413RequestTooLarge"
           },
           "500": {
             "$ref": "#/components/responses/500InternalServerError"
@@ -1122,6 +1128,16 @@
                   }
                 }
               }
+            }
+          }
+        }
+      },
+      "413RequestTooLarge": {
+        "description": "The bulk request is too large.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
             }
           }
         }
