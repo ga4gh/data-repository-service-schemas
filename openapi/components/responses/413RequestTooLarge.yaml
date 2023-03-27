@@ -1,4 +1,4 @@
-description: The requested `DrsObject` wasn't found.
+description: The bulk request is too large.
 content:
   application/json:
     schema:

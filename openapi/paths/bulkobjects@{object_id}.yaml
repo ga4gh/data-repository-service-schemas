@@ -18,6 +18,8 @@ post:
       $ref: '../components/responses/403Forbidden.yaml'
     404:
       $ref: '../components/responses/404NotFoundDrsObject.yaml'
+    413:
+      $ref: '../components/responses/413RequestTooLarge.yaml'
     500:
       $ref: '../components/responses/500InternalServerError.yaml'
   tags:
