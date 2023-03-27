@@ -1,6 +1,10 @@
 type: object
 description: The object that contains object_id/access_id tuples
 properties:
+  passports:
+    type: array
+    items:
+      type: string
   bulk_object_access_ids:
     type: array
     items:

@@ -562,13 +562,13 @@
         "type": "object",
         "description": "The object that contains the DRS object IDs array",
         "properties": {
-          "bulk_object_ids": {
+          "passports": {
             "type": "array",
             "items": {
               "type": "string"
             }
           },
-          "passports": {
+          "bulk_object_ids": {
             "type": "array",
             "items": {
               "type": "string"
@@ -616,6 +616,12 @@
         "type": "object",
         "description": "The object that contains object_id/access_id tuples",
         "properties": {
+          "passports": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
           "bulk_object_access_ids": {
             "type": "array",
             "items": {
@@ -632,6 +638,32 @@
                 }
               }
             }
+          }
+        }
+      },
+      "BulkAccessURL": {
+        "type": "object",
+        "required": [
+          "url"
+        ],
+        "properties": {
+          "drs_object_id": {
+            "type": "string"
+          },
+          "drs_access_id": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string",
+            "description": "A fully resolvable URL that can be used to fetch the actual object bytes."
+          },
+          "headers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "An optional list of headers to include in the HTTP request to `url`. These headers can be used to provide auth tokens required to fetch the object bytes.",
+            "example": "Authorization: Basic Z2E0Z2g6ZHJz"
           }
         }
       }
@@ -760,10 +792,16 @@
             "schema": {
               "type": "object",
               "properties": {
-                "access_urls": {
+                "summary": {
+                  "$ref": "#/components/schemas/summary"
+                },
+                "unresolved_drs_objects": {
+                  "$ref": "#/components/schemas/unresolved"
+                },
+                "resolved_drs_object_access_urls": {
                   "type": "array",
                   "items": {
-                    "$ref": "../schemas/BulkObjectSingleAccessURL.yaml"
+                    "$ref": "#/components/schemas/BulkAccessURL"
                   }
                 }
               }
