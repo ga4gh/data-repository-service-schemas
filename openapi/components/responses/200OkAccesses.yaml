@@ -4,7 +4,11 @@ content:
     schema:
       type: object
       properties:
-        access_urls:
+        summary:
+          $ref: '../schemas/summary.yaml'
+        unresolved_drs_objects:
+          $ref: '../schemas/unresolved.yaml'
+        resolved_drs_object_access_urls:
           type: array
           items:
-            $ref: '../schemas/BulkObjectSingleAccessURL.yaml'
+            $ref: '../schemas/BulkAccessURL.yaml'
