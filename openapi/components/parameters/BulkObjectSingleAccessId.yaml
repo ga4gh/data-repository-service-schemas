@@ -1,0 +1,7 @@
+type: object
+description: The object that contains an object_id/access_id tuple
+properties:
+  bulk_object_id:
+    type: string
+  bulk_object_access_id:
+    type: string
