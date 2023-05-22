@@ -1,5 +1,0 @@
-description: The bulk request is too large.
-content:
-  application/json:
-    schema:
-      $ref: '../schemas/Error.yaml'
