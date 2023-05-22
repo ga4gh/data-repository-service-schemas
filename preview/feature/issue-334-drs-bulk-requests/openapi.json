@@ -311,6 +311,9 @@
           "405": {
             "$ref": "#/components/responses/AuthorizationsNotSupported"
           },
+          "413": {
+            "$ref": "#/components/responses/413RequestTooLarge"
+          },
           "500": {
             "$ref": "#/components/responses/500InternalServerError"
           }
