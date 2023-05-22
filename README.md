@@ -2,7 +2,7 @@
 
 # Data Repository Service (DRS) API
 
-<sup>`develop` branch status: </sup>[![Build Status](https://app.travis-ci.com/ga4gh/data-repository-service-schemas.svg?branch=develop)](https://app.travis-ci.com/ga4gh/data-repository-service-schemas.svg?branch=develop)
+<sup>`develop` branch status: </sup>[![Build Status](https://travis-ci.org/ga4gh/data-repository-service-schemas.svg?branch=develop)](https://travis-ci.org/ga4gh/data-repository-service-schemas?branch=develop)
 <a href="https://ga4gh.github.io/data-repository-service-schemas/preview/develop/swagger.yaml"><img src="http://online.swagger.io/validator?url=https://ga4gh.github.io/data-repository-service-schemas/preview/develop/swagger.yaml" alt="Swagger Validator" height="20em" width="72em"></A> [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1405753.svg)](https://doi.org/10.5281/zenodo.1405753)
 
 The [Global Alliance for Genomics and Health](http://genomicsandhealth.org/) (GA4GH) is an international coalition, formed to enable the sharing of genomic and clinical data.
@@ -26,13 +26,14 @@ For more information see our HTML documentation links in the table below.
 |  **Branch** | **Reference Documentation** | Swagger Editor |
 | --- | --- | --- |
 | **develop**: the stable development branch, into which feature branches are merged | [HTML](https://ga4gh.github.io/data-repository-service-schemas/preview/develop/docs/) | [Swagger Editor](https://editor.swagger.io?url=https://ga4gh.github.io/data-repository-service-schemas/preview/develop/openapi.yaml) |
+| **release 1.3.0**: The 1.3.0 release of DRS adds the ability to use the options request method to return the auth issuers for a specific DRS object. | [HTML](https://ga4gh.github.io/data-repository-service-schemas/preview/release/drs-1.3.0/docs/) | [Swagger Editor](https://editor.swagger.io?url=https://ga4gh.github.io/data-repository-service-schemas/preview/release/drs-1.3.0/openapi.yaml) |
 | **release 1.2.0**: The 1.2.0 release of DRS adds the standardized `/service-info` endpoint, and 2 `POST` endpoints that are functionally equivalent to the current `GET` endpoints, but they enable the submission of large passport tokens in the request body. | [HTML](https://ga4gh.github.io/data-repository-service-schemas/preview/release/drs-1.2.0/docs/) | [Swagger Editor](https://editor.swagger.io?url=https://ga4gh.github.io/data-repository-service-schemas/preview/release/drs-1.2.0/openapi.yaml) |
 | **release 1.1.0**: The 1.1.0 release of DRS that includes *no* API changes only documentation changes. This introduces a new URI convention using compact identifiers along with clear directions on how to use identifiers.org/n2t.net to resolve them. | [HTML](https://ga4gh.github.io/data-repository-service-schemas/preview/release/drs-1.1.0/docs/) | [Swagger Editor](https://editor.swagger.io?url=https://ga4gh.github.io/data-repository-service-schemas/preview/release/drs-1.1.0/swagger.yaml) |
 | **release 1.0.0**: The 1.0.0 release of DRS that is now an approved GA4GH standard | [HTML](https://ga4gh.github.io/data-repository-service-schemas/preview/release/drs-1.0.0/docs/) | [Swagger Editor](https://editor.swagger.io?url=https://ga4gh.github.io/data-repository-service-schemas/preview/release/drs-1.0.0/swagger.yaml) |
 | **release 0.1**: Simplifying DRS to core functionality | [HTML](https://ga4gh.github.io/data-repository-service-schemas/preview/release/drs-0.1.0/docs/) | [Swagger Editor](https://editor.swagger.io?url=https://ga4gh.github.io/data-repository-service-schemas/preview/release/drs-0.1.0/swagger.yaml) |
 | **release 0.0.1**: The initial DRS after the rename from DOS | [HTML](https://ga4gh.github.io/data-repository-service-schemas/preview/release/0.0.1/docs/) | [Swagger Editor](https://editor.swagger.io?url=https://ga4gh.github.io/data-repository-service-schemas/preview/release/0.0.1/swagger.yaml) |
 
-To monitor development work on various branches, add 'preview/\<branch-name\>' to the master URLs above (e.g., 'https://ga4gh.github.io/data-repository-service-schemas/preview/\<branch-name\>/docs').
+To monitor development work on various branches, add 'preview/\<branch-name\>' to the master URLs above (e.g., `https://ga4gh.github.io/data-repository-service-schemas/preview/<branch-name>/docs`).
 
 # How to Contribute Changes
 

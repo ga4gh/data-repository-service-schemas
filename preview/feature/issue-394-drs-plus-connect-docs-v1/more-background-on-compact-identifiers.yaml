@@ -414,4 +414,14 @@ tags:
       `/tables/abcd/info`. There are optional functionalities of Data Connect,
       such as querying of tables, but we do not explore them or give any
       recommendations here.
+
+
+      Here is an example of using Data Connect with DRS in the fasp-scripts
+      repository
+      (https://github.com/ga4gh/fasp-scripts/blob/master/notebooks/drs/DRS%20File%20Data.ipynb).
+      In this notebook we can see that data connect is used to get DRS IDs from
+      a platform. Those DRS IDs are then used to gather aditional information
+      about the file that might be necessary for analysis. This is just one
+      example of how DRS and Data Connect can interact with each other to gather
+      information about data on a platform.
 components: {}
