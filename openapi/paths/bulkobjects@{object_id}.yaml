@@ -16,6 +16,8 @@ options:
       $ref: '../components/responses/404NotFoundDrsObject.yaml'
     405:
       $ref: '../components/responses/AuthorizationsNotSupported.yaml'
+    413:
+      $ref: '../components/responses/413RequestTooLarge.yaml'
     500:
       $ref: '../components/responses/500InternalServerError.yaml'
   tags:
