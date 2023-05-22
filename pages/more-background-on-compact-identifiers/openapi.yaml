@@ -27,3 +27,6 @@ tags:
   - name: Example DRS Client Compact Identifier-Based URI Resolution Process - Registering a new Compact Identifier for Your DRS Server
     description:
       $ref: ./tags/ExampleRegisterIdentifier.md
+  - name: Example How To Handle Extra Metadata for DRS Objects
+    description:
+      $ref: ./tags/DRSPlusDataConnect.md
