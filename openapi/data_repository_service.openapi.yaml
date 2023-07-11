@@ -1,9 +1,9 @@
 openapi: 3.0.3
 info:
   title: Data Repository Service
-  version: 1.3.0
+  version: 1.4.0
   x-logo:
-    url: 'https://www.ga4gh.org/wp-content/themes/ga4gh-theme/gfx/GA-logo-horizontal-tag-RGB.svg'
+    url: 'https://www.ga4gh.org/wp-content/themes/ga4gh/dist/assets/svg/logos/logo-full-color.svg'
   termsOfService: 'https://www.ga4gh.org/terms-and-conditions/'
   contact:
     name: GA4GH Cloud Work Stream
@@ -69,9 +69,6 @@ tags:
   - name: Motivation
     description:
       $ref: './tags/Motivation.md'
-  - name: Working With Compound Objects
-    description:
-      $ref: './tags/CompoundObjects.md'
   - name: Background Notes on DRS URIs
     description:
       $ref: './tags/BackgroundNotesOnDRSURIs.md'
@@ -105,7 +102,6 @@ x-tagGroups:
   - name: Appendices
     tags:
       - Motivation
-      - Working With Compound Objects
       - Background Notes on DRS URIs
       - Compact Identifier-Based URIs
       - Hostname-Based URIs
@@ -115,8 +111,12 @@ paths:
     $ref: ./paths/service-info.yaml
   /objects/{object_id}:
     $ref: ./paths/objects@{object_id}.yaml
+  /objects:
+    $ref: ./paths/bulkobjects@{object_id}.yaml
   /objects/{object_id}/access/{access_id}:
     $ref: ./paths/objects@{object_id}@access@{access_id}.yaml
+  /objects/access:
+    $ref: ./paths/bulkobjects@access@{access_id}.yaml
 components:
   securitySchemes:
     BasicAuth:
