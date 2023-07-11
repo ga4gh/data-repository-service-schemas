@@ -83,7 +83,7 @@ this will not automatically be built from our Travis.  However, if you
 are a developer and have created a feature branch following the naming
 convention above, you should see automated builds.
 
-Check https://travis-ci.com/ga4gh/data-repository-service-schemas/builds to see the status of the builds.
+Check https://app.travis-ci.com/github/ga4gh/data-repository-service-schemas to see the status of the builds.
 
 Pull Request Voting Process
 ===========================
