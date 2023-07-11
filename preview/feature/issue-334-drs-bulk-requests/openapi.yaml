@@ -1059,6 +1059,8 @@ paths:
         passports (one or more) or a single bearer token, so make sure your bulk
         request is for objects that all use the same passports/token.
       operationId: GetBulkObjects
+      security:
+        - PassportAuth: []
       parameters:
         - $ref: '#/components/parameters/Expand'
       responses:
@@ -1172,6 +1174,8 @@ paths:
         bearer token, so make sure your bulk request is for objects that all use
         the same passports/token.
       operationId: GetBulkAccessURL
+      security:
+        - PassportAuth: []
       responses:
         '200':
           $ref: '#/components/responses/200OkAccesses'
