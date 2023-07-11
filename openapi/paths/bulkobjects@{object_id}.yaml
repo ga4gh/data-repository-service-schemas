@@ -28,7 +28,7 @@ options:
     content:
       application/json:
         schema:
-          $ref: '../components/parameters/BulkObjectId.yaml'
+          $ref: '../components/parameters/BulkObjectIdNoPassport.yaml'
 
 post:
   summary: Get info about multiple DrsObjects with an optional Passport(s).
