@@ -1,0 +1,8 @@
+type: object
+description: The object that contains the DRS object IDs array
+properties:
+  bulk_object_ids:
+    type: array
+    items:
+      type: string
+    description: An array of ObjectIDs.
