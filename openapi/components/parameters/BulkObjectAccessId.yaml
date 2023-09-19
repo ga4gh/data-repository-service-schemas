@@ -12,7 +12,9 @@ properties:
       properties:
         bulk_object_id:
           type: string
+          description: DRS object ID
         bulk_access_ids:
           type: array
+          description: DRS object access ID
           items:
             type: string
