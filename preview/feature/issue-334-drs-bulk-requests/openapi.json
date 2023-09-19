@@ -332,7 +332,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/BulkObjectIdNoPassport"
+                "$ref": "../components/parameters/BulkObjectIdNoPassport.yaml"
               }
             }
           }
@@ -1007,19 +1007,6 @@
           }
         }
       },
-      "BulkObjectIdNoPassport": {
-        "type": "object",
-        "description": "The object that contains the DRS object IDs array",
-        "properties": {
-          "bulk_object_ids": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "description": "An array of ObjectIDs."
-          }
-        }
-      },
       "BulkObjectAccessId": {
         "type": "object",
         "description": "The object that contains object_id/access_id tuples",
@@ -1036,10 +1023,12 @@
               "type": "object",
               "properties": {
                 "bulk_object_id": {
-                  "type": "string"
+                  "type": "string",
+                  "description": "DRS object ID"
                 },
                 "bulk_access_ids": {
                   "type": "array",
+                  "description": "DRS object access ID",
                   "items": {
                     "type": "string"
                   }

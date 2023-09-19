@@ -1129,7 +1129,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/BulkObjectIdNoPassport'
+              $ref: ../components/parameters/BulkObjectIdNoPassport.yaml
     post:
       summary: Get info about multiple DrsObjects with an optional Passport(s).
       description: >-
@@ -1806,15 +1806,6 @@ components:
             type: array
             items:
               type: string
-    BulkObjectIdNoPassport:
-      type: object
-      description: The object that contains the DRS object IDs array
-      properties:
-        bulk_object_ids:
-          type: array
-          items:
-            type: string
-          description: An array of ObjectIDs.
     BulkObjectAccessId:
       type: object
       description: The object that contains object_id/access_id tuples
@@ -1830,8 +1821,10 @@ components:
             properties:
               bulk_object_id:
                 type: string
+                description: DRS object ID
               bulk_access_ids:
                 type: array
+                description: DRS object access ID
                 items:
                   type: string
     BulkAccessURL:
