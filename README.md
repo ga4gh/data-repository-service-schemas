@@ -1,8 +1,8 @@
-<img src="https://www.ga4gh.org/wp-content/themes/ga4gh-theme/gfx/GA-logo-horizontal-tag-RGB.svg" alt="GA4GH Logo" style="width: 400px;"/>
+<img src="https://www.ga4gh.org/wp-content/themes/ga4gh/dist/assets/svg/logos/logo-full-color.svg" alt="GA4GH Logo" style="width: 400px;"/>
 
 # Data Repository Service (DRS) API
 
-<sup>`develop` branch status: </sup>[![Build Status](https://travis-ci.org/ga4gh/data-repository-service-schemas.svg?branch=develop)](https://travis-ci.org/ga4gh/data-repository-service-schemas?branch=develop)
+<sup>`develop` branch status: </sup>[![Build Status](https://app.travis-ci.com/ga4gh/data-repository-service-schemas.svg?branch=develop)](https://app.travis-ci.com/ga4gh/data-repository-service-schemas.svg?branch=develop)
 <a href="https://ga4gh.github.io/data-repository-service-schemas/preview/develop/swagger.yaml"><img src="http://online.swagger.io/validator?url=https://ga4gh.github.io/data-repository-service-schemas/preview/develop/swagger.yaml" alt="Swagger Validator" height="20em" width="72em"></A> [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1405753.svg)](https://doi.org/10.5281/zenodo.1405753)
 
 The [Global Alliance for Genomics and Health](http://genomicsandhealth.org/) (GA4GH) is an international coalition, formed to enable the sharing of genomic and clinical data.

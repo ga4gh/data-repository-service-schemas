@@ -1,0 +1,14 @@
+description: The `DrsObjects` were found successfully
+content:
+  application/json:
+    schema:
+      type: object
+      properties:
+        summary:
+          $ref: '../schemas/summary.yaml'
+        unresolved_drs_objects:
+          $ref: '../schemas/unresolved.yaml'
+        resolved_drs_object:
+          type: array
+          items:
+            $ref: '../schemas/DrsObject.yaml'
