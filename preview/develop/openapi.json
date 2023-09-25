@@ -2,9 +2,9 @@
   "openapi": "3.0.3",
   "info": {
     "title": "Data Repository Service",
-    "version": "1.3.0",
+    "version": "1.4.0",
     "x-logo": {
-      "url": "https://www.ga4gh.org/wp-content/themes/ga4gh-theme/gfx/GA-logo-horizontal-tag-RGB.svg"
+      "url": "https://www.ga4gh.org/wp-content/themes/ga4gh/dist/assets/svg/logos/logo-full-color.svg"
     },
     "termsOfService": "https://www.ga4gh.org/terms-and-conditions/",
     "contact": {
@@ -107,7 +107,7 @@
     },
     {
       "name": "GA4GH Service Registry",
-      "description": "The [GA4GH Service Registry API specification](https://github.com/ga4gh-discovery/ga4gh-service-registry) allows information about GA4GH-compliant web services, including DRS services, to be aggregated into registries and made available via a standard API. The following considerations should be followed when registering DRS services within a service registry.\n\n* The DRS service attributes returned by `/service-info` (i.e. `id`, `name`, `description`, etc.) should have the same values as the registry entry for that service.\n* The value of the `type` object's `artifact` property should be `drs` (i.e. the same as it appears in `service-info`)\n* Each entry in a Service Registry must have a `url`, indicating the base URL to the web service. For DRS services, the registered `url` must include everything up to\nthe standardized `/ga4gh/drs/v1` path. Clients should be able to assume that:\n    + Adding `/ga4gh/drs/v1/objects/{object_id}` to the registered `url` will hit the `DrsObject` endpoint\n    + Adding `/ga4gh/drs/v1/service-info` to the registered `url` will hit the Service Info endpoint\n\nExample listing of a DRS API registration from a service registry's `/services` endpoint:\n\n```\n[\n    {\n        \"id\": \"com.example.drs\",\n        \"name\": \"Example DRS API\",\n        \"type\": {\n            \"group\": \"org.ga4gh\",\n            \"artifact\": \"drs\",\n            \"version\": \"1.3.0\"\n        },\n        \"description\": \"The Data Repository Service (DRS) API ...\",\n        \"organization\": {\n            \"id\": \"com.example\",\n            \"name\": \"Example Company\"\n        },\n        \"contactUrl\": \"mailto:support@example.com\",\n        \"documentationUrl\": \"https://docs.example.com/docs/drs\",\n        \"createdAt\": \"2021-08-09T00:00:00Z\",\n        \"updatedAt\": \"2021-08-09T12:30:00Z\",\n        \"environment\": \"production\",\n        \"version\": \"1.13.4\",\n        \"url\": \"https://drs-service.example.com\"\n    }\n]\n```\n"
+      "description": "The [GA4GH Service Registry API specification](https://github.com/ga4gh-discovery/ga4gh-service-registry) allows information about GA4GH-compliant web services, including DRS services, to be aggregated into registries and made available via a standard API. The following considerations should be followed when registering DRS services within a service registry.\n\n* The DRS service attributes returned by `/service-info` (i.e. `id`, `name`, `description`, etc.) should have the same values as the registry entry for that service.\n* The value of the `type` object's `artifact` property should be `drs` (i.e. the same as it appears in `service-info`)\n* Each entry in a Service Registry must have a `url`, indicating the base URL to the web service. For DRS services, the registered `url` must include everything up to\nthe standardized `/ga4gh/drs/v1` path. Clients should be able to assume that:\n    + Adding `/ga4gh/drs/v1/objects/{object_id}` to the registered `url` will hit the `DrsObject` endpoint\n    + Adding `/ga4gh/drs/v1/service-info` to the registered `url` will hit the Service Info endpoint\n\nExample listing of a DRS API registration from a service registry's `/services` endpoint:\n\n```\n[\n    {\n        \"id\": \"com.example.drs\",\n        \"name\": \"Example DRS API\",\n        \"type\": {\n            \"group\": \"org.ga4gh\",\n            \"artifact\": \"drs\",\n            \"version\": \"1.4.0\"\n        },\n        \"description\": \"The Data Repository Service (DRS) API ...\",\n        \"organization\": {\n            \"id\": \"com.example\",\n            \"name\": \"Example Company\"\n        },\n        \"contactUrl\": \"mailto:support@example.com\",\n        \"documentationUrl\": \"https://docs.example.com/docs/drs\",\n        \"createdAt\": \"2021-08-09T00:00:00Z\",\n        \"updatedAt\": \"2021-08-09T12:30:00Z\",\n        \"environment\": \"production\",\n        \"version\": \"1.13.4\",\n        \"url\": \"https://drs-service.example.com\"\n    }\n]\n```\n"
     }
   ],
   "x-tagGroups": [
@@ -292,6 +292,108 @@
         }
       }
     },
+    "/objects": {
+      "options": {
+        "summary": "Get Authorization info about multiple DrsObjects.",
+        "security": [
+          {}
+        ],
+        "description": "Returns a structure that contains for each DrsObjects a list of `Authorizations` that can be used to determine how to authorize requests to `GetObject` or `PostObject` (or bulk equivalents).",
+        "operationId": "OptionsBulkObject",
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/200OkBulkAuthorizations"
+          },
+          "204": {
+            "$ref": "#/components/responses/AuthorizationsNotSupported"
+          },
+          "400": {
+            "$ref": "#/components/responses/400BadRequest"
+          },
+          "404": {
+            "$ref": "#/components/responses/404NotFoundDrsObject"
+          },
+          "405": {
+            "$ref": "#/components/responses/AuthorizationsNotSupported"
+          },
+          "413": {
+            "$ref": "#/components/responses/413RequestTooLarge"
+          },
+          "500": {
+            "$ref": "#/components/responses/500InternalServerError"
+          }
+        },
+        "tags": [
+          "Objects"
+        ],
+        "x-swagger-router-controller": "ga4gh.drs.server",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "../components/parameters/BulkObjectIdNoPassport.yaml"
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "summary": "Get info about multiple DrsObjects with an optional Passport(s).",
+        "description": "Returns an array of object metadata, and a list of access methods that can be used to fetch objects' bytes.  Currently this is limited to use passports (one or more) or a single bearer token, so make sure your bulk request is for objects that all use the same passports/token.",
+        "operationId": "GetBulkObjects",
+        "security": [
+          {
+            "PassportAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Expand"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/200OkDrsObjects"
+          },
+          "202": {
+            "$ref": "#/components/responses/202Accepted"
+          },
+          "400": {
+            "$ref": "#/components/responses/400BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/401Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/403Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/404NotFoundDrsObject"
+          },
+          "413": {
+            "$ref": "#/components/responses/413RequestTooLarge"
+          },
+          "500": {
+            "$ref": "#/components/responses/500InternalServerError"
+          }
+        },
+        "tags": [
+          "Objects"
+        ],
+        "x-swagger-router-controller": "ga4gh.drs.server",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BulkObjectId"
+              }
+            }
+          }
+        }
+      }
+    },
     "/objects/{object_id}/access/{access_id}": {
       "get": {
         "summary": "Get a URL for fetching bytes",
@@ -379,6 +481,58 @@
         ],
         "requestBody": {
           "$ref": "#/components/requestBodies/Passports"
+        }
+      }
+    },
+    "/objects/access": {
+      "post": {
+        "summary": "Get URLs for fetching bytes from multiple objects with an optional Passport(s).",
+        "description": "Returns an array of URL objects that can be used to fetch the bytes of multiple `DrsObject`s.\nThis method only needs to be called when using an `AccessMethod` that contains an `access_id` (e.g., for servers that use signed URLs for fetching object bytes).\nCurrently this is limited to use passports (one or more) or a single bearer token, so make sure your bulk request is for objects that all use the same passports/token.",
+        "operationId": "GetBulkAccessURL",
+        "security": [
+          {
+            "PassportAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/200OkAccesses"
+          },
+          "202": {
+            "$ref": "#/components/responses/202Accepted"
+          },
+          "400": {
+            "$ref": "#/components/responses/400BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/401Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/403Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/404NotFoundAccess"
+          },
+          "413": {
+            "$ref": "#/components/responses/413RequestTooLarge"
+          },
+          "500": {
+            "$ref": "#/components/responses/500InternalServerError"
+          }
+        },
+        "tags": [
+          "Objects"
+        ],
+        "x-swagger-router-controller": "ga4gh.drs.server",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/BulkObjectAccessId"
+              }
+            }
+          }
         }
       }
     }
@@ -522,6 +676,11 @@
           "type"
         ],
         "properties": {
+          "maxBulkRequestLength": {
+            "type": "integer",
+            "required": true,
+            "description": "The max length the bullk request endpoints can handle (>= 1) before generating a 413 error e.g. how long can the arrays bulk_object_ids and bulk_object_access_ids be for this server."
+          },
           "type": {
             "type": "object",
             "required": [
@@ -594,6 +753,9 @@
       "Authorizations": {
         "type": "object",
         "properties": {
+          "drs_object_id": {
+            "type": "string"
+          },
           "supported_types": {
             "type": "array",
             "items": {
@@ -787,6 +949,120 @@
             "description": "A list of strings that can be used to find other metadata about this `DrsObject` from external metadata sources. These aliases can be used to represent secondary accession numbers or external GUIDs."
           }
         }
+      },
+      "BulkObjectId": {
+        "type": "object",
+        "description": "The object that contains the DRS object IDs array",
+        "properties": {
+          "passports": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJnYTRnaF9wYXNzcG9ydF92MSI6W119.JJ5rN0ktP0qwyZmIPpxmF_p7JsxAZH6L6brUxtad3CM"
+            },
+            "description": "the encoded JWT GA4GH Passport that contains embedded Visas.  The overall JWT is signed as are the individual Passport Visas."
+          },
+          "bulk_object_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "An array of ObjectIDs."
+          }
+        }
+      },
+      "summary": {
+        "type": "object",
+        "description": "A summary of what was resolved.",
+        "properties": {
+          "requested": {
+            "type": "integer",
+            "description": "Number of items requested."
+          },
+          "resolved": {
+            "type": "integer",
+            "description": "Number of objects resolved."
+          },
+          "unresolved": {
+            "type": "integer",
+            "description": "Number of objects not resolved."
+          }
+        }
+      },
+      "unresolved": {
+        "type": "array",
+        "description": "Error codes for each unresolved drs objects.",
+        "items": {
+          "type": "object",
+          "properties": {
+            "error_code": {
+              "type": "integer"
+            },
+            "object_ids": {
+              "type": "array",
+              "items": {
+                "type": "string"
+              }
+            }
+          }
+        }
+      },
+      "BulkObjectAccessId": {
+        "type": "object",
+        "description": "The object that contains object_id/access_id tuples",
+        "properties": {
+          "passports": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            }
+          },
+          "bulk_object_access_ids": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "bulk_object_id": {
+                  "type": "string",
+                  "description": "DRS object ID"
+                },
+                "bulk_access_ids": {
+                  "type": "array",
+                  "description": "DRS object access ID",
+                  "items": {
+                    "type": "string"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "BulkAccessURL": {
+        "type": "object",
+        "required": [
+          "url"
+        ],
+        "properties": {
+          "drs_object_id": {
+            "type": "string"
+          },
+          "drs_access_id": {
+            "type": "string"
+          },
+          "url": {
+            "type": "string",
+            "description": "A fully resolvable URL that can be used to fetch the actual object bytes."
+          },
+          "headers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "An optional list of headers to include in the HTTP request to `url`. These headers can be used to provide auth tokens required to fetch the object bytes.",
+            "example": "Authorization: Basic Z2E0Z2g6ZHJz"
+          }
+        }
       }
     },
     "responses": {
@@ -902,12 +1178,94 @@
       "AuthorizationsNotSupported": {
         "description": "`Authorizations` are not supported for this object. Default to `None`."
       },
+      "200OkDrsObjects": {
+        "description": "The `DrsObjects` were found successfully",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "summary": {
+                  "$ref": "#/components/schemas/summary"
+                },
+                "unresolved_drs_objects": {
+                  "$ref": "#/components/schemas/unresolved"
+                },
+                "resolved_drs_object": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DrsObject"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "413RequestTooLarge": {
+        "description": "The bulk request is too large.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            }
+          }
+        }
+      },
+      "200OkBulkAuthorizations": {
+        "description": "`Authorizations` were found successfully",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "summary": {
+                  "$ref": "#/components/schemas/summary"
+                },
+                "unresolved_drs_objects": {
+                  "$ref": "#/components/schemas/unresolved"
+                },
+                "resolved_drs_object": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Authorizations"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
       "200OkAccess": {
         "description": "The `AccessURL` was found successfully",
         "content": {
           "application/json": {
             "schema": {
               "$ref": "#/components/schemas/AccessURL"
+            }
+          }
+        }
+      },
+      "200OkAccesses": {
+        "description": "The `AccessURL` was found successfully",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "summary": {
+                  "$ref": "#/components/schemas/summary"
+                },
+                "unresolved_drs_objects": {
+                  "$ref": "#/components/schemas/unresolved"
+                },
+                "resolved_drs_object_access_urls": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/BulkAccessURL"
+                  }
+                }
+              }
             }
           }
         }
