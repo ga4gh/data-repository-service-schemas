@@ -1,5 +1,7 @@
 type: object
 properties:
+  drs_object_id:
+    type: string
   supported_types:
     type: array
     items:
