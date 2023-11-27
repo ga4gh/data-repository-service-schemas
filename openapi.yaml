@@ -1431,10 +1431,10 @@ components:
       type: object
       required:
         - type
+        - maxBulkRequestLength
       properties:
         maxBulkRequestLength:
           type: integer
-          required: true
           description: >-
             The max length the bullk request endpoints can handle (>= 1) before
             generating a 413 error e.g. how long can the arrays bulk_object_ids
