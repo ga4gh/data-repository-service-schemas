@@ -1586,6 +1586,12 @@ components:
             Name of the region in the cloud service provider that the object
             belongs to.
           example: us-east-1
+        storage:
+          type: string
+          description: >-
+            Type of storage of file in the cloud. Cold defines that this file is
+            not accessible as its in offline/archival storage.
+          example: cold
         authorizations:
           allOf:
             - $ref: '#/components/schemas/Authorizations'
