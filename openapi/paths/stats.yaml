@@ -18,4 +18,4 @@ get:
     500:
       $ref: '../components/responses/500InternalServerError.yaml'
   tags:
-    - Service Info
+    - Stats

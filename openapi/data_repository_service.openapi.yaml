@@ -95,6 +95,7 @@ x-tagGroups:
     tags:
       - Objects
       - Service Info
+      - Stats
   - name: Models
     tags:
       - AccessMethodModel
