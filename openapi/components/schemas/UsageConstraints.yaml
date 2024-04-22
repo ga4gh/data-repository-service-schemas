@@ -1,0 +1,14 @@
+type: object
+properties:
+  access_type:
+    type: string
+    enum: 
+      - cloud_exclusive
+      - cloud_provider_limited
+      - cloud_region_limited
+    description: represent the intended usage constraints
+  location_constraints:
+    type: object
+    items: 
+      $ref: 'LocationConstraints.yaml'
+    description: specifies cloud usage
