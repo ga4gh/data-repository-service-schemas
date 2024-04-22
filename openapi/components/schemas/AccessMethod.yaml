@@ -34,7 +34,7 @@ properties:
       - $ref: './Authorizations.yaml'
       - description: When `access_id` is provided, `authorizations` provides information about how to authorize the `/access` method.
   usage_constraints:
-    type: array
+    type: object
     items:
       - $ref: './UsageConstraints.yaml'
       - description: >-
