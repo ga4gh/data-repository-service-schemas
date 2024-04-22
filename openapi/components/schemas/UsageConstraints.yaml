@@ -12,5 +12,5 @@ properties:
   location_constraints:
     type: object
     items: 
-      $ref: 'LocationConstraints.yaml'
+      $ref: './LocationConstraints.yaml'
     description: specifies cloud usage
