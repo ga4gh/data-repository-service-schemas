@@ -33,3 +33,10 @@ properties:
     allOf:
       - $ref: './Authorizations.yaml'
       - description: When `access_id` is provided, `authorizations` provides information about how to authorize the `/access` method.
+  usage_constraints:
+	  type: array
+	  items:
+	  	$ref: ‘./UsageConstraints.yaml’
+	  description: >-
+		  This structured metadata allows data providers to clearly communicate their data access and usage policies, ensuring that users are aware of the intended constraints. It also enables data consumers to make informed decisions about how to handle and access the data. The specific values for access_type can be defined in the DRS specification, and they should correspond to the proposed usage policy options. This structure helps promote consistency and interoperability across different implementations of the DRS specification.
+
