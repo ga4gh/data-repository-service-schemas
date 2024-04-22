@@ -1,0 +1,14 @@
+type: object
+properties: 
+  cloud_provider:
+    type: string
+    enum: 
+      - aws
+      - gcp
+      - azure
+    description: specify cloud provider for compute
+  cloud_region:
+    type: array
+    items: string
+    description: specify cloud regions for compute
+    
