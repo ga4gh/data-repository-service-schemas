@@ -1,4 +1,6 @@
 type: object
+required: 
+  - cloud_provider
 properties: 
   cloud_provider:
     type: string
