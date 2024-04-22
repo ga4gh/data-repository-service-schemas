@@ -13,4 +13,5 @@ properties:
     type: array
     items: string
     description: specify cloud regions for compute
+    example: us-east-1
     
