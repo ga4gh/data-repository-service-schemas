@@ -1,9 +1,0 @@
-type: object
-description: A statistical summary of files in the DRS service
-properties:
-  fileCount:
-    type: integer
-    description: Number of files contained in DRS service
-  totalFileSize:
-    type: integer
-    description: Aggregate sum of file sizes in DRS service.

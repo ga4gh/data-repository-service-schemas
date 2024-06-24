@@ -1,6 +1,0 @@
-description: Retrieve statistics about the DRS service
-content:
-  application/json:
-    schema:
-      allOf:
-        - '$ref': '../schemas/DrsStats.yaml'

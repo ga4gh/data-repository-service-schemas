@@ -38,7 +38,6 @@ tags:
   # Operations
   - name: Objects
   - name: Service Info
-  - name: Stats
 
   # Models
   - name: AccessMethodModel
@@ -95,7 +94,6 @@ x-tagGroups:
     tags:
       - Objects
       - Service Info
-      - Stats
   - name: Models
     tags:
       - AccessMethodModel
@@ -123,8 +121,6 @@ paths:
     $ref: ./paths/objects@{object_id}@access@{access_id}.yaml
   /objects/access:
     $ref: ./paths/bulkobjects@access@{access_id}.yaml
-  /stats
-    $ref: ./paths/stats.yaml
 components:
   securitySchemes:
     BasicAuth:

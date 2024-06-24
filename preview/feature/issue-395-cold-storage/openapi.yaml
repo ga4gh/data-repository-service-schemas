@@ -1586,12 +1586,14 @@ components:
             Name of the region in the cloud service provider that the object
             belongs to.
           example: us-east-1
-        storage:
-          type: string
+        availability:
+          type: boolean
           description: >-
-            Type of storage of file in the cloud. Cold defines that this file is
-            not accessible as its in offline/archival storage.
-          example: cold
+            Availablity of file in the cloud. This label defines if this file is
+            immediately accessible via DRS. Any delay or requirement of thawing
+            mechanism if the file is in offline/archival storage is classified
+            as unavailable.
+          example: true
         authorizations:
           allOf:
             - $ref: '#/components/schemas/Authorizations'
