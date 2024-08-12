@@ -824,6 +824,11 @@
             "description": "Name of the region in the cloud service provider that the object belongs to.",
             "example": "us-east-1"
           },
+          "available": {
+            "type": "boolean",
+            "description": "Availablity of file in the cloud. This label defines if this file is immediately accessible via DRS. Any delay or requirement of thawing mechanism if the file is in offline/archival storage is classified as 0 or unavailable.",
+            "example": true
+          },
           "authorizations": {
             "allOf": [
               {
