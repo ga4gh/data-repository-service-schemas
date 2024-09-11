@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "Data Repository Service",
-    "version": "1.4.0",
+    "version": "1.5.0",
     "x-logo": {
       "url": "https://www.ga4gh.org/wp-content/themes/ga4gh/dist/assets/svg/logos/logo-full-color.svg"
     },
