@@ -153,7 +153,7 @@
     "/service-info": {
       "get": {
         "summary": "Retrieve information about this service",
-        "description": "Returns information about the DRS service\n\nExtends the\n[v1.0.0 GA4GH Service Info specification](https://github.com/ga4gh-discovery/ga4gh-service-info)\nas the standardized format for GA4GH web services to self-describe.\n\nAccording to the \n[service-info type registry](https://github.com/ga4gh/TASC/blob/master/service-info/ga4gh-service-info.json)\nmaintained by the [Technical Alignment Sub Committee (TASC)](https://github.com/ga4gh/TASC),\na DRS service MUST have:\n  * a `type.group` value of `org.ga4gh`\n  * a `type.artifact` value of `drs`\n\ne.g.\n```\n{\n    \"id\": \"com.example.drs\",\n    \"description\": \"Serves data according to DRS specification\",\n    ...\n    \"type\": {\n        \"group\": \"org.ga4gh\",\n        \"artifact\": \"drs\"\n    }\n    ...\n}\n```\n\nSee the [Service Registry Appendix](#tag/GA4GH-Service-Registry) for more information on how to register a DRS service with a service registry.",
+        "description": "Returns information about the DRS service along with stats pertaning to total object count and cumulative size in bytes.\n\nExtends the\n[v1.0.0 GA4GH Service Info specification](https://github.com/ga4gh-discovery/ga4gh-service-info)\nas the standardized format for GA4GH web services to self-describe.\n\nAccording to the \n[service-info type registry](https://github.com/ga4gh/TASC/blob/master/service-info/ga4gh-service-info.json)\nmaintained by the [Technical Alignment Sub Committee (TASC)](https://github.com/ga4gh/TASC),\na DRS service MUST have:\n  * a `type.group` value of `org.ga4gh`\n  * a `type.artifact` value of `drs`\n\ne.g.\n```\n{\n    \"id\": \"com.example.drs\",\n    \"description\": \"Serves data according to DRS specification\",\n    ...\n    \"type\": {\n        \"group\": \"org.ga4gh\",\n        \"artifact\": \"drs\",\n        \"version\": \"1.5\"\n    }\n    ...\n    \"stats\": {\n      \"objectCount\": 774560,\n      \"totalObjectSize\": 4018437188907752\n    }\n}\n```\n\nSee the [Service Registry Appendix](#tag/GA4GH-Service-Registry) for more information on how to register a DRS service with a service registry.",
         "operationId": "GetServiceInfo",
         "responses": {
           "200": {
@@ -680,6 +680,14 @@
           "maxBulkRequestLength": {
             "type": "integer",
             "description": "The max length the bullk request endpoints can handle (>= 1) before generating a 413 error e.g. how long can the arrays bulk_object_ids and bulk_object_access_ids be for this server."
+          },
+          "objectCount": {
+            "type": "integer",
+            "description": "The total number of objects in this DRS service."
+          },
+          "totalObjectSize": {
+            "type": "integer",
+            "description": "The total size of all objects in this DRS service in bytes.  As a general best practice, file bytes are counted for each unique file and not cloud mirrors or other redundant copies."
           },
           "type": {
             "type": "object",

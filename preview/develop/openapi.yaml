@@ -957,7 +957,8 @@ paths:
     get:
       summary: Retrieve information about this service
       description: >-
-        Returns information about the DRS service
+        Returns information about the DRS service along with stats pertaning to
+        total object count and cumulative size in bytes.
 
 
         Extends the
@@ -990,9 +991,14 @@ paths:
             ...
             "type": {
                 "group": "org.ga4gh",
-                "artifact": "drs"
+                "artifact": "drs",
+                "version": "1.5"
             }
             ...
+            "stats": {
+              "objectCount": 774560,
+              "totalObjectSize": 4018437188907752
+            }
         }
 
         ```
@@ -1439,6 +1445,15 @@ components:
             The max length the bullk request endpoints can handle (>= 1) before
             generating a 413 error e.g. how long can the arrays bulk_object_ids
             and bulk_object_access_ids be for this server.
+        objectCount:
+          type: integer
+          description: The total number of objects in this DRS service.
+        totalObjectSize:
+          type: integer
+          description: >-
+            The total size of all objects in this DRS service in bytes.  As a
+            general best practice, file bytes are counted for each unique file
+            and not cloud mirrors or other redundant copies.
         type:
           type: object
           required:
