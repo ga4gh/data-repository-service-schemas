@@ -819,6 +819,11 @@
             "type": "string",
             "description": "An arbitrary string to be passed to the `/access` method to get an `AccessURL`. This string must be unique within the scope of a single object. Note that at least one of `access_url` and `access_id` must be provided."
           },
+          "cloud": {
+            "type": "string",
+            "description": "Name of the cloud service provider that the object belongs to. If the cloud service is Amazon Web Services, Google Cloud Platform or Azure the values should be `aws`, `gcp`, or `azure` respectively.",
+            "example": "aws, gcp, or azure"
+          },
           "region": {
             "type": "string",
             "description": "Name of the region in the cloud service provider that the object belongs to.",
