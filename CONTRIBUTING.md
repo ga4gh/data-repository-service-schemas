@@ -44,7 +44,7 @@ Some general rules to follow:
 -   Create an issue in Github to track your work and start a conversation. Make a note of the number, you'll
     need it when naming your feature branch below.
 -   We follow [HubFlow](https://datasift.github.io/gitflow/)
-    (the HubFlow repo is deprecated, see this repo for the [instructions](https://github.com/wpsharks/hubflow)) which means we use
+    (the HubFlow repo is deprecated, see this forked repo for the preserved [instructions](https://github.com/wpsharks/hubflow)) which means we use
     a feature branch strategy with pull requests always going to `develop`
     and releases happening from `master`. **Please read the HubFlow guide linked above, it's a quick read and will give you a really good idea of how our branches work. Do not make pull requests to `master`!**
 -   If you are a core developer with write access to the repo, make a feature
