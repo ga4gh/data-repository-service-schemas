@@ -2,8 +2,8 @@
 
 # Data Repository Service (DRS) API
 
-<sup>`develop` branch status: </sup>[![Build Status](https://app.travis-ci.com/ga4gh/data-repository-service-schemas.svg?branch=develop)](https://app.travis-ci.com/ga4gh/data-repository-service-schemas.svg?branch=develop)
-<a href="https://ga4gh.github.io/data-repository-service-schemas/preview/develop/swagger.yaml"><img src="http://online.swagger.io/validator?url=https://ga4gh.github.io/data-repository-service-schemas/preview/develop/swagger.yaml" alt="Swagger Validator" height="20em" width="72em"></A> [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1405753.svg)](https://doi.org/10.5281/zenodo.1405753)
+<sup>`develop` branch status: </sup>[![Build Status](https://app.travis-ci.com/ga4gh/data-repository-service-schemas.svg?branch=develop)](https://app.travis-ci.com/github/ga4gh/data-repository-service-schemas/builds)
+<a href="https://editor.swagger.io/?url=https://ga4gh.github.io/data-repository-service-schemas/preview/develop/openapi.yaml"><img src="https://validator.swagger.io/validator?url=https://ga4gh.github.io/data-repository-service-schemas/preview/develop/openapi.yaml" alt="Swagger Validator" height="20em" width="72em"></A> [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1405753.svg)](https://doi.org/10.5281/zenodo.1405753)
 
 The [Global Alliance for Genomics and Health](http://genomicsandhealth.org/) (GA4GH) is an international coalition, formed to enable the sharing of genomic and clinical data.
 
