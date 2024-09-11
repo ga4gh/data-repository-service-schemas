@@ -1,7 +1,7 @@
 get:
   summary: Retrieve information about this service
   description: |-
-    Returns information about the DRS service along with stats pertaning to total object count and cumulative size in bytes.
+    Returns information about the DRS service
 
     Extends the
     [v1.0.0 GA4GH Service Info specification](https://github.com/ga4gh-discovery/ga4gh-service-info)
@@ -22,14 +22,9 @@ get:
         ...
         "type": {
             "group": "org.ga4gh",
-            "artifact": "drs",
-            "version": "1.5"
+            "artifact": "drs"
         }
         ...
-        "stats": {
-          "objectCount": 774560,
-          "totalObjectSize": 4018437188907752
-        }
     }
     ```
 
