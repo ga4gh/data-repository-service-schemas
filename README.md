@@ -2,8 +2,8 @@
 
 # Data Repository Service (DRS) API
 
-<sup>`develop` branch status: </sup>[![Build Status](https://app.travis-ci.com/ga4gh/data-repository-service-schemas.svg?branch=develop)](https://app.travis-ci.com/ga4gh/data-repository-service-schemas.svg?branch=develop)
-<a href="https://ga4gh.github.io/data-repository-service-schemas/preview/develop/swagger.yaml"><img src="http://online.swagger.io/validator?url=https://ga4gh.github.io/data-repository-service-schemas/preview/develop/swagger.yaml" alt="Swagger Validator" height="20em" width="72em"></A> [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1405753.svg)](https://doi.org/10.5281/zenodo.1405753)
+<sup>`develop` branch status: </sup>[![Build Status](https://app.travis-ci.com/ga4gh/data-repository-service-schemas.svg?branch=develop)](https://app.travis-ci.com/github/ga4gh/data-repository-service-schemas/builds)
+<a href="https://editor.swagger.io/?url=https://ga4gh.github.io/data-repository-service-schemas/preview/develop/openapi.yaml"><img src="https://validator.swagger.io/validator?url=https://ga4gh.github.io/data-repository-service-schemas/preview/develop/openapi.yaml" alt="Swagger Validator" height="20em" width="72em"></A> [![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.1405753.svg)](https://doi.org/10.5281/zenodo.1405753)
 
 The [Global Alliance for Genomics and Health](http://genomicsandhealth.org/) (GA4GH) is an international coalition, formed to enable the sharing of genomic and clinical data.
 
@@ -26,6 +26,7 @@ For more information see our HTML documentation links in the table below.
 |  **Branch** | **Reference Documentation** | Swagger Editor |
 | --- | --- | --- |
 | **develop**: the stable development branch, into which feature branches are merged | [HTML](https://ga4gh.github.io/data-repository-service-schemas/preview/develop/docs/) | [Swagger Editor](https://editor.swagger.io?url=https://ga4gh.github.io/data-repository-service-schemas/preview/develop/openapi.yaml) |
+| **release 1.5.0**: The 1.5.0 release of DRS adds fields for indicating cold storage, explict cloud locations, object count and size metadata, and best practice guidance for using GA4GH Data Connect with DRS. | [HTML](https://ga4gh.github.io/data-repository-service-schemas/preview/release/drs-1.5.0/docs/) | [Swagger Editor](https://editor.swagger.io?url=https://ga4gh.github.io/data-repository-service-schemas/preview/release/drs-1.5.0/openapi.yaml) |
 | **release 1.4.0**: The 1.4.0 release of DRS adds bulk operations. | [HTML](https://ga4gh.github.io/data-repository-service-schemas/preview/release/drs-1.4.0/docs/) | [Swagger Editor](https://editor.swagger.io?url=https://ga4gh.github.io/data-repository-service-schemas/preview/release/drs-1.4.0/openapi.yaml) |
 | **release 1.3.0**: The 1.3.0 release of DRS adds the ability to use the options request method to return the auth issuers for a specific DRS object. | [HTML](https://ga4gh.github.io/data-repository-service-schemas/preview/release/drs-1.3.0/docs/) | [Swagger Editor](https://editor.swagger.io?url=https://ga4gh.github.io/data-repository-service-schemas/preview/release/drs-1.3.0/openapi.yaml) |
 | **release 1.2.0**: The 1.2.0 release of DRS adds the standardized `/service-info` endpoint, and 2 `POST` endpoints that are functionally equivalent to the current `GET` endpoints, but they enable the submission of large passport tokens in the request body. | [HTML](https://ga4gh.github.io/data-repository-service-schemas/preview/release/drs-1.2.0/docs/) | [Swagger Editor](https://editor.swagger.io?url=https://ga4gh.github.io/data-repository-service-schemas/preview/release/drs-1.2.0/openapi.yaml) |

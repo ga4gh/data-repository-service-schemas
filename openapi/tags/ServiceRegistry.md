@@ -17,7 +17,7 @@ Example listing of a DRS API registration from a service registry's `/services` 
         "type": {
             "group": "org.ga4gh",
             "artifact": "drs",
-            "version": "1.4.0"
+            "version": "1.5.0"
         },
         "description": "The Data Repository Service (DRS) API ...",
         "organization": {

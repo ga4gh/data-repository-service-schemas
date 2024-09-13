@@ -5,16 +5,16 @@
     "redocTheme": "ga4gh",
     "buildPages": [
         {
-            "apiSpecPath": "openapi/data_repository_service.openapi.yaml",
-            "htmlOutfile": "index.html",
-            "yamlOutfile": "openapi.yaml",
-            "jsonOutfile": "openapi.json"
-        },
-        {
             "apiSpecPath": "pages/more-background-on-compact-identifiers/openapi.yaml",
             "htmlOutfile": "more-background-on-compact-identifiers.html",
             "yamlOutfile": "more-background-on-compact-identifiers.yaml",
             "jsonOutfile": "more-background-on-compact-identifiers.json"
+        },
+        {
+            "apiSpecPath": "openapi/data_repository_service.openapi.yaml",
+            "htmlOutfile": "index.html",
+            "yamlOutfile": "openapi.yaml",
+            "jsonOutfile": "openapi.json"
         }
     ]
 }
