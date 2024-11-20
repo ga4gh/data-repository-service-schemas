@@ -99,3 +99,4 @@ docs/asciidoc/swagger2markup/
 spec/
 web_deploy/
 node_modules/
+publish/
