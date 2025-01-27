@@ -27,6 +27,7 @@ get:
         }
         ...
         "drs":{
+          "maxBulkRequestLength": 200,
           "stats": {
             "objectCount": 774560,
             "totalObjectSize": 4018437188907752
