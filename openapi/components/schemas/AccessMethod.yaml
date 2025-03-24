@@ -39,7 +39,7 @@ properties:
     type: boolean
     description: >-
       Availablity of file in the cloud.
-      This label defines if this file is immediately accessible via DRS. Any delay or requirement of thawing mechanism if the file is in offline/archival storage is classified as 0 or unavailable.
+      This label defines if this file is immediately accessible via DRS. Any delay or requirement of thawing mechanism if the file is in offline/archival storage is classified as false, meaning it is unavailable.
     example: true
   authorizations:
     allOf:
