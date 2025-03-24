@@ -24,6 +24,12 @@ properties:
       An arbitrary string to be passed to the `/access` method to get an `AccessURL`.
       This string must be unique within the scope of a single object.
       Note that at least one of `access_url` and `access_id` must be provided.
+  cloud:
+    type: string
+    description: >-
+      Name of the cloud service provider that the object belongs to.
+      If the cloud service is Amazon Web Services, Google Cloud Platform or Azure the values should be `aws`, `gcp`, or `azure` respectively.
+    example: aws, gcp, or azure
   region:
     type: string
     description: >-
@@ -33,7 +39,7 @@ properties:
     type: boolean
     description: >-
       Availablity of file in the cloud.
-      This label defines if this file is immediately accessible via DRS. Any delay or requirement of thawing mechanism if the file is in offline/archival storage is classified as 0 or unavailable.
+      This label defines if this file is immediately accessible via DRS. Any delay or requirement of thawing mechanism if the file is in offline/archival storage is classified as false, meaning it is unavailable.
     example: true
   authorizations:
     allOf:
