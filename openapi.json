@@ -2,7 +2,7 @@
   "openapi": "3.0.3",
   "info": {
     "title": "Data Repository Service",
-    "version": "1.4.0",
+    "version": "1.5.0",
     "x-logo": {
       "url": "https://www.ga4gh.org/wp-content/themes/ga4gh/dist/assets/svg/logos/logo-full-color.svg"
     },
@@ -107,7 +107,7 @@
     },
     {
       "name": "GA4GH Service Registry",
-      "description": "The [GA4GH Service Registry API specification](https://github.com/ga4gh-discovery/ga4gh-service-registry) allows information about GA4GH-compliant web services, including DRS services, to be aggregated into registries and made available via a standard API. The following considerations should be followed when registering DRS services within a service registry.\n\n* The DRS service attributes returned by `/service-info` (i.e. `id`, `name`, `description`, etc.) should have the same values as the registry entry for that service.\n* The value of the `type` object's `artifact` property should be `drs` (i.e. the same as it appears in `service-info`)\n* Each entry in a Service Registry must have a `url`, indicating the base URL to the web service. For DRS services, the registered `url` must include everything up to\nthe standardized `/ga4gh/drs/v1` path. Clients should be able to assume that:\n    + Adding `/ga4gh/drs/v1/objects/{object_id}` to the registered `url` will hit the `DrsObject` endpoint\n    + Adding `/ga4gh/drs/v1/service-info` to the registered `url` will hit the Service Info endpoint\n\nExample listing of a DRS API registration from a service registry's `/services` endpoint:\n\n```\n[\n    {\n        \"id\": \"com.example.drs\",\n        \"name\": \"Example DRS API\",\n        \"type\": {\n            \"group\": \"org.ga4gh\",\n            \"artifact\": \"drs\",\n            \"version\": \"1.4.0\"\n        },\n        \"description\": \"The Data Repository Service (DRS) API ...\",\n        \"organization\": {\n            \"id\": \"com.example\",\n            \"name\": \"Example Company\"\n        },\n        \"contactUrl\": \"mailto:support@example.com\",\n        \"documentationUrl\": \"https://docs.example.com/docs/drs\",\n        \"createdAt\": \"2021-08-09T00:00:00Z\",\n        \"updatedAt\": \"2021-08-09T12:30:00Z\",\n        \"environment\": \"production\",\n        \"version\": \"1.13.4\",\n        \"url\": \"https://drs-service.example.com\"\n    }\n]\n```\n"
+      "description": "The [GA4GH Service Registry API specification](https://github.com/ga4gh-discovery/ga4gh-service-registry) allows information about GA4GH-compliant web services, including DRS services, to be aggregated into registries and made available via a standard API. The following considerations should be followed when registering DRS services within a service registry.\n\n* The DRS service attributes returned by `/service-info` (i.e. `id`, `name`, `description`, etc.) should have the same values as the registry entry for that service.\n* The value of the `type` object's `artifact` property should be `drs` (i.e. the same as it appears in `service-info`)\n* Each entry in a Service Registry must have a `url`, indicating the base URL to the web service. For DRS services, the registered `url` must include everything up to\nthe standardized `/ga4gh/drs/v1` path. Clients should be able to assume that:\n    + Adding `/ga4gh/drs/v1/objects/{object_id}` to the registered `url` will hit the `DrsObject` endpoint\n    + Adding `/ga4gh/drs/v1/service-info` to the registered `url` will hit the Service Info endpoint\n\nExample listing of a DRS API registration from a service registry's `/services` endpoint:\n\n```\n[\n    {\n        \"id\": \"com.example.drs\",\n        \"name\": \"Example DRS API\",\n        \"type\": {\n            \"group\": \"org.ga4gh\",\n            \"artifact\": \"drs\",\n            \"version\": \"1.5.0\"\n        },\n        \"description\": \"The Data Repository Service (DRS) API ...\",\n        \"organization\": {\n            \"id\": \"com.example\",\n            \"name\": \"Example Company\"\n        },\n        \"contactUrl\": \"mailto:support@example.com\",\n        \"documentationUrl\": \"https://docs.example.com/docs/drs\",\n        \"createdAt\": \"2021-08-09T00:00:00Z\",\n        \"updatedAt\": \"2021-08-09T12:30:00Z\",\n        \"environment\": \"production\",\n        \"version\": \"1.13.4\",\n        \"url\": \"https://drs-service.example.com\"\n    }\n]\n```\n"
     }
   ],
   "x-tagGroups": [
@@ -153,7 +153,7 @@
     "/service-info": {
       "get": {
         "summary": "Retrieve information about this service",
-        "description": "Returns information about the DRS service\n\nExtends the\n[v1.0.0 GA4GH Service Info specification](https://github.com/ga4gh-discovery/ga4gh-service-info)\nas the standardized format for GA4GH web services to self-describe.\n\nAccording to the \n[service-info type registry](https://github.com/ga4gh/TASC/blob/master/service-info/ga4gh-service-info.json)\nmaintained by the [Technical Alignment Sub Committee (TASC)](https://github.com/ga4gh/TASC),\na DRS service MUST have:\n  * a `type.group` value of `org.ga4gh`\n  * a `type.artifact` value of `drs`\n\ne.g.\n```\n{\n    \"id\": \"com.example.drs\",\n    \"description\": \"Serves data according to DRS specification\",\n    ...\n    \"type\": {\n        \"group\": \"org.ga4gh\",\n        \"artifact\": \"drs\"\n    }\n    ...\n}\n```\n\nSee the [Service Registry Appendix](#tag/GA4GH-Service-Registry) for more information on how to register a DRS service with a service registry.",
+        "description": "Returns information about the DRS service along with stats pertaning to total object count and cumulative size in bytes.\n\nExtends the\n[v1.0.0 GA4GH Service Info specification](https://github.com/ga4gh-discovery/ga4gh-service-info)\nas the standardized format for GA4GH web services to self-describe.\n\nAccording to the \n[service-info type registry](https://github.com/ga4gh/TASC/blob/master/service-info/ga4gh-service-info.json)\nmaintained by the [Technical Alignment Sub Committee (TASC)](https://github.com/ga4gh/TASC),\na DRS service MUST have:\n  * a `type.group` value of `org.ga4gh`\n  * a `type.artifact` value of `drs`\n\ne.g.\n```\n{\n    \"id\": \"com.example.drs\",\n    \"description\": \"Serves data according to DRS specification\",\n    ...\n    \"type\": {\n        \"group\": \"org.ga4gh\",\n        \"artifact\": \"drs\",\n        \"version\": \"1.5\"\n    }\n    ...\n    \"drs\":{\n      \"maxBulkRequestLength\": 200,\n      \"stats\": {\n        \"objectCount\": 774560,\n        \"totalObjectSize\": 4018437188907752\n      }\n    }\n}\n```\n\nSee the [Service Registry Appendix](#tag/GA4GH-Service-Registry) for more information on how to register a DRS service with a service registry.",
         "operationId": "GetServiceInfo",
         "responses": {
           "200": {
@@ -332,7 +332,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "../components/parameters/BulkObjectIdNoPassport.yaml"
+                "$ref": "#/components/schemas/BulkObjectIdNoPassport"
               }
             }
           }
@@ -679,7 +679,7 @@
         "properties": {
           "maxBulkRequestLength": {
             "type": "integer",
-            "description": "The max length the bullk request endpoints can handle (>= 1) before generating a 413 error e.g. how long can the arrays bulk_object_ids and bulk_object_access_ids be for this server."
+            "description": "DEPRECATED - In 2.0 this will move to under the drs section of service info and not at the root level. The max length the bulk request endpoints can handle (>= 1) before generating a 413 error e.g. how long can the arrays bulk_object_ids and bulk_object_access_ids be for this server."
           },
           "type": {
             "type": "object",
@@ -693,6 +693,26 @@
                   "drs"
                 ],
                 "example": "drs"
+              }
+            }
+          },
+          "drs": {
+            "type": "object",
+            "required": [
+              "maxBulkRequestLength"
+            ],
+            "properties": {
+              "maxBulkRequestLength": {
+                "type": "integer",
+                "description": "The max length the bulk request endpoints can handle (>= 1) before generating a 413 error e.g. how long can the arrays bulk_object_ids and bulk_object_access_ids be for this server."
+              },
+              "objectCount": {
+                "type": "integer",
+                "description": "The total number of objects in this DRS service."
+              },
+              "totalObjectSize": {
+                "type": "integer",
+                "description": "The total size of all objects in this DRS service in bytes.  As a general best practice, file bytes are counted for each unique file and not cloud mirrors or other redundant copies."
               }
             }
           }
@@ -819,6 +839,11 @@
             "type": "string",
             "description": "An arbitrary string to be passed to the `/access` method to get an `AccessURL`. This string must be unique within the scope of a single object. Note that at least one of `access_url` and `access_id` must be provided."
           },
+          "cloud": {
+            "type": "string",
+            "description": "Name of the cloud service provider that the object belongs to. If the cloud service is Amazon Web Services, Google Cloud Platform or Azure the values should be `aws`, `gcp`, or `azure` respectively.",
+            "example": "aws, gcp, or azure"
+          },
           "region": {
             "type": "string",
             "description": "Name of the region in the cloud service provider that the object belongs to.",
@@ -826,7 +851,7 @@
           },
           "available": {
             "type": "boolean",
-            "description": "Availablity of file in the cloud. This label defines if this file is immediately accessible via DRS. Any delay or requirement of thawing mechanism if the file is in offline/archival storage is classified as 0 or unavailable.",
+            "description": "Availablity of file in the cloud. This label defines if this file is immediately accessible via DRS. Any delay or requirement of thawing mechanism if the file is in offline/archival storage is classified as false, meaning it is unavailable.",
             "example": true
           },
           "authorizations": {
@@ -1009,6 +1034,19 @@
                 "type": "string"
               }
             }
+          }
+        }
+      },
+      "BulkObjectIdNoPassport": {
+        "type": "object",
+        "description": "The object that contains the DRS object IDs array",
+        "properties": {
+          "bulk_object_ids": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "An array of ObjectIDs."
           }
         }
       },

@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
   title: Data Repository Service
-  version: 1.4.0
+  version: 1.5.0
   x-logo:
     url: >-
       https://www.ga4gh.org/wp-content/themes/ga4gh/dist/assets/svg/logos/logo-full-color.svg
@@ -908,7 +908,7 @@ tags:
               "type": {
                   "group": "org.ga4gh",
                   "artifact": "drs",
-                  "version": "1.4.0"
+                  "version": "1.5.0"
               },
               "description": "The Data Repository Service (DRS) API ...",
               "organization": {
@@ -957,7 +957,8 @@ paths:
     get:
       summary: Retrieve information about this service
       description: >-
-        Returns information about the DRS service
+        Returns information about the DRS service along with stats pertaning to
+        total object count and cumulative size in bytes.
 
 
         Extends the
@@ -990,9 +991,17 @@ paths:
             ...
             "type": {
                 "group": "org.ga4gh",
-                "artifact": "drs"
+                "artifact": "drs",
+                "version": "1.5"
             }
             ...
+            "drs":{
+              "maxBulkRequestLength": 200,
+              "stats": {
+                "objectCount": 774560,
+                "totalObjectSize": 4018437188907752
+              }
+            }
         }
 
         ```
@@ -1129,7 +1138,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: ../components/parameters/BulkObjectIdNoPassport.yaml
+              $ref: '#/components/schemas/BulkObjectIdNoPassport'
     post:
       summary: Get info about multiple DrsObjects with an optional Passport(s).
       description: >-
@@ -1436,9 +1445,11 @@ components:
         maxBulkRequestLength:
           type: integer
           description: >-
-            The max length the bullk request endpoints can handle (>= 1) before
-            generating a 413 error e.g. how long can the arrays bulk_object_ids
-            and bulk_object_access_ids be for this server.
+            DEPRECATED - In 2.0 this will move to under the drs section of
+            service info and not at the root level. The max length the bulk
+            request endpoints can handle (>= 1) before generating a 413 error
+            e.g. how long can the arrays bulk_object_ids and
+            bulk_object_access_ids be for this server.
         type:
           type: object
           required:
@@ -1449,6 +1460,26 @@ components:
               enum:
                 - drs
               example: drs
+        drs:
+          type: object
+          required:
+            - maxBulkRequestLength
+          properties:
+            maxBulkRequestLength:
+              type: integer
+              description: >-
+                The max length the bulk request endpoints can handle (>= 1)
+                before generating a 413 error e.g. how long can the arrays
+                bulk_object_ids and bulk_object_access_ids be for this server.
+            objectCount:
+              type: integer
+              description: The total number of objects in this DRS service.
+            totalObjectSize:
+              type: integer
+              description: >-
+                The total size of all objects in this DRS service in bytes.  As
+                a general best practice, file bytes are counted for each unique
+                file and not cloud mirrors or other redundant copies.
     Error:
       type: object
       description: An object that can optionally include information about the error.
@@ -1580,6 +1611,13 @@ components:
             `AccessURL`. This string must be unique within the scope of a single
             object. Note that at least one of `access_url` and `access_id` must
             be provided.
+        cloud:
+          type: string
+          description: >-
+            Name of the cloud service provider that the object belongs to. If
+            the cloud service is Amazon Web Services, Google Cloud Platform or
+            Azure the values should be `aws`, `gcp`, or `azure` respectively.
+          example: aws, gcp, or azure
         region:
           type: string
           description: >-
@@ -1592,7 +1630,7 @@ components:
             Availablity of file in the cloud. This label defines if this file is
             immediately accessible via DRS. Any delay or requirement of thawing
             mechanism if the file is in offline/archival storage is classified
-            as 0 or unavailable.
+            as false, meaning it is unavailable.
           example: true
         authorizations:
           allOf:
@@ -1814,6 +1852,15 @@ components:
             type: array
             items:
               type: string
+    BulkObjectIdNoPassport:
+      type: object
+      description: The object that contains the DRS object IDs array
+      properties:
+        bulk_object_ids:
+          type: array
+          items:
+            type: string
+          description: An array of ObjectIDs.
     BulkObjectAccessId:
       type: object
       description: The object that contains object_id/access_id tuples
