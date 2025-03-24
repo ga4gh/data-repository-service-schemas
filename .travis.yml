@@ -23,10 +23,13 @@ jobs:
         - npm install -g @ga4gh/gh-openapi-docs@0.2.2-rc3
       script:
         - gh-openapi-docs
+      before_deploy:
+        - gem install bundler
       deploy:
-        provider: pages
-        skip_cleanup: true
+        provider: pages:git
+        cleanup: false
         keep_history: true
-        github-token: $GITHUB_TOKEN
+        token: $GITHUB_TOKEN
+        edge: true
         on:
           all_branches: true
