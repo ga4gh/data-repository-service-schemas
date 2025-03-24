@@ -1475,8 +1475,8 @@ components:
             totalObjectSize:
               type: integer
               description: >-
-                he total size of all objects in this DRS service in bytes.  As a
-                general best practice, file bytes are counted for each unique
+                The total size of all objects in this DRS service in bytes.  As
+                a general best practice, file bytes are counted for each unique
                 file and not cloud mirrors or other redundant copies.
     Error:
       type: object
@@ -1628,7 +1628,7 @@ components:
             Availablity of file in the cloud. This label defines if this file is
             immediately accessible via DRS. Any delay or requirement of thawing
             mechanism if the file is in offline/archival storage is classified
-            as 0 or unavailable.
+            as false, meaning it is unavailable.
           example: true
         authorizations:
           allOf:
