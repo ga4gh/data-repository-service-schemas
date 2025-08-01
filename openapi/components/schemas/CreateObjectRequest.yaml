@@ -1,0 +1,43 @@
+type: object
+required:
+  - size
+  - checksums
+  - target_storage_location
+properties:
+  name:
+    type: string
+    description: |-
+      A string that can be used to name a `DrsObject`.
+      This string is made up of uppercase and lowercase letters, decimal digits, hyphen, period, and underscore [A-Za-z0-9.-_]. See http://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap03.html#tag_03_282[portable filenames].
+    example: "sample-data.bam"
+  size:
+    type: integer
+    format: int64
+    description: Size of the object in bytes
+    example: 1073741824
+  checksums:
+    type: array
+    items:
+      $ref: './Checksum.yaml'
+    minItems: 1
+    description: The checksums of the object. At least one checksum must be provided.
+  target_storage_location:
+    type: string
+    description: The storage location where this object should be uploaded
+    example: "us-east-1-s3"
+  description:
+    type: string
+    description: A human readable description of the object
+    example: "Sample BAM file from analysis pipeline"
+  mime_type:
+    type: string
+    description: A string providing the mime-type of the object
+    example: "application/octet-stream"
+  aliases:
+    type: array
+    items:
+      type: string
+    description: A list of strings that can be used to find other metadata about this object from external metadata sources
+  version:
+    type: string
+    description: A string representing a version of this object

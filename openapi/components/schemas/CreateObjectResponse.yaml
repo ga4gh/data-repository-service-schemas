@@ -1,0 +1,26 @@
+type: object
+required:
+  - object
+  - upload_url
+properties:
+  object:
+    allOf:
+      - $ref: './DrsObject.yaml'
+      - type: object
+        properties:
+          state:
+            type: string
+            enum:
+              - pending
+              - uploading
+              - available
+              - failed
+              - deleted
+            description: Current state of the DRS object
+            example: "pending"
+          target_storage_location:
+            type: string
+            description: The target storage location for this object
+            example: "us-east-1-s3"
+  upload_url:
+    $ref: './UploadURL.yaml'

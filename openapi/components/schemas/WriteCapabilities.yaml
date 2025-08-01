@@ -1,0 +1,28 @@
+type: object
+required:
+  - supported
+properties:
+  supported:
+    type: boolean
+    description: Whether this server supports write operations
+    example: true
+  storage_locations:
+    type: array
+    items:
+      $ref: './StorageLocation.yaml'
+    description: Available storage locations for write operations
+  max_object_size:
+    type: integer
+    format: int64
+    description: Maximum size in bytes for uploaded objects (null means no limit)
+    example: 5497558138880
+  supported_checksums:
+    type: array
+    items:
+      type: string
+    description: Supported checksum algorithms for validation
+    example: ["md5", "sha256", "crc32c"]
+  upload_url_ttl:
+    type: integer
+    description: Default time-to-live for upload URLs in seconds
+    example: 3600
