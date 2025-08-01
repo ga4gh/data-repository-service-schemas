@@ -1,0 +1,39 @@
+type: object
+required:
+  - storage_location_id
+  - url
+  - method
+properties:
+  storage_location_id:
+    type: string
+    description: The storage location this upload URL corresponds to
+    example: "us-east-1-s3"
+  url:
+    type: string
+    format: uri
+    description: Presigned URL for direct upload to storage backend
+    example: "https://s3.amazonaws.com/bucket/abc123?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=..."
+  method:
+    type: string
+    enum:
+      - PUT
+      - POST
+    description: HTTP method to use for upload
+    example: "PUT"
+  headers:
+    type: object
+    additionalProperties:
+      type: string
+    description: Required headers for the upload request
+    example:
+      Content-Type: "application/octet-stream"
+  expires:
+    type: string
+    format: date-time
+    description: When this upload URL expires
+    example: "2025-08-01T11:00:00Z"
+  form_data:
+    type: object
+    additionalProperties:
+      type: string
+    description: Form data fields required for POST uploads (used with some cloud storage multipart uploads)

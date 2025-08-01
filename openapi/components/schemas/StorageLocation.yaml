@@ -1,0 +1,38 @@
+type: object
+required:
+  - id
+  - type
+properties:
+  id:
+    type: string
+    description: Unique identifier for this storage location
+    example: "us-east-1-s3"
+  type:
+    type: string
+    enum:
+      - s3
+      - gs
+      - azure
+      - file
+      - ftp
+      - gsiftp
+      - globus
+      - https
+    description: Storage backend type
+    example: "s3"
+  region:
+    type: string
+    description: Geographic region or availability zone
+    example: "us-east-1"
+  description:
+    type: string
+    description: Human-readable description of this storage location
+    example: "AWS S3 US East 1"
+  public:
+    type: boolean
+    description: Whether this location allows public read access without authentication
+    example: false
+  endpoint:
+    type: string
+    description: Custom endpoint URL for this storage location (for non-standard cloud providers)
+    example: "https://s3.us-east-1.amazonaws.com"

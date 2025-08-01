@@ -82,3 +82,74 @@ post:
     - $ref: '../components/parameters/ObjectId.yaml'
   requestBody:
     $ref: '../components/requestBodies/PostObjectBody.yaml'
+
+put:
+  summary: Update a DRS object
+  description: |-
+    Update a DRS object's metadata. If size, checksums, or target_storage_location are changed,
+    this triggers a content update and the object will transition to 'pending' state with new upload URLs provided.
+    Metadata-only updates (name, description, etc.) do not change the object state.
+  operationId: UpdateObject
+  tags:
+    - Objects
+  parameters:
+    - $ref: '../components/parameters/ObjectId.yaml'
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: '../components/schemas/UpdateObjectRequest.yaml'
+    required: true
+  responses:
+    '200':
+      description: The DRS object was successfully updated (metadata only)
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/DrsObject.yaml'
+    '201':
+      description: The DRS object update requires content change - upload URL provided
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/CreateObjectResponse.yaml'
+    '400':
+      $ref: '../components/responses/400BadRequest.yaml'
+    '401':
+      $ref: '../components/responses/401Unauthorized.yaml'
+    '403':
+      $ref: '../components/responses/403Forbidden.yaml'
+    '404':
+      $ref: '../components/responses/404NotFoundDrsObject.yaml'
+    '413':
+      $ref: '../components/responses/413RequestTooLarge.yaml'
+    '500':
+      $ref: '../components/responses/500InternalServerError.yaml'
+  security:
+    - BearerAuth: []
+    - BasicAuth: []
+
+delete:
+  summary: Delete a DRS object
+  description: |-
+    Delete a DRS object and all associated data from storage locations.
+    This operation is irreversible.
+  operationId: DeleteObject
+  tags:
+    - Objects
+  parameters:
+    - $ref: '../components/parameters/ObjectId.yaml'
+  responses:
+    '204':
+      description: The DRS object was successfully deleted
+    '401':
+      $ref: '../components/responses/401Unauthorized.yaml'
+    '403':
+      $ref: '../components/responses/403Forbidden.yaml'
+    '404':
+      $ref: '../components/responses/404NotFoundDrsObject.yaml'
+    '500':
+      $ref: '../components/responses/500InternalServerError.yaml'
+  security:
+    - BearerAuth: []
+    - BasicAuth: []

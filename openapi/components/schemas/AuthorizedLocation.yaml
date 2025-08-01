@@ -1,0 +1,29 @@
+type: object
+required:
+  - storage_location_id
+  - permissions
+properties:
+  storage_location_id:
+    type: string
+    description: The storage location identifier this authorization applies to
+    example: "us-east-1-s3"
+  permissions:
+    type: array
+    items:
+      type: string
+      enum:
+        - create
+        - update
+        - delete
+    description: Write permissions granted for this storage location
+    example: ["create", "update", "delete"]
+  quota_remaining:
+    type: integer
+    format: int64
+    description: Remaining storage quota in bytes for this location (null means no quota limit)
+    example: 1073741824000
+  quota_total:
+    type: integer
+    format: int64
+    description: Total storage quota in bytes for this location
+    example: 5497558138880

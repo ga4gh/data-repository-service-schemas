@@ -1,0 +1,34 @@
+post:
+  summary: Create a new DRS object
+  description: |-
+    Initialize a new DRS object with metadata and receive upload URLs for the target storage location.
+    The object will be in 'pending' state until finalized after successful upload.
+  operationId: CreateObject
+  tags:
+    - Objects
+  requestBody:
+    content:
+      application/json:
+        schema:
+          $ref: '../components/schemas/CreateObjectRequest.yaml'
+    required: true
+  responses:
+    '201':
+      description: The DRS object was successfully created and upload URL provided
+      content:
+        application/json:
+          schema:
+            $ref: '../components/schemas/CreateObjectResponse.yaml'
+    '400':
+      $ref: '../components/responses/400BadRequest.yaml'
+    '401':
+      $ref: '../components/responses/401Unauthorized.yaml'
+    '403':
+      $ref: '../components/responses/403Forbidden.yaml'
+    '413':
+      $ref: '../components/responses/413RequestTooLarge.yaml'
+    '500':
+      $ref: '../components/responses/500InternalServerError.yaml'
+  security:
+    - BearerAuth: []
+    - BasicAuth: []

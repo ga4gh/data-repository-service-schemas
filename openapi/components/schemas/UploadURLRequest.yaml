@@ -1,0 +1,8 @@
+type: object
+required:
+  - storage_location_id
+properties:
+  storage_location_id:
+    type: string
+    description: The storage location to request an upload URL for
+    example: "europe-gcs"
