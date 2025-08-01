@@ -29,6 +29,8 @@ properties:
       totalObjectSize:
         type: integer
         description: The total size of all objects in this DRS service in bytes.  As a general best practice, file bytes are counted for each unique file and not cloud mirrors or other redundant copies.
+      writeCapabilities:
+        $ref: './WriteCapabilities.yaml'
 
 
     

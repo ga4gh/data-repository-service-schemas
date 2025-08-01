@@ -1,7 +1,7 @@
-openapi: 3.0.3
+openapi: 3.0.4
 info:
   title: Data Repository Service
-  version: 1.5.0
+  version: 1.6.0-draft
   x-logo:
     url: 'https://www.ga4gh.org/wp-content/themes/ga4gh/dist/assets/svg/logos/logo-full-color.svg'
   termsOfService: 'https://www.ga4gh.org/terms-and-conditions/'
@@ -34,6 +34,9 @@ tags:
   - name: Authorization & Authentication
     description:
       $ref: ./tags/Auth.md
+  - name: Write Operations
+    description:
+      $ref: ./tags/WriteOperations.md
 
   # Operations
   - name: Objects
@@ -64,6 +67,22 @@ tags:
     x-displayName: Error
     description: |
       <SchemaDefinition schemaRef="#/components/schemas/Error" />
+  - name: StorageLocationModel
+    x-displayName: StorageLocation
+    description: |
+      <SchemaDefinition schemaRef="#/components/schemas/StorageLocation" />
+  - name: WriteCapabilitiesModel
+    x-displayName: WriteCapabilities
+    description: |
+      <SchemaDefinition schemaRef="#/components/schemas/WriteCapabilities" />
+  - name: UploadURLModel
+    x-displayName: UploadURL
+    description: |
+      <SchemaDefinition schemaRef="#/components/schemas/UploadURL" />
+  - name: AuthorizedLocationModel
+    x-displayName: AuthorizedLocation
+    description: |
+      <SchemaDefinition schemaRef="#/components/schemas/AuthorizedLocation" />
 
   # Appendices
   - name: Motivation
@@ -90,6 +109,7 @@ x-tagGroups:
       - Introduction
       - DRS API Principles
       - Authorization & Authentication
+      - Write Operations
   - name: Operations
     tags:
       - Objects
@@ -102,6 +122,10 @@ x-tagGroups:
       - ContentsObjectModel
       - DrsObjectModel
       - ErrorModel
+      - StorageLocationModel
+      - WriteCapabilitiesModel
+      - UploadURLModel
+      - AuthorizedLocationModel
   - name: Appendices
     tags:
       - Motivation
@@ -116,11 +140,19 @@ paths:
   /objects/{object_id}:
     $ref: ./paths/objects@{object_id}.yaml
   /objects:
-    $ref: ./paths/bulkobjects@{object_id}.yaml
+    $ref: ./paths/objects.yaml
   /objects/{object_id}/access/{access_id}:
     $ref: ./paths/objects@{object_id}@access@{access_id}.yaml
+  /objects/{object_id}/upload-urls:
+    $ref: ./paths/objects@{object_id}@upload-urls.yaml
+  /objects/{object_id}/finalize:
+    $ref: ./paths/objects@{object_id}@finalize.yaml
   /objects/access:
     $ref: ./paths/bulkobjects@access@{access_id}.yaml
+  /bulk/objects:
+    $ref: ./paths/bulkobjects@{object_id}.yaml
+  /write/authorizations:
+    $ref: ./paths/write@authorizations.yaml
 components:
   securitySchemes:
     BasicAuth:

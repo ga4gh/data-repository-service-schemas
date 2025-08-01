@@ -1,0 +1,9 @@
+type: object
+required:
+  - authorized_locations
+properties:
+  authorized_locations:
+    type: array
+    items:
+      $ref: './AuthorizedLocation.yaml'
+    description: List of storage locations the authenticated user can write to
