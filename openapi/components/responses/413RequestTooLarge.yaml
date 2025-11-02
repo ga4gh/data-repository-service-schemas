@@ -3,3 +3,16 @@ content:
   application/json:
     schema:
       $ref: '../schemas/Error.yaml'
+    examples:
+      bulk_limit_exceeded:
+        summary: Bulk delete limit exceeded
+        description: Request contains more objects than server's maximum bulk delete limit
+        value:
+          msg: "Bulk delete request contains 150 objects but server maximum is 100. Check maxBulkDeleteLength in service-info."
+          status_code: 413
+      request_size_too_large:
+        summary: Request payload too large
+        description: The overall request payload exceeds server limits
+        value:
+          msg: "Request payload size exceeds server limit of 1MB"
+          status_code: 413

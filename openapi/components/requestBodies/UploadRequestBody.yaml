@@ -1,0 +1,65 @@
+required: true
+content:
+  application/json:
+    schema:
+      $ref: '../schemas/UploadRequest.yaml'
+    examples:
+      single_file:
+        summary: Single file upload request
+        description: Request upload methods for a single file
+        value:
+          requests:
+            - name: "sample_data.vcf"
+              size: 1048576
+              mime_type: "text/plain"
+              checksums:
+                - checksum: "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+                  type: "sha-256"
+              description: "Variant call format file for sample analysis"
+              aliases:
+                - "sample_001_variants"
+                - "vcf_batch_2024"
+          passports:
+            - "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJnYTRnaF9wYXNzcG9ydF92MSI6W119.JJ5rN0ktP0qwyZmIPpxmF_p7JsxAZH6L6brUxtad3CM"
+      multiple_files:
+        summary: Multiple files upload request
+        description: Request upload methods for multiple files with different types
+        value:
+          requests:
+            - name: "genome_assembly.fasta"
+              size: 3221225472
+              mime_type: "text/plain"
+              checksums:
+                - checksum: "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3"
+                  type: "sha-256"
+                - checksum: "098f6bcd4621d373cade4e832627b4f6"
+                  type: "md5"
+              description: "Human genome reference assembly"
+              aliases:
+                - "hg38_reference"
+            - name: "annotations.gff3"
+              size: 524288000
+              mime_type: "text/plain"
+              checksums:
+                - checksum: "b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9"
+                  type: "sha-256"
+              description: "Gene annotations in GFF3 format"
+            - name: "metadata.json"
+              size: 2048
+              mime_type: "application/json"
+              checksums:
+                - checksum: "c89e4c5c7f2c8c8e8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c8c"
+                  type: "sha-256"
+              description: "Sample metadata and experimental conditions"
+      no_passports:
+        summary: Upload request without authentication
+        description: Request for public upload endpoints that don't require authentication
+        value:
+          requests:
+            - name: "public_dataset.csv"
+              size: 10240
+              mime_type: "text/csv"
+              checksums:
+                - checksum: "d4735e3a265e16eee03f59718b9b5d03019c07d8b6c51f90da3a666eec13ab35"
+                  type: "sha-256"
+              description: "Public research dataset"

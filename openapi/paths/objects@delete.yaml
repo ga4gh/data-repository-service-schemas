@@ -1,0 +1,150 @@
+post:
+  summary: Delete multiple DRS objects
+  description: >-
+    Delete multiple DRS objects in a single request. This endpoint supports bulk deletion
+    of objects with optional GA4GH Passport authentication and configurable storage data deletion.
+    
+    
+    **Authentication**: GA4GH Passports can be provided in the request body for authorization.
+    
+    
+    **Storage Data Deletion**: The `delete_storage_data` parameter controls whether underlying
+    storage files are deleted along with DRS metadata. Defaults to false for safety.
+    Servers will make a best effort attempt to delete storage data, but success is not guaranteed.
+    
+    
+    **Bulk Limits**: Servers may impose limits on the number of objects that can be deleted
+    in a single request. Check the `maxBulkDeleteLength` field in service-info for limits.
+    
+    
+    **Response Behavior**:
+    - Returns 204 No Content if all object metadata is successfully deleted
+    - Returns 207 Multi-Status if some object metadata fails to delete
+    - Returns 413 Request Entity Too Large if bulk limit is exceeded
+    - Returns 404 Not Found if delete operations are not supported by this server
+    - HTTP responses reflect metadata deletion status only, not storage deletion success
+  operationId: bulkDeleteObjects
+  tags:
+    - Delete Operations
+  requestBody:
+    $ref: '../components/requestBodies/BulkDeleteBody.yaml'
+  responses:
+    '204':
+      $ref: '../components/responses/204DeleteSuccess.yaml'
+    '207':
+      $ref: '../components/responses/207MultiStatusDelete.yaml'
+    '400':
+      $ref: '../components/responses/400BadRequestDelete.yaml'
+    '401':
+      $ref: '../components/responses/401Unauthorized.yaml'
+    '403':
+      $ref: '../components/responses/403ForbiddenDelete.yaml'
+    '404':
+      $ref: '../components/responses/404NotFoundDelete.yaml'
+    '413':
+      $ref: '../components/responses/413RequestTooLarge.yaml'
+    '500':
+      $ref: '../components/responses/500InternalServerError.yaml'
+  security:
+    - {}
+    - BasicAuth: []
+    - BearerAuth: []
+    - PassportAuth: []
+  x-codegen-request-body-name: body
+  examples:
+    successful_bulk_delete:
+      summary: Successful bulk deletion
+      description: Complete example of successfully deleting multiple objects
+      value:
+        request:
+          method: POST
+          url: "/objects/delete"
+          headers:
+            Content-Type: "application/json"
+          body:
+            bulk_object_ids:
+              - "drs_object_123456"
+              - "drs_object_789012"
+              - "drs_object_345678"
+            passports:
+              - "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJnYTRnaF9wYXNzcG9ydF92MSI6W119.JJ5rN0ktP0qwyZmIPpxmF_p7JsxAZH6L6brUxtad3CM"
+            delete_storage_data: false
+        response:
+          status: 204
+          headers:
+            Content-Length: "0"
+    mixed_results_bulk_delete:
+      summary: Mixed results bulk deletion
+      description: Complete example of bulk deletion with some successes and failures
+      value:
+        request:
+          method: POST
+          url: "/objects/delete"
+          headers:
+            Content-Type: "application/json"
+          body:
+            bulk_object_ids:
+              - "drs_object_123456"
+              - "nonexistent_object"
+              - "drs_object_345678"
+            passports:
+              - "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJnYTRnaF9wYXNzcG9ydF92MSI6W119.JJ5rN0ktP0qwyZmIPpxmF_p7JsxAZH6L6brUxtad3CM"
+            delete_storage_data: false
+        response:
+          status: 207
+          headers:
+            Content-Type: "application/json"
+          body:
+            results:
+              - object_id: "drs_object_123456"
+                status: 204
+                message: "Successfully deleted"
+              - object_id: "nonexistent_object"
+                status: 404
+                message: "Object not found"
+                error:
+                  msg: "DRS object nonexistent_object does not exist"
+                  status_code: 404
+              - object_id: "drs_object_345678"
+                status: 204
+                message: "Successfully deleted"
+    bulk_limit_exceeded:
+      summary: Bulk limit exceeded error
+      description: Complete example when bulk request exceeds server limits
+      value:
+        request:
+          method: POST
+          url: "/objects/delete"
+          headers:
+            Content-Type: "application/json"
+          body:
+            bulk_object_ids: ["obj1", "obj2", "obj3", "...150 objects total"]
+            delete_storage_data: false
+        response:
+          status: 413
+          headers:
+            Content-Type: "application/json"
+          body:
+            msg: "Bulk delete request contains 150 objects but server maximum is 100. Check maxBulkDeleteLength in service-info."
+            status_code: 413
+    unsupported_storage_deletion:
+      summary: Unsupported storage deletion error
+      description: Complete example when client requests storage deletion but server doesn't support it
+      value:
+        request:
+          method: POST
+          url: "/objects/delete"
+          headers:
+            Content-Type: "application/json"
+          body:
+            bulk_object_ids:
+              - "drs_object_123456"
+              - "drs_object_789012"
+            delete_storage_data: true
+        response:
+          status: 400
+          headers:
+            Content-Type: "application/json"
+          body:
+            msg: "Server does not support storage data deletion. Set delete_storage_data to false or omit the parameter."
+            status_code: 400

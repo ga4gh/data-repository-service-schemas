@@ -1,0 +1,72 @@
+required: true
+content:
+  application/json:
+    schema:
+      $ref: '../schemas/BulkDeleteRequest.yaml'
+    examples:
+      bulk_metadata_delete:
+        summary: Bulk delete metadata only
+        description: Delete multiple DRS objects metadata while preserving underlying storage data (default and safest option)
+        value:
+          bulk_object_ids:
+            - "drs_object_123456"
+            - "drs_object_789012"
+            - "drs_object_345678"
+          passports:
+            - "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJnYTRnaF9wYXNzcG9ydF92MSI6W119.JJ5rN0ktP0qwyZmIPpxmF_p7JsxAZH6L6brUxtad3CM"
+          delete_storage_data: false
+      bulk_full_delete:
+        summary: Bulk delete metadata and storage data
+        description: Delete both metadata and storage data for multiple objects (requires server support via deleteStorageDataSupported)
+        value:
+          bulk_object_ids:
+            - "drs_object_123456"
+            - "drs_object_789012"
+          passports:
+            - "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJnYTRnaF9wYXNzcG9ydF92MSI6W119.JJ5rN0ktP0qwyZmIPpxmF_p7JsxAZH6L6brUxtad3CM"
+          delete_storage_data: true
+      bulk_no_auth_delete:
+        summary: Bulk delete without authentication
+        description: Bulk delete operation without GA4GH Passport authentication (for public objects or when using Bearer token in headers)
+        value:
+          bulk_object_ids:
+            - "drs_object_123456"
+            - "drs_object_789012"
+          delete_storage_data: false
+      large_bulk_delete:
+        summary: Large bulk delete operation
+        description: Delete many objects in a single request (check maxBulkDeleteLength in service-info for limits)
+        value:
+          bulk_object_ids:
+            - "drs_object_001"
+            - "drs_object_002"
+            - "drs_object_003"
+            - "drs_object_004"
+            - "drs_object_005"
+            - "drs_object_006"
+            - "drs_object_007"
+            - "drs_object_008"
+            - "drs_object_009"
+            - "drs_object_010"
+          passports:
+            - "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJnYTRnaF9wYXNzcG9ydF92MSI6W119.JJ5rN0ktP0qwyZmIPpxmF_p7JsxAZH6L6brUxtad3CM"
+          delete_storage_data: false
+      mixed_object_types:
+        summary: Mixed object types deletion
+        description: Delete objects with different ID formats and types in a single request
+        value:
+          bulk_object_ids:
+            - "drs://example.org/123456"
+            - "local_object_789"
+            - "uuid:550e8400-e29b-41d4-a716-446655440000"
+            - "compact:prefix:identifier"
+          passports:
+            - "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJnYTRnaF9wYXNzcG9ydF92MSI6W119.JJ5rN0ktP0qwyZmIPpxmF_p7JsxAZH6L6brUxtad3CM"
+          delete_storage_data: false
+      minimal_bulk_request:
+        summary: Minimal bulk delete request
+        description: Simplest bulk delete request with required fields only
+        value:
+          bulk_object_ids:
+            - "drs_object_123456"
+            - "drs_object_789012"

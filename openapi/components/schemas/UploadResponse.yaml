@@ -1,0 +1,9 @@
+type: object
+required:
+  - responses
+properties:
+  responses:
+    type: array
+    items:
+      $ref: './UploadResponseObject.yaml'
+    description: List of upload responses for the requested files

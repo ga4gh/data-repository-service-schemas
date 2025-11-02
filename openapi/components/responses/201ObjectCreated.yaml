@@ -1,0 +1,5 @@
+description: DRS object created successfully. Returns the complete DRS object metadata.
+content:
+  application/json:
+    schema:
+      $ref: '../schemas/DrsObject.yaml'

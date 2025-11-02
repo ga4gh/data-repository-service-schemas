@@ -37,6 +37,12 @@ tags:
 
   # Operations
   - name: Objects
+  - name: Upload Operations
+    description:
+      $ref: ./tags/UploadOperations.md
+  - name: Delete Operations
+    description:
+      $ref: ./tags/DeleteOperations.md
   - name: Service Info
 
   # Models
@@ -64,6 +70,42 @@ tags:
     x-displayName: Error
     description: |
       <SchemaDefinition schemaRef="#/components/schemas/Error" />
+  - name: UploadRequestModel
+    x-displayName: UploadRequest
+    description: |
+      <SchemaDefinition schemaRef="#/components/schemas/UploadRequest" />
+  - name: UploadResponseModel
+    x-displayName: UploadResponse
+    description: |
+      <SchemaDefinition schemaRef="#/components/schemas/UploadResponse" />
+  - name: UploadRequestObjectModel
+    x-displayName: UploadRequestObject
+    description: |
+      <SchemaDefinition schemaRef="#/components/schemas/UploadRequestObject" />
+  - name: UploadResponseObjectModel
+    x-displayName: UploadResponseObject
+    description: |
+      <SchemaDefinition schemaRef="#/components/schemas/UploadResponseObject" />
+  - name: UploadMethodModel
+    x-displayName: UploadMethod
+    description: |
+      <SchemaDefinition schemaRef="#/components/schemas/UploadMethod" />
+  - name: SingleDeleteRequestModel
+    x-displayName: SingleDeleteRequest
+    description: |
+      <SchemaDefinition schemaRef="#/components/schemas/SingleDeleteRequest" />
+  - name: BulkDeleteRequestModel
+    x-displayName: BulkDeleteRequest
+    description: |
+      <SchemaDefinition schemaRef="#/components/schemas/BulkDeleteRequest" />
+  - name: DeleteResultModel
+    x-displayName: DeleteResult
+    description: |
+      <SchemaDefinition schemaRef="#/components/schemas/DeleteResult" />
+  - name: BulkDeleteResponseModel
+    x-displayName: BulkDeleteResponse
+    description: |
+      <SchemaDefinition schemaRef="#/components/schemas/BulkDeleteResponse" />
 
   # Appendices
   - name: Motivation
@@ -93,6 +135,8 @@ x-tagGroups:
   - name: Operations
     tags:
       - Objects
+      - Upload Operations
+      - Delete Operations
       - Service Info
   - name: Models
     tags:
@@ -102,6 +146,15 @@ x-tagGroups:
       - ContentsObjectModel
       - DrsObjectModel
       - ErrorModel
+      - UploadRequestModel
+      - UploadResponseModel
+      - UploadRequestObjectModel
+      - UploadResponseObjectModel
+      - UploadMethodModel
+      - SingleDeleteRequestModel
+      - BulkDeleteRequestModel
+      - DeleteResultModel
+      - BulkDeleteResponseModel
   - name: Appendices
     tags:
       - Motivation
@@ -115,12 +168,18 @@ paths:
     $ref: ./paths/service-info.yaml
   /objects/{object_id}:
     $ref: ./paths/objects@{object_id}.yaml
+  /objects/{object_id}/delete:
+    $ref: ./paths/objects@{object_id}@delete.yaml
+  /objects/delete:
+    $ref: ./paths/objects@delete.yaml
   /objects:
-    $ref: ./paths/bulkobjects@{object_id}.yaml
+    $ref: ./paths/objects.yaml
   /objects/{object_id}/access/{access_id}:
     $ref: ./paths/objects@{object_id}@access@{access_id}.yaml
   /objects/access:
-    $ref: ./paths/bulkobjects@access@{access_id}.yaml
+    $ref: ./paths/objects@access.yaml
+  /uploadrequest:
+    $ref: ./paths/uploadrequest.yaml
 components:
   securitySchemes:
     BasicAuth:
