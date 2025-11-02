@@ -1,0 +1,44 @@
+type: object
+required:
+  - id
+  - self_uri
+  - name
+  - size
+  - mime_type
+  - checksums
+properties:
+  id:
+    type: string
+    description: Unique DRS object identifier
+  self_uri:
+    type: string
+    description: DRS URI for accessing this object
+  name:
+    type: string
+    description: The name of the file
+  size:
+    type: integer
+    format: int64
+    description: Size of the file in bytes
+  mime_type:
+    type: string
+    description: MIME type of the file
+  checksums:
+    type: array
+    items:
+      $ref: './Checksum.yaml'
+    minItems: 1
+    description: Array of checksums for file integrity verification
+  description:
+    type: string
+    description: Optional description of the file
+  aliases:
+    type: array
+    items:
+      type: string
+    description: Optional array of alternative names
+  upload_methods:
+    type: array
+    items:
+      $ref: './UploadMethod.yaml'
+    description: Available methods for uploading this file

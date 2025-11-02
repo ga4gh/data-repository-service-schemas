@@ -1,0 +1,44 @@
+type: object
+required:
+  - type
+  - access_url
+properties:
+  type:
+    type: string
+    enum:
+      - s3
+      - gs
+      - https
+      - ftp
+      - sftp
+      - gsiftp
+      - globus
+    description: >-
+      Type of upload method. Implementations MAY support any subset of these types.
+      
+      The 'https' type can be used to return a presigned POST URL and is expected to be
+      the most common implementation for typical file uploads. This method provides a
+      simple HTTP POST interface that works with standard web clients.
+      
+      The 's3' type is primarily intended to support uploads of large files that want
+      to take advantage of multipart uploads and automatic retries implemented in AWS
+      libraries. This method provides direct access to S3-specific upload capabilities.
+      
+      Other common implementations include 'gs' for Google Cloud Storage and 'sftp'
+      for secure FTP uploads.
+  access_url:
+    allOf:
+      - $ref: './AccessURL.yaml'
+      - description: URL and headers for file upload
+  region:
+    type: string
+    description: >-
+      Cloud region for the upload location. Optional for non-cloud storage types.
+    example: us-east-1
+  credentials:
+    type: object
+    additionalProperties:
+      type: string
+    description: >-
+      Temporary credentials for authenticated uploads. May be empty for public
+      upload endpoints or contain cloud-specific credential fields.

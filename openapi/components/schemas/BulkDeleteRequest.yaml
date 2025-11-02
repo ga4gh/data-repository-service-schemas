@@ -1,0 +1,28 @@
+type: object
+description: Request body for bulk delete operations
+required:
+  - bulk_object_ids
+properties:
+  bulk_object_ids:
+    type: array
+    items:
+      type: string
+    description: Array of DRS object IDs to delete
+    example:
+      - "drs_object_123456"
+      - "drs_object_789012"
+      - "drs_object_345678"
+  passports:
+    type: array
+    items:
+      type: string
+      example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJnYTRnaF9wYXNzcG9ydF92MSI6W119.JJ5rN0ktP0qwyZmIPpxmF_p7JsxAZH6L6brUxtad3CM
+    description: the encoded JWT GA4GH Passport that contains embedded Visas.  The overall JWT is signed as are the individual Passport Visas.
+  delete_storage_data:
+    type: boolean
+    default: false
+    description: >-
+      If true, delete both DRS object metadata and underlying storage data (follows server's deleteStorageDataSupported capability).
+      If false (default), only delete DRS object metadata while preserving underlying storage data.
+      Clients must explicitly set this to true to enable storage data deletion, ensuring
+      intentional choice for this potentially destructive operation.

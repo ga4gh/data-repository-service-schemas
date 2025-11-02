@@ -3,19 +3,3 @@ content:
   application/json:
     schema:
       $ref: '../schemas/Error.yaml'
-    examples:
-      missing_required_field:
-        summary: Missing required field
-        value:
-          msg: "Missing required field: 'size'"
-          status_code: 400
-      invalid_checksum:
-        summary: Invalid checksum format
-        value:
-          msg: "Invalid checksum format. Expected format: '{algorithm}:{checksum}'"
-          status_code: 400
-      negative_size:
-        summary: Invalid size value
-        value:
-          msg: "Size must be a positive integer"
-          status_code: 400

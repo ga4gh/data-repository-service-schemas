@@ -1,0 +1,18 @@
+type: object
+description: Response for bulk delete operations with multi-status results
+properties:
+  results:
+    type: array
+    items:
+      $ref: './DeleteResult.yaml'
+    description: Results for each object in the delete request
+    example:
+      - object_id: "drs_object_123456"
+        status: 204
+        message: "Successfully deleted"
+      - object_id: "drs_object_789012"
+        status: 404
+        message: "Object not found"
+        error:
+          msg: "DRS object drs_object_789012 does not exist"
+          status_code: 404

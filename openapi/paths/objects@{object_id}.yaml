@@ -52,11 +52,22 @@ get:
   x-swagger-router-controller: ga4gh.drs.server
 
 post:
-  summary: Get info about a DrsObject through POST'ing a Passport.
+  summary: Get info about a DrsObject through POST'ing a Passport or register new DRS objects.
   description: >-
-    Returns object metadata, and a list of access methods that can be used to fetch object bytes.
+    This endpoint supports two modes of operation based on the request body:
+    
+    1. **Retrieve Mode** (backward compatible): When the "object" field is missing, 
+       returns object metadata and a list of access methods that can be used to fetch object bytes.
+    
+    2. **Register Mode**: When the "object" field contains a DRS object, registers the supplied 
+       fully formed DRS object using the provided passports for authorization.
 
-    Method is a POST to accommodate a JWT GA4GH Passport sent in the formData in order to authorize access.
+    Method is a POST to accommodate a JWT GA4GH Passport sent in the request body in order to authorize access.
+    
+    **Note**: To upload new files before registering them as DRS objects, use the `/uploadrequest` endpoint 
+    to obtain upload methods and temporary credentials. For registering multiple objects at once, use the 
+    bulk POST `/objects` endpoint. Note that upload functionality is optional and not all DRS servers implement 
+    the `/uploadrequest` endpoint.
   operationId: PostObject
   security:
     - PassportAuth: []
@@ -82,74 +93,3 @@ post:
     - $ref: '../components/parameters/ObjectId.yaml'
   requestBody:
     $ref: '../components/requestBodies/PostObjectBody.yaml'
-
-put:
-  summary: Update a DRS object
-  description: |-
-    Update a DRS object's metadata. If size, checksums, or target_storage_location are changed,
-    this triggers a content update and the object will transition to 'pending' state with new upload URLs provided.
-    Metadata-only updates (name, description, etc.) do not change the object state.
-  operationId: UpdateObject
-  tags:
-    - Objects
-  parameters:
-    - $ref: '../components/parameters/ObjectId.yaml'
-  requestBody:
-    content:
-      application/json:
-        schema:
-          $ref: '../components/schemas/UpdateObjectRequest.yaml'
-    required: true
-  responses:
-    '200':
-      description: The DRS object was successfully updated (metadata only)
-      content:
-        application/json:
-          schema:
-            $ref: '../components/schemas/DrsObject.yaml'
-    '201':
-      description: The DRS object update requires content change - upload URL provided
-      content:
-        application/json:
-          schema:
-            $ref: '../components/schemas/CreateObjectResponse.yaml'
-    '400':
-      $ref: '../components/responses/400BadRequest.yaml'
-    '401':
-      $ref: '../components/responses/401Unauthorized.yaml'
-    '403':
-      $ref: '../components/responses/403Forbidden.yaml'
-    '404':
-      $ref: '../components/responses/404NotFoundDrsObject.yaml'
-    '413':
-      $ref: '../components/responses/413RequestTooLarge.yaml'
-    '500':
-      $ref: '../components/responses/500InternalServerError.yaml'
-  security:
-    - BearerAuth: []
-    - BasicAuth: []
-
-delete:
-  summary: Delete a DRS object
-  description: |-
-    Delete a DRS object and all associated data from storage locations.
-    This operation is irreversible.
-  operationId: DeleteObject
-  tags:
-    - Objects
-  parameters:
-    - $ref: '../components/parameters/ObjectId.yaml'
-  responses:
-    '204':
-      description: The DRS object was successfully deleted
-    '401':
-      $ref: '../components/responses/401Unauthorized.yaml'
-    '403':
-      $ref: '../components/responses/403Forbidden.yaml'
-    '404':
-      $ref: '../components/responses/404NotFoundDrsObject.yaml'
-    '500':
-      $ref: '../components/responses/500InternalServerError.yaml'
-  security:
-    - BearerAuth: []
-    - BasicAuth: []

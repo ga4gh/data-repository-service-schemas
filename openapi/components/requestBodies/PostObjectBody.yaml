@@ -25,3 +25,53 @@ content:
             type: string
             example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJnYTRnaF9wYXNzcG9ydF92MSI6W119.JJ5rN0ktP0qwyZmIPpxmF_p7JsxAZH6L6brUxtad3CM
           description: the encoded JWT GA4GH Passport that contains embedded Visas.  The overall JWT is signed as are the individual Passport Visas.
+        object:
+          $ref: '../schemas/DrsObject.yaml'
+          description: >-
+            Optional fully formed DRS object to register. If this field is missing,
+            the endpoint behaves as a GET request with passport authentication to retrieve object metadata.
+            If an object is provided, the server will register the supplied DRS object using the passports for authorization.
+    examples:
+      retrieve_mode:
+        summary: Retrieve mode (backward compatible)
+        description: Request object metadata with passport authentication - no objects array provided
+        value:
+          expand: false
+          passports:
+            - "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJnYTRnaF9wYXNzcG9ydF92MSI6W119.JJ5rN0ktP0qwyZmIPpxmF_p7JsxAZH6L6brUxtad3CM"
+      retrieve_mode_expanded:
+        summary: Retrieve mode with bundle expansion
+        description: Request expanded bundle contents with passport authentication
+        value:
+          expand: true
+          passports:
+            - "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJnYTRnaF9wYXNzcG9ydF92MSI6W119.JJ5rN0ktP0qwyZmIPpxmF_p7JsxAZH6L6brUxtad3CM"
+            - "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJnYTRnaF9wYXNzcG9ydF92MSI6W119.additional_passport_signature"
+      register_mode:
+        summary: Register mode - single object
+        description: Register a single fully formed DRS object
+        value:
+          passports:
+            - "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJnYTRnaF9wYXNzcG9ydF92MSI6W119.JJ5rN0ktP0qwyZmIPpxmF_p7JsxAZH6L6brUxtad3CM"
+          object:
+            id: "drs_object_123456"
+            self_uri: "drs://drs.example.org/drs_object_123456"
+            name: "sample_data.vcf"
+            size: 1048576
+            mime_type: "text/plain"
+            created_time: "2024-01-15T10:30:00Z"
+            updated_time: "2024-01-15T10:30:00Z"
+            version: "1.0"
+            checksums:
+              - checksum: "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+                type: "sha-256"
+            access_methods:
+              - type: "s3"
+                access_url:
+                  url: "https://my-bucket.s3.amazonaws.com/files/drs_object_123456"
+                region: "us-east-1"
+            description: "Variant call format file for sample analysis"
+            aliases:
+              - "sample_001_variants"
+              - "vcf_batch_2024"
+

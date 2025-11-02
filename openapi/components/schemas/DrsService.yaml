@@ -29,8 +29,86 @@ properties:
       totalObjectSize:
         type: integer
         description: The total size of all objects in this DRS service in bytes.  As a general best practice, file bytes are counted for each unique file and not cloud mirrors or other redundant copies.
-      writeCapabilities:
-        $ref: './WriteCapabilities.yaml'
+      uploadSupported:
+        type: boolean
+        description: >-
+          Indicates whether this DRS server supports upload operations via the `/uploadrequest` endpoint.
+          If true, clients can upload files and register them as DRS objects.
+          If false or missing, the server is read-only and does not support file uploads.
+        default: false
+      supportedUploadMethods:
+        type: array
+        items:
+          type: string
+          enum:
+            - s3
+            - gs
+            - https
+            - ftp
+            - sftp
+            - gsiftp
+            - globus
+        description: >-
+          List of upload methods supported by this DRS server. Only present when uploadSupported is true.
+          Clients can use this information to determine which upload methods are available before making upload requests.
+          
+          - **s3**: Direct S3 upload with temporary AWS credentials
+          - **gs**: Google Cloud Storage upload with access tokens  
+          - **https**: Presigned POST URL for HTTP uploads
+          - **ftp**: File Transfer Protocol uploads
+          - **sftp**: Secure File Transfer Protocol uploads
+          - **gsiftp**: GridFTP secure file transfer
+          - **globus**: Globus transfer service for high-performance data movement
+      maxUploadSize:
+        type: integer
+        format: int64
+        description: >-
+          Maximum file size in bytes that can be uploaded via the upload endpoints.
+          Only present when uploadSupported is true. If not specified, there is no explicit size limit.
+      maxUploadRequestLength:
+        type: integer
+        description: >-
+          Maximum number of files that can be included in a single upload request.
+          Only present when uploadSupported is true. If not specified, defaults to the same value as maxBulkRequestLength.
+      validateUploadChecksums:
+        type: boolean
+        description: >-
+          Indicates whether this DRS server validates uploaded file checksums against the provided metadata.
+          If true, the server will verify that uploaded files match their declared checksums and may reject uploads with mismatches.
+          If false or missing, the server does not perform checksum validation and relies on client-provided metadata.
+          Only present when uploadSupported is true.
+        default: false
+      validateUploadFileSizes:
+        type: boolean
+        description: >-
+          Indicates whether this DRS server validates uploaded file sizes against the provided metadata.
+          If true, the server will verify that uploaded files match their declared sizes and may reject uploads with mismatches.
+          If false or missing, the server does not perform file size validation and relies on client-provided metadata.
+          Only present when uploadSupported is true.
+        default: false
+      deleteSupported:
+        type: boolean
+        description: >-
+          Indicates whether this DRS server supports delete operations via the delete endpoints.
+          If true, clients can delete DRS objects using POST requests to `/objects/{object_id}/delete` and `/objects/delete`.
+          If false or missing, the server does not support delete operations and will return 404 for delete endpoint requests.
+          Like upload functionality, delete support is entirely optional and servers remain DRS compliant without it.
+        default: false
+      maxBulkDeleteLength:
+        type: integer
+        description: >-
+          Maximum number of objects that can be deleted in a single bulk delete request via `/objects/delete`.
+          Only present when deleteSupported is true. If not specified when delete is supported, defaults to the same value as maxBulkRequestLength.
+          Servers may enforce lower limits for delete operations compared to other bulk operations for safety reasons.
+      deleteStorageDataSupported:
+        type: boolean
+        description: >-
+          Indicates whether this DRS server supports attempting to delete underlying storage data when clients request it.
+          If true, the server will attempt to delete both metadata and storage files when `delete_storage_data: true` is specified in delete requests.
+          If false or missing, the server only supports metadata deletion regardless of client request, preserving underlying storage data.
+          Only present when deleteSupported is true. This is a capability flag indicating what the server can attempt, not a default behavior setting.
+          Note: Storage deletion attempts may fail due to permissions, network issues, or storage service errors.
+        default: false
 
 
     

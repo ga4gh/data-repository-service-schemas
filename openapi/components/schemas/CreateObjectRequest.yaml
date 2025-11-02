@@ -1,43 +1,48 @@
 type: object
 required:
+  - name
   - size
   - checksums
-  - target_storage_location
+  - access_methods
 properties:
   name:
     type: string
-    description: |-
-      A string that can be used to name a `DrsObject`.
-      This string is made up of uppercase and lowercase letters, decimal digits, hyphen, period, and underscore [A-Za-z0-9.-_]. See http://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap03.html#tag_03_282[portable filenames].
-    example: "sample-data.bam"
+    description: The name of the uploaded file
   size:
     type: integer
     format: int64
-    description: Size of the object in bytes
-    example: 1073741824
+    description: Size of the uploaded file in bytes
   checksums:
     type: array
     items:
       $ref: './Checksum.yaml'
     minItems: 1
-    description: The checksums of the object. At least one checksum must be provided.
-  target_storage_location:
-    type: string
-    description: The storage location where this object should be uploaded
-    example: "us-east-1-s3"
+    description: Checksums of the uploaded file for integrity verification
+  access_methods:
+    type: array
+    items:
+      $ref: './AccessMethod.yaml'
+    minItems: 1
+    description: Access methods for retrieving the uploaded file
   description:
     type: string
-    description: A human readable description of the object
-    example: "Sample BAM file from analysis pipeline"
-  mime_type:
-    type: string
-    description: A string providing the mime-type of the object
-    example: "application/octet-stream"
+    description: Optional description of the file
   aliases:
     type: array
     items:
       type: string
-    description: A list of strings that can be used to find other metadata about this object from external metadata sources
+    description: Optional array of alternative names for the file
+  mime_type:
+    type: string
+    description: MIME type of the uploaded file
   version:
     type: string
-    description: A string representing a version of this object
+    description: Optional version identifier for the file
+  created_time:
+    type: string
+    format: date-time
+    description: Timestamp when the file was created
+  updated_time:
+    type: string
+    format: date-time
+    description: Timestamp when the file was last updated

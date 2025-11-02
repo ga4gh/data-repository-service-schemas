@@ -1,6 +1,0 @@
-type: object
-required:
-  - upload_url
-properties:
-  upload_url:
-    $ref: './UploadURL.yaml'
