@@ -17,6 +17,9 @@ Check `/service-info` for delete capabilities:
 ```json
 {
   "drs": {
+    "uploadSupported": true,
+    "supportedUploadMethods": ["s3", "https"],
+    "relatedFileStorageSupported": true,
     "deleteSupported": true,
     "maxBulkDeleteLength": 100,
     "deleteStorageDataSupported": true

@@ -1,7 +1,7 @@
 type: object
 required:
   - type
-  - upload_url
+  - access_url
 properties:
   type:
     type: string
@@ -26,17 +26,21 @@ properties:
       
       Other common implementations include 'gs' for Google Cloud Storage and 'sftp'
       for secure FTP uploads.
-  upload_url:
-    $ref: './UploadURL.yaml'
+  access_url:
+    allOf:
+      - $ref: './AccessURL.yaml'
+      - description: >-
+          An `AccessURL` that specifies where the file will be accessible after upload.
+          This URL will be used as the access_url in the eventual DRS object, ensuring
+          consistency between upload and retrieval operations.
   region:
     type: string
     description: >-
       Cloud region for the upload location. Optional for non-cloud storage types.
     example: us-east-1
-  credentials:
+  upload_details:
     type: object
-    additionalProperties:
-      type: string
+    additionalProperties: true
     description: >-
-      Temporary credentials for authenticated uploads. May be empty for public
-      upload endpoints or contain cloud-specific credential fields.
+      A dictionary of upload-specific configuration details that vary by upload method type.
+      The contents and structure depend on the specific upload method being used.
