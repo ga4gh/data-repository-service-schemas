@@ -2,15 +2,15 @@
 
 > **Optional Functionality**: Upload operations are optional DRS extensions. Clients should check `/service-info` for upload support before attempting to use these endpoints.
 
-Upload functionality allows clients to store files and register them as DRS objects through a three-phase workflow:
+Upload functionality allows clients to negotiate with servers on mutually convenient storage technologies and then register uploads as DRS objects through a three-phase workflow:
 
-1. **Request Upload URLs**: POST `/uploadrequest` with file metadata → receive upload methods and credentials
-2. **Upload Files**: Use returned URLs and credentials to upload files to storage using existing upload mechanisms. Note that DRS is not involved in this step at all, DRS simply allows the client and server to agree on a mutually convenient storage service.
-3. **Register Objects**: POST `/objects/register` with candidates → server mints IDs and registers DRS objects
+1. **Request Upload URLs**: POST `/uploadrequest` with file metadata to receive upload methods and credentials
+2. **Upload Files**: Use returned URLs and credentials to upload files to storage using existing upload mechanisms. DRS is not involved in this step at all, DRS simply allows the client and server to agree on a mutually convenient storage service.
+3. **Register Objects**: POST `/objects/register` to register associated DRS objects with the server, so they are available to DRS clients
 
-This design separates storage service and credential negotiation from file transfer and object registration, supporting multiple storage backends while maintaining security through temporary credentials.
+This approach separates storage service and credential negotiation from file transfer and object registration, supporting a vendor-neutral means of sharing data in a DRS network. The `/objects/register` endpoint can also be used independently to register existing data without the upload workflow.
 
-**Bulk-Only Design**: Upload operations are designed exclusively for bulk requests to simplify the interface and reflect real-world usage patterns. Bioinformatics workflows typically involve uploading multiple related files together (e.g., BAM + BAI, VCF + TBI, or analysis result sets), making bulk operations the natural fit. Single files are handled as arrays with one element.
+**Bulk-Only Design**: Upload operations only support bulk requests to simplify implementation and reflect real-world usage patterns. Bioinformatics workflows typically involve uploading multiple related files together (e.g., BAM + BAI, VCF + TBI, or analysis result sets), making bulk operations a natural fit. Single files are handled as lists with one element.
 
 ## Service Discovery
 
@@ -36,7 +36,7 @@ Key fields:
 - `maxUploadSize`: File size limit (bytes)
 - `maxUploadRequestLength`: Files per request limit
 - `validateUploadChecksums`/`validateUploadFileSizes`: Server validation behavior
-- `relatedFileStorageSupported`: Files from same request stored under common prefixes
+- `relatedFileStorageSupported`: Files from same upload request stored under common prefixes
 
 ## Upload Methods
 
@@ -44,9 +44,9 @@ Supported storage backends:
 - **https**: Presigned POST URLs for HTTP uploads
 - **s3**: Direct S3 upload with temporary AWS credentials
 - **gs**: Google Cloud Storage with OAuth2 tokens
-- **ftp/sftp**: Traditional file transfer protocols
+- **ftp/sftp**: Traditional file transfer protocols using negotiated credentials
 
-Servers may return a subset of advertised methods based on file characteristics.
+Servers may return a subset of advertised methods based on file characteristics, for example they may choose to store large objects such as WGS BAM files in different backends to small csv files.
 
 ## Related File Storage (Optional)
 
@@ -54,16 +54,9 @@ Servers MAY store files from the same upload request under common prefixes, enab
 
 - **CRAM + CRAI**: Alignment files with index files (samtools, IGV)
 - **VCF + TBI**: Variant files with tabix indexes  
-- **BAM + BAI**: Binary alignment files with indexes
-- **FASTA + FAI**: Reference sequences with indexes
+- **FASTQ.ora + ORADATA.tar.gz**: Compressed files with associated reference data
 
 Check `relatedFileStorageSupported` in service-info or examine upload URLs for common prefixes.
-
-## Authentication & Validation
-
-**Authentication**: Supports GA4GH Passports, Basic auth, and Bearer tokens.
-
-**Checksums**: Required for all files (SHA-256, MD5, or IANA-registered algorithms). Servers MAY validate checksums and file sizes as advertised in service-info flags.
 
 ## Object Registration
 
@@ -73,11 +66,21 @@ After upload, register files as DRS objects using POST `/objects/register`:
 
 **Requirements**:
 - Complete metadata (name, size, checksums, MIME type)
-- Access methods pointing to uploaded file locations  
+- Access methods pointing to file locations  
 - Valid authorization (if required)
-- Do NOT include server-generated fields (id, self_uri, timestamps)
+- Do not include server-generated fields (id, self_uri, timestamps)
 
 Server mints unique IDs and returns complete DRS objects.
+
+**Standalone Usage**: The `/objects/register` endpoint can be used independently to register existing data that is already stored in accessible locations, without using the `/uploadrequest` workflow. This is useful for registering pre-existing datasets or files uploaded through other means.
+
+## Authentication & Validation
+
+**Authentication**: Supports GA4GH Passports, Basic auth, and Bearer tokens.
+
+**Checksums**: Required for all files (SHA-256, MD5, or IANA-registered algorithms). Servers MAY validate checksums and file sizes as advertised in service-info flags.
+
+
 
 ## Error Handling
 
@@ -90,6 +93,16 @@ Server mints unique IDs and returns complete DRS objects.
 **Clients**: Check service-info first, calculate checksums, implement retry logic
 **Servers**: Use short-lived credentials, support multiple upload methods, implement rate limiting
 **Security**: Time-limited credentials, single-use URLs, proper logging
+
+## Security Considerations
+
+**Credential Scoping**: Implementers SHOULD scope upload credentials to the minimum necessary permissions and duration. Credentials should:
+- Allow write access only to the specific upload URL/path provided
+- Have the shortest practical expiration time (typically 15 minutes to 1 hour)
+- Be restricted to the specific file size and content type when possible
+- Not grant broader storage access beyond the intended upload location
+
+This principle of least privilege reduces security exposure if credentials are compromised or misused.
 
 ## Example Workflows
 
@@ -134,8 +147,11 @@ Content-Type: application/json
       "upload_methods": [
         {
           "type": "https",
-          "upload_url": {
-            "url": "https://uploads.example.org/presigned-upload?signature=FAKE_SIG"
+          "access_url": {
+            "url": "https://uploads.example.org/base-upload-endpoint"
+          },
+          "upload_details": {
+            "post_url": "https://uploads.example.org/presigned-upload?signature=FAKE_SIG"
           }
         }
       ]
@@ -172,7 +188,7 @@ Content-Type: application/json
         {
           "type": "https",
           "access_url": {
-            "url": "https://data.example.org/files/variants.vcf"
+            "url": "https://uploads.example.org/variants.vcf"
           }
         }
       ],
@@ -204,8 +220,9 @@ Content-Type: application/json
       "access_methods": [
         {
           "type": "https",
+          "access_id": "https",
           "access_url": {
-            "url": "https://data.example.org/files/variants.vcf"
+            "url": "https://uploads.example.org/variants.vcf"
           }
         }
       ],
@@ -267,14 +284,16 @@ Content-Type: application/json
       "upload_methods": [
         {
           "type": "s3",
-          "upload_url": {
+          "access_url": {
             "url": "s3://genomics-uploads/x7k9m/sample.bam"
           },
-          "credentials": {
+          "upload_details": {
+            "bucket": "genomics-uploads",
+            "key": "x7k9m/sample.bam",
             "access_key_id": "FAKE_ACCESS_KEY_123",
             "secret_access_key": "FAKE_SECRET_KEY_456",
             "session_token": "FAKE_SESSION_TOKEN_789",
-            "expiration": "2024-01-15T12:00:00Z"
+            "expires_at": "2024-01-15T12:00:00Z"
           }
         }
       ]
@@ -292,14 +311,16 @@ Content-Type: application/json
       "upload_methods": [
         {
           "type": "s3",
-          "upload_url": {
+          "access_url": {
             "url": "s3://genomics-uploads/x7k9m/sample.bam.bai"
           },
-          "credentials": {
+          "upload_details": {
+            "bucket": "genomics-uploads",
+            "key": "x7k9m/sample.bam.bai",
             "access_key_id": "FAKE_ACCESS_KEY_123",
             "secret_access_key": "FAKE_SECRET_KEY_456",
             "session_token": "FAKE_SESSION_TOKEN_789",
-            "expiration": "2024-01-15T12:00:00Z"
+            "expires_at": "2024-01-15T12:00:00Z"
           }
         }
       ]

@@ -37,6 +37,7 @@ get:
           "maxUploadRequestLength": 50,
           "validateUploadChecksums": true,
           "validateUploadFileSizes": false,
+          "relatedFileStorageSupported": true,
           "deleteSupported": true,
           "maxBulkDeleteLength": 100,
           "deleteStorageDataSupported": true
