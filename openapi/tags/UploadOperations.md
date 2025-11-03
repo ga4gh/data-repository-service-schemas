@@ -220,7 +220,6 @@ Content-Type: application/json
       "access_methods": [
         {
           "type": "https",
-          "access_id": "https",
           "access_url": {
             "url": "https://uploads.example.org/variants.vcf"
           }
