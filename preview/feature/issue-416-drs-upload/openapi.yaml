@@ -496,71 +496,44 @@ tags:
       # Upload Operations
 
 
-      > **Optional Functionality**: Upload operations are **optional**
-      extensions to the DRS API. Not all DRS servers are required to implement
-      upload functionality. Clients should check for the availability of upload
-      endpoints before attempting to use them.
+      > **Optional Functionality**: Upload operations are optional DRS
+      extensions. Clients should check `/service-info` for upload support before
+      attempting to use these endpoints.
 
 
-      The DRS API provides optional upload functionality that allows clients to
-      obtain upload methods and temporary credentials for storing files before
-      they are registered as DRS objects. This capability extends the
-      traditional read-only nature of DRS to support data ingestion workflows.
+      Upload functionality allows clients to store files and register them as
+      DRS objects through a three-phase workflow:
 
 
-      The upload feature is designed as a **negotiation mechanism** between
-      client and server to identify mutually convenient storage services and
-      access patterns. The DRS specification defines the negotiation protocol
-      and credential exchange, but the details of how data is physically
-      uploaded to the underlying storage systems are outside the scope of the
-      DRS specification and depend on the specific storage service protocols
-      (S3, HTTPS, etc.). DRS does not reinvent existing storage protocols, but
-      rather facilitates their discovery and authorization.
+      1. **Request Upload URLs**: POST `/uploadrequest` with file metadata →
+      receive upload methods and credentials
+
+      2. **Upload Files**: Use returned URLs and credentials to upload files to
+      storage using existing upload mechanisms. Note that DRS is not involved in
+      this step at all, DRS simply allows the client and server to agree on a
+      mutually convenient storage service.
+
+      3. **Register Objects**: POST `/objects/register` with candidates → server
+      mints IDs and registers DRS objects
 
 
-      ## Overview
+      This design separates storage service and credential negotiation from file
+      transfer and object registration, supporting multiple storage backends
+      while maintaining security through temporary credentials.
 
 
-      Upload operations in DRS follow a three-phase approach:
+      **Bulk-Only Design**: Upload operations are designed exclusively for bulk
+      requests to simplify the interface and reflect real-world usage patterns.
+      Bioinformatics workflows typically involve uploading multiple related
+      files together (e.g., BAM + BAI, VCF + TBI, or analysis result sets),
+      making bulk operations the natural fit. Single files are handled as arrays
+      with one element.
 
 
-      1. **Upload Request Phase**: Clients request upload methods by providing
-      file metadata
-
-      2. **File Upload Phase**: Clients use the returned upload methods to store
-      files in the underlying storage system
-
-      3. **DRS Object Registration Phase**: Clients register the uploaded files
-      as DRS objects using the POST `/objects` endpoint
+      ## Service Discovery
 
 
-      This design separates the concerns of obtaining upload credentials from
-      the actual file transfer and subsequent DRS object registration, providing
-      flexibility in how files are uploaded while maintaining security through
-      temporary, scoped credentials.
-
-
-      ## Server Implementation Requirements
-
-
-      Upload operations are **entirely optional**. Servers implement uploads
-      when they support data ingestion, collaborative workflows, or staging
-      areas. Read-only servers, mirrors, or security-constrained environments
-      typically do not implement uploads.
-
-
-      ## Client Discovery and Compatibility
-
-
-      Clients should implement proper discovery mechanisms to determine upload
-      support:
-
-
-      ### Service Info Discovery (Recommended)
-
-
-      The most reliable way to discover upload support is through the
-      `/service-info` endpoint:
+      Check `/service-info` for upload capabilities:
 
 
       ```json
@@ -572,477 +545,532 @@ tags:
           "maxUploadSize": 5368709120,
           "maxUploadRequestLength": 50,
           "validateUploadChecksums": true,
-          "validateUploadFileSizes": false
+          "validateUploadFileSizes": false,
+          "relatedFileStorageSupported": true
         }
       }
 
       ```
 
 
-      **Service Info Fields:**
+      Key fields:
 
-      - **`uploadSupported`**: Boolean indicating if upload operations are
-      available
+      - `uploadSupported`: Upload operations available
 
-      - **`supportedUploadMethods`**: Array of upload method types the server
-      supports
+      - `supportedUploadMethods`: Available storage backends  
 
-      - **`maxUploadSize`**: Maximum file size in bytes (optional)
+      - `maxUploadSize`: File size limit (bytes)
 
-      - **`maxUploadRequestLength`**: Maximum files per upload request
-      (optional)
+      - `maxUploadRequestLength`: Files per request limit
 
-      - **`validateUploadChecksums`**: Boolean indicating if server validates
-      uploaded file checksums (optional, defaults to false)
+      - `validateUploadChecksums`/`validateUploadFileSizes`: Server validation
+      behavior
 
-      - **`validateUploadFileSizes`**: Boolean indicating if server validates
-      uploaded file sizes (optional, defaults to false)
+      - `relatedFileStorageSupported`: Files from same request stored under
+      common prefixes
 
 
-      ### Client Best Practices
+      ## Upload Methods
 
 
-      1. **Always check `/service-info` first** for `uploadSupported`,
-      `supportedUploadMethods`, and validation flags
+      Supported storage backends:
 
-      2. **Respect server limits** (`maxUploadSize`, `maxUploadRequestLength`)
+      - **https**: Presigned POST URLs for HTTP uploads
 
-      3. **Handle missing upload support gracefully** with alternative workflows
+      - **s3**: Direct S3 upload with temporary AWS credentials
 
-      4. **Prepare for validation behavior** based on
-      `validateUploadChecksums`/`validateUploadFileSizes` flags
-
-
-      ## Upload Request Endpoint
-
-
-      The `/uploadrequest` endpoint accepts POST requests containing file
-      metadata and returns available upload methods with temporary credentials.
-
-
-      ### Request Structure
-
-
-      Upload requests must include:
-
-      - **File metadata**: Name, size, MIME type, and checksums for each file
-
-      - **Authentication**: Optional GA4GH Passport tokens for authorization
-
-      - **File descriptions**: Optional human-readable descriptions and aliases
-
-
-      **Note**: Servers do not validate the provided MIME type against the
-      actual file content. Clients are responsible for providing accurate MIME
-      type information.
-
-
-      **Upload Method Selection**: Clients must select one or more upload
-      methods from the server response to upload their files. The selected
-      upload methods determine the storage locations, and clients must include
-      corresponding access methods in the DRS object registration that point to
-      these same storage locations.
-
-
-      ### Response Structure
-
-
-      Upload responses provide:
-
-      - **DRS object metadata**: Pre-assigned IDs and URIs for the files
-
-      - **Upload methods**: Available storage protocols (S3, HTTPS, GCS, etc.)
-
-      - **Temporary credentials**: Time-limited access tokens or keys
-
-      - **Upload URLs**: Specific endpoints for file transfer
-
-
-      ## Supported Upload Methods
-
-
-      - **https**: Presigned POST URLs for simple HTTP uploads
-
-      - **s3**: Direct S3 upload with temporary AWS credentials (supports
-      multipart uploads)
-
-      - **gs**: Google Cloud Storage upload with OAuth2 tokens
+      - **gs**: Google Cloud Storage with OAuth2 tokens
 
       - **ftp/sftp**: Traditional file transfer protocols
 
-      - **globus**: High-performance transfer service for large files
 
+      Servers may return a subset of advertised methods based on file
+      characteristics.
 
-      **Note**: While servers advertise their supported upload methods in
-      `service-info`, the actual upload response may include only a subset of
-      these methods. Servers may choose specific upload methods based on file
-      characteristics such as size, type, or internal policies.
 
+      ## Related File Storage (Optional)
 
-      ## Authentication
 
+      Servers MAY store files from the same upload request under common
+      prefixes, enabling bioinformatics workflows that expect co-located files:
 
-      Upload operations support GA4GH Passports (embedded in request body),
-      Basic authentication, and Bearer tokens for flexible authorization.
 
+      - **CRAM + CRAI**: Alignment files with index files (samtools, IGV)
 
-      ## File Integrity and Validation
+      - **VCF + TBI**: Variant files with tabix indexes  
 
+      - **BAM + BAI**: Binary alignment files with indexes
 
-      All upload requests must include checksums to ensure data integrity:
+      - **FASTA + FAI**: Reference sequences with indexes
 
 
-      ### Required Checksums
+      Check `relatedFileStorageSupported` in service-info or examine upload URLs
+      for common prefixes.
 
-      - At least one checksum per file is mandatory for client requests
 
-      - Supported algorithms include SHA-256, MD5, and IANA-registered hash
-      types
+      ## Authentication & Validation
 
-      - Multiple checksums per file are supported for enhanced verification
 
+      **Authentication**: Supports GA4GH Passports, Basic auth, and Bearer
+      tokens.
 
-      ### Server Validation Options
 
-      Servers MAY validate checksums and/or file sizes (advertised via
-      `validateUploadChecksums`/`validateUploadFileSizes` flags) but are not
-      required to do so. Validation increases security but adds computational
-      overhead.
+      **Checksums**: Required for all files (SHA-256, MD5, or IANA-registered
+      algorithms). Servers MAY validate checksums and file sizes as advertised
+      in service-info flags.
 
 
-      ### Validation Process
+      ## Object Registration
 
-      1. Client calculates checksums before requesting upload methods
 
-      2. **Server MAY validate checksums and file sizes** during or after
-      upload, but is not required to do so
+      After upload, register files as DRS objects using POST
+      `/objects/register`:
 
-      3. If server performs validation and detects mismatches, it SHOULD reject
-      the upload or registration
 
-      4. Servers that do not perform validation rely on client-provided metadata
-      for DRS object registration
+      **Atomic Transactions**: Registration is all-or-nothing. If ANY candidate
+      fails, the ENTIRE request fails and no objects are registered.
 
-      5. Successful upload (with or without server validation) enables DRS
-      object registration
 
+      **Requirements**:
 
-      ## Integration with DRS Object Lifecycle
+      - Complete metadata (name, size, checksums, MIME type)
 
+      - Access methods pointing to uploaded file locations  
 
-      Upload operations are designed to integrate seamlessly with the broader
-      DRS object lifecycle:
+      - Valid authorization (if required)
 
+      - Do NOT include server-generated fields (id, self_uri, timestamps)
 
-      ### Pre-Upload Phase
 
-      1. Client prepares files and calculates metadata
-
-      2. Client requests upload methods via `/uploadrequest`
-
-      3. Server responds with upload options and pre-assigned DRS identifiers
-
-
-      ### Upload Phase
-
-      1. Client selects one or more appropriate upload methods from the server
-      response
-
-      2. Client uploads files using the selected methods' credentials and URLs
-
-      3. Storage system receives and stores files at the locations corresponding
-      to the selected upload methods
-
-
-      ### Post-Upload Phase
-
-      1. Files are available in storage with pre-assigned DRS identifiers
-
-      2. **DRS Object Registration**: Clients use the POST `/objects` endpoint
-      to register uploaded files as DRS objects
-
-      3. DRS objects can be queried using standard DRS endpoints
-
-      4. Access methods are automatically configured based on storage location
-
-
-      ## DRS Object Registration
-
-
-      After successfully uploading files using the `/uploadrequest` endpoint,
-      clients must register the uploaded files as DRS objects to make them
-      accessible through the DRS API. This can be accomplished using either:
-
-
-      - **Single Object Registration**: POST `/objects/{object_id}` for
-      registering one object at a time
-
-      - **Bulk Object Registration**: POST `/objects` for registering multiple
-      objects at once
-
-
-      ### Registration Process
-
-
-      1. **Prepare DRS Object Metadata**: Create fully formed DRS object
-      structures with:
-         - The object ID returned from the upload request
-         - Complete metadata (name, size, checksums, MIME type, timestamps)
-         - Access methods that correspond to the upload methods used during file upload
-         - Optional descriptions and aliases
-
-      2. **Choose Registration Method**:
-         - **Single Object**: POST to `/objects/{object_id}` with `object` field containing one DRS object
-         - **Bulk Objects**: POST to `/objects` with `objects` array containing multiple DRS objects
-
-      3. **Submit Registration Request**: Include GA4GH Passport tokens for
-      authorization (if required)
-
-
-      4. **Confirm Registration**: Server validates and registers the DRS
-      objects, making them available for subsequent queries
-
-
-      ### Single Object Registration
-
-
-      The POST `/objects/{object_id}` endpoint operates in two modes:
-
-
-      - **Register Mode**: When the request body contains an `object` field with
-      a fully formed DRS object, the endpoint registers the provided object
-
-      - **Retrieve Mode**: When the `object` field is missing, the endpoint
-      behaves as a GET request with passport authentication
-
-
-      ### Bulk Object Registration
-
-
-      The POST `/objects` endpoint operates in two modes:
-
-
-      - **Register Mode**: When the request body contains an `objects` array
-      with fully formed DRS objects, the endpoint registers the provided objects
-
-      - **Retrieve Mode**: When the request body contains `bulk_object_ids`
-      array, the endpoint behaves as a bulk retrieval operation returning
-      metadata for the specified objects
-
-
-      ### Registration Requirements
-
-
-      For successful DRS object registration after upload:
-
-
-      - **Complete Metadata**: All required DRS object fields must be present
-      and valid
-
-      - **Valid Access Methods**: Access methods must point to the actual
-      uploaded file locations
-
-      - **Checksum Consistency**: Checksums in registration request SHOULD match
-      those provided during upload request
-
-      - **Authorization**: Appropriate GA4GH Passport tokens must be provided if
-      required by the server
-
-      - **Bulk Efficiency**: Multiple objects can be registered in a single
-      request for better performance
-
-
-      **Note**: Servers MAY verify that registered object metadata matches
-      uploaded file characteristics, but are not required to do so.
-
-
-      ### Example Registration Workflows
-
-
-      **Single Object Registration:**
-
-      ```
-
-      1. Upload file via /uploadrequest
-         → Receive object ID: "drs_obj_123"
-
-      2. File is uploaded to storage location
-         → File available at provided upload URL
-
-      3. Register DRS object via POST /objects/drs_obj_123
-         → Request body contains object field with fully formed DRS object
-         → Server validates and registers the object
-
-      4. Query registered object via GET /objects/drs_obj_123
-         → Standard DRS object retrieval now works
-      ```
-
-
-      **Bulk Object Registration:**
-
-      ```
-
-      1. Upload files via /uploadrequest
-         → Receive object IDs: "drs_obj_123", "drs_obj_456"
-
-      2. Files are uploaded to storage locations
-         → Files available at provided upload URLs
-
-      3. Register DRS objects via POST /objects
-         → Request body contains objects array with fully formed DRS objects
-         → Server validates and registers all objects in bulk
-
-      4. Query registered objects via GET /objects/drs_obj_123
-         → Standard DRS object retrieval now works for all registered objects
-      ```
+      Server mints unique IDs and returns complete DRS objects.
 
 
       ## Error Handling
 
 
-      Upload operations include comprehensive error handling:
+      **Client Errors (4xx)**: Invalid metadata (400), missing auth (401),
+      insufficient permissions (403)
 
+      **Server Errors (5xx)**: Storage unavailable (500), capacity limits (503)
 
-      ### Client Errors (4xx)
-
-      - **400 Bad Request**: Invalid file metadata or malformed requests
-
-      - **401 Unauthorized**: Missing or invalid authentication credentials
-
-      - **403 Forbidden**: Insufficient permissions for upload operations
-
-
-      ### Server Errors (5xx)
-
-      - **500 Internal Server Error**: Storage system unavailable or
-      configuration issues
-
-      - **503 Service Unavailable**: Temporary capacity limitations or
-      maintenance
-
-
-      ### Upload-Specific Errors
-
-      - **Checksum validation failures** (only if server performs validation)
-
-      - **File size mismatches** (only if server performs validation)
-
-      - File size limit exceeded (server-imposed limits)
-
-      - Storage quota exceeded
-
-      - Upload timeout or connection failures
+      **Upload-Specific**: Checksum/size validation failures, quota exceeded,
+      timeouts
 
 
       ## Best Practices
 
 
-      **Clients**: Calculate checksums, handle multiple upload methods,
-      implement retry logic, check service-info for validation behavior.
+      **Clients**: Check service-info first, calculate checksums, implement
+      retry logic
 
+      **Servers**: Use short-lived credentials, support multiple upload methods,
+      implement rate limiting
 
-      **Servers**: Use short-lived credentials, provide multiple upload methods
-      when possible, implement consistent validation (if any), use rate
-      limiting.
-
-
-      **Security**: Time-limited credentials, single-use URLs, proper logging,
-      input validation.
+      **Security**: Time-limited credentials, single-use URLs, proper logging
 
 
       ## Example Workflows
 
 
-      ### Simple File Upload
-
-      1. **Check service info** via GET `/service-info` to confirm upload
-      support and available methods
-
-      2. Calculate SHA-256 checksum of local file
-
-      3. Send upload request with file metadata to `/uploadrequest`
-
-      4. Receive HTTPS upload URL, headers, and pre-assigned DRS object ID
-
-      5. POST file to upload URL using multipart form data
-
-      6. Verify upload success
-
-      7. **Register DRS object** via POST `/objects/{object_id}` with fully
-      formed DRS object metadata
-
-      8. Confirm DRS object is accessible via standard DRS endpoints
+      ### Simple HTTPS Upload
 
 
-      ### Large File Upload with S3
+      **1. Request Upload Method**
 
-      1. **Check service info** to confirm S3 upload support and size limits
+      ```http
 
-      2. Prepare large genomic dataset file
+      POST /uploadrequest
 
-      3. Request upload methods specifying file size via `/uploadrequest`
-
-      4. Receive S3 upload method with temporary AWS credentials and
-      pre-assigned DRS object ID
-
-      5. Use AWS SDK to perform multipart upload
-
-      6. Monitor upload progress and handle retries
-
-      7. Confirm upload completion
-
-      8. **Register DRS object** via POST `/objects/{object_id}` with complete
-      metadata and S3 access methods
-
-      9. Verify DRS object availability through standard DRS queries
+      Content-Type: application/json
 
 
-      ### Authenticated Upload with Passports
+      {
+        "requests": [
+          {
+            "name": "variants.vcf",
+            "size": 52428800,
+            "mime_type": "text/plain",
+            "checksums": [
+              {
+                "checksum": "5d41402abc4b2a76b9719d911017c592",
+                "type": "md5"
+              }
+            ]
+          }
+        ]
+      }
 
-      1. **Check service info** to confirm upload support and understand
-      available methods
-
-      2. Obtain GA4GH Passport tokens for dataset access
-
-      3. Include passports in upload request body to `/uploadrequest`
-
-      4. Server validates passport visas and permissions
-
-      5. Receive authorized upload methods and pre-assigned DRS object IDs
-
-      6. Upload files to authorized storage locations
-
-      7. **Register DRS objects** via POST `/objects` with the same passport
-      tokens (bulk registration)
-
-      8. Server validates passports again during registration
-
-      9. DRS objects become available with appropriate access controls based on
-      passport authorization
+      ```
 
 
-      ### Bulk Upload and Registration
+      **Response:**
 
-      1. **Check service info** to confirm upload support and bulk limits
+      ```json
 
-      2. Request upload methods for multiple files via `/uploadrequest`
+      {
+        "responses": [
+          {
+            "name": "variants.vcf",
+            "size": 52428800,
+            "mime_type": "text/plain",
+            "checksums": [
+              {
+                "checksum": "5d41402abc4b2a76b9719d911017c592",
+                "type": "md5"
+              }
+            ],
+            "upload_methods": [
+              {
+                "type": "https",
+                "upload_url": {
+                  "url": "https://uploads.example.org/presigned-upload?signature=FAKE_SIG"
+                }
+              }
+            ]
+          }
+        ]
+      }
 
-      3. Receive upload methods and pre-assigned DRS object IDs for all files
+      ```
 
-      4. Upload all files using their respective upload methods
 
-      5. **Register all DRS objects** via POST `/objects` with `objects` array
-      containing all uploaded files
+      **2. Upload via HTTPS**
 
-      6. All objects become available simultaneously through standard DRS
-      endpoints
+      ```bash
+
+      # Simple PUT upload to presigned URL
+
+      curl -X PUT
+      "https://uploads.example.org/presigned-upload?signature=FAKE_SIG" \
+        --data-binary @variants.vcf
+      ```
+
+
+      **3. Register DRS Object**
+
+      ```http
+
+      POST /objects/register
+
+      Content-Type: application/json
+
+
+      {
+        "candidates": [
+          {
+            "name": "variants.vcf",
+            "size": 52428800,
+            "mime_type": "text/plain",
+            "checksums": [
+              {
+                "checksum": "5d41402abc4b2a76b9719d911017c592",
+                "type": "md5"
+              }
+            ],
+            "access_methods": [
+              {
+                "type": "https",
+                "access_url": {
+                  "url": "https://data.example.org/files/variants.vcf"
+                }
+              }
+            ],
+            "description": "Variant calls in VCF format"
+          }
+        ]
+      }
+
+      ```
+
+
+      **Response:**
+
+      ```json
+
+      {
+        "objects": [
+          {
+            "id": "drs_obj_f6e5d4c3b2a1",
+            "self_uri": "drs://drs.example.org/drs_obj_f6e5d4c3b2a1",
+            "name": "variants.vcf",
+            "size": 52428800,
+            "mime_type": "text/plain",
+            "created_time": "2024-01-15T10:45:00Z",
+            "updated_time": "2024-01-15T10:45:00Z",
+            "version": "1.0",
+            "checksums": [
+              {
+                "checksum": "5d41402abc4b2a76b9719d911017c592",
+                "type": "md5"
+              }
+            ],
+            "access_methods": [
+              {
+                "type": "https",
+                "access_url": {
+                  "url": "https://data.example.org/files/variants.vcf"
+                }
+              }
+            ],
+            "description": "Variant calls in VCF format"
+          }
+        ]
+      }
+
+      ```
+
+
+      ### S3 Bulk Upload (BAM + Index)
+
+
+      **1. Request Upload Methods for Related Files**
+
+      ```http
+
+      POST /uploadrequest
+
+      Content-Type: application/json
+
+
+      {
+        "requests": [
+          {
+            "name": "sample.bam",
+            "size": 1073741824,
+            "mime_type": "application/octet-stream",
+            "checksums": [
+              {
+                "checksum": "d41d8cd98f00b204e9800998ecf8427e",
+                "type": "md5"
+              }
+            ]
+          },
+          {
+            "name": "sample.bam.bai",
+            "size": 2097152,
+            "mime_type": "application/octet-stream",
+            "checksums": [
+              {
+                "checksum": "098f6bcd4621d373cade4e832627b4f6",
+                "type": "md5"
+              }
+            ]
+          }
+        ]
+      }
+
+      ```
+
+
+      **Response:**
+
+      ```json
+
+      {
+        "responses": [
+          {
+            "name": "sample.bam",
+            "size": 1073741824,
+            "mime_type": "application/octet-stream",
+            "checksums": [
+              {
+                "checksum": "d41d8cd98f00b204e9800998ecf8427e",
+                "type": "md5"
+              }
+            ],
+            "upload_methods": [
+              {
+                "type": "s3",
+                "upload_url": {
+                  "url": "s3://genomics-uploads/x7k9m/sample.bam"
+                },
+                "credentials": {
+                  "access_key_id": "FAKE_ACCESS_KEY_123",
+                  "secret_access_key": "FAKE_SECRET_KEY_456",
+                  "session_token": "FAKE_SESSION_TOKEN_789",
+                  "expiration": "2024-01-15T12:00:00Z"
+                }
+              }
+            ]
+          },
+          {
+            "name": "sample.bam.bai",
+            "size": 2097152,
+            "mime_type": "application/octet-stream",
+            "checksums": [
+              {
+                "checksum": "098f6bcd4621d373cade4e832627b4f6",
+                "type": "md5"
+              }
+            ],
+            "upload_methods": [
+              {
+                "type": "s3",
+                "upload_url": {
+                  "url": "s3://genomics-uploads/x7k9m/sample.bam.bai"
+                },
+                "credentials": {
+                  "access_key_id": "FAKE_ACCESS_KEY_123",
+                  "secret_access_key": "FAKE_SECRET_KEY_456",
+                  "session_token": "FAKE_SESSION_TOKEN_789",
+                  "expiration": "2024-01-15T12:00:00Z"
+                }
+              }
+            ]
+          }
+        ]
+      }
+
+      ```
+
+
+      **2. Upload Both Files to S3**
+
+      ```bash
+
+      # Upload BAM and index files using the supplied credentials (note common
+      prefix)
+
+      aws s3 cp sample.bam s3://genomics-uploads/x7k9m/sample.bam
+
+      aws s3 cp sample.bam.bai s3://genomics-uploads/x7k9m/sample.bam.bai
+
+      ```
+
+
+      **3. Register Both DRS Objects**
+
+      ```http
+
+      POST /objects/register
+
+      Content-Type: application/json
+
+
+      {
+        "candidates": [
+          {
+            "name": "sample.bam",
+            "size": 1073741824,
+            "mime_type": "application/octet-stream",
+            "checksums": [
+              {
+                "checksum": "d41d8cd98f00b204e9800998ecf8427e",
+                "type": "md5"
+              }
+            ],
+            "access_methods": [
+              {
+                "type": "s3",
+                "access_id": "s3",
+                "access_url": {
+                  "url": "s3://genomics-uploads/x7k9m/sample.bam"
+                }
+              }
+            ],
+            "description": "BAM alignment file"
+          },
+          {
+            "name": "sample.bam.bai",
+            "size": 2097152,
+            "mime_type": "application/octet-stream",
+            "checksums": [
+              {
+                "checksum": "098f6bcd4621d373cade4e832627b4f6",
+                "type": "md5"
+              }
+            ],
+            "access_methods": [
+              {
+                "type": "s3",
+                "access_id": "s3",
+                "access_url": {
+                  "url": "s3://genomics-uploads/x7k9m/sample.bam.bai"
+                }
+              }
+            ],
+            "description": "BAM index file"
+          }
+        ]
+      }
+
+      ```
+
+
+      **Response:**
+
+      ```json
+
+      {
+        "objects": [
+          {
+            "id": "drs_obj_a1b2c3d4e5f6",
+            "self_uri": "drs://drs.example.org/drs_obj_a1b2c3d4e5f6",
+            "name": "sample.bam",
+            "size": 1073741824,
+            "mime_type": "application/octet-stream",
+            "created_time": "2024-01-15T10:30:00Z",
+            "updated_time": "2024-01-15T10:30:00Z",
+            "version": "1.0",
+            "checksums": [
+              {
+                "checksum": "d41d8cd98f00b204e9800998ecf8427e",
+                "type": "md5"
+              }
+            ],
+            "access_methods": [
+              {
+                "type": "s3",
+                "access_id": "s3",
+                "access_url": {
+                  "url": "s3://genomics-uploads/x7k9m/sample.bam"
+                }
+              }
+            ],
+            "description": "BAM alignment file"
+          },
+          {
+            "id": "drs_obj_b2c3d4e5f6a1",
+            "self_uri": "drs://drs.example.org/drs_obj_b2c3d4e5f6a1",
+            "name": "sample.bam.bai",
+            "size": 2097152,
+            "mime_type": "application/octet-stream",
+            "created_time": "2024-01-15T10:30:00Z",
+            "updated_time": "2024-01-15T10:30:00Z",
+            "version": "1.0",
+            "checksums": [
+              {
+                "checksum": "098f6bcd4621d373cade4e832627b4f6",
+                "type": "md5"
+              }
+            ],
+            "access_methods": [
+              {
+                "type": "s3",
+                "access_id": "s3",
+                "access_url": {
+                  "url": "s3://genomics-uploads/x7k9m/sample.bam.bai"
+                }
+              }
+            ],
+            "description": "BAM index file"
+          }
+        ]
+      }
+
+      ```
   - name: Delete Operations
     description: >-
       # Delete Operations
 
+      > **Optional Functionality**: Delete operations are **optional**
+      extensions to the DRS API. Not all DRS servers are required to implement
+      delete functionality. Clients should check for the availability of delete
+      endpoints before attempting to use them.
 
-      Optional DRS functionality for removing objects and, optionally, data from
-      the underlying storage service. Servers remain fully compliant without
+
+      DRS functionality for removing objects and, optionally, data from the
+      underlying storage service. Servers remain fully compliant without
       implementing delete endpoints.
 
 
@@ -1174,7 +1202,7 @@ tags:
       1. Delete metadata only: `POST /objects/{id}/delete` with
       `delete_storage_data: false`
 
-      2. Re-register object: `POST /objects/{id}` with updated metadata
+      2. Re-register object: `POST /objects/register` with updated metadata
 
 
       ```bash
@@ -1186,7 +1214,8 @@ tags:
 
       # Re-register with updates
 
-      curl -X POST ".../objects/obj_123" -d '{"name": "updated.txt", ...}'
+      curl -X POST ".../objects/register" -d '{"candidates": [{"name":
+      "updated.txt", ...}]}'
 
       ```
 
@@ -1215,7 +1244,8 @@ tags:
       curl -X POST ".../objects/obj_123/delete" -d '{"delete_storage_data":
       false}'
 
-      curl -X POST ".../objects/obj_123" -d '{"name": "updated.vcf", ...}'
+      curl -X POST ".../objects/register" -d '{"candidates": [{"name":
+      "updated.vcf", ...}]}'
 
       ```
 
@@ -1303,6 +1333,10 @@ tags:
     x-displayName: DrsObject
     description: |
       <SchemaDefinition schemaRef="#/components/schemas/DrsObject" />
+  - name: DrsObjectCandidateModel
+    x-displayName: DrsObjectCandidate
+    description: |
+      <SchemaDefinition schemaRef="#/components/schemas/DrsObjectCandidate" />
   - name: ErrorModel
     x-displayName: Error
     description: |
@@ -1327,10 +1361,10 @@ tags:
     x-displayName: UploadMethod
     description: |
       <SchemaDefinition schemaRef="#/components/schemas/UploadMethod" />
-  - name: SingleDeleteRequestModel
-    x-displayName: SingleDeleteRequest
+  - name: DeleteRequestModel
+    x-displayName: DeleteRequest
     description: |
-      <SchemaDefinition schemaRef="#/components/schemas/SingleDeleteRequest" />
+      <SchemaDefinition schemaRef="#/components/schemas/DeleteRequest" />
   - name: BulkDeleteRequestModel
     x-displayName: BulkDeleteRequest
     description: |
@@ -1772,13 +1806,14 @@ x-tagGroups:
       - ChecksumModel
       - ContentsObjectModel
       - DrsObjectModel
+      - DrsObjectCandidateModel
       - ErrorModel
       - UploadRequestModel
       - UploadResponseModel
       - UploadRequestObjectModel
       - UploadResponseObjectModel
       - UploadMethodModel
-      - SingleDeleteRequestModel
+      - DeleteRequestModel
       - BulkDeleteRequestModel
       - DeleteResultModel
       - BulkDeleteResponseModel
@@ -1972,29 +2007,17 @@ paths:
         - Objects
       x-swagger-router-controller: ga4gh.drs.server
     post:
-      summary: >-
-        Get info about a DrsObject through POST'ing a Passport or register new
-        DRS objects.
+      summary: Get info about a DrsObject through POST'ing a Passport.
       description: >-
-        This endpoint supports two modes of operation based on the request body:
+        Returns object metadata and a list of access methods that can be used to
+        fetch object bytes. Method is a POST to accommodate a JWT GA4GH Passport
+        sent in the request body in order to authorize access.
 
-        1. **Retrieve Mode** (backward compatible): When the "object" field is
-        missing, 
-           returns object metadata and a list of access methods that can be used to fetch object bytes.
-
-        2. **Register Mode**: When the "object" field contains a DRS object,
-        registers the supplied 
-           fully formed DRS object using the provided passports for authorization.
-
-        Method is a POST to accommodate a JWT GA4GH Passport sent in the request
-        body in order to authorize access.
-
-        **Note**: To upload new files before registering them as DRS objects,
-        use the `/uploadrequest` endpoint  to obtain upload methods and
-        temporary credentials. For registering multiple objects at once, use
-        the  bulk POST `/objects` endpoint. Note that upload functionality is
-        optional and not all DRS servers implement  the `/uploadrequest`
-        endpoint.
+        **Note**: To upload new files and register them as DRS objects, use the
+        `/uploadrequest` endpoint  to obtain upload methods and temporary
+        credentials, then use POST `/objects/register` endpoint  to register
+        multiple objects at once. Note that upload functionality is optional and
+        not all DRS  servers implement the upload endpoints.
       operationId: PostObject
       security:
         - PassportAuth: []
@@ -2050,7 +2073,7 @@ paths:
       parameters:
         - $ref: '#/components/parameters/ObjectId'
       requestBody:
-        $ref: '#/components/requestBodies/SingleDeleteBody'
+        $ref: '#/components/requestBodies/DeleteBody'
       responses:
         '204':
           $ref: '#/components/responses/204DeleteSuccess'
@@ -2350,27 +2373,17 @@ paths:
             schema:
               $ref: '#/components/schemas/BulkObjectIdNoPassport'
     post:
-      summary: >-
-        Get info about multiple DrsObjects or register multiple DRS objects with
-        an optional Passport(s).
+      summary: Get info about multiple DrsObjects with an optional Passport(s).
       description: >-
-        This endpoint supports two modes of operation based on the request body:
+        Returns an array of object metadata and access methods for the specified
+        object IDs.
 
-        1. **Retrieve Mode** (backward compatible): When the request contains
-        `bulk_object_ids`, 
-           returns an array of object metadata and access methods for the specified object IDs.
+        The request is limited to use passports (one or more) or a single bearer
+        token,  so make sure your bulk request is for objects that all use the
+        same passports/token.
 
-        2. **Register Mode**: When the request contains an `objects` array with
-        fully formed DRS objects, 
-           registers the supplied DRS objects using the provided passports for authorization.
-
-        For retrieve mode, the request is limited to use passports (one or more)
-        or a single bearer token,  so make sure your bulk request is for objects
-        that all use the same passports/token.
-
-        **Note**: Register mode is typically used after uploading files via the
-        `/uploadrequest` endpoint  to register the uploaded files as DRS objects
-        in bulk.
+        **Note**: To register new DRS objects, use the dedicated
+        `/objects/register` endpoint.
       operationId: GetBulkObjects
       security:
         - PassportAuth: []
@@ -2398,6 +2411,67 @@ paths:
       x-swagger-router-controller: ga4gh.drs.server
       requestBody:
         $ref: '#/components/requestBodies/BulkObjectBody'
+  /objects/register:
+    post:
+      summary: Register multiple DRS objects
+      description: >-
+        Registers one or more candidate DRS objects with the server. The server
+        will mint  unique object IDs for each registered object and return them
+        in the response.
+
+        This endpoint is typically used after uploading files via the
+        `/uploadrequest` endpoint  to register the uploaded files as DRS
+        objects. The request body should contain candidate  DRS objects with all
+        required metadata including access methods that correspond  to the
+        upload methods used during file upload.
+
+        **IMPORTANT - Transactional Behavior**:  Registration operations are
+        atomic transactions. If ANY candidate object fails validation  or
+        registration, the ENTIRE request fails and NO objects are registered.
+        Servers MUST  implement this as an all-or-nothing operation to ensure
+        data consistency.
+
+        **Authentication**: GA4GH Passports can be provided in the request body
+        for authorization.
+
+        **Server Responsibilities**: - Treat registration as an atomic
+        transaction (all succeed or all fail) - Validate ALL candidate objects
+        before registering ANY, and support rollback in the event of failures -
+        Mint unique object IDs for each registered object - Add server-generated
+        timestamps (created_time, updated_time) - Store objects in the DRS
+        repository atomically - Return complete registered DRS objects with all
+        server-generated fields - Roll back any partial changes if any candidate
+        fails validation
+
+        **Client Responsibilities**: - Provide complete DRS object metadata for
+        all candidates - Include access methods corresponding to uploaded file
+        locations - Ensure checksums match uploaded file content - Handle
+        potential failure of entire batch if any single object is invalid
+      operationId: RegisterObjects
+      security:
+        - {}
+        - BasicAuth: []
+        - BearerAuth: []
+        - PassportAuth: []
+      requestBody:
+        $ref: '#/components/requestBodies/RegisterObjectsBody'
+      responses:
+        '201':
+          $ref: '#/components/responses/201ObjectsCreated'
+        '400':
+          $ref: '#/components/responses/400BadRequest'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+        '403':
+          $ref: '#/components/responses/403Forbidden'
+        '413':
+          $ref: '#/components/responses/413RequestTooLarge'
+        '500':
+          $ref: '#/components/responses/500InternalServerError'
+      tags:
+        - Objects
+      x-swagger-router-controller: ga4gh.drs.server
+      x-codegen-request-body-name: body
   /objects/{object_id}/access/{access_id}:
     get:
       summary: Get a URL for fetching bytes
@@ -2543,15 +2617,14 @@ paths:
         MIME type)
 
         3. Server responds with available upload methods (S3, HTTPS, Google
-        Cloud Storage, etc.), temporary credentials, and pre-assigned DRS object
-        IDs
+        Cloud Storage, etc.) and temporary credentials
 
         4. Client selects one or more upload methods from the response and uses
         the corresponding credentials to upload the file to the storage service
 
         5. Once uploaded, client registers the files as DRS objects using POST
-        `/objects` with the pre-assigned object IDs, including access methods
-        that correspond to the upload methods used
+        `/objects/register`, with the server minting object IDs and including
+        access methods that correspond to the upload methods used
 
         6. The registered DRS object becomes accessible through standard DRS API
         endpoints
@@ -2853,6 +2926,20 @@ components:
                 uploads with mismatches. If false or missing, the server does
                 not perform file size validation and relies on client-provided
                 metadata. Only present when uploadSupported is true.
+              default: false
+            relatedFileStorageSupported:
+              type: boolean
+              description: >-
+                Indicates whether this DRS server supports storing files from
+                the same upload request under a common prefix or folder
+                structure. If true, the server will organize related files
+                together in storage, enabling bioinformatics workflows that
+                expect co-located files (e.g., CRAM + CRAI, VCF + TBI). If false
+                or missing, the server may distribute files across different
+                storage locations or prefixes. Only present when uploadSupported
+                is true. This feature is particularly valuable for genomics
+                tools like samtools that expect index files to be co-located
+                with data files.
               default: false
             deleteSupported:
               type: boolean
@@ -3218,7 +3305,7 @@ components:
             A list of strings that can be used to find other metadata about this
             `DrsObject` from external metadata sources. These aliases can be
             used to represent secondary accession numbers or external GUIDs.
-    SingleDeleteRequest:
+    DeleteRequest:
       type: object
       description: Request body for single object delete operations
       properties:
@@ -3350,6 +3437,105 @@ components:
           items:
             type: string
           description: An array of ObjectIDs.
+    DrsObjectCandidate:
+      type: object
+      required:
+        - size
+        - checksums
+      properties:
+        name:
+          type: string
+          description: >-
+            A string that can be used to name a `DrsObject`.
+
+            This string is made up of uppercase and lowercase letters, decimal
+            digits, hyphen, period, and underscore [A-Za-z0-9.-_]. See
+            http://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap03.html#tag_03_282[portable
+            filenames].
+        size:
+          type: integer
+          format: int64
+          description: >-
+            For blobs, the blob size in bytes.
+
+            For bundles, the cumulative size, in bytes, of items in the
+            `contents` field.
+        version:
+          type: string
+          description: >-
+            A string representing a version.
+
+            (Some systems may use checksum, a RFC3339 timestamp, or an
+            incrementing version number.)
+        mime_type:
+          type: string
+          description: A string providing the mime-type of the `DrsObject`.
+          example: application/json
+        checksums:
+          type: array
+          minItems: 1
+          items:
+            $ref: '#/components/schemas/Checksum'
+          description: >-
+            The checksum of the `DrsObject`. At least one checksum must be
+            provided.
+
+            For blobs, the checksum is computed over the bytes in the blob.
+
+            For bundles, the checksum is computed over a sorted concatenation of
+            the checksums of its top-level contained objects (not recursive,
+            names not included). The list of checksums is sorted alphabetically
+            (hex-code) before concatenation and a further checksum is performed
+            on the concatenated checksum value.
+
+            For example, if a bundle contains blobs with the following
+            checksums:
+
+            md5(blob1) = 72794b6d
+
+            md5(blob2) = 5e089d29
+
+            Then the checksum of the bundle is:
+
+            md5( concat( sort( md5(blob1), md5(blob2) ) ) )
+
+            = md5( concat( sort( 72794b6d, 5e089d29 ) ) )
+
+            = md5( concat( 5e089d29, 72794b6d ) )
+
+            = md5( 5e089d2972794b6d )
+
+            = f7a29a04
+        access_methods:
+          type: array
+          minItems: 1
+          items:
+            $ref: '#/components/schemas/AccessMethod'
+          description: >-
+            The list of access methods that can be used to fetch the
+            `DrsObject`.
+
+            Required for single blobs; optional for bundles.
+        contents:
+          type: array
+          description: >-
+            If not set, this `DrsObject` is a single blob.
+
+            If set, this `DrsObject` is a bundle containing the listed
+            `ContentsObject` s (some of which may be further nested).
+          items:
+            $ref: '#/components/schemas/ContentsObject'
+        description:
+          type: string
+          description: A human readable description of the `DrsObject`.
+        aliases:
+          type: array
+          items:
+            type: string
+          description: >-
+            A list of strings that can be used to find other metadata about this
+            `DrsObject` from external metadata sources. These aliases can be
+            used to represent secondary accession numbers or external GUIDs.
     BulkObjectAccessId:
       type: object
       description: The object that contains object_id/access_id tuples
@@ -3442,11 +3628,45 @@ components:
           items:
             type: string
           description: Optional array of GA4GH Passport JWTs for authorization
+    UploadURL:
+      type: object
+      required:
+        - url
+      properties:
+        url:
+          type: string
+          description: >-
+            URL for uploading the file. This may be a presigned URL, S3 bucket
+            path,  or other upload endpoint depending on the upload method type.
+          example: https://uploads.example.org/presigned-upload?signature=abc123
+        headers:
+          type: array
+          items:
+            type: string
+          description: >-
+            Optional HTTP headers required for the upload request. Common
+            examples include authorization headers, content-type specifications,
+            or upload-specific metadata.
+          example:
+            - 'Content-Type: multipart/form-data'
+            - 'Authorization: Bearer upload_token_123'
+        form_data:
+          type: object
+          additionalProperties:
+            type: string
+          description: >-
+            Optional form data fields required for multipart form uploads
+            (typically used with HTTPS presigned POST URLs). These fields must
+            be included in the upload request along with the file data.
+          example:
+            key: uploads/batch-123/file.txt
+            policy: eyJleHBpcmF0aW9uIjoiMjAyNC0wMS0xNVQxMjowMDowMFoifQ==
+            signature: abc123def456
     UploadMethod:
       type: object
       required:
         - type
-        - access_url
+        - upload_url
       properties:
         type:
           type: string
@@ -3474,10 +3694,8 @@ components:
 
             Other common implementations include 'gs' for Google Cloud Storage
             and 'sftp' for secure FTP uploads.
-        access_url:
-          allOf:
-            - $ref: '#/components/schemas/AccessURL'
-            - description: URL and headers for file upload
+        upload_url:
+          $ref: '#/components/schemas/UploadURL'
         region:
           type: string
           description: >-
@@ -3494,19 +3712,11 @@ components:
     UploadResponseObject:
       type: object
       required:
-        - id
-        - self_uri
         - name
         - size
         - mime_type
         - checksums
       properties:
-        id:
-          type: string
-          description: Unique DRS object identifier
-        self_uri:
-          type: string
-          description: DRS URI for accessing this object
         name:
           type: string
           description: The name of the file
@@ -3814,6 +4024,88 @@ components:
                 type: array
                 items:
                   $ref: '#/components/schemas/Authorizations'
+    201ObjectsCreated:
+      description: >-
+        DRS objects were successfully registered as an atomic transaction.
+        Returns the complete DRS objects with server-minted IDs and timestamps.
+        All candidate objects were validated and registered together - if any
+        had failed, none would have been registered.
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - objects
+            properties:
+              objects:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DrsObject'
+                description: >-
+                  Array of registered DRS objects in the same order as the
+                  candidates in the request
+          examples:
+            single_object_created:
+              summary: Single object registered
+              description: Response after registering one DRS object
+              value:
+                objects:
+                  - id: drs_obj_a1b2c3d4e5f6
+                    self_uri: drs://drs.example.org/drs_obj_a1b2c3d4e5f6
+                    name: sample_data.vcf
+                    size: 1048576
+                    mime_type: text/plain
+                    created_time: '2024-01-15T10:30:00Z'
+                    updated_time: '2024-01-15T10:30:00Z'
+                    version: '1.0'
+                    checksums:
+                      - checksum: >-
+                          e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
+                        type: sha-256
+                    access_methods:
+                      - type: s3
+                        access_url:
+                          url: s3://my-bucket/uploads/sample_data.vcf
+                    description: Variant call format file for sample analysis
+            multiple_objects_created:
+              summary: Multiple objects registered
+              description: Response after registering multiple DRS objects
+              value:
+                objects:
+                  - id: drs_obj_a1b2c3d4e5f6
+                    self_uri: drs://drs.example.org/drs_obj_a1b2c3d4e5f6
+                    name: genome_assembly.fasta
+                    size: 3221225472
+                    mime_type: text/plain
+                    created_time: '2024-01-15T09:00:00Z'
+                    updated_time: '2024-01-15T09:00:00Z'
+                    version: '1.0'
+                    checksums:
+                      - checksum: >-
+                          a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3
+                        type: sha-256
+                    access_methods:
+                      - type: s3
+                        access_url:
+                          url: s3://genomics-bucket/assemblies/hg38.fasta
+                    description: Human genome reference assembly
+                  - id: drs_obj_f6e5d4c3b2a1
+                    self_uri: drs://drs.example.org/drs_obj_f6e5d4c3b2a1
+                    name: annotations.gff3
+                    size: 524288000
+                    mime_type: text/plain
+                    created_time: '2024-01-15T09:15:00Z'
+                    updated_time: '2024-01-15T09:15:00Z'
+                    version: '1.0'
+                    checksums:
+                      - checksum: >-
+                          b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9
+                        type: sha-256
+                    access_methods:
+                      - type: https
+                        access_url:
+                          url: https://data.example.org/files/annotations.gff3
+                    description: Gene annotations in GFF3 format
     200OkAccess:
       description: The `AccessURL` was found successfully
       content:
@@ -3849,9 +4141,7 @@ components:
               description: Response with S3 upload method and temporary credentials
               value:
                 responses:
-                  - id: drs_object_123456
-                    self_uri: drs://drs.example.org/drs_object_123456
-                    name: sample_data.vcf
+                  - name: sample_data.vcf
                     size: 1048576
                     mime_type: text/plain
                     checksums:
@@ -3864,7 +4154,7 @@ components:
                       - vcf_batch_2024
                     upload_methods:
                       - type: s3
-                        access_url:
+                        upload_url:
                           url: >-
                             https://my-bucket.s3.amazonaws.com/uploads/drs_object_123456
                           headers:
@@ -3882,9 +4172,7 @@ components:
               description: Response with HTTPS presigned POST URL for direct upload
               value:
                 responses:
-                  - id: drs_object_789012
-                    self_uri: drs://drs.example.org/drs_object_789012
-                    name: genome_assembly.fasta
+                  - name: genome_assembly.fasta
                     size: 3221225472
                     mime_type: text/plain
                     checksums:
@@ -3898,7 +4186,7 @@ components:
                       - hg38_reference
                     upload_methods:
                       - type: https
-                        access_url:
+                        upload_url:
                           url: >-
                             https://upload.example.org/v1/files/drs_object_789012
                           headers:
@@ -3912,9 +4200,7 @@ components:
               description: Response offering multiple upload method options for flexibility
               value:
                 responses:
-                  - id: drs_object_345678
-                    self_uri: drs://drs.example.org/drs_object_345678
-                    name: annotations.gff3
+                  - name: annotations.gff3
                     size: 524288000
                     mime_type: text/plain
                     checksums:
@@ -4017,27 +4303,17 @@ components:
                   the encoded JWT GA4GH Passport that contains embedded Visas. 
                   The overall JWT is signed as are the individual Passport
                   Visas.
-              object:
-                $ref: '#/components/schemas/DrsObject'
-                description: >-
-                  Optional fully formed DRS object to register. If this field is
-                  missing, the endpoint behaves as a GET request with passport
-                  authentication to retrieve object metadata. If an object is
-                  provided, the server will register the supplied DRS object
-                  using the passports for authorization.
           examples:
-            retrieve_mode:
-              summary: Retrieve mode (backward compatible)
-              description: >-
-                Request object metadata with passport authentication - no
-                objects array provided
+            retrieve_with_auth:
+              summary: Retrieve object with authentication
+              description: Request object metadata with passport authentication
               value:
                 expand: false
                 passports:
                   - >-
                     eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJnYTRnaF9wYXNzcG9ydF92MSI6W119.JJ5rN0ktP0qwyZmIPpxmF_p7JsxAZH6L6brUxtad3CM
-            retrieve_mode_expanded:
-              summary: Retrieve mode with bundle expansion
+            retrieve_expanded_bundle:
+              summary: Retrieve expanded bundle with authentication
               description: Request expanded bundle contents with passport authentication
               value:
                 expand: true
@@ -4046,42 +4322,12 @@ components:
                     eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJnYTRnaF9wYXNzcG9ydF92MSI6W119.JJ5rN0ktP0qwyZmIPpxmF_p7JsxAZH6L6brUxtad3CM
                   - >-
                     eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJnYTRnaF9wYXNzcG9ydF92MSI6W119.additional_passport_signature
-            register_mode:
-              summary: Register mode - single object
-              description: Register a single fully formed DRS object
-              value:
-                passports:
-                  - >-
-                    eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJnYTRnaF9wYXNzcG9ydF92MSI6W119.JJ5rN0ktP0qwyZmIPpxmF_p7JsxAZH6L6brUxtad3CM
-                object:
-                  id: drs_object_123456
-                  self_uri: drs://drs.example.org/drs_object_123456
-                  name: sample_data.vcf
-                  size: 1048576
-                  mime_type: text/plain
-                  created_time: '2024-01-15T10:30:00Z'
-                  updated_time: '2024-01-15T10:30:00Z'
-                  version: '1.0'
-                  checksums:
-                    - checksum: >-
-                        e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
-                      type: sha-256
-                  access_methods:
-                    - type: s3
-                      access_url:
-                        url: >-
-                          https://my-bucket.s3.amazonaws.com/files/drs_object_123456
-                      region: us-east-1
-                  description: Variant call format file for sample analysis
-                  aliases:
-                    - sample_001_variants
-                    - vcf_batch_2024
-    SingleDeleteBody:
+    DeleteBody:
       required: false
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/SingleDeleteRequest'
+            $ref: '#/components/schemas/DeleteRequest'
           examples:
             metadata_only_delete:
               summary: Delete metadata only (default)
@@ -4231,6 +4477,8 @@ components:
         application/json:
           schema:
             type: object
+            required:
+              - bulk_object_ids
             properties:
               passports:
                 type: array
@@ -4246,22 +4494,11 @@ components:
                 type: array
                 items:
                   type: string
-                description: >-
-                  An array of ObjectIDs for retrieve mode. When this field is
-                  present, the endpoint  behaves as a bulk retrieval operation
-                  returning metadata for the specified objects.
-              objects:
-                type: array
-                items:
-                  $ref: '#/components/schemas/DrsObject'
-                description: >-
-                  An array of fully formed DRS objects for register mode. When
-                  this field is present,  the endpoint registers the supplied
-                  DRS objects using the passports for authorization. This field
-                  is mutually exclusive with bulk_object_ids.
+                minItems: 1
+                description: An array of ObjectIDs to retrieve metadata for
           examples:
             bulk_retrieve:
-              summary: Bulk retrieve mode
+              summary: Bulk retrieve objects
               description: >-
                 Retrieve metadata for multiple existing DRS objects using their
                 IDs
@@ -4273,52 +4510,85 @@ components:
                   - drs_object_123456
                   - drs_object_789012
                   - drs_object_345678
-            bulk_register:
-              summary: Bulk register mode
-              description: Register multiple fully formed DRS objects after upload
+            bulk_retrieve_no_auth:
+              summary: Bulk retrieve without authentication
+              description: Retrieve metadata for public DRS objects
               value:
-                passports:
-                  - >-
-                    eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJnYTRnaF9wYXNzcG9ydF92MSI6W119.JJ5rN0ktP0qwyZmIPpxmF_p7JsxAZH6L6brUxtad3CM
-                objects:
-                  - id: drs_object_123456
-                    self_uri: drs://drs.example.org/drs_object_123456
-                    name: sample_data.vcf
+                bulk_object_ids:
+                  - drs_object_public_123
+                  - drs_object_public_456
+    RegisterObjectsBody:
+      description: Request body for registering DRS objects after upload
+      required: true
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - candidates
+            properties:
+              candidates:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DrsObjectCandidate'
+                minItems: 1
+                description: >-
+                  Array of DRS object candidates to register (server will mint
+                  IDs and timestamps)
+              passports:
+                type: array
+                items:
+                  type: string
+                description: Optional array of GA4GH Passport JWTs for authorization
+          examples:
+            single_object_registration:
+              summary: Register a single object
+              description: Register one DRS object after upload
+              value:
+                candidates:
+                  - name: sample_data.vcf
                     size: 1048576
                     mime_type: text/plain
-                    created_time: '2024-01-15T10:30:00Z'
-                    updated_time: '2024-01-15T10:30:00Z'
-                    version: '1.0'
                     checksums:
                       - checksum: >-
                           e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855
                         type: sha-256
+                    description: Variant call format file for sample analysis
                     access_methods:
                       - type: s3
                         access_url:
-                          url: >-
-                            https://my-bucket.s3.amazonaws.com/files/drs_object_123456
-                        region: us-east-1
-                    description: Variant call format file for sample analysis
-                    aliases:
-                      - sample_001_variants
-                  - id: drs_object_789012
-                    self_uri: drs://drs.example.org/drs_object_789012
-                    name: genome_assembly.fasta
+                          url: s3://my-bucket/uploads/sample_data.vcf
+                passports:
+                  - eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
+            bulk_object_registration:
+              summary: Register multiple objects
+              description: Register multiple DRS objects in a single request
+              value:
+                candidates:
+                  - name: genome_assembly.fasta
                     size: 3221225472
                     mime_type: text/plain
-                    created_time: '2024-01-15T09:00:00Z'
                     checksums:
                       - checksum: >-
                           a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3
                         type: sha-256
+                    description: Human genome reference assembly
                     access_methods:
                       - type: s3
                         access_url:
-                          url: >-
-                            https://genomics-bucket.s3.us-west-2.amazonaws.com/files/drs_object_789012
-                        region: us-west-2
-                    description: Human genome reference assembly
+                          url: s3://genomics-bucket/assemblies/hg38.fasta
+                  - name: annotations.gff3
+                    size: 524288000
+                    mime_type: text/plain
+                    checksums:
+                      - checksum: >-
+                          b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9
+                        type: sha-256
+                    description: Gene annotations in GFF3 format
+                    access_methods:
+                      - type: https
+                        access_url:
+                          url: https://data.example.org/files/annotations.gff3
     Passports:
       required: true
       content:

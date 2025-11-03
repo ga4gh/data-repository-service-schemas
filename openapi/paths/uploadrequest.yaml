@@ -21,11 +21,11 @@ post:
     
     2. Client sends a request with file metadata (name, size, checksums, MIME type)
     
-    3. Server responds with available upload methods (S3, HTTPS, Google Cloud Storage, etc.), temporary credentials, and pre-assigned DRS object IDs
+    3. Server responds with available upload methods (S3, HTTPS, Google Cloud Storage, etc.) and temporary credentials
     
     4. Client selects one or more upload methods from the response and uses the corresponding credentials to upload the file to the storage service
     
-    5. Once uploaded, client registers the files as DRS objects using POST `/objects` with the pre-assigned object IDs, including access methods that correspond to the upload methods used
+    5. Once uploaded, client registers the files as DRS objects using POST `/objects/register`, with the server minting object IDs and including access methods that correspond to the upload methods used
     
     6. The registered DRS object becomes accessible through standard DRS API endpoints
     

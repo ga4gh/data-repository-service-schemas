@@ -1,0 +1,66 @@
+description: Request body for registering DRS objects after upload
+required: true
+content:
+  application/json:
+    schema:
+      type: object
+      required:
+        - candidates
+      properties:
+        candidates:
+          type: array
+          items:
+            $ref: '../schemas/DrsObjectCandidate.yaml'
+          minItems: 1
+          description: Array of DRS object candidates to register (server will mint IDs and timestamps)
+        passports:
+          type: array
+          items:
+            type: string
+          description: Optional array of GA4GH Passport JWTs for authorization
+    examples:
+      single_object_registration:
+        summary: Register a single object
+        description: Register one DRS object after upload
+        value:
+          candidates:
+            - name: "sample_data.vcf"
+              size: 1048576
+              mime_type: "text/plain"
+              checksums:
+                - checksum: "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+                  type: "sha-256"
+              description: "Variant call format file for sample analysis"
+              access_methods:
+                - type: "s3"
+                  access_url:
+                    url: "s3://my-bucket/uploads/sample_data.vcf"
+          passports:
+            - "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+      bulk_object_registration:
+        summary: Register multiple objects
+        description: Register multiple DRS objects in a single request
+        value:
+          candidates:
+            - name: "genome_assembly.fasta"
+              size: 3221225472
+              mime_type: "text/plain"
+              checksums:
+                - checksum: "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3"
+                  type: "sha-256"
+              description: "Human genome reference assembly"
+              access_methods:
+                - type: "s3"
+                  access_url:
+                    url: "s3://genomics-bucket/assemblies/hg38.fasta"
+            - name: "annotations.gff3"
+              size: 524288000
+              mime_type: "text/plain"
+              checksums:
+                - checksum: "b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9"
+                  type: "sha-256"
+              description: "Gene annotations in GFF3 format"
+              access_methods:
+                - type: "https"
+                  access_url:
+                    url: "https://data.example.org/files/annotations.gff3"

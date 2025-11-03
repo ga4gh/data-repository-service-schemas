@@ -1,6 +1,7 @@
 # Delete Operations
+> **Optional Functionality**: Delete operations are **optional** extensions to the DRS API. Not all DRS servers are required to implement delete functionality. Clients should check for the availability of delete endpoints before attempting to use them.
 
-Optional DRS functionality for removing objects and, optionally, data from the underlying storage service. Servers remain fully compliant without implementing delete endpoints.
+DRS functionality for removing objects and, optionally, data from the underlying storage service. Servers remain fully compliant without implementing delete endpoints.
 
 ## Overview
 
@@ -78,13 +79,13 @@ curl -H "Authorization: Bearer token" -d '{"delete_storage_data": false}' ...
 
 **Safe Update Process:**
 1. Delete metadata only: `POST /objects/{id}/delete` with `delete_storage_data: false`
-2. Re-register object: `POST /objects/{id}` with updated metadata
+2. Re-register object: `POST /objects/register` with updated metadata
 
 ```bash
 # Delete metadata (preserves storage)
 curl -X POST ".../objects/obj_123/delete" -d '{"delete_storage_data": false}'
 # Re-register with updates
-curl -X POST ".../objects/obj_123" -d '{"name": "updated.txt", ...}'
+curl -X POST ".../objects/register" -d '{"candidates": [{"name": "updated.txt", ...}]}'
 ```
 
 ## Error Responses
@@ -100,7 +101,7 @@ curl -X POST ".../objects/obj_123" -d '{"name": "updated.txt", ...}'
 ```bash
 curl ".../service-info"  # Check capabilities
 curl -X POST ".../objects/obj_123/delete" -d '{"delete_storage_data": false}'
-curl -X POST ".../objects/obj_123" -d '{"name": "updated.vcf", ...}'
+curl -X POST ".../objects/register" -d '{"candidates": [{"name": "updated.vcf", ...}]}'
 ```
 
 **Complete Removal:**
