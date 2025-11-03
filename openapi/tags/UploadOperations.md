@@ -148,7 +148,7 @@ Content-Type: application/json
         {
           "type": "https",
           "access_url": {
-            "url": "https://uploads.example.org/base-upload-endpoint"
+            "url": "https://uploads.example.org/variants.vcf"
           },
           "upload_details": {
             "post_url": "https://uploads.example.org/presigned-upload?signature=FAKE_SIG"
