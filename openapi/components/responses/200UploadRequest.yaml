@@ -9,9 +9,7 @@ content:
         description: Response with S3 upload method and temporary credentials
         value:
           responses:
-            - id: "drs_object_123456"
-              self_uri: "drs://drs.example.org/drs_object_123456"
-              name: "sample_data.vcf"
+            - name: "sample_data.vcf"
               size: 1048576
               mime_type: "text/plain"
               checksums:
@@ -23,7 +21,7 @@ content:
                 - "vcf_batch_2024"
               upload_methods:
                 - type: "s3"
-                  access_url:
+                  upload_url:
                     url: "https://my-bucket.s3.amazonaws.com/uploads/drs_object_123456"
                     headers:
                       - "Authorization: AWS4-HMAC-SHA256 Credential=AKIAIOSFODNN7EXAMPLE/20240101/us-east-1/s3/aws4_request"
@@ -37,9 +35,7 @@ content:
         description: Response with HTTPS presigned POST URL for direct upload
         value:
           responses:
-            - id: "drs_object_789012"
-              self_uri: "drs://drs.example.org/drs_object_789012"
-              name: "genome_assembly.fasta"
+            - name: "genome_assembly.fasta"
               size: 3221225472
               mime_type: "text/plain"
               checksums:
@@ -52,7 +48,7 @@ content:
                 - "hg38_reference"
               upload_methods:
                 - type: "https"
-                  access_url:
+                  upload_url:
                     url: "https://upload.example.org/v1/files/drs_object_789012"
                     headers:
                       - "Content-Type: multipart/form-data"
@@ -63,9 +59,7 @@ content:
         description: Response offering multiple upload method options for flexibility
         value:
           responses:
-            - id: "drs_object_345678"
-              self_uri: "drs://drs.example.org/drs_object_345678"
-              name: "annotations.gff3"
+            - name: "annotations.gff3"
               size: 524288000
               mime_type: "text/plain"
               checksums:

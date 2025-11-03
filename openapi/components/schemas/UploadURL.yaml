@@ -1,0 +1,31 @@
+type: object
+required:
+  - url
+properties:
+  url:
+    type: string
+    description: >-
+      URL for uploading the file. This may be a presigned URL, S3 bucket path, 
+      or other upload endpoint depending on the upload method type.
+    example: "https://uploads.example.org/presigned-upload?signature=abc123"
+  headers:
+    type: array
+    items:
+      type: string
+    description: >-
+      Optional HTTP headers required for the upload request. Common examples include
+      authorization headers, content-type specifications, or upload-specific metadata.
+    example:
+      - "Content-Type: multipart/form-data"
+      - "Authorization: Bearer upload_token_123"
+  form_data:
+    type: object
+    additionalProperties:
+      type: string
+    description: >-
+      Optional form data fields required for multipart form uploads (typically used with HTTPS presigned POST URLs).
+      These fields must be included in the upload request along with the file data.
+    example:
+      key: "uploads/batch-123/file.txt"
+      policy: "eyJleHBpcmF0aW9uIjoiMjAyNC0wMS0xNVQxMjowMDowMFoifQ=="
+      signature: "abc123def456"

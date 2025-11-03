@@ -1,0 +1,57 @@
+post:
+  summary: Register multiple DRS objects
+  description: >-
+    Registers one or more candidate DRS objects with the server. The server will mint 
+    unique object IDs for each registered object and return them in the response.
+    
+    This endpoint is typically used after uploading files via the `/uploadrequest` endpoint 
+    to register the uploaded files as DRS objects. The request body should contain candidate 
+    DRS objects with all required metadata including access methods that correspond 
+    to the upload methods used during file upload.
+    
+    **IMPORTANT - Transactional Behavior**: 
+    Registration operations are atomic transactions. If ANY candidate object fails validation 
+    or registration, the ENTIRE request fails and NO objects are registered. Servers MUST 
+    implement this as an all-or-nothing operation to ensure data consistency.
+    
+    **Authentication**: GA4GH Passports can be provided in the request body for authorization.
+    
+    **Server Responsibilities**:
+    - Treat registration as an atomic transaction (all succeed or all fail)
+    - Validate ALL candidate objects before registering ANY, and support rollback in the event of failures
+    - Mint unique object IDs for each registered object
+    - Add server-generated timestamps (created_time, updated_time)
+    - Store objects in the DRS repository atomically
+    - Return complete registered DRS objects with all server-generated fields
+    - Roll back any partial changes if any candidate fails validation
+    
+    **Client Responsibilities**:
+    - Provide complete DRS object metadata for all candidates
+    - Include access methods corresponding to uploaded file locations
+    - Ensure checksums match uploaded file content
+    - Handle potential failure of entire batch if any single object is invalid
+  operationId: RegisterObjects
+  security:
+    - {}
+    - BasicAuth: []
+    - BearerAuth: []
+    - PassportAuth: []
+  requestBody:
+    $ref: '../components/requestBodies/RegisterObjectsBody.yaml'
+  responses:
+    201:
+      $ref: '../components/responses/201ObjectsCreated.yaml'
+    400:
+      $ref: '../components/responses/400BadRequest.yaml'
+    401:
+      $ref: '../components/responses/401Unauthorized.yaml'
+    403:
+      $ref: '../components/responses/403Forbidden.yaml'
+    413:
+      $ref: '../components/responses/413RequestTooLarge.yaml'
+    500:
+      $ref: '../components/responses/500InternalServerError.yaml'
+  tags:
+    - Objects
+  x-swagger-router-controller: ga4gh.drs.server
+  x-codegen-request-body-name: body

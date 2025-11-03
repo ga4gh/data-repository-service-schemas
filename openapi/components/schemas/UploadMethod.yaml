@@ -1,7 +1,7 @@
 type: object
 required:
   - type
-  - access_url
+  - upload_url
 properties:
   type:
     type: string
@@ -26,10 +26,8 @@ properties:
       
       Other common implementations include 'gs' for Google Cloud Storage and 'sftp'
       for secure FTP uploads.
-  access_url:
-    allOf:
-      - $ref: './AccessURL.yaml'
-      - description: URL and headers for file upload
+  upload_url:
+    $ref: './UploadURL.yaml'
   region:
     type: string
     description: >-

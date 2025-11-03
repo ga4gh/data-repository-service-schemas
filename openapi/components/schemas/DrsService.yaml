@@ -86,6 +86,14 @@ properties:
           If false or missing, the server does not perform file size validation and relies on client-provided metadata.
           Only present when uploadSupported is true.
         default: false
+      relatedFileStorageSupported:
+        type: boolean
+        description: >-
+          Indicates whether this DRS server supports storing files from the same upload request under a common prefix or folder structure.
+          If true, the server will organize related files together in storage, enabling bioinformatics workflows that expect co-located files (e.g., CRAM + CRAI, VCF + TBI).
+          If false or missing, the server may distribute files across different storage locations or prefixes.
+          Only present when uploadSupported is true. This feature is particularly valuable for genomics tools like samtools that expect index files to be co-located with data files.
+        default: false
       deleteSupported:
         type: boolean
         description: >-
