@@ -80,11 +80,14 @@ curl -X POST "https://drs.example.org/objects/delete" \
 curl -H "Authorization: Bearer token" -d '{"delete_storage_data": false}' ...
 ```
 
-## Storage Data
+## Underlying Storage Data
 
-**Important**: Storage data deletion is never guaranteed. Even when `delete_storage_data: true` is requested and the server supports it, the actual deletion may fail due to permissions, network issues, or storage service errors. Clients must never depend on storage deletion occurring.
+**Important**: Storage data deletion is never guaranteed. Even when `delete_storage_data: true` is requested and the server supports it, the actual deletion may fail due to permissions, network issues, or storage service errors. Clients shoud not depend on storage deletion success.
 
-**`delete_storage_data: false`** (default): Removes metadata only, preserves underlying storage files
+Clients can request that the server attempts to delete the underlying data referred to by the DRS object using the `delete_storage_data` parameter.
+
+**`delete_storage_data: false`** (default): Removes DRS object metadata only, preserves underlying storage files
+
 **`delete_storage_data: true`**: Removes metadata AND requests server attempt to delete underlying storage files (requires `deleteStorageDataSupported: true`, **success not guaranteed**)
 
 ## Update Pattern
