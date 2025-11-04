@@ -1,10 +1,18 @@
 type: object
 required:
+  - id
+  - self_uri
   - name
   - size
   - mime_type
   - checksums
 properties:
+  id:
+    type: string
+    description: Unique DRS object identifier
+  self_uri:
+    type: string
+    description: DRS URI for accessing this object
   name:
     type: string
     description: The name of the file

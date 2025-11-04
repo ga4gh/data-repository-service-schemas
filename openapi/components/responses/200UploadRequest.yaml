@@ -9,7 +9,9 @@ content:
         description: Response with S3 upload method and temporary credentials
         value:
           responses:
-            - name: "sample_data.vcf"
+            - id: "drs_object_123456"
+              self_uri: "drs://drs.example.org/drs_object_123456"
+              name: "sample_data.vcf"
               size: 1048576
               mime_type: "text/plain"
               checksums:
@@ -23,20 +25,21 @@ content:
                 - type: "s3"
                   access_url:
                     url: "https://my-bucket.s3.amazonaws.com/uploads/drs_object_123456"
+                    headers:
+                      - "Authorization: AWS4-HMAC-SHA256 Credential=AKIAIOSFODNN7EXAMPLE/20240101/us-east-1/s3/aws4_request"
                   region: "us-east-1"
-                  upload_details:
-                    bucket: "my-bucket"
-                    key: "uploads/drs_object_123456"
+                  credentials:
                     access_key_id: "AKIAIOSFODNN7EXAMPLE"
                     secret_access_key: "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
                     session_token: "AQoEXAMPLEH4aoAH0gNCAPyJxz4BlCFFxWNE1OPTgk5TthT+FvwqnKwRcOIfrRh3c/LTo6UDdyJwOOvEVPvLXCrrrUtdnniCEXAMPLE/IvU1dYUg2RVAJBanLiHb4IgRmpRV3zrkuWJOgQs8IZZaIv2BXIa2R4OlgkBN9bkUDNCJiBeb/AXlzBBko7b15fjrBs2+cTQtpZ3CYWFXG8C5zqx37wnOE49mRl/+OtkIKGO7fAE"
-                    expires_at: "2024-01-01T12:00:00Z"
       https_upload:
         summary: HTTPS upload method response
         description: Response with HTTPS presigned POST URL for direct upload
         value:
           responses:
-            - name: "genome_assembly.fasta"
+            - id: "drs_object_789012"
+              self_uri: "drs://drs.example.org/drs_object_789012"
+              name: "genome_assembly.fasta"
               size: 3221225472
               mime_type: "text/plain"
               checksums:
@@ -51,14 +54,18 @@ content:
                 - type: "https"
                   access_url:
                     url: "https://upload.example.org/v1/files/drs_object_789012"
-                  upload_details:
-                    post_url: "https://upload.example.org/v1/files/drs_object_789012?signature=abc123"
+                    headers:
+                      - "Content-Type: multipart/form-data"
+                      - "X-Upload-Token: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1cGxvYWRfaWQiOiJkcnNfb2JqZWN0Xzc4OTAxMiJ9.signature"
+                  credentials: {}
       multiple_methods:
         summary: Multiple upload methods response
         description: Response offering multiple upload method options for flexibility
         value:
           responses:
-            - name: "annotations.gff3"
+            - id: "drs_object_345678"
+              self_uri: "drs://drs.example.org/drs_object_345678"
+              name: "annotations.gff3"
               size: 524288000
               mime_type: "text/plain"
               checksums:
@@ -70,24 +77,19 @@ content:
                   access_url:
                     url: "https://genomics-bucket.s3.us-west-2.amazonaws.com/uploads/drs_object_345678"
                   region: "us-west-2"
-                  upload_details:
-                    bucket: "genomics-bucket"
-                    key: "uploads/drs_object_345678"
+                  credentials:
                     access_key_id: "AKIAI44QH8DHBEXAMPLE"
                     secret_access_key: "je7MtGbClwBF/2Zp9Utk/h3yCo8nvbEXAMPLEKEY"
                     session_token: "temporary_session_token_here"
-                    expires_at: "2024-01-01T12:00:00Z"
                 - type: "https"
                   access_url:
                     url: "https://upload-api.example.org/files/drs_object_345678"
-                  upload_details:
-                    post_url: "https://upload-api.example.org/files/drs_object_345678?token=upload_token_12345"
+                    headers:
+                      - "Authorization: Bearer upload_token_12345"
+                  credentials: {}
                 - type: "gs"
                   access_url:
                     url: "https://storage.googleapis.com/genomics-uploads/drs_object_345678"
                   region: "us-central1"
-                  upload_details:
-                    bucket: "genomics-uploads"
-                    key: "drs_object_345678"
+                  credentials:
                     access_token: "ya29.AHES6ZRVmB7fkLtd1XTmq6mo0S1wqZZi3-Lh_s-6Uw7p8vtgSwg"
-                    expires_at: "2024-01-01T12:00:00Z"

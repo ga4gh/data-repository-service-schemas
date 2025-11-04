@@ -23,7 +23,7 @@ post:
   parameters:
     - $ref: '../components/parameters/ObjectId.yaml'
   requestBody:
-    $ref: '../components/requestBodies/DeleteBody.yaml'
+    $ref: '../components/requestBodies/SingleDeleteBody.yaml'
   responses:
     204:
       $ref: '../components/responses/204DeleteSuccess.yaml'

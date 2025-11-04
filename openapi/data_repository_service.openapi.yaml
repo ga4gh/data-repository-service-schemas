@@ -66,10 +66,6 @@ tags:
     x-displayName: DrsObject
     description: |
       <SchemaDefinition schemaRef="#/components/schemas/DrsObject" />
-  - name: DrsObjectCandidateModel
-    x-displayName: DrsObjectCandidate
-    description: |
-      <SchemaDefinition schemaRef="#/components/schemas/DrsObjectCandidate" />
   - name: ErrorModel
     x-displayName: Error
     description: |
@@ -94,10 +90,10 @@ tags:
     x-displayName: UploadMethod
     description: |
       <SchemaDefinition schemaRef="#/components/schemas/UploadMethod" />
-  - name: DeleteRequestModel
-    x-displayName: DeleteRequest
+  - name: SingleDeleteRequestModel
+    x-displayName: SingleDeleteRequest
     description: |
-      <SchemaDefinition schemaRef="#/components/schemas/DeleteRequest" />
+      <SchemaDefinition schemaRef="#/components/schemas/SingleDeleteRequest" />
   - name: BulkDeleteRequestModel
     x-displayName: BulkDeleteRequest
     description: |
@@ -149,14 +145,13 @@ x-tagGroups:
       - ChecksumModel
       - ContentsObjectModel
       - DrsObjectModel
-      - DrsObjectCandidateModel
       - ErrorModel
       - UploadRequestModel
       - UploadResponseModel
       - UploadRequestObjectModel
       - UploadResponseObjectModel
       - UploadMethodModel
-      - DeleteRequestModel
+      - SingleDeleteRequestModel
       - BulkDeleteRequestModel
       - DeleteResultModel
       - BulkDeleteResponseModel
@@ -179,14 +174,12 @@ paths:
     $ref: ./paths/objects@delete.yaml
   /objects:
     $ref: ./paths/objects.yaml
-  /objects/register:
-    $ref: ./paths/objects@register.yaml
   /objects/{object_id}/access/{access_id}:
     $ref: ./paths/objects@{object_id}@access@{access_id}.yaml
   /objects/access:
     $ref: ./paths/objects@access.yaml
-  /upload-request:
-    $ref: ./paths/upload-request.yaml
+  /uploadrequest:
+    $ref: ./paths/uploadrequest.yaml
 components:
   securitySchemes:
     BasicAuth:

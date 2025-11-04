@@ -3,8 +3,6 @@ content:
   application/json:
     schema:
       type: object
-      required:
-        - bulk_object_ids
       properties:
         passports:
           type: array
@@ -16,11 +14,20 @@ content:
           type: array
           items:
             type: string
-          minItems: 1
-          description: An array of ObjectIDs to retrieve metadata for
+          description: >-
+            An array of ObjectIDs for retrieve mode. When this field is present, the endpoint 
+            behaves as a bulk retrieval operation returning metadata for the specified objects.
+        objects:
+          type: array
+          items:
+            $ref: '../schemas/DrsObject.yaml'
+          description: >-
+            An array of fully formed DRS objects for register mode. When this field is present, 
+            the endpoint registers the supplied DRS objects using the passports for authorization.
+            This field is mutually exclusive with bulk_object_ids.
     examples:
       bulk_retrieve:
-        summary: Bulk retrieve objects
+        summary: Bulk retrieve mode
         description: Retrieve metadata for multiple existing DRS objects using their IDs
         value:
           passports:
@@ -29,10 +36,44 @@ content:
             - "drs_object_123456"
             - "drs_object_789012"
             - "drs_object_345678"
-      bulk_retrieve_no_auth:
-        summary: Bulk retrieve without authentication
-        description: Retrieve metadata for public DRS objects
+      bulk_register:
+        summary: Bulk register mode
+        description: Register multiple fully formed DRS objects after upload
         value:
-          bulk_object_ids:
-            - "drs_object_public_123"
-            - "drs_object_public_456"
+          passports:
+            - "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJnYTRnaF9wYXNzcG9ydF92MSI6W119.JJ5rN0ktP0qwyZmIPpxmF_p7JsxAZH6L6brUxtad3CM"
+          objects:
+            - id: "drs_object_123456"
+              self_uri: "drs://drs.example.org/drs_object_123456"
+              name: "sample_data.vcf"
+              size: 1048576
+              mime_type: "text/plain"
+              created_time: "2024-01-15T10:30:00Z"
+              updated_time: "2024-01-15T10:30:00Z"
+              version: "1.0"
+              checksums:
+                - checksum: "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+                  type: "sha-256"
+              access_methods:
+                - type: "s3"
+                  access_url:
+                    url: "https://my-bucket.s3.amazonaws.com/files/drs_object_123456"
+                  region: "us-east-1"
+              description: "Variant call format file for sample analysis"
+              aliases:
+                - "sample_001_variants"
+            - id: "drs_object_789012"
+              self_uri: "drs://drs.example.org/drs_object_789012"
+              name: "genome_assembly.fasta"
+              size: 3221225472
+              mime_type: "text/plain"
+              created_time: "2024-01-15T09:00:00Z"
+              checksums:
+                - checksum: "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3"
+                  type: "sha-256"
+              access_methods:
+                - type: "s3"
+                  access_url:
+                    url: "https://genomics-bucket.s3.us-west-2.amazonaws.com/files/drs_object_789012"
+                  region: "us-west-2"
+              description: "Human genome reference assembly"
