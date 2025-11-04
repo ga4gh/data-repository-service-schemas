@@ -32,7 +32,7 @@ properties:
       uploadRequestSupported:
         type: boolean
         description: >-
-          Indicates whether this DRS server supports upload request operations via the `/uploadrequest` endpoint.
+          Indicates whether this DRS server supports upload request operations via the `/upload-request` endpoint.
           If true, clients can request upload methods and credentials for uploading files.
           If false or missing, the server does not support upload request coordination.
         default: false
