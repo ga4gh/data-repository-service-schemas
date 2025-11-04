@@ -75,6 +75,11 @@ properties:
         description: >-
           Maximum number of files that can be included in a single upload request.
           Only present when uploadRequestSupported is true. If not specified, defaults to the same value as maxBulkRequestLength.
+      maxRegisterRequestLength:
+        type: integer
+        description: >-
+          Maximum number of candidate objects that can be included in a single registration request.
+          Only present when objectRegistrationSupported is true. If not specified, defaults to the same value as maxBulkRequestLength.
       validateUploadChecksums:
         type: boolean
         description: >-

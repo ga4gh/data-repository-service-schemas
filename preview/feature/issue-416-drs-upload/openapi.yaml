@@ -525,7 +525,10 @@ tags:
 
 
       The `/objects/register` endpoint can be used independently to register
-      existing data without using the `/uploadreuqest` endpoint.
+      existing data without using the `/uploadreuqest` endpoint, and servers can
+      choose to only support object registration and not file uploads by setting
+      the `uploadRequestSupported` and `objectRegistrationSupported` flags in
+      `/service-info`.
 
 
       Upload operations only support bulk requests to simplify implementation
@@ -586,6 +589,7 @@ tags:
           "supportedUploadMethods": ["s3", "https", "gs"],
           "maxUploadSize": 5368709120,
           "maxUploadRequestLength": 50,
+          "maxRegisterRequestLength": 50,
           "validateUploadChecksums": true,
           "validateUploadFileSizes": false,
           "relatedFileStorageSupported": true
@@ -607,7 +611,10 @@ tags:
 
       - `maxUploadSize`: File size limit (bytes)
 
-      - `maxUploadRequestLength`: Files per request limit
+      - `maxUploadRequestLength`: Files per request limit for upload requests
+
+      - `maxRegisterRequestLength`: Candidate objects per request limit for
+      registration
 
       - `validateUploadChecksums`/`validateUploadFileSizes`: Server validation
       behavior
@@ -697,6 +704,8 @@ tags:
       register existing data that is already stored in accessible locations,
       without using the `/uploadrequest` workflow. This is useful for
       registering pre-existing datasets or files uploaded through other means.
+      Servers may choose only to support registration and not uploads, and
+      should advertise this in `/service-info`
 
 
       ## Authentication & Validation
@@ -3074,6 +3083,13 @@ components:
                 request. Only present when uploadRequestSupported is true. If
                 not specified, defaults to the same value as
                 maxBulkRequestLength.
+            maxRegisterRequestLength:
+              type: integer
+              description: >-
+                Maximum number of candidate objects that can be included in a
+                single registration request. Only present when
+                objectRegistrationSupported is true. If not specified, defaults
+                to the same value as maxBulkRequestLength.
             validateUploadChecksums:
               type: boolean
               description: >-

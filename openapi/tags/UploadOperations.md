@@ -10,7 +10,7 @@ DRS upload functionality allows clients to negotiate with servers on mutually co
 
 This approach separates storage service and credential negotiation from file transfer and object registration, supporting a vendor-neutral means of sharing data in a DRS network. 
 
-The `/objects/register` endpoint can be used independently to register existing data without using the `/uploadreuqest` endpoint.
+The `/objects/register` endpoint can be used independently to register existing data without using the `/uploadreuqest` endpoint, and servers can choose to only support object registration and not file uploads by setting the `uploadRequestSupported` and `objectRegistrationSupported` flags in `/service-info`.
 
 Upload operations only support bulk requests to simplify implementation and reflect real-world usage patterns. Bioinformatics workflows often involve uploading multiple related files together (e.g., BAM and VCF files with their indices, or analysis result sets), making bulk operations a natural fit. Single files are handled as lists with one element.
 
@@ -32,6 +32,7 @@ Check `/service-info` for upload capabilities:
     "supportedUploadMethods": ["s3", "https", "gs"],
     "maxUploadSize": 5368709120,
     "maxUploadRequestLength": 50,
+    "maxRegisterRequestLength": 50,
     "validateUploadChecksums": true,
     "validateUploadFileSizes": false,
     "relatedFileStorageSupported": true
@@ -44,7 +45,8 @@ Upload related fields:
 - `objectRegistrationSupported`: Object registration operations available via `/objects/register`
 - `supportedUploadMethods`: Available storage backends  
 - `maxUploadSize`: File size limit (bytes)
-- `maxUploadRequestLength`: Files per request limit
+- `maxUploadRequestLength`: Files per request limit for upload requests
+- `maxRegisterRequestLength`: Candidate objects per request limit for registration
 - `validateUploadChecksums`/`validateUploadFileSizes`: Server validation behavior
 - `relatedFileStorageSupported`: Files from same upload request stored under common prefixes
 
@@ -82,7 +84,7 @@ After upload, clients can register files in bulk as DRS objects using POST `/obj
 
 Upon receipt of candidate objects for registration the server will create unique object IDs and returns complete DRS objects. Note that the server is not obliged to retain the clients supplied `access_method`s and is free to move data to different locations/backends once the object is registered. This means that a server can choose to receive uploads in a dedicated "dropzone", with hard quotas and additional security, and then move them to more permanent storage once the DRS object is registered. Clients SHOULD NOT cache the response from `/objects/register` as the `access_method`s might change after registration.
 
-The `/objects/register` endpoint can also be used independently to register existing data that is already stored in accessible locations, without using the `/uploadrequest` workflow. This is useful for registering pre-existing datasets or files uploaded through other means.
+The `/objects/register` endpoint can also be used independently to register existing data that is already stored in accessible locations, without using the `/uploadrequest` workflow. This is useful for registering pre-existing datasets or files uploaded through other means. Servers may choose only to support registration and not uploads, and should advertise this in `/service-info`
 
 ## Authentication & Validation
 
