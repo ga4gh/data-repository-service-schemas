@@ -525,7 +525,7 @@ tags:
 
 
       The `/objects/register` endpoint can be used independently to register
-      existing data without using the `/uploadreuqest` endpoint, and servers can
+      existing data without using the `/uploadrequest` endpoint, and servers can
       choose to only support object registration and not file uploads by setting
       the `uploadRequestSupported` and `objectRegistrationSupported` flags in
       `/service-info`.

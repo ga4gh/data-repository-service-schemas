@@ -10,7 +10,7 @@ DRS upload functionality allows clients to negotiate with servers on mutually co
 
 This approach separates storage service and credential negotiation from file transfer and object registration, supporting a vendor-neutral means of sharing data in a DRS network. 
 
-The `/objects/register` endpoint can be used independently to register existing data without using the `/uploadreuqest` endpoint, and servers can choose to only support object registration and not file uploads by setting the `uploadRequestSupported` and `objectRegistrationSupported` flags in `/service-info`.
+The `/objects/register` endpoint can be used independently to register existing data without using the `/uploadrequest` endpoint, and servers can choose to only support object registration and not file uploads by setting the `uploadRequestSupported` and `objectRegistrationSupported` flags in `/service-info`.
 
 Upload operations only support bulk requests to simplify implementation and reflect real-world usage patterns. Bioinformatics workflows often involve uploading multiple related files together (e.g., BAM and VCF files with their indices, or analysis result sets), making bulk operations a natural fit. Single files are handled as lists with one element.
 
