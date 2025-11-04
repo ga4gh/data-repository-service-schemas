@@ -1,5 +1,0 @@
-description: An object with the specified ID already exists. Cannot create duplicate objects.
-content:
-  application/json:
-    schema:
-      $ref: '../schemas/Error.yaml'

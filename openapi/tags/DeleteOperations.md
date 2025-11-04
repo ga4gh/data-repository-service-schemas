@@ -1,14 +1,25 @@
 # Delete Operations
 > **Optional Functionality**: Delete operations are **optional** extensions to the DRS API. Not all DRS servers are required to implement delete functionality. Clients should check for the availability of delete endpoints before attempting to use them.
 
-DRS functionality for removing objects and, optionally, data from the underlying storage service. Servers remain fully compliant without implementing delete endpoints.
+DRS upload functionality allows suitably authenticated clients to request that DRS objects are removed from the server and, optionally, to request that the server attempt to delete the underlying data.
 
-## Overview
+Servers should ensure that they trust clients from whom they receive delete requests, and may choose to implement "soft" deletes to minimise the risk of accidental or malicious requests. The DRS specification does not currently provide explicit support for soft deletes. Because delete support is optional, servers operating in untrusted environments may choose not to support delete operations at all.
+
+In combination with the `/objects/register` endpoint, metadata only delete requests offer a means for clients to update DRS metadata without affecting the underlying data, and without introducing additional update operations which would complicate server implementation.
+
+Clients can express a preference that the underlying data referred to by the deleted DRS object(s) is deleted with the `delete_storage_data` parameter. Servers are free to interpret this as they choose, and can advertise whether they support it at all with the `deleteStorageDataSupported` flag. Servers that choose to attempt to honour the request need not perform this operation synchronously and may, for example, register the file for later deletion. Implementations may also choose to ensure that no other DRS object registered in the server refers to the underlying data before deleting. Servers may not have the necessary permissions to delete the data from the backend even if they would like to do so, or may encounter errors when they attempt deletion. In the case that a DRS object refers to data stored in multiple backends (e.g. has multiple `access_method`s) the server may attempt to delete the data from all or only some of the backends.
+
+For these reasons clients MUST NOT depend on the server deleting the underlying storage data even if the server advertises that `deleteStorageDataSupported` and the client sets the `delete_storage_data` flag. 
+
+In situations where the DRS server controls the storage backend, DRS delete support offers a convenient vendor-neutral way for clients to update and delete DRS objects and corresponding data.
+
+## Design principles
 
 - **Optional**: Delete support is completely optional
-- **Safe by Default**: Preserves storage data unless explicitly requested
-- **Backward Compatible**: No impact on existing DRS functionality
-- **Flexible Auth**: Supports GA4GH Passports and Bearer tokens
+- **Safety**: Preserves underlying data in storage unless explicitly requested
+- **Backward compatible**: No impact on existing DRS functionality
+- **Flexible authentication**: Supports GA4GH Passports, Bearer tokens, API keys
+- **Use POST rather than DELETE**: GA4GH Passports require request bodies, which DELETE methods don't reliably support across all HTTP infrastructure. POST ensures broad compatibility.
 
 ## Service Discovery
 
@@ -17,7 +28,8 @@ Check `/service-info` for delete capabilities:
 ```json
 {
   "drs": {
-    "uploadSupported": true,
+    "uploadRequestSupported": true,
+    "objectRegistrationSupported": true,
     "supportedUploadMethods": ["s3", "https"],
     "relatedFileStorageSupported": true,
     "deleteSupported": true,
@@ -27,13 +39,10 @@ Check `/service-info` for delete capabilities:
 }
 ```
 
-- **`deleteSupported`**: Whether server implements delete endpoints
+- **`deleteSupported`**: Whether server supports deletion
 - **`maxBulkDeleteLength`**: Maximum objects per bulk delete request  
 - **`deleteStorageDataSupported`**: Whether server can attempt to delete underlying storage files
 
-## Delete Endpoints
-
-**Why POST instead of DELETE?** GA4GH Passports require request bodies, which DELETE methods don't reliably support across all HTTP infrastructure. POST ensures broad compatibility.
 
 ### Single Object Delete: `POST /objects/{object_id}/delete`
 
@@ -71,16 +80,18 @@ curl -X POST "https://drs.example.org/objects/delete" \
 curl -H "Authorization: Bearer token" -d '{"delete_storage_data": false}' ...
 ```
 
-## Storage Data Control
+## Storage Data
 
-**`delete_storage_data: false`** (default): Removes metadata only, preserves storage files
-**`delete_storage_data: true`**: Removes metadata AND attempts to delete storage files (requires server support, not guaranteed)
+**Important**: Storage data deletion is never guaranteed. Even when `delete_storage_data: true` is requested and the server supports it, the actual deletion may fail due to permissions, network issues, or storage service errors. Clients must never depend on storage deletion occurring.
+
+**`delete_storage_data: false`** (default): Removes metadata only, preserves underlying storage files
+**`delete_storage_data: true`**: Removes metadata AND requests server attempt to delete underlying storage files (requires `deleteStorageDataSupported: true`, **success not guaranteed**)
 
 ## Update Pattern
 
-**Why no native updates?** DRS promotes immutability, data safety, and clear audit trails through explicit operations. This approach also makes implementation simpler by reusing existing endpoints.
+Rather than introducing additional operations and endpoints for updating DRS objects, implementations can allow clients to use the metadata-only deletion and object registration endpoints to update object metadata while leaving the underlying data in place. This simplifies server implementation while still offering clients flexibility.
 
-**Safe Update Process:**
+**Metadata update steps:**
 1. Delete metadata only: `POST /objects/{id}/delete` with `delete_storage_data: false`
 2. Re-register object: `POST /objects/register` with updated metadata
 
@@ -93,10 +104,10 @@ curl -X POST ".../objects/register" -d '{"candidates": [{"name": "updated.txt", 
 
 ## Error Responses
 
-- **400**: Unsupported storage deletion
+- **400**: Unsupported storage deletion or invalid request parameters
 - **403**: Insufficient permissions  
-- **404**: Object not found or delete not supported
-- **413**: Bulk request too large
+- **404**: Object not found or delete endpoints not supported by server
+- **413**: Bulk request exceeds `maxBulkDeleteLength` limit
 
 ## Examples
 
@@ -124,9 +135,9 @@ curl -X POST ".../objects/delete" -d '{
 
 ## Best Practices
 
-**Clients:** Check service-info, default to safe deletion, handle errors, respect limits, confirm destructive operations
+**Clients:** Check service-info, default to safe deletion, handle errors, respect limits, confirm destructive operations, do not rely on underlying storage deletion
 
-**Servers:** Advertise capabilities, validate permissions, implement limits, audit logging, rate limiting
+**Servers:** Advertise capabilities, validate permissions, implement limits, use versioning to avoid inadvertent deletion.
 
 ## Security Considerations
 
@@ -137,9 +148,9 @@ curl -X POST ".../objects/delete" -d '{
 
 ## Backward Compatibility
 
-Delete functionality is designed to be 100% backward compatible:
+Delete functionality is designed to be backward compatible:
 
 - **No Impact on Existing Endpoints**: All existing DRS endpoints remain unchanged
 - **Optional Implementation**: Servers can ignore delete functionality entirely
 - **Graceful Degradation**: Clients receive 404 responses when delete is not supported
-- **Safe Defaults**: New fields in service-info have safe default values
+- **Safe Defaults**: New fields in service-info have safe default values, and requests default to leaving underlying data in place.

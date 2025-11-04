@@ -6,26 +6,26 @@ post:
     
     
     **Discovery**: Before using this endpoint, clients should check the `/service-info` endpoint 
-    to determine if upload operations are supported. Look for `drs.uploadSupported: true` and 
+    to determine if upload operations are supported. Look for `drs.uploadRequestSupported: true` and 
     `drs.supportedUploadMethods` to understand which upload methods are available. Also check 
     `drs.maxUploadSize` and `drs.maxUploadRequestLength` for server limits.
     
     
-    Request upload methods and temporary credentials for uploading one or more files to the underlying storage service.
+    Request upload method details and temporary credentials for uploading one or more files to the underlying storage service.
     This endpoint allows clients to obtain the necessary information to upload files before they are registered as DRS objects.
     
     
     **Usage Flow:**
     
-    1. **Discovery**: Client checks `/service-info` endpoint to confirm upload support (`drs.uploadSupported: true`) and available methods (`drs.supportedUploadMethods`)
+    1. **Discovery**: Client checks `/service-info` endpoint to confirm upload support (`drs.uploadRequestSupported: true`) and available methods (`drs.supportedUploadMethods`)
     
-    2. Client sends a request with file metadata (name, size, checksums, MIME type)
+    2. Client sends an upload request with file metadata (name, size, checksums, MIME type)
     
     3. Server responds with available upload methods (S3, HTTPS, Google Cloud Storage, etc.) and temporary credentials
     
     4. Client selects one or more upload methods from the response and uses the corresponding credentials to upload the file to the storage service
     
-    5. Once uploaded, client registers the files as DRS objects using POST `/objects/register`, with the server minting object IDs and including access methods that correspond to the upload methods used
+    5. Once uploaded, the client registers the files as DRS objects including access methods that correspond to the upload methods used with a POST request to `/objects/register`, the server will return fully formed DRS objects with server minted unique IDs.
     
     6. The registered DRS object becomes accessible through standard DRS API endpoints
     
@@ -36,7 +36,7 @@ post:
     Passport tokens enable fine-grained authorization based on data access policies.
     
     
-    **Upload Methods**: Response may include multiple options (s3, https, gs, ftp/sftp, globus) for flexibility. Note that servers may return a subset of their advertised `supportedUploadMethods` based on file-specific factors such as file type, size, or server policies.
+    **Upload Methods**: Response may include multiple options (s3, https, gs, ftp/sftp) for flexibility. Note that servers may return a subset of their advertised `supportedUploadMethods` based on file-specific factors such as file type, size, or server policies.
     
     **File Integrity**: All requests must include at least one checksum per file (SHA-256, MD5, or other IANA-registered algorithms).
     
