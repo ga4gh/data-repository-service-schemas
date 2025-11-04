@@ -57,7 +57,7 @@ post:
     Returns object metadata and a list of access methods that can be used to fetch object bytes.
     Method is a POST to accommodate a JWT GA4GH Passport sent in the request body in order to authorize access.
     
-    **Note**: To upload new files and register them as DRS objects, use the `/uploadrequest` endpoint 
+    **Note**: To upload new files and register them as DRS objects, use the `/upload-request` endpoint 
     to obtain upload methods and temporary credentials, then use POST `/objects/register` endpoint 
     to register multiple objects at once. Note that upload functionality is optional and not all DRS 
     servers implement the upload endpoints.
