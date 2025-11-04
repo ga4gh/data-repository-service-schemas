@@ -1,7 +1,7 @@
 # Delete Operations
 > **Optional Functionality**: Delete operations are **optional** extensions to the DRS API. Not all DRS servers are required to implement delete functionality. Clients should check for the availability of delete endpoints before attempting to use them.
 
-DRS upload functionality allows suitably authenticated clients to request that DRS objects are removed from the server and, optionally, to request that the server attempt to delete the underlying data.
+DRS delete functionality allows suitably authenticated clients to request that DRS objects are removed from the server and, optionally, to request that the server attempt to delete the underlying data.
 
 Servers should ensure that they trust clients from whom they receive delete requests, and may choose to implement "soft" deletes to minimise the risk of accidental or malicious requests. The DRS specification does not currently provide explicit support for soft deletes. Because delete support is optional, servers operating in untrusted environments may choose not to support delete operations at all.
 
@@ -12,6 +12,8 @@ Clients can express a preference that the underlying data referred to by the del
 For these reasons clients MUST NOT depend on the server deleting the underlying storage data even if the server advertises that `deleteStorageDataSupported` and the client sets the `delete_storage_data` flag. 
 
 In situations where the DRS server controls the storage backend, DRS delete support offers a convenient vendor-neutral way for clients to update and delete DRS objects and corresponding data.
+
+For bulk deletes using the `/objects/delete` endpoint the server SHOULD implement transaction semantics: if any object fails validation or deletion, the entire request should fail and no objects are deleted and no attempt is made to delete from underlying storage for any object.
 
 ## Design principles
 
@@ -65,7 +67,7 @@ curl -X POST "https://drs.example.org/objects/delete" \
     "passports": ["..."],
     "delete_storage_data": false
   }'
-# Response: 204 No Content (all metadata deleted) or 207 Multi-Status (mixed metadata results)
+# Response: 204 No Content (all metadata deleted) or 4xx error (no objects deleted)
 ```
 
 ## Authentication
@@ -108,8 +110,8 @@ curl -X POST ".../objects/register" -d '{"candidates": [{"name": "updated.txt", 
 ## Error Responses
 
 - **400**: Unsupported storage deletion or invalid request parameters
-- **403**: Insufficient permissions  
-- **404**: Object not found or delete endpoints not supported by server
+- **403**: Insufficient permissions for any object in the request
+- **404**: Any object not found or delete endpoints not supported by server
 - **413**: Bulk request exceeds `maxBulkDeleteLength` limit
 
 ## Examples
@@ -127,20 +129,21 @@ curl -X POST ".../objects/obj_456/delete" -H "Authorization: Bearer token" \
   -d '{"delete_storage_data": true}'
 ```
 
-**Bulk Delete:**
+**Bulk Delete (Atomic):**
 ```bash
 curl -X POST ".../objects/delete" -d '{
   "bulk_object_ids": ["obj_1", "obj_2"],
   "passports": ["..."],
   "delete_storage_data": false
 }'
+# All objects deleted or none deleted (transactional)
 ```
 
 ## Best Practices
 
-**Clients:** Check service-info, default to safe deletion, handle errors, respect limits, confirm destructive operations, do not rely on underlying storage deletion
+**Clients:** Check service-info, default to safe deletion, handle transactional failures, respect limits, confirm destructive operations, do not rely on underlying storage deletion
 
-**Servers:** Advertise capabilities, validate permissions, implement limits, use versioning to avoid inadvertent deletion.
+**Servers:** Advertise capabilities, validate permissions, implement atomic transactions, implement limits, use versioning to avoid inadvertent deletion.
 
 ## Security Considerations
 
