@@ -1,5 +1,6 @@
-# Delete Operations
-> **Optional Functionality**: Delete operations are **optional** extensions to the DRS API. Not all DRS servers are required to implement delete functionality. Clients should check for the availability of delete endpoints before attempting to use them.
+# Object Deletion
+
+> **Optional Functionality**: Delete support is an **optional** extension to the DRS API. Not all DRS servers are required to implement delete functionality. Clients should check for the availability of delete endpoints before attempting to use them.
 
 DRS delete functionality allows suitably authenticated clients to request that DRS objects are removed from the server and, optionally, to request that the server attempt to delete the underlying data.
 
@@ -9,7 +10,7 @@ In combination with the `/objects/register` endpoint, metadata only delete reque
 
 Clients can express a preference that the underlying data referred to by the deleted DRS object(s) is deleted with the `delete_storage_data` parameter. Servers are free to interpret this as they choose, and can advertise whether they support it at all with the `deleteStorageDataSupported` flag. Servers that choose to attempt to honour the request need not perform this operation synchronously and may, for example, register the file for later deletion. Implementations may also choose to ensure that no other DRS object registered in the server refers to the underlying data before deleting. Servers may not have the necessary permissions to delete the data from the backend even if they would like to do so, or may encounter errors when they attempt deletion. In the case that a DRS object refers to data stored in multiple backends (e.g. has multiple `access_method`s) the server may attempt to delete the data from all or only some of the backends.
 
-For these reasons clients MUST NOT depend on the server deleting the underlying storage data even if the server advertises that `deleteStorageDataSupported` and the client sets the `delete_storage_data` flag. 
+For these reasons clients MUST NOT depend on the server deleting the underlying storage data even if the server advertises that `deleteStorageDataSupported` and the client sets the `delete_storage_data` flag.
 
 In situations where the DRS server controls the storage backend, DRS delete support offers a convenient vendor-neutral way for clients to update and delete DRS objects and corresponding data.
 
@@ -45,7 +46,6 @@ Check `/service-info` for delete capabilities:
 - **`maxBulkDeleteLength`**: Maximum objects per bulk delete request  
 - **`deleteStorageDataSupported`**: Whether server can attempt to delete underlying storage files
 
-
 ### Single Object Delete: `POST /objects/{object_id}/delete`
 
 ```bash
@@ -73,11 +73,13 @@ curl -X POST "https://drs.example.org/objects/delete" \
 ## Authentication
 
 **GA4GH Passports** (in request body):
+
 ```json
 {"passports": ["eyJhbGci..."], "delete_storage_data": false}
 ```
 
 **Bearer Tokens** (in headers):
+
 ```bash
 curl -H "Authorization: Bearer token" -d '{"delete_storage_data": false}' ...
 ```
@@ -97,6 +99,7 @@ Clients can request that the server attempts to delete the underlying data refer
 Rather than introducing additional operations and endpoints for updating DRS objects, implementations can allow clients to use the metadata-only deletion and object registration endpoints to update object metadata while leaving the underlying data in place. This simplifies server implementation while still offering clients flexibility.
 
 **Metadata update steps:**
+
 1. Delete metadata only: `POST /objects/{id}/delete` with `delete_storage_data: false`
 2. Re-register object: `POST /objects/register` with updated metadata
 
@@ -117,6 +120,7 @@ curl -X POST ".../objects/register" -d '{"candidates": [{"name": "updated.txt", 
 ## Examples
 
 **Metadata Update:**
+
 ```bash
 curl ".../service-info"  # Check capabilities
 curl -X POST ".../objects/obj_123/delete" -d '{"delete_storage_data": false}'
@@ -124,12 +128,14 @@ curl -X POST ".../objects/register" -d '{"candidates": [{"name": "updated.vcf", 
 ```
 
 **Complete Removal:**
+
 ```bash
 curl -X POST ".../objects/obj_456/delete" -H "Authorization: Bearer token" \
   -d '{"delete_storage_data": true}'
 ```
 
 **Bulk Delete (Atomic):**
+
 ```bash
 curl -X POST ".../objects/delete" -d '{
   "bulk_object_ids": ["obj_1", "obj_2"],

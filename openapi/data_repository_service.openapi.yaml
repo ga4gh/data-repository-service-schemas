@@ -37,12 +37,7 @@ tags:
 
   # Operations
   - name: Objects
-  - name: Upload Operations
-    description:
-      $ref: ./tags/UploadOperations.md
-  - name: Delete Operations
-    description:
-      $ref: ./tags/DeleteOperations.md
+  - name: Upload Request
   - name: Service Info
 
   # Models
@@ -130,6 +125,12 @@ tags:
   - name: GA4GH Service Registry
     description:
       $ref: './tags/ServiceRegistry.md'
+  - name: Upload Requests and Object Registration
+    description:
+      $ref: ./tags/UploadRequest.md
+  - name: Object Deletion
+    description:
+      $ref: ./tags/ObjectDeletion.md
 x-tagGroups:
   - name: Overview
     tags:
@@ -139,8 +140,7 @@ x-tagGroups:
   - name: Operations
     tags:
       - Objects
-      - Upload Operations
-      - Delete Operations
+      - Upload Request
       - Service Info
   - name: Models
     tags:
@@ -168,6 +168,8 @@ x-tagGroups:
       - Compact Identifier-Based URIs
       - Hostname-Based URIs
       - GA4GH Service Registry
+      - Upload Requests and Object Registration
+      - Object Deletion
 paths:
   /service-info:
     $ref: ./paths/service-info.yaml

@@ -1,8 +1,11 @@
 post:
-  summary: Register multiple DRS objects
+  summary: Register DRS objects (optional endpoint)
   description: >-
+    **Optional Endpoint**: This endpoint is not required for DRS server implementations. 
+    Not all DRS servers support object registration.    
+
     Registers one or more "candidate" DRS objects with the server. If it accepts the request, the server will create 
-    unique object IDs for each registered object and return them as fully-formed DRS objects in response.
+    unique object IDs for each registered object and return them in fully-formed DRS objects in response.
     
     This endpoint can be used after uploading files using methods negotiated with the `/upload-request` endpoint 
     to register the uploaded files as DRS objects, or to register existinf data. The request body should contain candidate 

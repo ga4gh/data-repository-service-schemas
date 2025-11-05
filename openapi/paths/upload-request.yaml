@@ -1,19 +1,16 @@
 post:
-  summary: Request upload methods for files (Optional Endpoint)
+  summary: Request upload methods for files (optional endpoint)
   description: >-
     **Optional Endpoint**: This endpoint is not required for DRS server implementations. 
-    Not all DRS servers support upload functionality.
+    Not all DRS servers support upload functionality. 
     
+    Request upload method details and temporary credentials for uploading one or more files to an underlying storage service.
+    This endpoint allows clients to obtain the necessary information to upload files before they are registered as DRS objects.
     
     **Discovery**: Before using this endpoint, clients should check the `/service-info` endpoint 
     to determine if upload operations are supported. Look for `drs.uploadRequestSupported: true` and 
     `drs.supportedUploadMethods` to understand which upload methods are available. Also check 
     `drs.maxUploadSize` and `drs.maxUploadRequestLength` for server limits.
-    
-    
-    Request upload method details and temporary credentials for uploading one or more files to the underlying storage service.
-    This endpoint allows clients to obtain the necessary information to upload files before they are registered as DRS objects.
-    
     
     **Usage Flow:**
     
@@ -34,7 +31,6 @@ post:
     
     The endpoint supports multiple authentication methods including GA4GH Passport tokens sent in the request body.
     Passport tokens enable fine-grained authorization based on data access policies.
-    
     
     **Upload Methods**: Response may include multiple options (s3, https, gs, ftp/sftp) for flexibility. Note that servers may return a subset of their advertised `supportedUploadMethods` based on file-specific factors such as file type, size, or server policies.
     
@@ -61,4 +57,4 @@ post:
     '500':
       $ref: '../components/responses/500InternalServerError.yaml'
   tags:
-    - Upload Operations
+    - Upload Request

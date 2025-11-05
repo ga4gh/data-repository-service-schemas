@@ -1,20 +1,20 @@
-# Upload Operations
+# Upload Requests and Object Registration
 
-> **Optional Functionality**: Upload operations are optional DRS extensions. Clients should check `/service-info` for `uploadRequestSupported` and `objectRegistrationSupported` before attempting to use these endpoints.
+> **Optional Functionality**: Upload and object registration are optional DRS extensions. Clients should check `/service-info` for `uploadRequestSupported` and `objectRegistrationSupported` before attempting to use these endpoints.
 
-DRS upload functionality allows clients to negotiate with servers on mutually convenient storage backends and then register uploads as DRS objects through a three-phase workflow:
+The DRS upload and object registration endpoints allows clients to negotiate with servers on mutually convenient storage backends and then register uploads as DRS objects through a three-phase workflow:
 
 1. **Request Upload URLs**: POST `/upload-request` with file metadata to receive upload methods and credentials
-2. **Upload Files**: Use returned URLs and credentials to upload files to storage using existing upload mechanisms. DRS is not involved in this step at all, DRS simply allows the client and server to agree on a mutually convenient storage service.
+2. **Upload Files**: Use returned URLs and credentials to upload files to storage using existing upload mechanisms. DRS is not involved in this step at all, DRS simply enables clients and servers to agree on a mutually convenient storage service.
 3. **Register Objects**: POST `/objects/register` to register "candidate" DRS objects with the server
 
-This approach separates storage service and credential negotiation from file transfer and object registration, supporting a vendor-neutral means of sharing data in a DRS network. 
+This approach separates storage service and credential negotiation from file transfer and object registration, supporting a vendor-neutral means of sharing data in a DRS network.
 
 The `/objects/register` endpoint can be used independently to register existing data without using the `/upload-request` endpoint, and servers can choose to only support object registration and not file uploads by setting the `uploadRequestSupported` and `objectRegistrationSupported` flags appropriately in `/service-info`.
 
-Upload operations only support bulk requests to simplify implementation and reflect real-world usage patterns. Bioinformatics workflows often involve uploading multiple related files together (e.g., BAM and VCF files with their indices, or analysis result sets), making bulk operations a natural fit. Single files are handled as lists with one element. Implementations of the `/objects/register` endpoint SHOULD implement transaction semantics so that either all of the objects are successfully registered or none of them are, and clients should be robust to this behaviour. Transaction semantics for the `/upload-request` are encouraged but not required due to the variety and complexity of data transfer technologies.
+Upload requests and object registration endpoints only support bulk requests to simplify implementation and reflect real-world usage patterns. Bioinformatics workflows often involve uploading multiple related files together (e.g., BAM and VCF files with their indices, or analysis result sets), making bulk operations a natural fit. Single files/objects are handled as lists with one element. Implementations of the `/objects/register` endpoint SHOULD implement transaction semantics so that either all of the objects are successfully registered or none of them are, and clients should be robust to this behaviour. Transaction semantics for the `/upload-request` are encouraged but not required due to the variety and complexity of data transfer technologies.
 
-The `/upload-request` endpoint does not require any state to be maintained on the DRS server (intermediate DRS object IDs etc.) it is simply a means for a server to provide details of where a client can upload data, and it should ensure that it trusts the client before providing such details. This means that if uploads fail and there is no later call to `/objects/register` there is no DRS state to manage, simplifying server implementation. 
+The `/upload-request` endpoint does not require any state to be maintained on the DRS server (intermediate DRS object IDs etc.) it is simply a means for a server to provide details of where a client can upload data, and it should ensure that it trusts the client before providing such details. This means that if uploads fail and there is no later call to `/objects/register` there is no DRS state to manage, simplifying server implementation.
 
 Servers SHOULD ensure that any data from unsuccessful uploads (e.g. incomplete multi-part uploads) are cleaned up, for example by using lifecycle configuration in the backend storage. There is _no_ means of requiring that a client ultimately registers a DRS object pointing at data uploaded, and so servers should consider implementing some form of storage "garbage" collection (or simply set a short lifecycle policy on the upload location and move uploaded data that is later registered as DRS objects to other locations, updating the `access_method`s accordingly). Servers should also implement some means of constraining upload size (quotas etc.) to protect against accidental or malicious unconstrained uploads.
 
@@ -41,6 +41,7 @@ Check `/service-info` for upload capabilities:
 ```
 
 Upload related fields:
+
 - `uploadRequestSupported`: Upload request operations available via `/upload-request`
 - `objectRegistrationSupported`: Object registration operations available via `/objects/register`
 - `supportedUploadMethods`: Available storage backends  
@@ -55,6 +56,7 @@ Upload related fields:
 Upon receipt of a request for an upload method for a specific file, the server will respond with one or more `upload_method` with associated `type` and corresponding `upload_details` with upload locations, temporary credentials etc. These details are specific to backend implementations.
 
 Example storage backends:
+
 - **https**: Presigned POST URLs for HTTP uploads
 - **s3**: Direct S3 upload with temporary AWS credentials
 - **gs**: Google Cloud Storage with OAuth2 tokens
@@ -77,6 +79,7 @@ Check `relatedFileStorageSupported` in service-info or examine upload URLs for c
 After upload, clients can register files in bulk as DRS objects using POST `/objects/register`. Registration is all-or-nothing. If any candidate object fails to be registered in the server, the entire request fails and no objects are registered.
 
 **Candidate DRS object equirements**:
+
 - Complete metadata (name, size, checksums, MIME type)
 - Access methods pointing to file locations  
 - Valid authorization (if required)
@@ -94,12 +97,14 @@ The `/objects/register` endpoint can also be used independently to register exis
 
 ## Error Handling
 
-**Client Errors (4xx)**: 
+**Client Errors (4xx)**:
+
 - Invalid metadata (400)
 - Missing auth (401)
 - Insufficient permissions (403)
 
-**Server Errors (5xx)**: 
+**Server Errors (5xx)**:
+
 - Storage unavailable (500)
 - Capacity limits (503)
 
@@ -112,6 +117,7 @@ The `/objects/register` endpoint can also be used independently to register exis
 ## Security Considerations
 
 **Credential Scoping**: Implementers SHOULD scope upload credentials to the minimum necessary permissions and duration. Credentials should:
+
 - Allow write access only to the specific upload URL/path provided
 - Have the shortest practical expiration time (e.g. 15 minutes to 1 hour)
 - Be restricted to the specific file size and content type when possible
@@ -123,7 +129,8 @@ This principle of least privilege reduces security exposure if credentials are c
 
 ### Simple HTTPS Upload
 
-**1. Request Upload Method**
+Upload Request:
+
 ```http
 POST /upload-request
 Content-Type: application/json
@@ -145,7 +152,8 @@ Content-Type: application/json
 }
 ```
 
-**Response:**
+Response:
+
 ```json
 {
   "responses": [
@@ -175,14 +183,16 @@ Content-Type: application/json
 }
 ```
 
-**2. Upload via HTTPS**
+Upload via HTTPS:
+
 ```bash
 # Simple PUT upload to presigned URL
 curl -X PUT "https://uploads.example.org/presigned-upload?signature=FAKE_SIG" \
   --data-binary @variants.vcf
 ```
 
-**3. Register DRS Object**
+Register DRS Object:
+
 ```http
 POST /objects/register
 Content-Type: application/json
@@ -213,7 +223,8 @@ Content-Type: application/json
 }
 ```
 
-**Response:**
+Response:
+
 ```json
 {
   "objects": [
@@ -248,7 +259,8 @@ Content-Type: application/json
 
 ### S3 Bulk Upload (BAM + Index)
 
-**1. Request Upload Methods for Related Files**
+Request Upload Methods for Related Files
+
 ```http
 POST /upload-request
 Content-Type: application/json
@@ -281,7 +293,8 @@ Content-Type: application/json
 }
 ```
 
-**Response:**
+Response:
+
 ```json
 {
   "responses": [
@@ -343,14 +356,16 @@ Content-Type: application/json
 }
 ```
 
-**2. Upload Both Files to S3**
+Upload Both Files to S3:
+
 ```bash
 # Upload BAM and index files using the supplied credentials (note common prefix)
 aws s3 cp sample.bam s3://genomics-uploads/x7k9m/sample.bam
 aws s3 cp sample.bam.bai s3://genomics-uploads/x7k9m/sample.bam.bai
 ```
 
-**3. Register Both DRS Objects**
+Register Both DRS Objects:
+
 ```http
 POST /objects/register
 Content-Type: application/json
@@ -403,7 +418,8 @@ Content-Type: application/json
 }
 ```
 
-**Response:**
+Response:
+
 ```json
 {
   "objects": [
