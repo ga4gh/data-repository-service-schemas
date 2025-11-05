@@ -1,0 +1,72 @@
+description: DRS objects were successfully registered as an atomic transaction. Returns the complete DRS objects with server-minted IDs and timestamps. All candidate objects were validated and registered together - if any had failed, none would have been registered.
+content:
+  application/json:
+    schema:
+      type: object
+      required:
+        - objects
+      properties:
+        objects:
+          type: array
+          items:
+            $ref: '../schemas/DrsObject.yaml'
+          description: Array of registered DRS objects in the same order as the candidates in the request
+    examples:
+      single_object_created:
+        summary: Single object registered
+        description: Response after registering one DRS object
+        value:
+          objects:
+            - id: "drs_obj_a1b2c3d4e5f6"
+              self_uri: "drs://drs.example.org/drs_obj_a1b2c3d4e5f6"
+              name: "sample_data.vcf"
+              size: 1048576
+              mime_type: "text/plain"
+              created_time: "2024-01-15T10:30:00Z"
+              updated_time: "2024-01-15T10:30:00Z"
+              version: "1.0"
+              checksums:
+                - checksum: "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+                  type: "sha-256"
+              access_methods:
+                - type: "s3"
+                  access_url:
+                    url: "s3://my-bucket/uploads/sample_data.vcf"
+              description: "Variant call format file for sample analysis"
+      multiple_objects_created:
+        summary: Multiple objects registered
+        description: Response after registering multiple DRS objects
+        value:
+          objects:
+            - id: "drs_obj_a1b2c3d4e5f6"
+              self_uri: "drs://drs.example.org/drs_obj_a1b2c3d4e5f6"
+              name: "genome_assembly.fasta"
+              size: 3221225472
+              mime_type: "text/plain"
+              created_time: "2024-01-15T09:00:00Z"
+              updated_time: "2024-01-15T09:00:00Z"
+              version: "1.0"
+              checksums:
+                - checksum: "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3"
+                  type: "sha-256"
+              access_methods:
+                - type: "s3"
+                  access_url:
+                    url: "s3://genomics-bucket/assemblies/hg38.fasta"
+              description: "Human genome reference assembly"
+            - id: "drs_obj_f6e5d4c3b2a1"
+              self_uri: "drs://drs.example.org/drs_obj_f6e5d4c3b2a1"
+              name: "annotations.gff3"
+              size: 524288000
+              mime_type: "text/plain"
+              created_time: "2024-01-15T09:15:00Z"
+              updated_time: "2024-01-15T09:15:00Z"
+              version: "1.0"
+              checksums:
+                - checksum: "b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9"
+                  type: "sha-256"
+              access_methods:
+                - type: "https"
+                  access_url:
+                    url: "https://data.example.org/files/annotations.gff3"
+              description: "Gene annotations in GFF3 format"

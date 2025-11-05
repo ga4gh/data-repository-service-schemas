@@ -2,7 +2,7 @@ required: false
 content:
   application/json:
     schema:
-      $ref: '../schemas/SingleDeleteRequest.yaml'
+      $ref: '../schemas/DeleteRequest.yaml'
     examples:
       metadata_only_delete:
         summary: Delete metadata only (default)

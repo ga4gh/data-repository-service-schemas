@@ -1,1 +1,4 @@
-description: The DRS object was successfully deleted.
+description: >-
+  All DRS objects were successfully deleted. For bulk operations, this indicates that 
+  the entire atomic transaction completed successfully - all requested objects have been 
+  deleted. Storage data deletion (if requested) was attempted but success is not guaranteed.

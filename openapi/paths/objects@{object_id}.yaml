@@ -52,22 +52,15 @@ get:
   x-swagger-router-controller: ga4gh.drs.server
 
 post:
-  summary: Get info about a DrsObject through POST'ing a Passport or register new DRS objects.
+  summary: Get info about a DrsObject through POST'ing a Passport.
   description: >-
-    This endpoint supports two modes of operation based on the request body:
-    
-    1. **Retrieve Mode** (backward compatible): When the "object" field is missing, 
-       returns object metadata and a list of access methods that can be used to fetch object bytes.
-    
-    2. **Register Mode**: When the "object" field contains a DRS object, registers the supplied 
-       fully formed DRS object using the provided passports for authorization.
-
+    Returns object metadata and a list of access methods that can be used to fetch object bytes.
     Method is a POST to accommodate a JWT GA4GH Passport sent in the request body in order to authorize access.
     
-    **Note**: To upload new files before registering them as DRS objects, use the `/uploadrequest` endpoint 
-    to obtain upload methods and temporary credentials. For registering multiple objects at once, use the 
-    bulk POST `/objects` endpoint. Note that upload functionality is optional and not all DRS servers implement 
-    the `/uploadrequest` endpoint.
+    **Note**: To upload new files and register them as DRS objects, use the `/upload-request` endpoint 
+    to obtain upload methods and temporary credentials, then use POST `/objects/register` endpoint 
+    to register multiple objects at once. Note that upload functionality is optional and not all DRS 
+    servers implement the upload endpoints.
   operationId: PostObject
   security:
     - PassportAuth: []
