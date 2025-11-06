@@ -492,6 +492,283 @@ tags:
       | **HTTP POST** | tokens[] |
   - name: Objects
   - name: Upload Request
+  - name: Access Method Updates
+    description: >-
+      # Access Method Updates
+
+
+      > **Optional Functionality**: Access method updates are optional
+      extensions to the DRS API. Not all DRS servers are required to implement
+      this functionality. Clients should check `/service-info` for
+      `accessMethodUpdateSupported` before attempting to use these endpoints.
+
+
+      Access method update endpoints allows authorized clients to modify how
+      existing DRS objects can be accessed without changing the core object
+      metadata (size, checksums, name). This is useful for storage migrations,
+      adding mirrors, or updating URLs.
+
+
+      These endpoints will overwrite existing access methods for an object, if
+      clients want to add access methods in addition to existing ones for
+      objects they should first retrieve the current access methods and include
+      them in the update request along with the new methods.
+
+
+      ## Use Cases
+
+
+      - **Storage Migration**: Move data between storage providers while keeping
+      same DRS object
+
+      - **Mirror Addition**: Add CDN or regional access points for better
+      performance  
+
+      - **URL Refresh**: Update changed domain names
+
+      - **Access Optimization**: Add or remove access methods based on
+      performance or cost
+
+
+      ## Design Principles
+
+
+      - **Optional**: Access method update support is completely optional
+
+      - **Immutable Core**: Only access methods can be updated - size,
+      checksums, name remain unchanged
+
+      - **Atomic Bulk Operations**: All updates succeed or all fail
+      (transactional)
+
+      - **Optional Validation**: Servers MAY validate new access methods point
+      to same data
+
+      - **Flexible Authentication**: Supports GA4GH Passports, Bearer tokens,
+      API keys
+
+
+      ## Service Discovery
+
+
+      Check `/service-info` for access method update capabilities:
+
+
+      ```json
+
+      {
+        "drs": {
+          "accessMethodUpdateSupported": true,
+          "maxBulkAccessMethodUpdateLength": 100,
+          "validateAccessMethodUpdates": false
+        }
+      }
+
+      ```
+
+
+      - **`accessMethodUpdateSupported`**: Whether server supports access method
+      updates
+
+      - **`maxBulkAccessMethodUpdateLength`**: Maximum objects per bulk update
+      request
+
+      - **`validateAccessMethodUpdates`**: Whether server validates new access
+      methods
+
+
+      ## Single Object Update
+
+
+      Update access methods for a single DRS object:
+
+
+      ```bash
+
+      curl -X POST "https://drs.example.org/objects/obj_123/access-methods" \
+        -H "Content-Type: application/json" \
+        -d '{
+          "access_methods": [
+            {
+              "type": "https",
+              "access_url": {
+                "url": "https://new-cdn.example.org/data/file.bam"
+              }
+            },
+            {
+              "type": "s3",
+              "access_id": "s3,
+              "access_url": {
+                "url": "s3://new-bucket/migrated/file.bam"
+              }
+            }
+          ]
+        }'
+      ```
+
+
+      ## Bulk Object Update
+
+
+      Update access methods for multiple objects atomically:
+
+
+      ```bash
+
+      curl -X POST "https://drs.example.org/objects/access-methods" \
+        -H "Content-Type: application/json" \
+        -d '{
+          "updates": [
+            {
+              "object_id": "obj_123",
+              "access_methods": [
+                {
+                  "type": "https",
+                  "access_url": {"url": "https://new-location.com/file1.bam"}
+                }
+              ]
+            },
+            {
+              "object_id": "obj_456", 
+              "access_methods": [
+                {
+                  "type": "s3",
+                  "access_url": {"url": "s3://new-bucket/file2.vcf"}
+                }
+              ]
+            }
+          ]
+        }'
+      ```
+
+
+      ## Authentication
+
+
+      **GA4GH Passports** (in request body):
+
+      ```json
+
+      {
+        "access_methods": [...],
+        "passports": ["eyJhbGci..."]
+      }
+
+      ```
+
+
+      **Bearer Tokens** (in headers):
+
+      ```bash
+
+      curl -H "Authorization: Bearer token" -d '{"access_methods": [...]}' ...
+
+      ```
+
+
+      ## Validation
+
+
+      Servers MAY validate that new access methods point to the same data by
+      checkingm file availability, checksums or file content. Validation
+      behavior is advertised in `validateAccessMethodUpdates` service-info
+      field.
+
+
+
+      ## Error Responses
+
+
+      - **400**: Invalid access methods or validation failure
+
+      - **401**: Authentication required
+
+      - **403**: Insufficient permissions for object(s)
+
+      - **404**: Object not found or access method updates not supported
+
+      - **413**: Bulk request exceeds `maxBulkAccessMethodUpdateLength` limit
+
+
+      ## Examples
+
+
+      **Storage Migration:**
+
+      ```bash
+
+      # Check server capabilities
+
+      curl "https://drs.example.org/service-info"
+
+
+      # Update single object after migration
+
+      curl -X POST "https://drs.example.org/objects/obj_123/access-methods" \
+        -d '{"access_methods": [{"type": "s3", "access_url": {"url": "s3://new-bucket/file.bam"}}]}'
+      ```
+
+
+      **Add CDN Mirror:**
+
+      ```bash
+
+      # Add additional access method without removing existing ones
+
+      curl -X POST "https://drs.example.org/objects/obj_456/access-methods" \
+        -d '{
+          "access_methods": [
+            {"type": "https", "access_url": {"url": "https://origin.example.org/file.vcf"}},
+            {"type": "https", "access_url": {"url": "https://cdn.example.org/file.vcf"}}
+          ]
+        }'
+      ```
+
+
+      **Bulk Migration:**
+
+      ```bash
+
+      # Migrate multiple objects atomically
+
+      curl -X POST "https://drs.example.org/objects/access-methods" \
+        -d '{
+          "updates": [
+            {"object_id": "obj_1", "access_methods": [...]},
+            {"object_id": "obj_2", "access_methods": [...]}
+          ]
+        }'
+      ```
+
+
+      ## Best Practices
+
+
+      **Clients**: Check service-info first, handle atomic transaction failures,
+      respect bulk limits, verify permissions
+
+
+      **Servers**: Advertise capabilities clearly, implement atomic transactions
+      for bulk operations, validate permissions, consider optional validation
+      for data integrity
+
+
+      ## Backward Compatibility
+
+
+      Access method update functionality is designed to be backward compatible:
+
+
+      - **No Impact on Existing Endpoints**: All existing DRS endpoints remain
+      unchanged
+
+      - **Optional Implementation**: Servers can ignore this functionality
+      entirely  
+
+      - **Graceful Degradation**: Clients receive 404 responses when not
+      supported
+
+      - **Safe Defaults**: New service-info fields have safe default values
   - name: Service Info
   - name: AccessMethodModel
     x-displayName: AccessMethod
@@ -1865,10 +2142,9 @@ tags:
 
 
       Rather than introducing additional operations and endpoints for updating
-      DRS objects, implementations can allow clients to use the metadata-only
-      deletion and object registration endpoints to update object metadata while
-      leaving the underlying data in place. This simplifies server
-      implementation while still offering clients flexibility.
+      DRS objects, servers can allow clients to use the metadata-only deletion
+      and object registration endpoints to create a new DRS object with updated
+      metadata while leaving the underlying data in place.
 
 
       **Metadata update steps:**
@@ -1996,6 +2272,283 @@ tags:
 
       - **Safe Defaults**: New fields in service-info have safe default values,
       and requests default to leaving underlying data in place.
+  - name: Access Method Update
+    description: >-
+      # Access Method Updates
+
+
+      > **Optional Functionality**: Access method updates are optional
+      extensions to the DRS API. Not all DRS servers are required to implement
+      this functionality. Clients should check `/service-info` for
+      `accessMethodUpdateSupported` before attempting to use these endpoints.
+
+
+      Access method update endpoints allows authorized clients to modify how
+      existing DRS objects can be accessed without changing the core object
+      metadata (size, checksums, name). This is useful for storage migrations,
+      adding mirrors, or updating URLs.
+
+
+      These endpoints will overwrite existing access methods for an object, if
+      clients want to add access methods in addition to existing ones for
+      objects they should first retrieve the current access methods and include
+      them in the update request along with the new methods.
+
+
+      ## Use Cases
+
+
+      - **Storage Migration**: Move data between storage providers while keeping
+      same DRS object
+
+      - **Mirror Addition**: Add CDN or regional access points for better
+      performance  
+
+      - **URL Refresh**: Update changed domain names
+
+      - **Access Optimization**: Add or remove access methods based on
+      performance or cost
+
+
+      ## Design Principles
+
+
+      - **Optional**: Access method update support is completely optional
+
+      - **Immutable Core**: Only access methods can be updated - size,
+      checksums, name remain unchanged
+
+      - **Atomic Bulk Operations**: All updates succeed or all fail
+      (transactional)
+
+      - **Optional Validation**: Servers MAY validate new access methods point
+      to same data
+
+      - **Flexible Authentication**: Supports GA4GH Passports, Bearer tokens,
+      API keys
+
+
+      ## Service Discovery
+
+
+      Check `/service-info` for access method update capabilities:
+
+
+      ```json
+
+      {
+        "drs": {
+          "accessMethodUpdateSupported": true,
+          "maxBulkAccessMethodUpdateLength": 100,
+          "validateAccessMethodUpdates": false
+        }
+      }
+
+      ```
+
+
+      - **`accessMethodUpdateSupported`**: Whether server supports access method
+      updates
+
+      - **`maxBulkAccessMethodUpdateLength`**: Maximum objects per bulk update
+      request
+
+      - **`validateAccessMethodUpdates`**: Whether server validates new access
+      methods
+
+
+      ## Single Object Update
+
+
+      Update access methods for a single DRS object:
+
+
+      ```bash
+
+      curl -X POST "https://drs.example.org/objects/obj_123/access-methods" \
+        -H "Content-Type: application/json" \
+        -d '{
+          "access_methods": [
+            {
+              "type": "https",
+              "access_url": {
+                "url": "https://new-cdn.example.org/data/file.bam"
+              }
+            },
+            {
+              "type": "s3",
+              "access_id": "s3,
+              "access_url": {
+                "url": "s3://new-bucket/migrated/file.bam"
+              }
+            }
+          ]
+        }'
+      ```
+
+
+      ## Bulk Object Update
+
+
+      Update access methods for multiple objects atomically:
+
+
+      ```bash
+
+      curl -X POST "https://drs.example.org/objects/access-methods" \
+        -H "Content-Type: application/json" \
+        -d '{
+          "updates": [
+            {
+              "object_id": "obj_123",
+              "access_methods": [
+                {
+                  "type": "https",
+                  "access_url": {"url": "https://new-location.com/file1.bam"}
+                }
+              ]
+            },
+            {
+              "object_id": "obj_456", 
+              "access_methods": [
+                {
+                  "type": "s3",
+                  "access_url": {"url": "s3://new-bucket/file2.vcf"}
+                }
+              ]
+            }
+          ]
+        }'
+      ```
+
+
+      ## Authentication
+
+
+      **GA4GH Passports** (in request body):
+
+      ```json
+
+      {
+        "access_methods": [...],
+        "passports": ["eyJhbGci..."]
+      }
+
+      ```
+
+
+      **Bearer Tokens** (in headers):
+
+      ```bash
+
+      curl -H "Authorization: Bearer token" -d '{"access_methods": [...]}' ...
+
+      ```
+
+
+      ## Validation
+
+
+      Servers MAY validate that new access methods point to the same data by
+      checkingm file availability, checksums or file content. Validation
+      behavior is advertised in `validateAccessMethodUpdates` service-info
+      field.
+
+
+
+      ## Error Responses
+
+
+      - **400**: Invalid access methods or validation failure
+
+      - **401**: Authentication required
+
+      - **403**: Insufficient permissions for object(s)
+
+      - **404**: Object not found or access method updates not supported
+
+      - **413**: Bulk request exceeds `maxBulkAccessMethodUpdateLength` limit
+
+
+      ## Examples
+
+
+      **Storage Migration:**
+
+      ```bash
+
+      # Check server capabilities
+
+      curl "https://drs.example.org/service-info"
+
+
+      # Update single object after migration
+
+      curl -X POST "https://drs.example.org/objects/obj_123/access-methods" \
+        -d '{"access_methods": [{"type": "s3", "access_url": {"url": "s3://new-bucket/file.bam"}}]}'
+      ```
+
+
+      **Add CDN Mirror:**
+
+      ```bash
+
+      # Add additional access method without removing existing ones
+
+      curl -X POST "https://drs.example.org/objects/obj_456/access-methods" \
+        -d '{
+          "access_methods": [
+            {"type": "https", "access_url": {"url": "https://origin.example.org/file.vcf"}},
+            {"type": "https", "access_url": {"url": "https://cdn.example.org/file.vcf"}}
+          ]
+        }'
+      ```
+
+
+      **Bulk Migration:**
+
+      ```bash
+
+      # Migrate multiple objects atomically
+
+      curl -X POST "https://drs.example.org/objects/access-methods" \
+        -d '{
+          "updates": [
+            {"object_id": "obj_1", "access_methods": [...]},
+            {"object_id": "obj_2", "access_methods": [...]}
+          ]
+        }'
+      ```
+
+
+      ## Best Practices
+
+
+      **Clients**: Check service-info first, handle atomic transaction failures,
+      respect bulk limits, verify permissions
+
+
+      **Servers**: Advertise capabilities clearly, implement atomic transactions
+      for bulk operations, validate permissions, consider optional validation
+      for data integrity
+
+
+      ## Backward Compatibility
+
+
+      Access method update functionality is designed to be backward compatible:
+
+
+      - **No Impact on Existing Endpoints**: All existing DRS endpoints remain
+      unchanged
+
+      - **Optional Implementation**: Servers can ignore this functionality
+      entirely  
+
+      - **Graceful Degradation**: Clients receive 404 responses when not
+      supported
+
+      - **Safe Defaults**: New service-info fields have safe default values
 x-tagGroups:
   - name: Overview
     tags:
@@ -2035,6 +2588,7 @@ x-tagGroups:
       - GA4GH Service Registry
       - Upload Requests and Object Registration
       - Object Deletion
+      - Access Method Update
 paths:
   /service-info:
     get:
@@ -2427,7 +2981,7 @@ paths:
         limits before making requests
       operationId: bulkDeleteObjects
       tags:
-        - Delete Operations
+        - Objects
       requestBody:
         $ref: '#/components/requestBodies/BulkDeleteBody'
       responses:
@@ -2804,6 +3358,95 @@ paths:
           application/json:
             schema:
               $ref: '#/components/schemas/BulkObjectAccessId'
+  /objects/{object_id}/access-methods:
+    post:
+      summary: Update access methods for a DRS object
+      description: >-
+        **Optional Endpoint**: Not all DRS servers support access method
+        updates.
+
+        Update the access methods for an existing DRS object. Only access
+        methods are modified -  core object metadata (size, checksums, name)
+        remains unchanged. Servers MAY validate  that new access methods point
+        to the same data.
+
+        Note that existing access methods are overwritten, if clients want to
+        add additional  access methods they should first retrieve the current
+        methods and include them along with the new methods in this request.
+
+        **Authentication**: GA4GH Passports can be provided in the request body.
+      operationId: updateObjectAccessMethods
+      parameters:
+        - name: object_id
+          in: path
+          required: true
+          schema:
+            type: string
+          description: DRS object identifier
+      requestBody:
+        $ref: '#/components/requestBodies/AccessMethodUpdateBody'
+      responses:
+        '200':
+          $ref: '#/components/responses/200AccessMethodUpdate'
+        '400':
+          $ref: '#/components/responses/400BadRequest'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+        '403':
+          $ref: '#/components/responses/403Forbidden'
+        '404':
+          $ref: '#/components/responses/404NotFoundDrsObject'
+        '500':
+          $ref: '#/components/responses/500InternalServerError'
+      security:
+        - {}
+        - BasicAuth: []
+        - BearerAuth: []
+        - PassportAuth: []
+      tags:
+        - Objects
+  /objects/access-methods:
+    post:
+      summary: Bulk update access methods for multiple DRS objects
+      description: >-
+        **Optional Endpoint**: Not all DRS servers support access method
+        updates.
+
+        Update access methods for multiple DRS objects in a single atomic
+        transaction.  If ANY object fails to update, the ENTIRE request fails
+        and NO objects are updated. Only access methods are modified - core
+        object metadata remains unchanged.
+
+        Note that existing access methods are overwritten, if clients want to
+        add additional  access methods they should first retrieve the current
+        methods and include them along with the new methods in this request.
+
+        **Authentication**: GA4GH Passports can be provided in the request body.
+      operationId: bulkUpdateAccessMethods
+      requestBody:
+        $ref: '#/components/requestBodies/BulkAccessMethodUpdateBody'
+      responses:
+        '200':
+          $ref: '#/components/responses/200BulkAccessMethodUpdate'
+        '400':
+          $ref: '#/components/responses/400BadRequest'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+        '403':
+          $ref: '#/components/responses/403Forbidden'
+        '404':
+          $ref: '#/components/responses/404NotFoundDrsObject'
+        '413':
+          $ref: '#/components/responses/413RequestTooLarge'
+        '500':
+          $ref: '#/components/responses/500InternalServerError'
+      security:
+        - {}
+        - BasicAuth: []
+        - BearerAuth: []
+        - PassportAuth: []
+      tags:
+        - Objects
   /upload-request:
     post:
       summary: Request upload methods for files (optional endpoint)
@@ -3208,6 +3851,32 @@ components:
                 default behavior setting. Note: Storage deletion attempts may
                 fail due to permissions, network issues, or storage service
                 errors.
+              default: false
+            accessMethodUpdateSupported:
+              type: boolean
+              description: >-
+                Indicates whether this DRS server supports updating access
+                methods for existing objects. If true, clients can update access
+                methods using `/objects/{object_id}/access-methods` and
+                `/objects/access-methods` endpoints. If false or missing, the
+                server does not support access method updates.
+              default: false
+            maxBulkAccessMethodUpdateLength:
+              type: integer
+              description: >-
+                Maximum number of objects that can be updated in a single bulk
+                access method update request. Only present when
+                accessMethodUpdateSupported is true. If not specified, defaults
+                to maxBulkRequestLength.
+            validateAccessMethodUpdates:
+              type: boolean
+              description: >-
+                Indicates whether this DRS server validates new access methods
+                by verifying they point to the same data. If true, the server
+                will attempt to verify checksums/content before updating access
+                methods. If false or missing, the server trusts client-provided
+                access methods without validation. Only present when
+                accessMethodUpdateSupported is true.
               default: false
     Error:
       type: object
@@ -3772,6 +4441,51 @@ components:
             These headers can be used to provide auth tokens required to fetch
             the object bytes.
           example: 'Authorization: Basic Z2E0Z2g6ZHJz'
+    AccessMethodUpdateRequest:
+      type: object
+      required:
+        - access_methods
+      properties:
+        access_methods:
+          type: array
+          items:
+            $ref: '#/components/schemas/AccessMethod'
+          minItems: 1
+          description: New access methods for the DRS object
+        passports:
+          type: array
+          items:
+            type: string
+          description: Optional GA4GH Passport JWTs for authorization
+    BulkAccessMethodUpdateRequest:
+      type: object
+      required:
+        - updates
+      properties:
+        updates:
+          type: array
+          items:
+            type: object
+            required:
+              - object_id
+              - access_methods
+            properties:
+              object_id:
+                type: string
+                description: DRS object ID to update
+              access_methods:
+                type: array
+                items:
+                  $ref: '#/components/schemas/AccessMethod'
+                minItems: 1
+                description: New access methods for this object
+          minItems: 1
+          description: Array of access method updates to perform
+        passports:
+          type: array
+          items:
+            type: string
+          description: Optional GA4GH Passport JWTs for authorization
     UploadRequestObject:
       type: object
       required:
@@ -4250,6 +4964,30 @@ components:
                 type: array
                 items:
                   $ref: '#/components/schemas/BulkAccessURL'
+    200AccessMethodUpdate:
+      description: >-
+        Access methods successfully updated. Returns the updated DRS object with
+        new access methods and updated timestamp.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/DrsObject'
+    200BulkAccessMethodUpdate:
+      description: >-
+        Access methods successfully updated for all objects. Returns updated DRS
+        objects with  new access methods and updated timestamps.
+      content:
+        application/json:
+          schema:
+            type: object
+            required:
+              - objects
+            properties:
+              objects:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DrsObject'
+                description: Array of updated DRS objects
     200UploadRequest:
       description: >-
         Upload request processed successfully. Returns upload methods and
@@ -4731,6 +5469,20 @@ components:
                   the encoded JWT GA4GH Passport that contains embedded Visas. 
                   The overall JWT is signed as are the individual Passport
                   Visas.
+    AccessMethodUpdateBody:
+      description: Request body for updating access methods of a DRS object
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/AccessMethodUpdateRequest'
+    BulkAccessMethodUpdateBody:
+      description: Request body for bulk updating access methods of multiple DRS objects
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/BulkAccessMethodUpdateRequest'
     UploadRequestBody:
       required: true
       content:

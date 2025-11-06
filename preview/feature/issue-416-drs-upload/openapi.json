@@ -56,6 +56,10 @@
       "name": "Upload Request"
     },
     {
+      "name": "Access Method Updates",
+      "description": "# Access Method Updates\n\n> **Optional Functionality**: Access method updates are optional extensions to the DRS API. Not all DRS servers are required to implement this functionality. Clients should check `/service-info` for `accessMethodUpdateSupported` before attempting to use these endpoints.\n\nAccess method update endpoints allows authorized clients to modify how existing DRS objects can be accessed without changing the core object metadata (size, checksums, name). This is useful for storage migrations, adding mirrors, or updating URLs.\n\nThese endpoints will overwrite existing access methods for an object, if clients want to add access methods in addition to existing ones for objects they should first retrieve the current access methods and include them in the update request along with the new methods.\n\n## Use Cases\n\n- **Storage Migration**: Move data between storage providers while keeping same DRS object\n- **Mirror Addition**: Add CDN or regional access points for better performance  \n- **URL Refresh**: Update changed domain names\n- **Access Optimization**: Add or remove access methods based on performance or cost\n\n## Design Principles\n\n- **Optional**: Access method update support is completely optional\n- **Immutable Core**: Only access methods can be updated - size, checksums, name remain unchanged\n- **Atomic Bulk Operations**: All updates succeed or all fail (transactional)\n- **Optional Validation**: Servers MAY validate new access methods point to same data\n- **Flexible Authentication**: Supports GA4GH Passports, Bearer tokens, API keys\n\n## Service Discovery\n\nCheck `/service-info` for access method update capabilities:\n\n```json\n{\n  \"drs\": {\n    \"accessMethodUpdateSupported\": true,\n    \"maxBulkAccessMethodUpdateLength\": 100,\n    \"validateAccessMethodUpdates\": false\n  }\n}\n```\n\n- **`accessMethodUpdateSupported`**: Whether server supports access method updates\n- **`maxBulkAccessMethodUpdateLength`**: Maximum objects per bulk update request\n- **`validateAccessMethodUpdates`**: Whether server validates new access methods\n\n## Single Object Update\n\nUpdate access methods for a single DRS object:\n\n```bash\ncurl -X POST \"https://drs.example.org/objects/obj_123/access-methods\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\n    \"access_methods\": [\n      {\n        \"type\": \"https\",\n        \"access_url\": {\n          \"url\": \"https://new-cdn.example.org/data/file.bam\"\n        }\n      },\n      {\n        \"type\": \"s3\",\n        \"access_id\": \"s3,\n        \"access_url\": {\n          \"url\": \"s3://new-bucket/migrated/file.bam\"\n        }\n      }\n    ]\n  }'\n```\n\n## Bulk Object Update\n\nUpdate access methods for multiple objects atomically:\n\n```bash\ncurl -X POST \"https://drs.example.org/objects/access-methods\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\n    \"updates\": [\n      {\n        \"object_id\": \"obj_123\",\n        \"access_methods\": [\n          {\n            \"type\": \"https\",\n            \"access_url\": {\"url\": \"https://new-location.com/file1.bam\"}\n          }\n        ]\n      },\n      {\n        \"object_id\": \"obj_456\", \n        \"access_methods\": [\n          {\n            \"type\": \"s3\",\n            \"access_url\": {\"url\": \"s3://new-bucket/file2.vcf\"}\n          }\n        ]\n      }\n    ]\n  }'\n```\n\n## Authentication\n\n**GA4GH Passports** (in request body):\n```json\n{\n  \"access_methods\": [...],\n  \"passports\": [\"eyJhbGci...\"]\n}\n```\n\n**Bearer Tokens** (in headers):\n```bash\ncurl -H \"Authorization: Bearer token\" -d '{\"access_methods\": [...]}' ...\n```\n\n## Validation\n\nServers MAY validate that new access methods point to the same data by checkingm file availability, checksums or file content. Validation behavior is advertised in `validateAccessMethodUpdates` service-info field.\n\n\n## Error Responses\n\n- **400**: Invalid access methods or validation failure\n- **401**: Authentication required\n- **403**: Insufficient permissions for object(s)\n- **404**: Object not found or access method updates not supported\n- **413**: Bulk request exceeds `maxBulkAccessMethodUpdateLength` limit\n\n## Examples\n\n**Storage Migration:**\n```bash\n# Check server capabilities\ncurl \"https://drs.example.org/service-info\"\n\n# Update single object after migration\ncurl -X POST \"https://drs.example.org/objects/obj_123/access-methods\" \\\n  -d '{\"access_methods\": [{\"type\": \"s3\", \"access_url\": {\"url\": \"s3://new-bucket/file.bam\"}}]}'\n```\n\n**Add CDN Mirror:**\n```bash\n# Add additional access method without removing existing ones\ncurl -X POST \"https://drs.example.org/objects/obj_456/access-methods\" \\\n  -d '{\n    \"access_methods\": [\n      {\"type\": \"https\", \"access_url\": {\"url\": \"https://origin.example.org/file.vcf\"}},\n      {\"type\": \"https\", \"access_url\": {\"url\": \"https://cdn.example.org/file.vcf\"}}\n    ]\n  }'\n```\n\n**Bulk Migration:**\n```bash\n# Migrate multiple objects atomically\ncurl -X POST \"https://drs.example.org/objects/access-methods\" \\\n  -d '{\n    \"updates\": [\n      {\"object_id\": \"obj_1\", \"access_methods\": [...]},\n      {\"object_id\": \"obj_2\", \"access_methods\": [...]}\n    ]\n  }'\n```\n\n## Best Practices\n\n**Clients**: Check service-info first, handle atomic transaction failures, respect bulk limits, verify permissions\n\n**Servers**: Advertise capabilities clearly, implement atomic transactions for bulk operations, validate permissions, consider optional validation for data integrity\n\n## Backward Compatibility\n\nAccess method update functionality is designed to be backward compatible:\n\n- **No Impact on Existing Endpoints**: All existing DRS endpoints remain unchanged\n- **Optional Implementation**: Servers can ignore this functionality entirely  \n- **Graceful Degradation**: Clients receive 404 responses when not supported\n- **Safe Defaults**: New service-info fields have safe default values"
+    },
+    {
       "name": "Service Info"
     },
     {
@@ -168,7 +172,11 @@
     },
     {
       "name": "Object Deletion",
-      "description": "# Object Deletion\n\n> **Optional Functionality**: Delete support is an **optional** extension to the DRS API. Not all DRS servers are required to implement delete functionality. Clients should check for the availability of delete endpoints before attempting to use them.\n\nDRS delete functionality allows suitably authenticated clients to request that DRS objects are removed from the server and, optionally, to request that the server attempt to delete the underlying data.\n\nServers should ensure that they trust clients from whom they receive delete requests, and may choose to implement \"soft\" deletes to minimise the risk of accidental or malicious requests. The DRS specification does not currently provide explicit support for soft deletes. Because delete support is optional, servers operating in untrusted environments may choose not to support delete operations at all.\n\nIn combination with the `/objects/register` endpoint, metadata only delete requests offer a means for clients to update DRS metadata without affecting the underlying data, and without introducing additional update operations which would complicate server implementation.\n\nClients can express a preference that the underlying data referred to by the deleted DRS object(s) is deleted with the `delete_storage_data` parameter. Servers are free to interpret this as they choose, and can advertise whether they support it at all with the `deleteStorageDataSupported` flag. Servers that choose to attempt to honour the request need not perform this operation synchronously and may, for example, register the file for later deletion. Implementations may also choose to ensure that no other DRS object registered in the server refers to the underlying data before deleting. Servers may not have the necessary permissions to delete the data from the backend even if they would like to do so, or may encounter errors when they attempt deletion. In the case that a DRS object refers to data stored in multiple backends (e.g. has multiple `access_method`s) the server may attempt to delete the data from all or only some of the backends.\n\nFor these reasons clients MUST NOT depend on the server deleting the underlying storage data even if the server advertises that `deleteStorageDataSupported` and the client sets the `delete_storage_data` flag.\n\nIn situations where the DRS server controls the storage backend, DRS delete support offers a convenient vendor-neutral way for clients to update and delete DRS objects and corresponding data.\n\nFor bulk deletes using the `/objects/delete` endpoint the server SHOULD implement transaction semantics: if any object fails validation or deletion, the entire request should fail and no objects are deleted and no attempt is made to delete from underlying storage for any object.\n\n## Design principles\n\n- **Optional**: Delete support is completely optional\n- **Safety**: Preserves underlying data in storage unless explicitly requested\n- **Backward compatible**: No impact on existing DRS functionality\n- **Flexible authentication**: Supports GA4GH Passports, Bearer tokens, API keys\n- **Use POST rather than DELETE**: GA4GH Passports require request bodies, which DELETE methods don't reliably support across all HTTP infrastructure. POST ensures broad compatibility.\n\n## Service Discovery\n\nCheck `/service-info` for delete capabilities:\n\n```json\n{\n  \"drs\": {\n    \"uploadRequestSupported\": true,\n    \"objectRegistrationSupported\": true,\n    \"supportedUploadMethods\": [\"s3\", \"https\"],\n    \"relatedFileStorageSupported\": true,\n    \"deleteSupported\": true,\n    \"maxBulkDeleteLength\": 100,\n    \"deleteStorageDataSupported\": true\n  }\n}\n```\n\n- **`deleteSupported`**: Whether server supports deletion\n- **`maxBulkDeleteLength`**: Maximum objects per bulk delete request  \n- **`deleteStorageDataSupported`**: Whether server can attempt to delete underlying storage files\n\n### Single Object Delete: `POST /objects/{object_id}/delete`\n\n```bash\ncurl -X POST \"https://drs.example.org/objects/drs_object_123456/delete\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\"passports\": [\"...\"], \"delete_storage_data\": false}'\n# Response: 204 No Content (indicates metadata deletion success only)\n```\n\n**Note**: HTTP responses indicate metadata deletion status only. Storage deletion (`delete_storage_data: true`) is a best effort attempt with no guarantee of success.\n\n### Bulk Object Delete: `POST /objects/delete`\n\n```bash\ncurl -X POST \"https://drs.example.org/objects/delete\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\n    \"bulk_object_ids\": [\"obj_1\", \"obj_2\", \"obj_3\"],\n    \"passports\": [\"...\"],\n    \"delete_storage_data\": false\n  }'\n# Response: 204 No Content (all metadata deleted) or 4xx error (no objects deleted)\n```\n\n## Authentication\n\n**GA4GH Passports** (in request body):\n\n```json\n{\"passports\": [\"eyJhbGci...\"], \"delete_storage_data\": false}\n```\n\n**Bearer Tokens** (in headers):\n\n```bash\ncurl -H \"Authorization: Bearer token\" -d '{\"delete_storage_data\": false}' ...\n```\n\n## Underlying Storage Data\n\n**Important**: Storage data deletion is never guaranteed. Even when `delete_storage_data: true` is requested and the server supports it, the actual deletion may fail due to permissions, network issues, or storage service errors. Clients shoud not depend on storage deletion success.\n\nClients can request that the server attempts to delete the underlying data referred to by the DRS object using the `delete_storage_data` parameter.\n\n**`delete_storage_data: false`** (default): Removes DRS object metadata only, preserves underlying storage files\n\n**`delete_storage_data: true`**: Removes metadata AND requests server attempt to delete underlying storage files (requires `deleteStorageDataSupported: true`, **success not guaranteed**)\n\n## Update Pattern\n\nRather than introducing additional operations and endpoints for updating DRS objects, implementations can allow clients to use the metadata-only deletion and object registration endpoints to update object metadata while leaving the underlying data in place. This simplifies server implementation while still offering clients flexibility.\n\n**Metadata update steps:**\n\n1. Delete metadata only: `POST /objects/{id}/delete` with `delete_storage_data: false`\n2. Re-register object: `POST /objects/register` with updated metadata\n\n```bash\n# Delete metadata (preserves storage)\ncurl -X POST \".../objects/obj_123/delete\" -d '{\"delete_storage_data\": false}'\n# Re-register with updates\ncurl -X POST \".../objects/register\" -d '{\"candidates\": [{\"name\": \"updated.txt\", ...}]}'\n```\n\n## Error Responses\n\n- **400**: Unsupported storage deletion or invalid request parameters\n- **403**: Insufficient permissions for any object in the request\n- **404**: Any object not found or delete endpoints not supported by server\n- **413**: Bulk request exceeds `maxBulkDeleteLength` limit\n\n## Examples\n\n**Metadata Update:**\n\n```bash\ncurl \".../service-info\"  # Check capabilities\ncurl -X POST \".../objects/obj_123/delete\" -d '{\"delete_storage_data\": false}'\ncurl -X POST \".../objects/register\" -d '{\"candidates\": [{\"name\": \"updated.vcf\", ...}]}'\n```\n\n**Complete Removal:**\n\n```bash\ncurl -X POST \".../objects/obj_456/delete\" -H \"Authorization: Bearer token\" \\\n  -d '{\"delete_storage_data\": true}'\n```\n\n**Bulk Delete (Atomic):**\n\n```bash\ncurl -X POST \".../objects/delete\" -d '{\n  \"bulk_object_ids\": [\"obj_1\", \"obj_2\"],\n  \"passports\": [\"...\"],\n  \"delete_storage_data\": false\n}'\n# All objects deleted or none deleted (transactional)\n```\n\n## Best Practices\n\n**Clients:** Check service-info, default to safe deletion, handle transactional failures, respect limits, confirm destructive operations, do not rely on underlying storage deletion\n\n**Servers:** Advertise capabilities, validate permissions, implement atomic transactions, implement limits, use versioning to avoid inadvertent deletion.\n\n## Security Considerations\n\n- **Authentication**: Validate GA4GH Passports and Bearer tokens\n- **HTTPS Required**: Protect credentials in transit\n- **Rate Limiting**: Prevent abuse of delete endpoints\n- **Input Validation**: Sanitize all request parameters\n\n## Backward Compatibility\n\nDelete functionality is designed to be backward compatible:\n\n- **No Impact on Existing Endpoints**: All existing DRS endpoints remain unchanged\n- **Optional Implementation**: Servers can ignore delete functionality entirely\n- **Graceful Degradation**: Clients receive 404 responses when delete is not supported\n- **Safe Defaults**: New fields in service-info have safe default values, and requests default to leaving underlying data in place.\n"
+      "description": "# Object Deletion\n\n> **Optional Functionality**: Delete support is an **optional** extension to the DRS API. Not all DRS servers are required to implement delete functionality. Clients should check for the availability of delete endpoints before attempting to use them.\n\nDRS delete functionality allows suitably authenticated clients to request that DRS objects are removed from the server and, optionally, to request that the server attempt to delete the underlying data.\n\nServers should ensure that they trust clients from whom they receive delete requests, and may choose to implement \"soft\" deletes to minimise the risk of accidental or malicious requests. The DRS specification does not currently provide explicit support for soft deletes. Because delete support is optional, servers operating in untrusted environments may choose not to support delete operations at all.\n\nIn combination with the `/objects/register` endpoint, metadata only delete requests offer a means for clients to update DRS metadata without affecting the underlying data, and without introducing additional update operations which would complicate server implementation.\n\nClients can express a preference that the underlying data referred to by the deleted DRS object(s) is deleted with the `delete_storage_data` parameter. Servers are free to interpret this as they choose, and can advertise whether they support it at all with the `deleteStorageDataSupported` flag. Servers that choose to attempt to honour the request need not perform this operation synchronously and may, for example, register the file for later deletion. Implementations may also choose to ensure that no other DRS object registered in the server refers to the underlying data before deleting. Servers may not have the necessary permissions to delete the data from the backend even if they would like to do so, or may encounter errors when they attempt deletion. In the case that a DRS object refers to data stored in multiple backends (e.g. has multiple `access_method`s) the server may attempt to delete the data from all or only some of the backends.\n\nFor these reasons clients MUST NOT depend on the server deleting the underlying storage data even if the server advertises that `deleteStorageDataSupported` and the client sets the `delete_storage_data` flag.\n\nIn situations where the DRS server controls the storage backend, DRS delete support offers a convenient vendor-neutral way for clients to update and delete DRS objects and corresponding data.\n\nFor bulk deletes using the `/objects/delete` endpoint the server SHOULD implement transaction semantics: if any object fails validation or deletion, the entire request should fail and no objects are deleted and no attempt is made to delete from underlying storage for any object.\n\n## Design principles\n\n- **Optional**: Delete support is completely optional\n- **Safety**: Preserves underlying data in storage unless explicitly requested\n- **Backward compatible**: No impact on existing DRS functionality\n- **Flexible authentication**: Supports GA4GH Passports, Bearer tokens, API keys\n- **Use POST rather than DELETE**: GA4GH Passports require request bodies, which DELETE methods don't reliably support across all HTTP infrastructure. POST ensures broad compatibility.\n\n## Service Discovery\n\nCheck `/service-info` for delete capabilities:\n\n```json\n{\n  \"drs\": {\n    \"uploadRequestSupported\": true,\n    \"objectRegistrationSupported\": true,\n    \"supportedUploadMethods\": [\"s3\", \"https\"],\n    \"relatedFileStorageSupported\": true,\n    \"deleteSupported\": true,\n    \"maxBulkDeleteLength\": 100,\n    \"deleteStorageDataSupported\": true\n  }\n}\n```\n\n- **`deleteSupported`**: Whether server supports deletion\n- **`maxBulkDeleteLength`**: Maximum objects per bulk delete request  \n- **`deleteStorageDataSupported`**: Whether server can attempt to delete underlying storage files\n\n### Single Object Delete: `POST /objects/{object_id}/delete`\n\n```bash\ncurl -X POST \"https://drs.example.org/objects/drs_object_123456/delete\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\"passports\": [\"...\"], \"delete_storage_data\": false}'\n# Response: 204 No Content (indicates metadata deletion success only)\n```\n\n**Note**: HTTP responses indicate metadata deletion status only. Storage deletion (`delete_storage_data: true`) is a best effort attempt with no guarantee of success.\n\n### Bulk Object Delete: `POST /objects/delete`\n\n```bash\ncurl -X POST \"https://drs.example.org/objects/delete\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\n    \"bulk_object_ids\": [\"obj_1\", \"obj_2\", \"obj_3\"],\n    \"passports\": [\"...\"],\n    \"delete_storage_data\": false\n  }'\n# Response: 204 No Content (all metadata deleted) or 4xx error (no objects deleted)\n```\n\n## Authentication\n\n**GA4GH Passports** (in request body):\n\n```json\n{\"passports\": [\"eyJhbGci...\"], \"delete_storage_data\": false}\n```\n\n**Bearer Tokens** (in headers):\n\n```bash\ncurl -H \"Authorization: Bearer token\" -d '{\"delete_storage_data\": false}' ...\n```\n\n## Underlying Storage Data\n\n**Important**: Storage data deletion is never guaranteed. Even when `delete_storage_data: true` is requested and the server supports it, the actual deletion may fail due to permissions, network issues, or storage service errors. Clients shoud not depend on storage deletion success.\n\nClients can request that the server attempts to delete the underlying data referred to by the DRS object using the `delete_storage_data` parameter.\n\n**`delete_storage_data: false`** (default): Removes DRS object metadata only, preserves underlying storage files\n\n**`delete_storage_data: true`**: Removes metadata AND requests server attempt to delete underlying storage files (requires `deleteStorageDataSupported: true`, **success not guaranteed**)\n\n## Update Pattern\n\nRather than introducing additional operations and endpoints for updating DRS objects, servers can allow clients to use the metadata-only deletion and object registration endpoints to create a new DRS object with updated metadata while leaving the underlying data in place.\n\n**Metadata update steps:**\n\n1. Delete metadata only: `POST /objects/{id}/delete` with `delete_storage_data: false`\n2. Re-register object: `POST /objects/register` with updated metadata\n\n```bash\n# Delete metadata (preserves storage)\ncurl -X POST \".../objects/obj_123/delete\" -d '{\"delete_storage_data\": false}'\n# Re-register with updates\ncurl -X POST \".../objects/register\" -d '{\"candidates\": [{\"name\": \"updated.txt\", ...}]}'\n```\n\n## Error Responses\n\n- **400**: Unsupported storage deletion or invalid request parameters\n- **403**: Insufficient permissions for any object in the request\n- **404**: Any object not found or delete endpoints not supported by server\n- **413**: Bulk request exceeds `maxBulkDeleteLength` limit\n\n## Examples\n\n**Metadata Update:**\n\n```bash\ncurl \".../service-info\"  # Check capabilities\ncurl -X POST \".../objects/obj_123/delete\" -d '{\"delete_storage_data\": false}'\ncurl -X POST \".../objects/register\" -d '{\"candidates\": [{\"name\": \"updated.vcf\", ...}]}'\n```\n\n**Complete Removal:**\n\n```bash\ncurl -X POST \".../objects/obj_456/delete\" -H \"Authorization: Bearer token\" \\\n  -d '{\"delete_storage_data\": true}'\n```\n\n**Bulk Delete (Atomic):**\n\n```bash\ncurl -X POST \".../objects/delete\" -d '{\n  \"bulk_object_ids\": [\"obj_1\", \"obj_2\"],\n  \"passports\": [\"...\"],\n  \"delete_storage_data\": false\n}'\n# All objects deleted or none deleted (transactional)\n```\n\n## Best Practices\n\n**Clients:** Check service-info, default to safe deletion, handle transactional failures, respect limits, confirm destructive operations, do not rely on underlying storage deletion\n\n**Servers:** Advertise capabilities, validate permissions, implement atomic transactions, implement limits, use versioning to avoid inadvertent deletion.\n\n## Security Considerations\n\n- **Authentication**: Validate GA4GH Passports and Bearer tokens\n- **HTTPS Required**: Protect credentials in transit\n- **Rate Limiting**: Prevent abuse of delete endpoints\n- **Input Validation**: Sanitize all request parameters\n\n## Backward Compatibility\n\nDelete functionality is designed to be backward compatible:\n\n- **No Impact on Existing Endpoints**: All existing DRS endpoints remain unchanged\n- **Optional Implementation**: Servers can ignore delete functionality entirely\n- **Graceful Degradation**: Clients receive 404 responses when delete is not supported\n- **Safe Defaults**: New fields in service-info have safe default values, and requests default to leaving underlying data in place.\n"
+    },
+    {
+      "name": "Access Method Update",
+      "description": "# Access Method Updates\n\n> **Optional Functionality**: Access method updates are optional extensions to the DRS API. Not all DRS servers are required to implement this functionality. Clients should check `/service-info` for `accessMethodUpdateSupported` before attempting to use these endpoints.\n\nAccess method update endpoints allows authorized clients to modify how existing DRS objects can be accessed without changing the core object metadata (size, checksums, name). This is useful for storage migrations, adding mirrors, or updating URLs.\n\nThese endpoints will overwrite existing access methods for an object, if clients want to add access methods in addition to existing ones for objects they should first retrieve the current access methods and include them in the update request along with the new methods.\n\n## Use Cases\n\n- **Storage Migration**: Move data between storage providers while keeping same DRS object\n- **Mirror Addition**: Add CDN or regional access points for better performance  \n- **URL Refresh**: Update changed domain names\n- **Access Optimization**: Add or remove access methods based on performance or cost\n\n## Design Principles\n\n- **Optional**: Access method update support is completely optional\n- **Immutable Core**: Only access methods can be updated - size, checksums, name remain unchanged\n- **Atomic Bulk Operations**: All updates succeed or all fail (transactional)\n- **Optional Validation**: Servers MAY validate new access methods point to same data\n- **Flexible Authentication**: Supports GA4GH Passports, Bearer tokens, API keys\n\n## Service Discovery\n\nCheck `/service-info` for access method update capabilities:\n\n```json\n{\n  \"drs\": {\n    \"accessMethodUpdateSupported\": true,\n    \"maxBulkAccessMethodUpdateLength\": 100,\n    \"validateAccessMethodUpdates\": false\n  }\n}\n```\n\n- **`accessMethodUpdateSupported`**: Whether server supports access method updates\n- **`maxBulkAccessMethodUpdateLength`**: Maximum objects per bulk update request\n- **`validateAccessMethodUpdates`**: Whether server validates new access methods\n\n## Single Object Update\n\nUpdate access methods for a single DRS object:\n\n```bash\ncurl -X POST \"https://drs.example.org/objects/obj_123/access-methods\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\n    \"access_methods\": [\n      {\n        \"type\": \"https\",\n        \"access_url\": {\n          \"url\": \"https://new-cdn.example.org/data/file.bam\"\n        }\n      },\n      {\n        \"type\": \"s3\",\n        \"access_id\": \"s3,\n        \"access_url\": {\n          \"url\": \"s3://new-bucket/migrated/file.bam\"\n        }\n      }\n    ]\n  }'\n```\n\n## Bulk Object Update\n\nUpdate access methods for multiple objects atomically:\n\n```bash\ncurl -X POST \"https://drs.example.org/objects/access-methods\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\n    \"updates\": [\n      {\n        \"object_id\": \"obj_123\",\n        \"access_methods\": [\n          {\n            \"type\": \"https\",\n            \"access_url\": {\"url\": \"https://new-location.com/file1.bam\"}\n          }\n        ]\n      },\n      {\n        \"object_id\": \"obj_456\", \n        \"access_methods\": [\n          {\n            \"type\": \"s3\",\n            \"access_url\": {\"url\": \"s3://new-bucket/file2.vcf\"}\n          }\n        ]\n      }\n    ]\n  }'\n```\n\n## Authentication\n\n**GA4GH Passports** (in request body):\n```json\n{\n  \"access_methods\": [...],\n  \"passports\": [\"eyJhbGci...\"]\n}\n```\n\n**Bearer Tokens** (in headers):\n```bash\ncurl -H \"Authorization: Bearer token\" -d '{\"access_methods\": [...]}' ...\n```\n\n## Validation\n\nServers MAY validate that new access methods point to the same data by checkingm file availability, checksums or file content. Validation behavior is advertised in `validateAccessMethodUpdates` service-info field.\n\n\n## Error Responses\n\n- **400**: Invalid access methods or validation failure\n- **401**: Authentication required\n- **403**: Insufficient permissions for object(s)\n- **404**: Object not found or access method updates not supported\n- **413**: Bulk request exceeds `maxBulkAccessMethodUpdateLength` limit\n\n## Examples\n\n**Storage Migration:**\n```bash\n# Check server capabilities\ncurl \"https://drs.example.org/service-info\"\n\n# Update single object after migration\ncurl -X POST \"https://drs.example.org/objects/obj_123/access-methods\" \\\n  -d '{\"access_methods\": [{\"type\": \"s3\", \"access_url\": {\"url\": \"s3://new-bucket/file.bam\"}}]}'\n```\n\n**Add CDN Mirror:**\n```bash\n# Add additional access method without removing existing ones\ncurl -X POST \"https://drs.example.org/objects/obj_456/access-methods\" \\\n  -d '{\n    \"access_methods\": [\n      {\"type\": \"https\", \"access_url\": {\"url\": \"https://origin.example.org/file.vcf\"}},\n      {\"type\": \"https\", \"access_url\": {\"url\": \"https://cdn.example.org/file.vcf\"}}\n    ]\n  }'\n```\n\n**Bulk Migration:**\n```bash\n# Migrate multiple objects atomically\ncurl -X POST \"https://drs.example.org/objects/access-methods\" \\\n  -d '{\n    \"updates\": [\n      {\"object_id\": \"obj_1\", \"access_methods\": [...]},\n      {\"object_id\": \"obj_2\", \"access_methods\": [...]}\n    ]\n  }'\n```\n\n## Best Practices\n\n**Clients**: Check service-info first, handle atomic transaction failures, respect bulk limits, verify permissions\n\n**Servers**: Advertise capabilities clearly, implement atomic transactions for bulk operations, validate permissions, consider optional validation for data integrity\n\n## Backward Compatibility\n\nAccess method update functionality is designed to be backward compatible:\n\n- **No Impact on Existing Endpoints**: All existing DRS endpoints remain unchanged\n- **Optional Implementation**: Servers can ignore this functionality entirely  \n- **Graceful Degradation**: Clients receive 404 responses when not supported\n- **Safe Defaults**: New service-info fields have safe default values"
     }
   ],
   "x-tagGroups": [
@@ -219,7 +227,8 @@
         "Hostname-Based URIs",
         "GA4GH Service Registry",
         "Upload Requests and Object Registration",
-        "Object Deletion"
+        "Object Deletion",
+        "Access Method Update"
       ]
     }
   ],
@@ -531,7 +540,7 @@
         "description": "**Optional Endpoint**: This endpoint is not required for DRS server implementations.  Not all DRS servers support delete functionality.\nDelete multiple DRS objects in a single atomic transaction. If ANY object fails to be deleted,  the ENTIRE request fails and NO objects are deleted. This ensures data consistency and prevents  partial deletion scenarios.\n**RECOMMENDED - Transactional Behavior**:  Deletion operations SHOULD be atomic transactions. If ANY object fails validation or deletion,  the ENTIRE request SHOULD fail and NO objects SHOULD be deleted. Servers SHOULD implement this as an  all-or-nothing operation to ensure data consistency, but MAY implement partial deletion with  appropriate error reporting if transactional behavior is not feasible.\n**Authentication**: GA4GH Passports can be provided in the request body for authorization.\n**Storage Data Deletion**: The `delete_storage_data` parameter controls whether the server will attempt to delete underlying storage files along with DRS metadata. This defaults to false for safety. Servers will make a best effort attempt to delete storage data, but success is not guaranteed.\n**Server Responsibilities**: - SHOULD treat deletion as an atomic transaction (all succeed or all fail) - SHOULD validate ALL object IDs exist and are accessible before deleting ANY - SHOULD roll back any partial changes if any object fails deletion - SHOULD return 400 if any object ID is invalid or inaccessible when using transactional behavior\n**Client Responsibilities**: - Provide valid object IDs for all objects to be deleted - Handle potential failure of entire batch if any single object cannot be deleted - Check service-info for `maxBulkDeleteLength` limits before making requests",
         "operationId": "bulkDeleteObjects",
         "tags": [
-          "Delete Operations"
+          "Objects"
         ],
         "requestBody": {
           "$ref": "#/components/requestBodies/BulkDeleteBody"
@@ -986,6 +995,110 @@
         }
       }
     },
+    "/objects/{object_id}/access-methods": {
+      "post": {
+        "summary": "Update access methods for a DRS object",
+        "description": "**Optional Endpoint**: Not all DRS servers support access method updates.\nUpdate the access methods for an existing DRS object. Only access methods are modified -  core object metadata (size, checksums, name) remains unchanged. Servers MAY validate  that new access methods point to the same data.\nNote that existing access methods are overwritten, if clients want to add additional  access methods they should first retrieve the current methods and include them along with the new methods in this request.\n**Authentication**: GA4GH Passports can be provided in the request body.",
+        "operationId": "updateObjectAccessMethods",
+        "parameters": [
+          {
+            "name": "object_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "DRS object identifier"
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/AccessMethodUpdateBody"
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/200AccessMethodUpdate"
+          },
+          "400": {
+            "$ref": "#/components/responses/400BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/401Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/403Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/404NotFoundDrsObject"
+          },
+          "500": {
+            "$ref": "#/components/responses/500InternalServerError"
+          }
+        },
+        "security": [
+          {},
+          {
+            "BasicAuth": []
+          },
+          {
+            "BearerAuth": []
+          },
+          {
+            "PassportAuth": []
+          }
+        ],
+        "tags": [
+          "Objects"
+        ]
+      }
+    },
+    "/objects/access-methods": {
+      "post": {
+        "summary": "Bulk update access methods for multiple DRS objects",
+        "description": "**Optional Endpoint**: Not all DRS servers support access method updates.\nUpdate access methods for multiple DRS objects in a single atomic transaction.  If ANY object fails to update, the ENTIRE request fails and NO objects are updated. Only access methods are modified - core object metadata remains unchanged.\nNote that existing access methods are overwritten, if clients want to add additional  access methods they should first retrieve the current methods and include them along with the new methods in this request.\n**Authentication**: GA4GH Passports can be provided in the request body.",
+        "operationId": "bulkUpdateAccessMethods",
+        "requestBody": {
+          "$ref": "#/components/requestBodies/BulkAccessMethodUpdateBody"
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/200BulkAccessMethodUpdate"
+          },
+          "400": {
+            "$ref": "#/components/responses/400BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/401Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/403Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/404NotFoundDrsObject"
+          },
+          "413": {
+            "$ref": "#/components/responses/413RequestTooLarge"
+          },
+          "500": {
+            "$ref": "#/components/responses/500InternalServerError"
+          }
+        },
+        "security": [
+          {},
+          {
+            "BasicAuth": []
+          },
+          {
+            "BearerAuth": []
+          },
+          {
+            "PassportAuth": []
+          }
+        ],
+        "tags": [
+          "Objects"
+        ]
+      }
+    },
     "/upload-request": {
       "post": {
         "summary": "Request upload methods for files (optional endpoint)",
@@ -1270,6 +1383,20 @@
               "deleteStorageDataSupported": {
                 "type": "boolean",
                 "description": "Indicates whether this DRS server supports attempting to delete underlying storage data when clients request it. If true, the server will attempt to delete both metadata and storage files when `delete_storage_data: true` is specified in delete requests. If false or missing, the server only supports metadata deletion regardless of client request, preserving underlying storage data. Only present when deleteSupported is true. This is a capability flag indicating what the server can attempt, not a default behavior setting. Note: Storage deletion attempts may fail due to permissions, network issues, or storage service errors.",
+                "default": false
+              },
+              "accessMethodUpdateSupported": {
+                "type": "boolean",
+                "description": "Indicates whether this DRS server supports updating access methods for existing objects. If true, clients can update access methods using `/objects/{object_id}/access-methods` and `/objects/access-methods` endpoints. If false or missing, the server does not support access method updates.",
+                "default": false
+              },
+              "maxBulkAccessMethodUpdateLength": {
+                "type": "integer",
+                "description": "Maximum number of objects that can be updated in a single bulk access method update request. Only present when accessMethodUpdateSupported is true. If not specified, defaults to maxBulkRequestLength."
+              },
+              "validateAccessMethodUpdates": {
+                "type": "boolean",
+                "description": "Indicates whether this DRS server validates new access methods by verifying they point to the same data. If true, the server will attempt to verify checksums/content before updating access methods. If false or missing, the server trusts client-provided access methods without validation. Only present when accessMethodUpdateSupported is true.",
                 "default": false
               }
             }
@@ -1755,6 +1882,70 @@
             },
             "description": "An optional list of headers to include in the HTTP request to `url`. These headers can be used to provide auth tokens required to fetch the object bytes.",
             "example": "Authorization: Basic Z2E0Z2g6ZHJz"
+          }
+        }
+      },
+      "AccessMethodUpdateRequest": {
+        "type": "object",
+        "required": [
+          "access_methods"
+        ],
+        "properties": {
+          "access_methods": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AccessMethod"
+            },
+            "minItems": 1,
+            "description": "New access methods for the DRS object"
+          },
+          "passports": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Optional GA4GH Passport JWTs for authorization"
+          }
+        }
+      },
+      "BulkAccessMethodUpdateRequest": {
+        "type": "object",
+        "required": [
+          "updates"
+        ],
+        "properties": {
+          "updates": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "required": [
+                "object_id",
+                "access_methods"
+              ],
+              "properties": {
+                "object_id": {
+                  "type": "string",
+                  "description": "DRS object ID to update"
+                },
+                "access_methods": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/AccessMethod"
+                  },
+                  "minItems": 1,
+                  "description": "New access methods for this object"
+                }
+              }
+            },
+            "minItems": 1,
+            "description": "Array of access method updates to perform"
+          },
+          "passports": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Optional GA4GH Passport JWTs for authorization"
           }
         }
       },
@@ -2381,6 +2572,38 @@
           }
         }
       },
+      "200AccessMethodUpdate": {
+        "description": "Access methods successfully updated. Returns the updated DRS object with new access methods and updated timestamp.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/DrsObject"
+            }
+          }
+        }
+      },
+      "200BulkAccessMethodUpdate": {
+        "description": "Access methods successfully updated for all objects. Returns updated DRS objects with  new access methods and updated timestamps.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "required": [
+                "objects"
+              ],
+              "properties": {
+                "objects": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DrsObject"
+                  },
+                  "description": "Array of updated DRS objects"
+                }
+              }
+            }
+          }
+        }
+      },
       "200UploadRequest": {
         "description": "Upload request processed successfully. Returns upload methods and temporary credentials for the requested files.",
         "content": {
@@ -2960,6 +3183,28 @@
                   "description": "the encoded JWT GA4GH Passport that contains embedded Visas.  The overall JWT is signed as are the individual Passport Visas."
                 }
               }
+            }
+          }
+        }
+      },
+      "AccessMethodUpdateBody": {
+        "description": "Request body for updating access methods of a DRS object",
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/AccessMethodUpdateRequest"
+            }
+          }
+        }
+      },
+      "BulkAccessMethodUpdateBody": {
+        "description": "Request body for bulk updating access methods of multiple DRS objects",
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/BulkAccessMethodUpdateRequest"
             }
           }
         }

@@ -127,6 +127,26 @@ properties:
           Only present when deleteSupported is true. This is a capability flag indicating what the server can attempt, not a default behavior setting.
           Note: Storage deletion attempts may fail due to permissions, network issues, or storage service errors.
         default: false
+      accessMethodUpdateSupported:
+        type: boolean
+        description: >-
+          Indicates whether this DRS server supports updating access methods for existing objects.
+          If true, clients can update access methods using `/objects/{object_id}/access-methods` and `/objects/access-methods` endpoints.
+          If false or missing, the server does not support access method updates.
+        default: false
+      maxBulkAccessMethodUpdateLength:
+        type: integer
+        description: >-
+          Maximum number of objects that can be updated in a single bulk access method update request.
+          Only present when accessMethodUpdateSupported is true. If not specified, defaults to maxBulkRequestLength.
+      validateAccessMethodUpdates:
+        type: boolean
+        description: >-
+          Indicates whether this DRS server validates new access methods by verifying they point to the same data.
+          If true, the server will attempt to verify checksums/content before updating access methods.
+          If false or missing, the server trusts client-provided access methods without validation.
+          Only present when accessMethodUpdateSupported is true.
+        default: false
 
 
     
