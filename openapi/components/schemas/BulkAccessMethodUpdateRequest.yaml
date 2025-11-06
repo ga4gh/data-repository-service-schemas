@@ -1,0 +1,28 @@
+type: object
+required:
+  - updates
+properties:
+  updates:
+    type: array
+    items:
+      type: object
+      required:
+        - object_id
+        - access_methods
+      properties:
+        object_id:
+          type: string
+          description: DRS object ID to update
+        access_methods:
+          type: array
+          items:
+            $ref: './AccessMethod.yaml'
+          minItems: 1
+          description: New access methods for this object
+    minItems: 1
+    description: Array of access method updates to perform
+  passports:
+    type: array
+    items:
+      type: string
+    description: Optional GA4GH Passport JWTs for authorization

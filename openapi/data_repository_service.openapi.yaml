@@ -38,6 +38,9 @@ tags:
   # Operations
   - name: Objects
   - name: Upload Request
+  - name: Access Method Updates
+    description:
+      $ref: ./tags/AccessMethodUpdate.md
   - name: Service Info
 
   # Models
@@ -131,6 +134,9 @@ tags:
   - name: Object Deletion
     description:
       $ref: ./tags/ObjectDeletion.md
+  - name: Access Method Update
+    description:
+      $ref: ./tags/AccessMethodUpdate.md
 x-tagGroups:
   - name: Overview
     tags:
@@ -170,6 +176,7 @@ x-tagGroups:
       - GA4GH Service Registry
       - Upload Requests and Object Registration
       - Object Deletion
+      - Access Method Update
 paths:
   /service-info:
     $ref: ./paths/service-info.yaml
@@ -187,6 +194,10 @@ paths:
     $ref: ./paths/objects@{object_id}@access@{access_id}.yaml
   /objects/access:
     $ref: ./paths/objects@access.yaml
+  /objects/{object_id}/access-methods:
+    $ref: ./paths/objects@{object_id}@access-methods.yaml
+  /objects/access-methods:
+    $ref: ./paths/objects@access-methods.yaml
   /upload-request:
     $ref: ./paths/upload-request.yaml
 components:

@@ -32,7 +32,7 @@ post:
     - Check service-info for `maxBulkDeleteLength` limits before making requests
   operationId: bulkDeleteObjects
   tags:
-    - Delete Operations
+    - Objects
   requestBody:
     $ref: '../components/requestBodies/BulkDeleteBody.yaml'
   responses:

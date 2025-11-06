@@ -1,0 +1,44 @@
+post:
+  summary: Update access methods for a DRS object
+  description: >-
+    **Optional Endpoint**: Not all DRS servers support access method updates.
+    
+    Update the access methods for an existing DRS object. Only access methods are modified - 
+    core object metadata (size, checksums, name) remains unchanged. Servers MAY validate 
+    that new access methods point to the same data.
+
+    Note that existing access methods are overwritten, if clients want to add additional 
+    access methods they should first retrieve the current methods and include them along
+    with the new methods in this request.
+    
+    **Authentication**: GA4GH Passports can be provided in the request body.
+  operationId: updateObjectAccessMethods
+  parameters:
+    - name: object_id
+      in: path
+      required: true
+      schema:
+        type: string
+      description: DRS object identifier
+  requestBody:
+    $ref: '../components/requestBodies/AccessMethodUpdateBody.yaml'
+  responses:
+    '200':
+      $ref: '../components/responses/200AccessMethodUpdate.yaml'
+    '400':
+      $ref: '../components/responses/400BadRequest.yaml'
+    '401':
+      $ref: '../components/responses/401Unauthorized.yaml'
+    '403':
+      $ref: '../components/responses/403Forbidden.yaml'
+    '404':
+      $ref: '../components/responses/404NotFoundDrsObject.yaml'
+    '500':
+      $ref: '../components/responses/500InternalServerError.yaml'
+  security:
+    - {}
+    - BasicAuth: []
+    - BearerAuth: []
+    - PassportAuth: []
+  tags:
+    - Objects

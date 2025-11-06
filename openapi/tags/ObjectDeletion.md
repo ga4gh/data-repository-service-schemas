@@ -96,7 +96,7 @@ Clients can request that the server attempts to delete the underlying data refer
 
 ## Update Pattern
 
-Rather than introducing additional operations and endpoints for updating DRS objects, implementations can allow clients to use the metadata-only deletion and object registration endpoints to update object metadata while leaving the underlying data in place. This simplifies server implementation while still offering clients flexibility.
+Rather than introducing additional operations and endpoints for updating DRS objects, servers can allow clients to use the metadata-only deletion and object registration endpoints to create a new DRS object with updated metadata while leaving the underlying data in place.
 
 **Metadata update steps:**
 
