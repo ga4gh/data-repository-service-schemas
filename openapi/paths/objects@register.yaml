@@ -1,5 +1,5 @@
 post:
-  summary: Register DRS objects (optional endpoint)
+  summary: Register DRS objects
   description: >-
     **Optional Endpoint**: This endpoint is not required for DRS server implementations. 
     Not all DRS servers support object registration.    
@@ -18,7 +18,7 @@ post:
     implement this as an all-or-nothing operation to ensure data consistency, but MAY implement partial 
     registration with appropriate error reporting if transactional behavior is not feasible.
     
-    **Authentication**: GA4GH Passports can be provided in the request body for authorization.
+    **Authentication**: GA4GH Passports can be provided in the request body for authorization. Bearer tokens can be supplied in headers.
     
     **Server Responsibilities**:
     - SHOULD treat registration as an atomic transaction (all succeed or all fail)
