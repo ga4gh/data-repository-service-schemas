@@ -1,5 +1,5 @@
 post:
-  summary: Request upload methods for files (optional endpoint)
+  summary: Request upload methods for files
   description: >-
     **Optional Endpoint**: This endpoint is not required for DRS server implementations. 
     Not all DRS servers support upload functionality. 
