@@ -108,6 +108,10 @@ tags:
     x-displayName: BulkDeleteResponse
     description: |
       <SchemaDefinition schemaRef="#/components/schemas/BulkDeleteResponse" />
+  - name: ObjectUpdateModel
+    x-displayName: ObjectUpdate
+    description: |
+      <SchemaDefinition schemaRef="#/components/schemas/ObjectUpdate" />
 
   # Appendices
   - name: Motivation
@@ -166,6 +170,7 @@ x-tagGroups:
       - BulkDeleteRequestModel
       - DeleteResultModel
       - BulkDeleteResponseModel
+      - ObjectUpdateModel
   - name: Appendices
     tags:
       - Motivation

@@ -56,14 +56,58 @@ properties:
         description: >-
           List of upload methods supported by this DRS server. Only present when uploadRequestSupported is true.
           Clients can use this information to determine which upload methods are available before making upload requests.
-          
+
           - **s3**: Direct S3 upload with temporary AWS credentials
-          - **gs**: Google Cloud Storage upload with access tokens  
+          - **gs**: Google Cloud Storage upload with access tokens
           - **https**: Presigned POST URL for HTTP uploads
           - **ftp**: File Transfer Protocol uploads
           - **sftp**: Secure File Transfer Protocol uploads
           - **gsiftp**: GridFTP secure file transfer
           - **globus**: Globus transfer service for high-performance data movement
+      availableUploadLocations:
+        type: array
+        items:
+          type: object
+          required:
+            - type
+          properties:
+            type:
+              type: string
+              enum:
+                - s3
+                - gs
+                - https
+                - ftp
+                - sftp
+              description: The upload method type
+            cloud_provider:
+              type: string
+              description: Cloud provider name (e.g., "aws", "gcp", "azure")
+              example: "aws"
+            regions:
+              type: array
+              items:
+                type: string
+              description: Available cloud regions for this upload method
+              example: ["us-east-1", "us-west-2", "eu-west-1"]
+            description:
+              type: string
+              description: Human-readable description of this upload location
+              example: "AWS S3 in US East Coast region"
+        description: >-
+          List of available upload locations with cloud provider and region information.
+          Only present when uploadRequestSupported is true. This allows clients to understand
+          which clouds and regions are available for uploads without credentials. Similar to
+          the upload_methods response but focused on discovery rather than actual upload execution.
+      uploadRetentionPeriod:
+        type: integer
+        description: >-
+          Time in seconds that uploaded files will be retained before being garbage collected
+          if they are not registered as DRS objects via `/objects/register`. This prevents orphaned
+          file uploads from consuming storage indefinitely. Clients should register uploaded files
+          within this time window. Only present when uploadRequestSupported is true.
+          If not specified, uploaded files may be retained indefinitely or server policy applies.
+        example: 86400
       maxUploadSize:
         type: integer
         format: int64

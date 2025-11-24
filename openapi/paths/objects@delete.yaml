@@ -19,6 +19,12 @@ post:
     **Storage Data Deletion**: The `delete_storage_data` parameter controls whether the server will attempt to delete underlying
     storage files along with DRS metadata. This defaults to false for safety.
     Servers will make a best effort attempt to delete storage data, but success is not guaranteed.
+
+    **Orphaned Files**: When `delete_storage_data` is false (default), only DRS metadata is deleted while underlying
+    storage files are preserved. This may result in orphaned files that are no longer referenced by any DRS objects.
+    Servers MAY implement garbage collection policies to clean up orphaned files, but this is implementation-specific.
+    Clients should be aware that preserving storage data may lead to increased storage costs over time and should
+    consider periodic cleanup strategies or setting `delete_storage_data` to true when appropriate.
     
     **Server Responsibilities**:
     - SHOULD treat deletion as an atomic transaction (all succeed or all fail)
