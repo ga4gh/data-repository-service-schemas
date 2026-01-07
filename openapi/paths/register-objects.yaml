@@ -54,6 +54,6 @@ post:
     500:
       $ref: '../components/responses/500InternalServerError.yaml'
   tags:
-    - Objects
+    - Register Objects
   x-swagger-router-controller: ga4gh.drs.server
   x-codegen-request-body-name: body

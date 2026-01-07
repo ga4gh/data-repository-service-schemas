@@ -38,6 +38,7 @@ tags:
   # Operations
   - name: Objects
   - name: Upload Request
+  - name: Register Objects
   - name: Access Method Updates
     description:
       $ref: ./tags/AccessMethodUpdate.md
@@ -147,6 +148,7 @@ x-tagGroups:
     tags:
       - Objects
       - Upload Request
+      - Register Objects
       - Service Info
   - name: Models
     tags:
