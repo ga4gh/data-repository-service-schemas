@@ -23,12 +23,13 @@ options:
   tags:
     - Objects
   x-swagger-router-controller: ga4gh.drs.server
-  requestBody:
-    required: true
-    content:
-      application/json:
-        schema:
-          $ref: '../components/parameters/BulkObjectIdNoPassport.yaml'
+  # temp removal to see if it fixes swagger validation issue
+  #requestBody:
+  #  required: true
+  #  content:
+  #    application/json:
+  #      schema:
+  #        $ref: '../components/parameters/BulkObjectIdNoPassport.yaml'
 
 post:
   summary: Get info about multiple DrsObjects with an optional Passport(s).
