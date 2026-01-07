@@ -6,7 +6,7 @@ DRS delete functionality allows suitably authenticated clients to request that D
 
 Servers should ensure that they trust clients from whom they receive delete requests, and may choose to implement "soft" deletes to minimise the risk of accidental or malicious requests. The DRS specification does not currently provide explicit support for soft deletes. Because delete support is optional, servers operating in untrusted environments may choose not to support delete operations at all.
 
-In combination with the `/objects/register` endpoint, metadata only delete requests offer a means for clients to update DRS metadata without affecting the underlying data, and without introducing additional update operations which would complicate server implementation.
+In combination with the `/register-objects` endpoint, metadata only delete requests offer a means for clients to update DRS metadata without affecting the underlying data, and without introducing additional update operations which would complicate server implementation.
 
 Clients can express a preference that the underlying data referred to by the deleted DRS object(s) is deleted with the `delete_storage_data` parameter. Servers are free to interpret this as they choose, and can advertise whether they support it at all with the `deleteStorageDataSupported` flag. Servers that choose to attempt to honour the request need not perform this operation synchronously and may, for example, register the file for later deletion. Implementations may also choose to ensure that no other DRS object registered in the server refers to the underlying data before deleting. Servers may not have the necessary permissions to delete the data from the backend even if they would like to do so, or may encounter errors when they attempt deletion. In the case that a DRS object refers to data stored in multiple backends (e.g. has multiple `access_method`s) the server may attempt to delete the data from all or only some of the backends.
 
@@ -101,13 +101,13 @@ Rather than introducing additional operations and endpoints for updating DRS obj
 **Metadata update steps:**
 
 1. Delete metadata only: `POST /objects/{id}/delete` with `delete_storage_data: false`
-2. Re-register object: `POST /objects/register` with updated metadata
+2. Re-register object: `POST /register-objects` with updated metadata
 
 ```bash
 # Delete metadata (preserves storage)
 curl -X POST ".../objects/obj_123/delete" -d '{"delete_storage_data": false}'
 # Re-register with updates
-curl -X POST ".../objects/register" -d '{"candidates": [{"name": "updated.txt", ...}]}'
+curl -X POST ".../register-objects" -d '{"candidates": [{"name": "updated.txt", ...}]}'
 ```
 
 ## Error Responses
@@ -124,7 +124,7 @@ curl -X POST ".../objects/register" -d '{"candidates": [{"name": "updated.txt", 
 ```bash
 curl ".../service-info"  # Check capabilities
 curl -X POST ".../objects/obj_123/delete" -d '{"delete_storage_data": false}'
-curl -X POST ".../objects/register" -d '{"candidates": [{"name": "updated.vcf", ...}]}'
+curl -X POST ".../register-objects" -d '{"candidates": [{"name": "updated.vcf", ...}]}'
 ```
 
 **Complete Removal:**

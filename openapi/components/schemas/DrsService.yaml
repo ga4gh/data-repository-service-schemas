@@ -39,7 +39,7 @@ properties:
       objectRegistrationSupported:
         type: boolean
         description: >-
-          Indicates whether this DRS server supports object registration operations via the `/objects/register` endpoint.
+          Indicates whether this DRS server supports object registration operations via the `/register-objects` endpoint.
           If true, clients can register uploaded files or existing data as DRS objects.
           If false or missing, the server does not support object registration.
         default: false
