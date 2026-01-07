@@ -168,11 +168,11 @@
     },
     {
       "name": "Upload Requests and Object Registration",
-      "description": "# Upload Requests and Object Registration\n\n> **Optional Functionality**: Upload and object registration are optional DRS extensions. Clients should check `/service-info` for `uploadRequestSupported` and `objectRegistrationSupported` before attempting to use these endpoints.\n\nThe DRS upload and object registration endpoints allows clients to negotiate with servers on mutually convenient storage backends and then register uploads as DRS objects through a three-phase workflow:\n\n1. **Request Upload URLs**: POST `/upload-request` with file metadata to receive upload methods and credentials\n2. **Upload Files**: Use returned URLs and credentials to upload files to storage using existing upload mechanisms. DRS is not involved in this step at all, DRS simply enables clients and servers to agree on a mutually convenient storage service.\n3. **Register Objects**: POST `/objects/register` to register \"candidate\" DRS objects with the server\n\nThis approach separates storage service and credential negotiation from file transfer and object registration, supporting a vendor-neutral means of sharing data in a DRS network.\n\nThe `/objects/register` endpoint can be used independently to register existing data without using the `/upload-request` endpoint, and servers can choose to only support object registration and not file uploads by setting the `uploadRequestSupported` and `objectRegistrationSupported` flags appropriately in `/service-info`.\n\nUpload requests and object registration endpoints only support bulk requests to simplify implementation and reflect real-world usage patterns. Bioinformatics workflows often involve uploading multiple related files together (e.g., BAM and VCF files with their indices, or analysis result sets), making bulk operations a natural fit. Single files/objects are handled as lists with one element. Implementations of the `/objects/register` endpoint SHOULD implement transaction semantics so that either all of the objects are successfully registered or none of them are, and clients should be robust to this behaviour. Transaction semantics for the `/upload-request` are encouraged but not required due to the variety and complexity of data transfer technologies.\n\nThe `/upload-request` endpoint does not require any state to be maintained on the DRS server (intermediate DRS object IDs etc.) it is simply a means for a server to provide details of where a client can upload data, and it should ensure that it trusts the client before providing such details. This means that if uploads fail and there is no later call to `/objects/register` there is no DRS state to manage, simplifying server implementation.\n\nServers SHOULD ensure that any data from unsuccessful uploads (e.g. incomplete multi-part uploads) are cleaned up, for example by using lifecycle configuration in the backend storage. There is _no_ means of requiring that a client ultimately registers a DRS object pointing at data uploaded, and so servers should consider implementing some form of storage \"garbage\" collection (or simply set a short lifecycle policy on the upload location and move uploaded data that is later registered as DRS objects to other locations, updating the `access_method`s accordingly). Servers should also implement some means of constraining upload size (quotas etc.) to protect against accidental or malicious unconstrained uploads.\n\nThe `/upload-request` endpoint can return one or more `upload_method`s of different types for each requested file, and backend specific details such as bucket names, object keys and credentials are supplied in a generic `upload_details` field. A straightforward implementation might return an single time-limited pre-signed POST URL as the `post_url` for an `upload_method` of type `https` which incorporates authentication into the URL, but because DRS is often used for large files such as BAMs and CRAMs we also want to support more sophisticated upload approaches implemented by storage backends such as multi-part uploads, automatic retries etc. The `upload_details` field can also be used to include bucket names, keys and temporary credentials that can be used in native clients and SDKs. This offers a natural way to adapt this protocol to new storage technologies. Refer to the examples below for some suggested implementations.\n\n## Service Discovery\n\nCheck `/service-info` for upload capabilities:\n\n```json\n{\n  \"drs\": {\n    \"uploadRequestSupported\": true,\n    \"objectRegistrationSupported\": true,\n    \"supportedUploadMethods\": [\"s3\", \"https\", \"gs\"],\n    \"maxUploadSize\": 5368709120,\n    \"maxUploadRequestLength\": 50,\n    \"maxRegisterRequestLength\": 50,\n    \"validateUploadChecksums\": true,\n    \"validateUploadFileSizes\": false,\n    \"relatedFileStorageSupported\": true\n  }\n}\n```\n\nUpload related fields:\n\n- `uploadRequestSupported`: Upload request operations available via `/upload-request`\n- `objectRegistrationSupported`: Object registration operations available via `/objects/register`\n- `supportedUploadMethods`: Available storage backends  \n- `maxUploadSize`: File size limit (bytes)\n- `maxUploadRequestLength`: Files per request limit for upload requests\n- `maxRegisterRequestLength`: Candidate objects per request limit for registration\n- `validateUploadChecksums`/`validateUploadFileSizes`: Server validation behavior\n- `relatedFileStorageSupported`: Files from same upload request stored under common prefixes\n\n## Upload Methods\n\nUpon receipt of a request for an upload method for a specific file, the server will respond with one or more `upload_method` with associated `type` and corresponding `upload_details` with upload locations, temporary credentials etc. These details are specific to backend implementations.\n\nExample storage backends:\n\n- **https**: Presigned POST URLs for HTTP uploads\n- **s3**: Direct S3 upload with temporary AWS credentials\n- **gs**: Google Cloud Storage with OAuth2 tokens\n- **ftp/sftp**: Traditional file transfer protocols using negotiated credentials\n\nServers may return a subset of advertised methods based on file characteristics, for example they may choose to store large objects such as WGS BAM files in different backends to small csv files.\n\n## Related File Storage (Optional)\n\nServers MAY support storing files from the same upload request under common prefixes, enabling bioinformatics workflows that expect co-located files:\n\n- **CRAM + CRAI**: Alignment files with index files\n- **VCF + TBI**: Variant files with tabix indexes  \n- **FASTQ.ora + ORADATA.tar.gz**: Compressed files with associated reference data\n\nCheck `relatedFileStorageSupported` in service-info or examine upload URLs for common prefixes.\n\n## Object Registration\n\nAfter upload, clients can register files in bulk as DRS objects using POST `/objects/register`. Registration is all-or-nothing. If any candidate object fails to be registered in the server, the entire request fails and no objects are registered.\n\n**Candidate DRS object equirements**:\n\n- Complete metadata (name, size, checksums, MIME type)\n- Access methods pointing to file locations  \n- Valid authorization (if required)\n- Do not include server-generated fields (id, self_uri, timestamps)\n\nUpon receipt of candidate objects for registration the server will create unique object IDs and returns complete DRS objects. Note that the server is not obliged to retain the clients supplied `access_method`s and is free to move data to different locations/backends once the object is registered. This means that a server can choose to receive uploads in a dedicated \"dropzone\", with hard quotas and additional security, and then move them to more permanent storage once the DRS object is registered. Clients SHOULD NOT cache the response from `/objects/register` as the `access_method`s might change after registration.\n\nThe `/objects/register` endpoint can also be used independently to register existing data that is already stored in accessible locations, without using the `/upload-request` workflow. This is useful for registering pre-existing datasets or files uploaded through other means. Servers may choose only to support registration and not uploads, and should advertise this in `/service-info`\n\n## Authentication & Validation\n\n**Authentication**: Supports GA4GH Passports, Basic auth, and Bearer tokens.\n\n**Checksums**: Required for all files (SHA-256, MD5, or IANA-registered algorithms). Servers MAY validate checksums and file sizes as advertised in service-info flags.\n\n## Error Handling\n\n**Client Errors (4xx)**:\n\n- Invalid metadata (400)\n- Missing auth (401)\n- Insufficient permissions (403)\n\n**Server Errors (5xx)**:\n\n- Storage unavailable (500)\n- Capacity limits (503)\n\n## Best Practices\n\n**Clients**: Check service-info first, calculate checksums, be robust to failed object registration\n**Servers**: Use short-lived tightly scoped credentials, support multiple upload methods, implement rate limiting, ensure unique storage backend names to avoid inadvertent overwrites (e.g. using UUIDs), ensure that quotas are enforced and incomplete or unregistered uploads are deleted\n**Security**: Time-limited credentials, single-use URLs, logging for audit\n\n## Security Considerations\n\n**Credential Scoping**: Implementers SHOULD scope upload credentials to the minimum necessary permissions and duration. Credentials should:\n\n- Allow write access only to the specific upload URL/path provided\n- Have the shortest practical expiration time (e.g. 15 minutes to 1 hour)\n- Be restricted to the specific file size and content type when possible\n- Not grant broader storage access beyond the intended upload location\n\nThis principle of least privilege reduces security exposure if credentials are compromised or misused.\n\n## Example Workflows\n\n### Simple HTTPS Upload\n\nUpload Request:\n\n```http\nPOST /upload-request\nContent-Type: application/json\n\n{\n  \"requests\": [\n    {\n      \"name\": \"variants.vcf\",\n      \"size\": 52428800,\n      \"mime_type\": \"text/plain\",\n      \"checksums\": [\n        {\n          \"checksum\": \"5d41402abc4b2a76b9719d911017c592\",\n          \"type\": \"md5\"\n        }\n      ]\n    }\n  ]\n}\n```\n\nResponse:\n\n```json\n{\n  \"responses\": [\n    {\n      \"name\": \"variants.vcf\",\n      \"size\": 52428800,\n      \"mime_type\": \"text/plain\",\n      \"checksums\": [\n        {\n          \"checksum\": \"5d41402abc4b2a76b9719d911017c592\",\n          \"type\": \"md5\"\n        }\n      ],\n      \"upload_methods\": [\n        {\n          \"type\": \"https\",\n          \"access_url\": {\n            \"url\": \"https://uploads.example.org/variants.vcf\"\n          },\n          \"upload_details\": {\n            \"post_url\": \"https://uploads.example.org/presigned-upload?signature=FAKE_SIG\"\n          }\n        }\n      ]\n    }\n  ]\n}\n```\n\nUpload via HTTPS:\n\n```bash\n# Simple PUT upload to presigned URL\ncurl -X PUT \"https://uploads.example.org/presigned-upload?signature=FAKE_SIG\" \\\n  --data-binary @variants.vcf\n```\n\nRegister DRS Object:\n\n```http\nPOST /objects/register\nContent-Type: application/json\n\n{\n  \"candidates\": [\n    {\n      \"name\": \"variants.vcf\",\n      \"size\": 52428800,\n      \"mime_type\": \"text/plain\",\n      \"checksums\": [\n        {\n          \"checksum\": \"5d41402abc4b2a76b9719d911017c592\",\n          \"type\": \"md5\"\n        }\n      ],\n      \"access_methods\": [\n        {\n          \"type\": \"https\",\n          \"access_url\": {\n            \"url\": \"https://uploads.example.org/variants.vcf\"\n          }\n        }\n      ],\n      \"description\": \"Variant calls in VCF format\"\n    }\n  ]\n}\n```\n\nResponse:\n\n```json\n{\n  \"objects\": [\n    {\n      \"id\": \"drs_obj_f6e5d4c3b2a1\",\n      \"self_uri\": \"drs://drs.example.org/drs_obj_f6e5d4c3b2a1\",\n      \"name\": \"variants.vcf\",\n      \"size\": 52428800,\n      \"mime_type\": \"text/plain\",\n      \"created_time\": \"2024-01-15T10:45:00Z\",\n      \"updated_time\": \"2024-01-15T10:45:00Z\",\n      \"version\": \"1.0\",\n      \"checksums\": [\n        {\n          \"checksum\": \"5d41402abc4b2a76b9719d911017c592\",\n          \"type\": \"md5\"\n        }\n      ],\n      \"access_methods\": [\n        {\n          \"type\": \"https\",\n          \"access_url\": {\n            \"url\": \"https://uploads.example.org/variants.vcf\"\n          }\n        }\n      ],\n      \"description\": \"Variant calls in VCF format\"\n    }\n  ]\n}\n```\n\n### S3 Bulk Upload (BAM + Index)\n\nRequest Upload Methods for Related Files\n\n```http\nPOST /upload-request\nContent-Type: application/json\n\n{\n  \"requests\": [\n    {\n      \"name\": \"sample.bam\",\n      \"size\": 1073741824,\n      \"mime_type\": \"application/octet-stream\",\n      \"checksums\": [\n        {\n          \"checksum\": \"d41d8cd98f00b204e9800998ecf8427e\",\n          \"type\": \"md5\"\n        }\n      ]\n    },\n    {\n      \"name\": \"sample.bam.bai\",\n      \"size\": 2097152,\n      \"mime_type\": \"application/octet-stream\",\n      \"checksums\": [\n        {\n          \"checksum\": \"098f6bcd4621d373cade4e832627b4f6\",\n          \"type\": \"md5\"\n        }\n      ]\n    }\n  ]\n}\n```\n\nResponse:\n\n```json\n{\n  \"responses\": [\n    {\n      \"name\": \"sample.bam\",\n      \"size\": 1073741824,\n      \"mime_type\": \"application/octet-stream\",\n      \"checksums\": [\n        {\n          \"checksum\": \"d41d8cd98f00b204e9800998ecf8427e\",\n          \"type\": \"md5\"\n        }\n      ],\n      \"upload_methods\": [\n        {\n          \"type\": \"s3\",\n          \"access_url\": {\n            \"url\": \"s3://genomics-uploads/x7k9m/sample.bam\"\n          },\n          \"upload_details\": {\n            \"bucket\": \"genomics-uploads\",\n            \"key\": \"x7k9m/sample.bam\",\n            \"access_key_id\": \"FAKE_ACCESS_KEY_123\",\n            \"secret_access_key\": \"FAKE_SECRET_KEY_456\",\n            \"session_token\": \"FAKE_SESSION_TOKEN_789\",\n            \"expires_at\": \"2024-01-15T12:00:00Z\"\n          }\n        }\n      ]\n    },\n    {\n      \"name\": \"sample.bam.bai\",\n      \"size\": 2097152,\n      \"mime_type\": \"application/octet-stream\",\n      \"checksums\": [\n        {\n          \"checksum\": \"098f6bcd4621d373cade4e832627b4f6\",\n          \"type\": \"md5\"\n        }\n      ],\n      \"upload_methods\": [\n        {\n          \"type\": \"s3\",\n          \"access_url\": {\n            \"url\": \"s3://genomics-uploads/x7k9m/sample.bam.bai\"\n          },\n          \"upload_details\": {\n            \"bucket\": \"genomics-uploads\",\n            \"key\": \"x7k9m/sample.bam.bai\",\n            \"access_key_id\": \"FAKE_ACCESS_KEY_123\",\n            \"secret_access_key\": \"FAKE_SECRET_KEY_456\",\n            \"session_token\": \"FAKE_SESSION_TOKEN_789\",\n            \"expires_at\": \"2024-01-15T12:00:00Z\"\n          }\n        }\n      ]\n    }\n  ]\n}\n```\n\nUpload Both Files to S3:\n\n```bash\n# Upload BAM and index files using the supplied credentials (note common prefix)\naws s3 cp sample.bam s3://genomics-uploads/x7k9m/sample.bam\naws s3 cp sample.bam.bai s3://genomics-uploads/x7k9m/sample.bam.bai\n```\n\nRegister Both DRS Objects:\n\n```http\nPOST /objects/register\nContent-Type: application/json\n\n{\n  \"candidates\": [\n    {\n      \"name\": \"sample.bam\",\n      \"size\": 1073741824,\n      \"mime_type\": \"application/octet-stream\",\n      \"checksums\": [\n        {\n          \"checksum\": \"d41d8cd98f00b204e9800998ecf8427e\",\n          \"type\": \"md5\"\n        }\n      ],\n      \"access_methods\": [\n        {\n          \"type\": \"s3\",\n          \"access_id\": \"s3\",\n          \"access_url\": {\n            \"url\": \"s3://genomics-uploads/x7k9m/sample.bam\"\n          }\n        }\n      ],\n      \"description\": \"BAM alignment file\"\n    },\n    {\n      \"name\": \"sample.bam.bai\",\n      \"size\": 2097152,\n      \"mime_type\": \"application/octet-stream\",\n      \"checksums\": [\n        {\n          \"checksum\": \"098f6bcd4621d373cade4e832627b4f6\",\n          \"type\": \"md5\"\n        }\n      ],\n      \"access_methods\": [\n        {\n          \"type\": \"s3\",\n          \"access_id\": \"s3\",\n          \"access_url\": {\n            \"url\": \"s3://genomics-uploads/x7k9m/sample.bam.bai\"\n          }\n        }\n      ],\n      \"description\": \"BAM index file\"\n    }\n  ]\n}\n```\n\nResponse:\n\n```json\n{\n  \"objects\": [\n    {\n      \"id\": \"drs_obj_a1b2c3d4e5f6\",\n      \"self_uri\": \"drs://drs.example.org/drs_obj_a1b2c3d4e5f6\",\n      \"name\": \"sample.bam\",\n      \"size\": 1073741824,\n      \"mime_type\": \"application/octet-stream\",\n      \"created_time\": \"2024-01-15T10:30:00Z\",\n      \"updated_time\": \"2024-01-15T10:30:00Z\",\n      \"version\": \"1.0\",\n      \"checksums\": [\n        {\n          \"checksum\": \"d41d8cd98f00b204e9800998ecf8427e\",\n          \"type\": \"md5\"\n        }\n      ],\n      \"access_methods\": [\n        {\n          \"type\": \"s3\",\n          \"access_id\": \"s3\",\n          \"access_url\": {\n            \"url\": \"s3://genomics-uploads/x7k9m/sample.bam\"\n          }\n        }\n      ],\n      \"description\": \"BAM alignment file\"\n    },\n    {\n      \"id\": \"drs_obj_b2c3d4e5f6a1\",\n      \"self_uri\": \"drs://drs.example.org/drs_obj_b2c3d4e5f6a1\",\n      \"name\": \"sample.bam.bai\",\n      \"size\": 2097152,\n      \"mime_type\": \"application/octet-stream\",\n      \"created_time\": \"2024-01-15T10:30:00Z\",\n      \"updated_time\": \"2024-01-15T10:30:00Z\",\n      \"version\": \"1.0\",\n      \"checksums\": [\n        {\n          \"checksum\": \"098f6bcd4621d373cade4e832627b4f6\",\n          \"type\": \"md5\"\n        }\n      ],\n      \"access_methods\": [\n        {\n          \"type\": \"s3\",\n          \"access_id\": \"s3\",\n          \"access_url\": {\n            \"url\": \"s3://genomics-uploads/x7k9m/sample.bam.bai\"\n          }\n        }\n      ],\n      \"description\": \"BAM index file\"\n    }\n  ]\n}\n```\n"
+      "description": "# Upload Requests and Object Registration\n\n> **Optional Functionality**: Upload and object registration are optional DRS extensions. Clients should check `/service-info` for `uploadRequestSupported` and `objectRegistrationSupported` before attempting to use these endpoints.\n\nThe DRS upload and object registration endpoints allows clients to negotiate with servers on mutually convenient storage backends and then register uploads as DRS objects through a three-phase workflow:\n\n1. **Request Upload URLs**: POST `/upload-request` with file metadata to receive upload methods and credentials\n2. **Upload Files**: Use returned URLs and credentials to upload files to storage using existing upload mechanisms. DRS is not involved in this step at all, DRS simply enables clients and servers to agree on a mutually convenient storage service.\n3. **Register Objects**: POST `/register-objects` to register \"candidate\" DRS objects with the server\n\nThis approach separates storage service and credential negotiation from file transfer and object registration, supporting a vendor-neutral means of sharing data in a DRS network.\n\nThe `/register-objects` endpoint can be used independently to register existing data without using the `/upload-request` endpoint, and servers can choose to only support object registration and not file uploads by setting the `uploadRequestSupported` and `objectRegistrationSupported` flags appropriately in `/service-info`.\n\nUpload requests and object registration endpoints only support bulk requests to simplify implementation and reflect real-world usage patterns. Bioinformatics workflows often involve uploading multiple related files together (e.g., BAM and VCF files with their indices, or analysis result sets), making bulk operations a natural fit. Single files/objects are handled as lists with one element. Implementations of the `/register-objects` endpoint SHOULD implement transaction semantics so that either all of the objects are successfully registered or none of them are, and clients should be robust to this behaviour. Transaction semantics for the `/upload-request` are encouraged but not required due to the variety and complexity of data transfer technologies.\n\nThe `/upload-request` endpoint does not require any state to be maintained on the DRS server (intermediate DRS object IDs etc.) it is simply a means for a server to provide details of where a client can upload data, and it should ensure that it trusts the client before providing such details. This means that if uploads fail and there is no later call to `/register-objects` there is no DRS state to manage, simplifying server implementation.\n\nServers SHOULD ensure that any data from unsuccessful uploads (e.g. incomplete multi-part uploads) are cleaned up, for example by using lifecycle configuration in the backend storage. There is _no_ means of requiring that a client ultimately registers a DRS object pointing at data uploaded, and so servers should consider implementing some form of storage \"garbage\" collection (or simply set a short lifecycle policy on the upload location and move uploaded data that is later registered as DRS objects to other locations, updating the `access_method`s accordingly). Servers should also implement some means of constraining upload size (quotas etc.) to protect against accidental or malicious unconstrained uploads.\n\nThe `/upload-request` endpoint can return one or more `upload_method`s of different types for each requested file, and backend specific details such as bucket names, object keys and credentials are supplied in a generic `upload_details` field. A straightforward implementation might return an single time-limited pre-signed POST URL as the `post_url` for an `upload_method` of type `https` which incorporates authentication into the URL, but because DRS is often used for large files such as BAMs and CRAMs we also want to support more sophisticated upload approaches implemented by storage backends such as multi-part uploads, automatic retries etc. The `upload_details` field can also be used to include bucket names, keys and temporary credentials that can be used in native clients and SDKs. This offers a natural way to adapt this protocol to new storage technologies. Refer to the examples below for some suggested implementations.\n\n## Service Discovery\n\nCheck `/service-info` for upload capabilities:\n\n```json\n{\n  \"drs\": {\n    \"uploadRequestSupported\": true,\n    \"objectRegistrationSupported\": true,\n    \"supportedUploadMethods\": [\"s3\", \"https\", \"gs\"],\n    \"maxUploadSize\": 5368709120,\n    \"maxUploadRequestLength\": 50,\n    \"maxRegisterRequestLength\": 50,\n    \"validateUploadChecksums\": true,\n    \"validateUploadFileSizes\": false,\n    \"relatedFileStorageSupported\": true\n  }\n}\n```\n\nUpload related fields:\n\n- `uploadRequestSupported`: Upload request operations available via `/upload-request`\n- `objectRegistrationSupported`: Object registration operations available via `/register-objects`\n- `supportedUploadMethods`: Available storage backends  \n- `maxUploadSize`: File size limit (bytes)\n- `maxUploadRequestLength`: Files per request limit for upload requests\n- `maxRegisterRequestLength`: Candidate objects per request limit for registration\n- `validateUploadChecksums`/`validateUploadFileSizes`: Server validation behavior\n- `relatedFileStorageSupported`: Files from same upload request stored under common prefixes\n\n## Upload Methods\n\nUpon receipt of a request for an upload method for a specific file, the server will respond with one or more `upload_method` with associated `type` and corresponding `upload_details` with upload locations, temporary credentials etc. These details are specific to backend implementations.\n\nExample storage backends:\n\n- **https**: Presigned POST URLs for HTTP uploads\n- **s3**: Direct S3 upload with temporary AWS credentials\n- **gs**: Google Cloud Storage with OAuth2 tokens\n- **ftp/sftp**: Traditional file transfer protocols using negotiated credentials\n\nServers may return a subset of advertised methods based on file characteristics, for example they may choose to store large objects such as WGS BAM files in different backends to small csv files.\n\n## Related File Storage (Optional)\n\nServers MAY support storing files from the same upload request under common prefixes, enabling bioinformatics workflows that expect co-located files:\n\n- **CRAM + CRAI**: Alignment files with index files\n- **VCF + TBI**: Variant files with tabix indexes  \n- **FASTQ.ora + ORADATA.tar.gz**: Compressed files with associated reference data\n\nCheck `relatedFileStorageSupported` in service-info or examine upload URLs for common prefixes.\n\n## Object Registration\n\nAfter upload, clients can register files in bulk as DRS objects using POST `/register-objects`. Registration is all-or-nothing. If any candidate object fails to be registered in the server, the entire request fails and no objects are registered.\n\n**Candidate DRS object equirements**:\n\n- Complete metadata (name, size, checksums, MIME type)\n- Access methods pointing to file locations  \n- Valid authorization (if required)\n- Do not include server-generated fields (id, self_uri, timestamps)\n\nUpon receipt of candidate objects for registration the server will create unique object IDs and returns complete DRS objects. Note that the server is not obliged to retain the clients supplied `access_method`s and is free to move data to different locations/backends once the object is registered. This means that a server can choose to receive uploads in a dedicated \"dropzone\", with hard quotas and additional security, and then move them to more permanent storage once the DRS object is registered. Clients SHOULD NOT cache the response from `/register-objects` as the `access_method`s might change after registration.\n\nThe `/register-objects` endpoint can also be used independently to register existing data that is already stored in accessible locations, without using the `/upload-request` workflow. This is useful for registering pre-existing datasets or files uploaded through other means. Servers may choose only to support registration and not uploads, and should advertise this in `/service-info`\n\n## Authentication & Validation\n\n**Authentication**: Supports GA4GH Passports, Basic auth, and Bearer tokens.\n\n**Checksums**: Required for all files (SHA-256, MD5, or IANA-registered algorithms). Servers MAY validate checksums and file sizes as advertised in service-info flags.\n\n## Error Handling\n\n**Client Errors (4xx)**:\n\n- Invalid metadata (400)\n- Missing auth (401)\n- Insufficient permissions (403)\n\n**Server Errors (5xx)**:\n\n- Storage unavailable (500)\n- Capacity limits (503)\n\n## Best Practices\n\n**Clients**: Check service-info first, calculate checksums, be robust to failed object registration\n**Servers**: Use short-lived tightly scoped credentials, support multiple upload methods, implement rate limiting, ensure unique storage backend names to avoid inadvertent overwrites (e.g. using UUIDs), ensure that quotas are enforced and incomplete or unregistered uploads are deleted\n**Security**: Time-limited credentials, single-use URLs, logging for audit\n\n## Security Considerations\n\n**Credential Scoping**: Implementers SHOULD scope upload credentials to the minimum necessary permissions and duration. Credentials should:\n\n- Allow write access only to the specific upload URL/path provided\n- Have the shortest practical expiration time (e.g. 15 minutes to 1 hour)\n- Be restricted to the specific file size and content type when possible\n- Not grant broader storage access beyond the intended upload location\n\nThis principle of least privilege reduces security exposure if credentials are compromised or misused.\n\n## Example Workflows\n\n### Simple HTTPS Upload\n\nUpload Request:\n\n```http\nPOST /upload-request\nContent-Type: application/json\n\n{\n  \"requests\": [\n    {\n      \"name\": \"variants.vcf\",\n      \"size\": 52428800,\n      \"mime_type\": \"text/plain\",\n      \"checksums\": [\n        {\n          \"checksum\": \"5d41402abc4b2a76b9719d911017c592\",\n          \"type\": \"md5\"\n        }\n      ]\n    }\n  ]\n}\n```\n\nResponse:\n\n```json\n{\n  \"responses\": [\n    {\n      \"name\": \"variants.vcf\",\n      \"size\": 52428800,\n      \"mime_type\": \"text/plain\",\n      \"checksums\": [\n        {\n          \"checksum\": \"5d41402abc4b2a76b9719d911017c592\",\n          \"type\": \"md5\"\n        }\n      ],\n      \"upload_methods\": [\n        {\n          \"type\": \"https\",\n          \"access_url\": {\n            \"url\": \"https://uploads.example.org/variants.vcf\"\n          },\n          \"upload_details\": {\n            \"post_url\": \"https://uploads.example.org/presigned-upload?signature=FAKE_SIG\"\n          }\n        }\n      ]\n    }\n  ]\n}\n```\n\nUpload via HTTPS:\n\n```bash\n# Simple PUT upload to presigned URL\ncurl -X PUT \"https://uploads.example.org/presigned-upload?signature=FAKE_SIG\" \\\n  --data-binary @variants.vcf\n```\n\nRegister DRS Object:\n\n```http\nPOST /register-objects\nContent-Type: application/json\n\n{\n  \"candidates\": [\n    {\n      \"name\": \"variants.vcf\",\n      \"size\": 52428800,\n      \"mime_type\": \"text/plain\",\n      \"checksums\": [\n        {\n          \"checksum\": \"5d41402abc4b2a76b9719d911017c592\",\n          \"type\": \"md5\"\n        }\n      ],\n      \"access_methods\": [\n        {\n          \"type\": \"https\",\n          \"access_url\": {\n            \"url\": \"https://uploads.example.org/variants.vcf\"\n          }\n        }\n      ],\n      \"description\": \"Variant calls in VCF format\"\n    }\n  ]\n}\n```\n\nResponse:\n\n```json\n{\n  \"objects\": [\n    {\n      \"id\": \"drs_obj_f6e5d4c3b2a1\",\n      \"self_uri\": \"drs://drs.example.org/drs_obj_f6e5d4c3b2a1\",\n      \"name\": \"variants.vcf\",\n      \"size\": 52428800,\n      \"mime_type\": \"text/plain\",\n      \"created_time\": \"2024-01-15T10:45:00Z\",\n      \"updated_time\": \"2024-01-15T10:45:00Z\",\n      \"version\": \"1.0\",\n      \"checksums\": [\n        {\n          \"checksum\": \"5d41402abc4b2a76b9719d911017c592\",\n          \"type\": \"md5\"\n        }\n      ],\n      \"access_methods\": [\n        {\n          \"type\": \"https\",\n          \"access_url\": {\n            \"url\": \"https://uploads.example.org/variants.vcf\"\n          }\n        }\n      ],\n      \"description\": \"Variant calls in VCF format\"\n    }\n  ]\n}\n```\n\n### S3 Bulk Upload (BAM + Index)\n\nRequest Upload Methods for Related Files\n\n```http\nPOST /upload-request\nContent-Type: application/json\n\n{\n  \"requests\": [\n    {\n      \"name\": \"sample.bam\",\n      \"size\": 1073741824,\n      \"mime_type\": \"application/octet-stream\",\n      \"checksums\": [\n        {\n          \"checksum\": \"d41d8cd98f00b204e9800998ecf8427e\",\n          \"type\": \"md5\"\n        }\n      ]\n    },\n    {\n      \"name\": \"sample.bam.bai\",\n      \"size\": 2097152,\n      \"mime_type\": \"application/octet-stream\",\n      \"checksums\": [\n        {\n          \"checksum\": \"098f6bcd4621d373cade4e832627b4f6\",\n          \"type\": \"md5\"\n        }\n      ]\n    }\n  ]\n}\n```\n\nResponse:\n\n```json\n{\n  \"responses\": [\n    {\n      \"name\": \"sample.bam\",\n      \"size\": 1073741824,\n      \"mime_type\": \"application/octet-stream\",\n      \"checksums\": [\n        {\n          \"checksum\": \"d41d8cd98f00b204e9800998ecf8427e\",\n          \"type\": \"md5\"\n        }\n      ],\n      \"upload_methods\": [\n        {\n          \"type\": \"s3\",\n          \"access_url\": {\n            \"url\": \"s3://genomics-uploads/x7k9m/sample.bam\"\n          },\n          \"upload_details\": {\n            \"bucket\": \"genomics-uploads\",\n            \"key\": \"x7k9m/sample.bam\",\n            \"access_key_id\": \"FAKE_ACCESS_KEY_123\",\n            \"secret_access_key\": \"FAKE_SECRET_KEY_456\",\n            \"session_token\": \"FAKE_SESSION_TOKEN_789\",\n            \"expires_at\": \"2024-01-15T12:00:00Z\"\n          }\n        }\n      ]\n    },\n    {\n      \"name\": \"sample.bam.bai\",\n      \"size\": 2097152,\n      \"mime_type\": \"application/octet-stream\",\n      \"checksums\": [\n        {\n          \"checksum\": \"098f6bcd4621d373cade4e832627b4f6\",\n          \"type\": \"md5\"\n        }\n      ],\n      \"upload_methods\": [\n        {\n          \"type\": \"s3\",\n          \"access_url\": {\n            \"url\": \"s3://genomics-uploads/x7k9m/sample.bam.bai\"\n          },\n          \"upload_details\": {\n            \"bucket\": \"genomics-uploads\",\n            \"key\": \"x7k9m/sample.bam.bai\",\n            \"access_key_id\": \"FAKE_ACCESS_KEY_123\",\n            \"secret_access_key\": \"FAKE_SECRET_KEY_456\",\n            \"session_token\": \"FAKE_SESSION_TOKEN_789\",\n            \"expires_at\": \"2024-01-15T12:00:00Z\"\n          }\n        }\n      ]\n    }\n  ]\n}\n```\n\nUpload Both Files to S3:\n\n```bash\n# Upload BAM and index files using the supplied credentials (note common prefix)\naws s3 cp sample.bam s3://genomics-uploads/x7k9m/sample.bam\naws s3 cp sample.bam.bai s3://genomics-uploads/x7k9m/sample.bam.bai\n```\n\nRegister Both DRS Objects:\n\n```http\nPOST /register-objects\nContent-Type: application/json\n\n{\n  \"candidates\": [\n    {\n      \"name\": \"sample.bam\",\n      \"size\": 1073741824,\n      \"mime_type\": \"application/octet-stream\",\n      \"checksums\": [\n        {\n          \"checksum\": \"d41d8cd98f00b204e9800998ecf8427e\",\n          \"type\": \"md5\"\n        }\n      ],\n      \"access_methods\": [\n        {\n          \"type\": \"s3\",\n          \"access_id\": \"s3\",\n          \"access_url\": {\n            \"url\": \"s3://genomics-uploads/x7k9m/sample.bam\"\n          }\n        }\n      ],\n      \"description\": \"BAM alignment file\"\n    },\n    {\n      \"name\": \"sample.bam.bai\",\n      \"size\": 2097152,\n      \"mime_type\": \"application/octet-stream\",\n      \"checksums\": [\n        {\n          \"checksum\": \"098f6bcd4621d373cade4e832627b4f6\",\n          \"type\": \"md5\"\n        }\n      ],\n      \"access_methods\": [\n        {\n          \"type\": \"s3\",\n          \"access_id\": \"s3\",\n          \"access_url\": {\n            \"url\": \"s3://genomics-uploads/x7k9m/sample.bam.bai\"\n          }\n        }\n      ],\n      \"description\": \"BAM index file\"\n    }\n  ]\n}\n```\n\nResponse:\n\n```json\n{\n  \"objects\": [\n    {\n      \"id\": \"drs_obj_a1b2c3d4e5f6\",\n      \"self_uri\": \"drs://drs.example.org/drs_obj_a1b2c3d4e5f6\",\n      \"name\": \"sample.bam\",\n      \"size\": 1073741824,\n      \"mime_type\": \"application/octet-stream\",\n      \"created_time\": \"2024-01-15T10:30:00Z\",\n      \"updated_time\": \"2024-01-15T10:30:00Z\",\n      \"version\": \"1.0\",\n      \"checksums\": [\n        {\n          \"checksum\": \"d41d8cd98f00b204e9800998ecf8427e\",\n          \"type\": \"md5\"\n        }\n      ],\n      \"access_methods\": [\n        {\n          \"type\": \"s3\",\n          \"access_id\": \"s3\",\n          \"access_url\": {\n            \"url\": \"s3://genomics-uploads/x7k9m/sample.bam\"\n          }\n        }\n      ],\n      \"description\": \"BAM alignment file\"\n    },\n    {\n      \"id\": \"drs_obj_b2c3d4e5f6a1\",\n      \"self_uri\": \"drs://drs.example.org/drs_obj_b2c3d4e5f6a1\",\n      \"name\": \"sample.bam.bai\",\n      \"size\": 2097152,\n      \"mime_type\": \"application/octet-stream\",\n      \"created_time\": \"2024-01-15T10:30:00Z\",\n      \"updated_time\": \"2024-01-15T10:30:00Z\",\n      \"version\": \"1.0\",\n      \"checksums\": [\n        {\n          \"checksum\": \"098f6bcd4621d373cade4e832627b4f6\",\n          \"type\": \"md5\"\n        }\n      ],\n      \"access_methods\": [\n        {\n          \"type\": \"s3\",\n          \"access_id\": \"s3\",\n          \"access_url\": {\n            \"url\": \"s3://genomics-uploads/x7k9m/sample.bam.bai\"\n          }\n        }\n      ],\n      \"description\": \"BAM index file\"\n    }\n  ]\n}\n```\n"
     },
     {
       "name": "Object Deletion",
-      "description": "# Object Deletion\n\n> **Optional Functionality**: Delete support is an **optional** extension to the DRS API. Not all DRS servers are required to implement delete functionality. Clients should check for the availability of delete endpoints before attempting to use them.\n\nDRS delete functionality allows suitably authenticated clients to request that DRS objects are removed from the server and, optionally, to request that the server attempt to delete the underlying data.\n\nServers should ensure that they trust clients from whom they receive delete requests, and may choose to implement \"soft\" deletes to minimise the risk of accidental or malicious requests. The DRS specification does not currently provide explicit support for soft deletes. Because delete support is optional, servers operating in untrusted environments may choose not to support delete operations at all.\n\nIn combination with the `/objects/register` endpoint, metadata only delete requests offer a means for clients to update DRS metadata without affecting the underlying data, and without introducing additional update operations which would complicate server implementation.\n\nClients can express a preference that the underlying data referred to by the deleted DRS object(s) is deleted with the `delete_storage_data` parameter. Servers are free to interpret this as they choose, and can advertise whether they support it at all with the `deleteStorageDataSupported` flag. Servers that choose to attempt to honour the request need not perform this operation synchronously and may, for example, register the file for later deletion. Implementations may also choose to ensure that no other DRS object registered in the server refers to the underlying data before deleting. Servers may not have the necessary permissions to delete the data from the backend even if they would like to do so, or may encounter errors when they attempt deletion. In the case that a DRS object refers to data stored in multiple backends (e.g. has multiple `access_method`s) the server may attempt to delete the data from all or only some of the backends.\n\nFor these reasons clients MUST NOT depend on the server deleting the underlying storage data even if the server advertises that `deleteStorageDataSupported` and the client sets the `delete_storage_data` flag.\n\nIn situations where the DRS server controls the storage backend, DRS delete support offers a convenient vendor-neutral way for clients to update and delete DRS objects and corresponding data.\n\nFor bulk deletes using the `/objects/delete` endpoint the server SHOULD implement transaction semantics: if any object fails validation or deletion, the entire request should fail and no objects are deleted and no attempt is made to delete from underlying storage for any object.\n\n## Design principles\n\n- **Optional**: Delete support is completely optional\n- **Safety**: Preserves underlying data in storage unless explicitly requested\n- **Backward compatible**: No impact on existing DRS functionality\n- **Flexible authentication**: Supports GA4GH Passports, Bearer tokens, API keys\n- **Use POST rather than DELETE**: GA4GH Passports require request bodies, which DELETE methods don't reliably support across all HTTP infrastructure. POST ensures broad compatibility.\n\n## Service Discovery\n\nCheck `/service-info` for delete capabilities:\n\n```json\n{\n  \"drs\": {\n    \"uploadRequestSupported\": true,\n    \"objectRegistrationSupported\": true,\n    \"supportedUploadMethods\": [\"s3\", \"https\"],\n    \"relatedFileStorageSupported\": true,\n    \"deleteSupported\": true,\n    \"maxBulkDeleteLength\": 100,\n    \"deleteStorageDataSupported\": true\n  }\n}\n```\n\n- **`deleteSupported`**: Whether server supports deletion\n- **`maxBulkDeleteLength`**: Maximum objects per bulk delete request  \n- **`deleteStorageDataSupported`**: Whether server can attempt to delete underlying storage files\n\n### Single Object Delete: `POST /objects/{object_id}/delete`\n\n```bash\ncurl -X POST \"https://drs.example.org/objects/drs_object_123456/delete\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\"passports\": [\"...\"], \"delete_storage_data\": false}'\n# Response: 204 No Content (indicates metadata deletion success only)\n```\n\n**Note**: HTTP responses indicate metadata deletion status only. Storage deletion (`delete_storage_data: true`) is a best effort attempt with no guarantee of success.\n\n### Bulk Object Delete: `POST /objects/delete`\n\n```bash\ncurl -X POST \"https://drs.example.org/objects/delete\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\n    \"bulk_object_ids\": [\"obj_1\", \"obj_2\", \"obj_3\"],\n    \"passports\": [\"...\"],\n    \"delete_storage_data\": false\n  }'\n# Response: 204 No Content (all metadata deleted) or 4xx error (no objects deleted)\n```\n\n## Authentication\n\n**GA4GH Passports** (in request body):\n\n```json\n{\"passports\": [\"eyJhbGci...\"], \"delete_storage_data\": false}\n```\n\n**Bearer Tokens** (in headers):\n\n```bash\ncurl -H \"Authorization: Bearer token\" -d '{\"delete_storage_data\": false}' ...\n```\n\n## Underlying Storage Data\n\n**Important**: Storage data deletion is never guaranteed. Even when `delete_storage_data: true` is requested and the server supports it, the actual deletion may fail due to permissions, network issues, or storage service errors. Clients shoud not depend on storage deletion success.\n\nClients can request that the server attempts to delete the underlying data referred to by the DRS object using the `delete_storage_data` parameter.\n\n**`delete_storage_data: false`** (default): Removes DRS object metadata only, preserves underlying storage files\n\n**`delete_storage_data: true`**: Removes metadata AND requests server attempt to delete underlying storage files (requires `deleteStorageDataSupported: true`, **success not guaranteed**)\n\n## Update Pattern\n\nRather than introducing additional operations and endpoints for updating DRS objects, servers can allow clients to use the metadata-only deletion and object registration endpoints to create a new DRS object with updated metadata while leaving the underlying data in place.\n\n**Metadata update steps:**\n\n1. Delete metadata only: `POST /objects/{id}/delete` with `delete_storage_data: false`\n2. Re-register object: `POST /objects/register` with updated metadata\n\n```bash\n# Delete metadata (preserves storage)\ncurl -X POST \".../objects/obj_123/delete\" -d '{\"delete_storage_data\": false}'\n# Re-register with updates\ncurl -X POST \".../objects/register\" -d '{\"candidates\": [{\"name\": \"updated.txt\", ...}]}'\n```\n\n## Error Responses\n\n- **400**: Unsupported storage deletion or invalid request parameters\n- **403**: Insufficient permissions for any object in the request\n- **404**: Any object not found or delete endpoints not supported by server\n- **413**: Bulk request exceeds `maxBulkDeleteLength` limit\n\n## Examples\n\n**Metadata Update:**\n\n```bash\ncurl \".../service-info\"  # Check capabilities\ncurl -X POST \".../objects/obj_123/delete\" -d '{\"delete_storage_data\": false}'\ncurl -X POST \".../objects/register\" -d '{\"candidates\": [{\"name\": \"updated.vcf\", ...}]}'\n```\n\n**Complete Removal:**\n\n```bash\ncurl -X POST \".../objects/obj_456/delete\" -H \"Authorization: Bearer token\" \\\n  -d '{\"delete_storage_data\": true}'\n```\n\n**Bulk Delete (Atomic):**\n\n```bash\ncurl -X POST \".../objects/delete\" -d '{\n  \"bulk_object_ids\": [\"obj_1\", \"obj_2\"],\n  \"passports\": [\"...\"],\n  \"delete_storage_data\": false\n}'\n# All objects deleted or none deleted (transactional)\n```\n\n## Best Practices\n\n**Clients:** Check service-info, default to safe deletion, handle transactional failures, respect limits, confirm destructive operations, do not rely on underlying storage deletion\n\n**Servers:** Advertise capabilities, validate permissions, implement atomic transactions, implement limits, use versioning to avoid inadvertent deletion.\n\n## Security Considerations\n\n- **Authentication**: Validate GA4GH Passports and Bearer tokens\n- **HTTPS Required**: Protect credentials in transit\n- **Rate Limiting**: Prevent abuse of delete endpoints\n- **Input Validation**: Sanitize all request parameters\n\n## Backward Compatibility\n\nDelete functionality is designed to be backward compatible:\n\n- **No Impact on Existing Endpoints**: All existing DRS endpoints remain unchanged\n- **Optional Implementation**: Servers can ignore delete functionality entirely\n- **Graceful Degradation**: Clients receive 404 responses when delete is not supported\n- **Safe Defaults**: New fields in service-info have safe default values, and requests default to leaving underlying data in place.\n"
+      "description": "# Object Deletion\n\n> **Optional Functionality**: Delete support is an **optional** extension to the DRS API. Not all DRS servers are required to implement delete functionality. Clients should check for the availability of delete endpoints before attempting to use them.\n\nDRS delete functionality allows suitably authenticated clients to request that DRS objects are removed from the server and, optionally, to request that the server attempt to delete the underlying data.\n\nServers should ensure that they trust clients from whom they receive delete requests, and may choose to implement \"soft\" deletes to minimise the risk of accidental or malicious requests. The DRS specification does not currently provide explicit support for soft deletes. Because delete support is optional, servers operating in untrusted environments may choose not to support delete operations at all.\n\nIn combination with the `/register-objects` endpoint, metadata only delete requests offer a means for clients to update DRS metadata without affecting the underlying data, and without introducing additional update operations which would complicate server implementation.\n\nClients can express a preference that the underlying data referred to by the deleted DRS object(s) is deleted with the `delete_storage_data` parameter. Servers are free to interpret this as they choose, and can advertise whether they support it at all with the `deleteStorageDataSupported` flag. Servers that choose to attempt to honour the request need not perform this operation synchronously and may, for example, register the file for later deletion. Implementations may also choose to ensure that no other DRS object registered in the server refers to the underlying data before deleting. Servers may not have the necessary permissions to delete the data from the backend even if they would like to do so, or may encounter errors when they attempt deletion. In the case that a DRS object refers to data stored in multiple backends (e.g. has multiple `access_method`s) the server may attempt to delete the data from all or only some of the backends.\n\nFor these reasons clients MUST NOT depend on the server deleting the underlying storage data even if the server advertises that `deleteStorageDataSupported` and the client sets the `delete_storage_data` flag.\n\nIn situations where the DRS server controls the storage backend, DRS delete support offers a convenient vendor-neutral way for clients to update and delete DRS objects and corresponding data.\n\nFor bulk deletes using the `/objects/delete` endpoint the server SHOULD implement transaction semantics: if any object fails validation or deletion, the entire request should fail and no objects are deleted and no attempt is made to delete from underlying storage for any object.\n\n## Design principles\n\n- **Optional**: Delete support is completely optional\n- **Safety**: Preserves underlying data in storage unless explicitly requested\n- **Backward compatible**: No impact on existing DRS functionality\n- **Flexible authentication**: Supports GA4GH Passports, Bearer tokens, API keys\n- **Use POST rather than DELETE**: GA4GH Passports require request bodies, which DELETE methods don't reliably support across all HTTP infrastructure. POST ensures broad compatibility.\n\n## Service Discovery\n\nCheck `/service-info` for delete capabilities:\n\n```json\n{\n  \"drs\": {\n    \"uploadRequestSupported\": true,\n    \"objectRegistrationSupported\": true,\n    \"supportedUploadMethods\": [\"s3\", \"https\"],\n    \"relatedFileStorageSupported\": true,\n    \"deleteSupported\": true,\n    \"maxBulkDeleteLength\": 100,\n    \"deleteStorageDataSupported\": true\n  }\n}\n```\n\n- **`deleteSupported`**: Whether server supports deletion\n- **`maxBulkDeleteLength`**: Maximum objects per bulk delete request  \n- **`deleteStorageDataSupported`**: Whether server can attempt to delete underlying storage files\n\n### Single Object Delete: `POST /objects/{object_id}/delete`\n\n```bash\ncurl -X POST \"https://drs.example.org/objects/drs_object_123456/delete\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\"passports\": [\"...\"], \"delete_storage_data\": false}'\n# Response: 204 No Content (indicates metadata deletion success only)\n```\n\n**Note**: HTTP responses indicate metadata deletion status only. Storage deletion (`delete_storage_data: true`) is a best effort attempt with no guarantee of success.\n\n### Bulk Object Delete: `POST /objects/delete`\n\n```bash\ncurl -X POST \"https://drs.example.org/objects/delete\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\n    \"bulk_object_ids\": [\"obj_1\", \"obj_2\", \"obj_3\"],\n    \"passports\": [\"...\"],\n    \"delete_storage_data\": false\n  }'\n# Response: 204 No Content (all metadata deleted) or 4xx error (no objects deleted)\n```\n\n## Authentication\n\n**GA4GH Passports** (in request body):\n\n```json\n{\"passports\": [\"eyJhbGci...\"], \"delete_storage_data\": false}\n```\n\n**Bearer Tokens** (in headers):\n\n```bash\ncurl -H \"Authorization: Bearer token\" -d '{\"delete_storage_data\": false}' ...\n```\n\n## Underlying Storage Data\n\n**Important**: Storage data deletion is never guaranteed. Even when `delete_storage_data: true` is requested and the server supports it, the actual deletion may fail due to permissions, network issues, or storage service errors. Clients shoud not depend on storage deletion success.\n\nClients can request that the server attempts to delete the underlying data referred to by the DRS object using the `delete_storage_data` parameter.\n\n**`delete_storage_data: false`** (default): Removes DRS object metadata only, preserves underlying storage files\n\n**`delete_storage_data: true`**: Removes metadata AND requests server attempt to delete underlying storage files (requires `deleteStorageDataSupported: true`, **success not guaranteed**)\n\n## Update Pattern\n\nRather than introducing additional operations and endpoints for updating DRS objects, servers can allow clients to use the metadata-only deletion and object registration endpoints to create a new DRS object with updated metadata while leaving the underlying data in place.\n\n**Metadata update steps:**\n\n1. Delete metadata only: `POST /objects/{id}/delete` with `delete_storage_data: false`\n2. Re-register object: `POST /register-objects` with updated metadata\n\n```bash\n# Delete metadata (preserves storage)\ncurl -X POST \".../objects/obj_123/delete\" -d '{\"delete_storage_data\": false}'\n# Re-register with updates\ncurl -X POST \".../register-objects\" -d '{\"candidates\": [{\"name\": \"updated.txt\", ...}]}'\n```\n\n## Error Responses\n\n- **400**: Unsupported storage deletion or invalid request parameters\n- **403**: Insufficient permissions for any object in the request\n- **404**: Any object not found or delete endpoints not supported by server\n- **413**: Bulk request exceeds `maxBulkDeleteLength` limit\n\n## Examples\n\n**Metadata Update:**\n\n```bash\ncurl \".../service-info\"  # Check capabilities\ncurl -X POST \".../objects/obj_123/delete\" -d '{\"delete_storage_data\": false}'\ncurl -X POST \".../register-objects\" -d '{\"candidates\": [{\"name\": \"updated.vcf\", ...}]}'\n```\n\n**Complete Removal:**\n\n```bash\ncurl -X POST \".../objects/obj_456/delete\" -H \"Authorization: Bearer token\" \\\n  -d '{\"delete_storage_data\": true}'\n```\n\n**Bulk Delete (Atomic):**\n\n```bash\ncurl -X POST \".../objects/delete\" -d '{\n  \"bulk_object_ids\": [\"obj_1\", \"obj_2\"],\n  \"passports\": [\"...\"],\n  \"delete_storage_data\": false\n}'\n# All objects deleted or none deleted (transactional)\n```\n\n## Best Practices\n\n**Clients:** Check service-info, default to safe deletion, handle transactional failures, respect limits, confirm destructive operations, do not rely on underlying storage deletion\n\n**Servers:** Advertise capabilities, validate permissions, implement atomic transactions, implement limits, use versioning to avoid inadvertent deletion.\n\n## Security Considerations\n\n- **Authentication**: Validate GA4GH Passports and Bearer tokens\n- **HTTPS Required**: Protect credentials in transit\n- **Rate Limiting**: Prevent abuse of delete endpoints\n- **Input Validation**: Sanitize all request parameters\n\n## Backward Compatibility\n\nDelete functionality is designed to be backward compatible:\n\n- **No Impact on Existing Endpoints**: All existing DRS endpoints remain unchanged\n- **Optional Implementation**: Servers can ignore delete functionality entirely\n- **Graceful Degradation**: Clients receive 404 responses when delete is not supported\n- **Safe Defaults**: New fields in service-info have safe default values, and requests default to leaving underlying data in place.\n"
     },
     {
       "name": "Access Method Update",
@@ -331,7 +331,7 @@
       },
       "post": {
         "summary": "Get info about a DrsObject through POST'ing a Passport.",
-        "description": "Returns object metadata and a list of access methods that can be used to fetch object bytes. Method is a POST to accommodate a JWT GA4GH Passport sent in the request body in order to authorize access.\n**Note**: To upload new files and register them as DRS objects, use the `/upload-request` endpoint  to obtain upload methods and temporary credentials, then use POST `/objects/register` endpoint  to register multiple objects at once. Note that upload functionality is optional and not all DRS  servers implement the upload endpoints.",
+        "description": "Returns object metadata and a list of access methods that can be used to fetch object bytes. Method is a POST to accommodate a JWT GA4GH Passport sent in the request body in order to authorize access.\n**Note**: To upload new files and register them as DRS objects, use the `/upload-request` endpoint  to obtain upload methods and temporary credentials, then use POST `/register-objects` endpoint  to register multiple objects at once. Note that upload functionality is optional and not all DRS  servers implement the upload endpoints.",
         "operationId": "PostObject",
         "security": [
           {
@@ -759,7 +759,7 @@
       },
       "post": {
         "summary": "Get info about multiple DrsObjects with an optional Passport(s).",
-        "description": "Returns an array of object metadata and access methods for the specified object IDs.\nThe request is limited to use passports (one or more) or a single bearer token,  so make sure your bulk request is for objects that all use the same passports/token.\n**Note**: To register new DRS objects, use the dedicated `/objects/register` endpoint.",
+        "description": "Returns an array of object metadata and access methods for the specified object IDs.\nThe request is limited to use passports (one or more) or a single bearer token,  so make sure your bulk request is for objects that all use the same passports/token.\n**Note**: To register new DRS objects, use the dedicated `/register-objects` endpoint.",
         "operationId": "GetBulkObjects",
         "security": [
           {
@@ -804,53 +804,6 @@
         "requestBody": {
           "$ref": "#/components/requestBodies/BulkObjectBody"
         }
-      }
-    },
-    "/objects/register": {
-      "post": {
-        "summary": "Register DRS objects",
-        "description": "**Optional Endpoint**: This endpoint is not required for DRS server implementations.  Not all DRS servers support object registration.    \nRegisters one or more \"candidate\" DRS objects with the server. If it accepts the request, the server will create  unique object IDs for each registered object and return them in fully-formed DRS objects in response.\nThis endpoint can be used after uploading files using methods negotiated with the `/upload-request` endpoint  to register the uploaded files as DRS objects, or to register existinf data. The request body should contain candidate  DRS objects with all required metadata including access methods that correspond  to the upload methods used during file upload.\n**RECOMMENDED - Transactional Behavior**:  Registration operations SHOULD be atomic transactions. If ANY candidate object fails validation  or registration, the ENTIRE request SHOULD fail and NO objects SHOULD be registered. Servers SHOULD  implement this as an all-or-nothing operation to ensure data consistency, but MAY implement partial  registration with appropriate error reporting if transactional behavior is not feasible.\n**Authentication**: GA4GH Passports can be provided in the request body for authorization. Bearer tokens can be supplied in headers.\n**Server Responsibilities**: - SHOULD treat registration as an atomic transaction (all succeed or all fail) - SHOULD validate ALL candidate objects before registering ANY - Create unique object IDs for each registered object - Add timestamps (created_time, updated_time) - SHOULD roll back any partial changes if any candidate fails validation\n**Client Responsibilities**: - Provide required DRS object metadata for all candidates - Include access methods corresponding to uploaded file locations - Ensure checksums match uploaded file content - Handle potential failure of entire batch if any single object is invalid",
-        "operationId": "RegisterObjects",
-        "security": [
-          {},
-          {
-            "BasicAuth": []
-          },
-          {
-            "BearerAuth": []
-          },
-          {
-            "PassportAuth": []
-          }
-        ],
-        "requestBody": {
-          "$ref": "#/components/requestBodies/RegisterObjectsBody"
-        },
-        "responses": {
-          "201": {
-            "$ref": "#/components/responses/201ObjectsCreated"
-          },
-          "400": {
-            "$ref": "#/components/responses/400BadRequest"
-          },
-          "401": {
-            "$ref": "#/components/responses/401Unauthorized"
-          },
-          "403": {
-            "$ref": "#/components/responses/403Forbidden"
-          },
-          "413": {
-            "$ref": "#/components/responses/413RequestTooLarge"
-          },
-          "500": {
-            "$ref": "#/components/responses/500InternalServerError"
-          }
-        },
-        "tags": [
-          "Objects"
-        ],
-        "x-swagger-router-controller": "ga4gh.drs.server",
-        "x-codegen-request-body-name": "body"
       }
     },
     "/objects/{object_id}/access/{access_id}": {
@@ -1140,6 +1093,53 @@
           "Upload Request"
         ]
       }
+    },
+    "/register-objects": {
+      "post": {
+        "summary": "Register DRS objects",
+        "description": "**Optional Endpoint**: This endpoint is not required for DRS server implementations.  Not all DRS servers support object registration.    \nRegisters one or more \"candidate\" DRS objects with the server. If it accepts the request, the server will create  unique object IDs for each registered object and return them in fully-formed DRS objects in response.\nThis endpoint can be used after uploading files using methods negotiated with the `/upload-request` endpoint  to register the uploaded files as DRS objects, or to register existinf data. The request body should contain candidate  DRS objects with all required metadata including access methods that correspond  to the upload methods used during file upload.\n**RECOMMENDED - Transactional Behavior**:  Registration operations SHOULD be atomic transactions. If ANY candidate object fails validation  or registration, the ENTIRE request SHOULD fail and NO objects SHOULD be registered. Servers SHOULD  implement this as an all-or-nothing operation to ensure data consistency, but MAY implement partial  registration with appropriate error reporting if transactional behavior is not feasible.\n**Authentication**: GA4GH Passports can be provided in the request body for authorization. Bearer tokens can be supplied in headers.\n**Server Responsibilities**: - SHOULD treat registration as an atomic transaction (all succeed or all fail) - SHOULD validate ALL candidate objects before registering ANY - Create unique object IDs for each registered object - Add timestamps (created_time, updated_time) - SHOULD roll back any partial changes if any candidate fails validation\n**Client Responsibilities**: - Provide required DRS object metadata for all candidates - Include access methods corresponding to uploaded file locations - Ensure checksums match uploaded file content - Handle potential failure of entire batch if any single object is invalid",
+        "operationId": "RegisterObjects",
+        "security": [
+          {},
+          {
+            "BasicAuth": []
+          },
+          {
+            "BearerAuth": []
+          },
+          {
+            "PassportAuth": []
+          }
+        ],
+        "requestBody": {
+          "$ref": "#/components/requestBodies/RegisterObjectsBody"
+        },
+        "responses": {
+          "201": {
+            "$ref": "#/components/responses/201ObjectsCreated"
+          },
+          "400": {
+            "$ref": "#/components/responses/400BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/401Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/403Forbidden"
+          },
+          "413": {
+            "$ref": "#/components/responses/413RequestTooLarge"
+          },
+          "500": {
+            "$ref": "#/components/responses/500InternalServerError"
+          }
+        },
+        "tags": [
+          "Objects"
+        ],
+        "x-swagger-router-controller": "ga4gh.drs.server",
+        "x-codegen-request-body-name": "body"
+      }
     }
   },
   "components": {
@@ -1163,118 +1163,6 @@
       }
     },
     "schemas": {
-      "ServiceType": {
-        "description": "Type of a GA4GH service",
-        "type": "object",
-        "required": [
-          "group",
-          "artifact",
-          "version"
-        ],
-        "properties": {
-          "group": {
-            "type": "string",
-            "description": "Namespace in reverse domain name format. Use `org.ga4gh` for implementations compliant with official GA4GH specifications. For services with custom APIs not standardized by GA4GH, or implementations diverging from official GA4GH specifications, use a different namespace (e.g. your organization's reverse domain name).",
-            "example": "org.ga4gh"
-          },
-          "artifact": {
-            "type": "string",
-            "description": "Name of the API or GA4GH specification implemented. Official GA4GH types should be assigned as part of standards approval process. Custom artifacts are supported.",
-            "example": "beacon"
-          },
-          "version": {
-            "type": "string",
-            "description": "Version of the API or specification. GA4GH specifications use semantic versioning.",
-            "example": "1.0.0"
-          }
-        }
-      },
-      "Service": {
-        "description": "GA4GH service",
-        "type": "object",
-        "required": [
-          "id",
-          "name",
-          "type",
-          "organization",
-          "version"
-        ],
-        "properties": {
-          "id": {
-            "type": "string",
-            "description": "Unique ID of this service. Reverse domain name notation is recommended, though not required. The identifier should attempt to be globally unique so it can be used in downstream aggregator services e.g. Service Registry.",
-            "example": "org.ga4gh.myservice"
-          },
-          "name": {
-            "type": "string",
-            "description": "Name of this service. Should be human readable.",
-            "example": "My project"
-          },
-          "type": {
-            "$ref": "#/components/schemas/ServiceType"
-          },
-          "description": {
-            "type": "string",
-            "description": "Description of the service. Should be human readable and provide information about the service.",
-            "example": "This service provides..."
-          },
-          "organization": {
-            "type": "object",
-            "description": "Organization providing the service",
-            "required": [
-              "name",
-              "url"
-            ],
-            "properties": {
-              "name": {
-                "type": "string",
-                "description": "Name of the organization responsible for the service",
-                "example": "My organization"
-              },
-              "url": {
-                "type": "string",
-                "format": "uri",
-                "description": "URL of the website of the organization (RFC 3986 format)",
-                "example": "https://example.com"
-              }
-            }
-          },
-          "contactUrl": {
-            "type": "string",
-            "format": "uri",
-            "description": "URL of the contact for the provider of this service, e.g. a link to a contact form (RFC 3986 format), or an email (RFC 2368 format).",
-            "example": "mailto:support@example.com"
-          },
-          "documentationUrl": {
-            "type": "string",
-            "format": "uri",
-            "description": "URL of the documentation of this service (RFC 3986 format). This should help someone learn how to use your service, including any specifics required to access data, e.g. authentication.",
-            "example": "https://docs.myservice.example.com"
-          },
-          "createdAt": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Timestamp describing when the service was first deployed and available (RFC 3339 format)",
-            "example": "2019-06-04T12:58:19Z"
-          },
-          "updatedAt": {
-            "type": "string",
-            "format": "date-time",
-            "description": "Timestamp describing when the service was last updated (RFC 3339 format)",
-            "example": "2019-06-04T12:58:19Z"
-          },
-          "environment": {
-            "type": "string",
-            "description": "Environment the service is running in. Use this to distinguish between production, development and testing/staging deployments. Suggested values are prod, test, dev, staging. However this is advised and not enforced.",
-            "example": "test"
-          },
-          "version": {
-            "type": "string",
-            "description": "Version of the service being described. Semantic versioning is recommended, but other identifiers, such as dates or commit hashes, are also allowed. The version should be changed whenever the service is updated.",
-            "example": "1.0.0"
-          }
-        }
-      },
       "DrsService": {
         "type": "object",
         "required": [
@@ -1326,7 +1214,7 @@
               },
               "objectRegistrationSupported": {
                 "type": "boolean",
-                "description": "Indicates whether this DRS server supports object registration operations via the `/objects/register` endpoint. If true, clients can register uploaded files or existing data as DRS objects. If false or missing, the server does not support object registration.",
+                "description": "Indicates whether this DRS server supports object registration operations via the `/register-objects` endpoint. If true, clients can register uploaded files or existing data as DRS objects. If false or missing, the server does not support object registration.",
                 "default": false
               },
               "supportedUploadMethods": {
@@ -1771,67 +1659,6 @@
           }
         }
       },
-      "DrsObjectCandidate": {
-        "type": "object",
-        "required": [
-          "size",
-          "checksums"
-        ],
-        "properties": {
-          "name": {
-            "type": "string",
-            "description": "A string that can be used to name a `DrsObject`.\nThis string is made up of uppercase and lowercase letters, decimal digits, hyphen, period, and underscore [A-Za-z0-9.-_]. See http://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap03.html#tag_03_282[portable filenames]."
-          },
-          "size": {
-            "type": "integer",
-            "format": "int64",
-            "description": "For blobs, the blob size in bytes.\nFor bundles, the cumulative size, in bytes, of items in the `contents` field."
-          },
-          "version": {
-            "type": "string",
-            "description": "A string representing a version.\n(Some systems may use checksum, a RFC3339 timestamp, or an incrementing version number.)"
-          },
-          "mime_type": {
-            "type": "string",
-            "description": "A string providing the mime-type of the `DrsObject`.",
-            "example": "application/json"
-          },
-          "checksums": {
-            "type": "array",
-            "minItems": 1,
-            "items": {
-              "$ref": "#/components/schemas/Checksum"
-            },
-            "description": "The checksum of the `DrsObject`. At least one checksum must be provided.\nFor blobs, the checksum is computed over the bytes in the blob.\nFor bundles, the checksum is computed over a sorted concatenation of the checksums of its top-level contained objects (not recursive, names not included). The list of checksums is sorted alphabetically (hex-code) before concatenation and a further checksum is performed on the concatenated checksum value.\nFor example, if a bundle contains blobs with the following checksums:\nmd5(blob1) = 72794b6d\nmd5(blob2) = 5e089d29\nThen the checksum of the bundle is:\nmd5( concat( sort( md5(blob1), md5(blob2) ) ) )\n= md5( concat( sort( 72794b6d, 5e089d29 ) ) )\n= md5( concat( 5e089d29, 72794b6d ) )\n= md5( 5e089d2972794b6d )\n= f7a29a04"
-          },
-          "access_methods": {
-            "type": "array",
-            "minItems": 1,
-            "items": {
-              "$ref": "#/components/schemas/AccessMethod"
-            },
-            "description": "The list of access methods that can be used to fetch the `DrsObject`.\nRequired for single blobs; optional for bundles."
-          },
-          "contents": {
-            "type": "array",
-            "description": "If not set, this `DrsObject` is a single blob.\nIf set, this `DrsObject` is a bundle containing the listed `ContentsObject` s (some of which may be further nested).",
-            "items": {
-              "$ref": "#/components/schemas/ContentsObject"
-            }
-          },
-          "description": {
-            "type": "string",
-            "description": "A human readable description of the `DrsObject`."
-          },
-          "aliases": {
-            "type": "array",
-            "items": {
-              "type": "string"
-            },
-            "description": "A list of strings that can be used to find other metadata about this `DrsObject` from external metadata sources. These aliases can be used to represent secondary accession numbers or external GUIDs."
-          }
-        }
-      },
       "BulkObjectAccessId": {
         "type": "object",
         "description": "The object that contains object_id/access_id tuples",
@@ -1993,6 +1820,13 @@
               "type": "string"
             },
             "description": "Optional array of alternative names for the file"
+          },
+          "upload_methods": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Optional array of requested upload methods which should match those published by  the server in the `supportedUploadMethods` field in  the `/service-info` response.  Servers SHALL try to honour requests, but the server may not be able to offer the  requested upload type for specific file types/sizes etc. The server MAY return a  4** error code if it cannot honour the request, or MAY return an alternative  supported upload method."
           }
         }
       },
@@ -2125,6 +1959,67 @@
             "description": "List of upload responses for the requested files"
           }
         }
+      },
+      "DrsObjectCandidate": {
+        "type": "object",
+        "required": [
+          "size",
+          "checksums"
+        ],
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "A string that can be used to name a `DrsObject`.\nThis string is made up of uppercase and lowercase letters, decimal digits, hyphen, period, and underscore [A-Za-z0-9.-_]. See http://pubs.opengroup.org/onlinepubs/9699919799/basedefs/V1_chap03.html#tag_03_282[portable filenames]."
+          },
+          "size": {
+            "type": "integer",
+            "format": "int64",
+            "description": "For blobs, the blob size in bytes.\nFor bundles, the cumulative size, in bytes, of items in the `contents` field."
+          },
+          "version": {
+            "type": "string",
+            "description": "A string representing a version.\n(Some systems may use checksum, a RFC3339 timestamp, or an incrementing version number.)"
+          },
+          "mime_type": {
+            "type": "string",
+            "description": "A string providing the mime-type of the `DrsObject`.",
+            "example": "application/json"
+          },
+          "checksums": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "$ref": "#/components/schemas/Checksum"
+            },
+            "description": "The checksum of the `DrsObject`. At least one checksum must be provided.\nFor blobs, the checksum is computed over the bytes in the blob.\nFor bundles, the checksum is computed over a sorted concatenation of the checksums of its top-level contained objects (not recursive, names not included). The list of checksums is sorted alphabetically (hex-code) before concatenation and a further checksum is performed on the concatenated checksum value.\nFor example, if a bundle contains blobs with the following checksums:\nmd5(blob1) = 72794b6d\nmd5(blob2) = 5e089d29\nThen the checksum of the bundle is:\nmd5( concat( sort( md5(blob1), md5(blob2) ) ) )\n= md5( concat( sort( 72794b6d, 5e089d29 ) ) )\n= md5( concat( 5e089d29, 72794b6d ) )\n= md5( 5e089d2972794b6d )\n= f7a29a04"
+          },
+          "access_methods": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "$ref": "#/components/schemas/AccessMethod"
+            },
+            "description": "The list of access methods that can be used to fetch the `DrsObject`.\nRequired for single blobs; optional for bundles."
+          },
+          "contents": {
+            "type": "array",
+            "description": "If not set, this `DrsObject` is a single blob.\nIf set, this `DrsObject` is a bundle containing the listed `ContentsObject` s (some of which may be further nested).",
+            "items": {
+              "$ref": "#/components/schemas/ContentsObject"
+            }
+          },
+          "description": {
+            "type": "string",
+            "description": "A human readable description of the `DrsObject`."
+          },
+          "aliases": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "A list of strings that can be used to find other metadata about this `DrsObject` from external metadata sources. These aliases can be used to represent secondary accession numbers or external GUIDs."
+          }
+        }
       }
     },
     "responses": {
@@ -2134,9 +2029,6 @@
           "application/json": {
             "schema": {
               "allOf": [
-                {
-                  "$ref": "#/components/schemas/Service"
-                },
                 {
                   "$ref": "#/components/schemas/DrsService"
                 }
@@ -2427,121 +2319,6 @@
           }
         }
       },
-      "201ObjectsCreated": {
-        "description": "DRS objects were successfully registered as an atomic transaction. Returns the complete DRS objects with server-minted IDs and timestamps. All candidate objects were validated and registered together - if any had failed, none would have been registered.",
-        "content": {
-          "application/json": {
-            "schema": {
-              "type": "object",
-              "required": [
-                "objects"
-              ],
-              "properties": {
-                "objects": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/DrsObject"
-                  },
-                  "description": "Array of registered DRS objects in the same order as the candidates in the request"
-                }
-              }
-            },
-            "examples": {
-              "single_object_created": {
-                "summary": "Single object registered",
-                "description": "Response after registering one DRS object",
-                "value": {
-                  "objects": [
-                    {
-                      "id": "drs_obj_a1b2c3d4e5f6",
-                      "self_uri": "drs://drs.example.org/drs_obj_a1b2c3d4e5f6",
-                      "name": "sample_data.vcf",
-                      "size": 1048576,
-                      "mime_type": "text/plain",
-                      "created_time": "2024-01-15T10:30:00Z",
-                      "updated_time": "2024-01-15T10:30:00Z",
-                      "version": "1.0",
-                      "checksums": [
-                        {
-                          "checksum": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-                          "type": "sha-256"
-                        }
-                      ],
-                      "access_methods": [
-                        {
-                          "type": "s3",
-                          "access_url": {
-                            "url": "s3://my-bucket/uploads/sample_data.vcf"
-                          }
-                        }
-                      ],
-                      "description": "Variant call format file for sample analysis"
-                    }
-                  ]
-                }
-              },
-              "multiple_objects_created": {
-                "summary": "Multiple objects registered",
-                "description": "Response after registering multiple DRS objects",
-                "value": {
-                  "objects": [
-                    {
-                      "id": "drs_obj_a1b2c3d4e5f6",
-                      "self_uri": "drs://drs.example.org/drs_obj_a1b2c3d4e5f6",
-                      "name": "genome_assembly.fasta",
-                      "size": 3221225472,
-                      "mime_type": "text/plain",
-                      "created_time": "2024-01-15T09:00:00Z",
-                      "updated_time": "2024-01-15T09:00:00Z",
-                      "version": "1.0",
-                      "checksums": [
-                        {
-                          "checksum": "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3",
-                          "type": "sha-256"
-                        }
-                      ],
-                      "access_methods": [
-                        {
-                          "type": "s3",
-                          "access_url": {
-                            "url": "s3://genomics-bucket/assemblies/hg38.fasta"
-                          }
-                        }
-                      ],
-                      "description": "Human genome reference assembly"
-                    },
-                    {
-                      "id": "drs_obj_f6e5d4c3b2a1",
-                      "self_uri": "drs://drs.example.org/drs_obj_f6e5d4c3b2a1",
-                      "name": "annotations.gff3",
-                      "size": 524288000,
-                      "mime_type": "text/plain",
-                      "created_time": "2024-01-15T09:15:00Z",
-                      "updated_time": "2024-01-15T09:15:00Z",
-                      "version": "1.0",
-                      "checksums": [
-                        {
-                          "checksum": "b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9",
-                          "type": "sha-256"
-                        }
-                      ],
-                      "access_methods": [
-                        {
-                          "type": "https",
-                          "access_url": {
-                            "url": "https://data.example.org/files/annotations.gff3"
-                          }
-                        }
-                      ],
-                      "description": "Gene annotations in GFF3 format"
-                    }
-                  ]
-                }
-              }
-            }
-          }
-        }
-      },
       "200OkAccess": {
         "description": "The `AccessURL` was found successfully",
         "content": {
@@ -2750,6 +2527,121 @@
                           }
                         }
                       ]
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "201ObjectsCreated": {
+        "description": "DRS objects were successfully registered as an atomic transaction. Returns the complete DRS objects with server-minted IDs and timestamps. All candidate objects were validated and registered together - if any had failed, none would have been registered.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "required": [
+                "objects"
+              ],
+              "properties": {
+                "objects": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DrsObject"
+                  },
+                  "description": "Array of registered DRS objects in the same order as the candidates in the request"
+                }
+              }
+            },
+            "examples": {
+              "single_object_created": {
+                "summary": "Single object registered",
+                "description": "Response after registering one DRS object",
+                "value": {
+                  "objects": [
+                    {
+                      "id": "drs_obj_a1b2c3d4e5f6",
+                      "self_uri": "drs://drs.example.org/drs_obj_a1b2c3d4e5f6",
+                      "name": "sample_data.vcf",
+                      "size": 1048576,
+                      "mime_type": "text/plain",
+                      "created_time": "2024-01-15T10:30:00Z",
+                      "updated_time": "2024-01-15T10:30:00Z",
+                      "version": "1.0",
+                      "checksums": [
+                        {
+                          "checksum": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                          "type": "sha-256"
+                        }
+                      ],
+                      "access_methods": [
+                        {
+                          "type": "s3",
+                          "access_url": {
+                            "url": "s3://my-bucket/uploads/sample_data.vcf"
+                          }
+                        }
+                      ],
+                      "description": "Variant call format file for sample analysis"
+                    }
+                  ]
+                }
+              },
+              "multiple_objects_created": {
+                "summary": "Multiple objects registered",
+                "description": "Response after registering multiple DRS objects",
+                "value": {
+                  "objects": [
+                    {
+                      "id": "drs_obj_a1b2c3d4e5f6",
+                      "self_uri": "drs://drs.example.org/drs_obj_a1b2c3d4e5f6",
+                      "name": "genome_assembly.fasta",
+                      "size": 3221225472,
+                      "mime_type": "text/plain",
+                      "created_time": "2024-01-15T09:00:00Z",
+                      "updated_time": "2024-01-15T09:00:00Z",
+                      "version": "1.0",
+                      "checksums": [
+                        {
+                          "checksum": "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3",
+                          "type": "sha-256"
+                        }
+                      ],
+                      "access_methods": [
+                        {
+                          "type": "s3",
+                          "access_url": {
+                            "url": "s3://genomics-bucket/assemblies/hg38.fasta"
+                          }
+                        }
+                      ],
+                      "description": "Human genome reference assembly"
+                    },
+                    {
+                      "id": "drs_obj_f6e5d4c3b2a1",
+                      "self_uri": "drs://drs.example.org/drs_obj_f6e5d4c3b2a1",
+                      "name": "annotations.gff3",
+                      "size": 524288000,
+                      "mime_type": "text/plain",
+                      "created_time": "2024-01-15T09:15:00Z",
+                      "updated_time": "2024-01-15T09:15:00Z",
+                      "version": "1.0",
+                      "checksums": [
+                        {
+                          "checksum": "b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9",
+                          "type": "sha-256"
+                        }
+                      ],
+                      "access_methods": [
+                        {
+                          "type": "https",
+                          "access_url": {
+                            "url": "https://data.example.org/files/annotations.gff3"
+                          }
+                        }
+                      ],
+                      "description": "Gene annotations in GFF3 format"
                     }
                   ]
                 }
@@ -3059,118 +2951,6 @@
           }
         }
       },
-      "RegisterObjectsBody": {
-        "description": "Request body for registering DRS objects after upload",
-        "required": true,
-        "content": {
-          "application/json": {
-            "schema": {
-              "type": "object",
-              "required": [
-                "candidates"
-              ],
-              "properties": {
-                "candidates": {
-                  "type": "array",
-                  "items": {
-                    "$ref": "#/components/schemas/DrsObjectCandidate"
-                  },
-                  "minItems": 1,
-                  "description": "Array of DRS object candidates to register (server will mint IDs and timestamps)"
-                },
-                "passports": {
-                  "type": "array",
-                  "items": {
-                    "type": "string"
-                  },
-                  "description": "Optional array of GA4GH Passport JWTs for authorization"
-                }
-              }
-            },
-            "examples": {
-              "single_object_registration": {
-                "summary": "Register a single object",
-                "description": "Register one DRS object after upload",
-                "value": {
-                  "candidates": [
-                    {
-                      "name": "sample_data.vcf",
-                      "size": 1048576,
-                      "mime_type": "text/plain",
-                      "checksums": [
-                        {
-                          "checksum": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
-                          "type": "sha-256"
-                        }
-                      ],
-                      "description": "Variant call format file for sample analysis",
-                      "access_methods": [
-                        {
-                          "type": "s3",
-                          "access_url": {
-                            "url": "s3://my-bucket/uploads/sample_data.vcf"
-                          }
-                        }
-                      ]
-                    }
-                  ],
-                  "passports": [
-                    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
-                  ]
-                }
-              },
-              "bulk_object_registration": {
-                "summary": "Register multiple objects",
-                "description": "Register multiple DRS objects in a single request",
-                "value": {
-                  "candidates": [
-                    {
-                      "name": "genome_assembly.fasta",
-                      "size": 3221225472,
-                      "mime_type": "text/plain",
-                      "checksums": [
-                        {
-                          "checksum": "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3",
-                          "type": "sha-256"
-                        }
-                      ],
-                      "description": "Human genome reference assembly",
-                      "access_methods": [
-                        {
-                          "type": "s3",
-                          "access_url": {
-                            "url": "s3://genomics-bucket/assemblies/hg38.fasta"
-                          }
-                        }
-                      ]
-                    },
-                    {
-                      "name": "annotations.gff3",
-                      "size": 524288000,
-                      "mime_type": "text/plain",
-                      "checksums": [
-                        {
-                          "checksum": "b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9",
-                          "type": "sha-256"
-                        }
-                      ],
-                      "description": "Gene annotations in GFF3 format",
-                      "access_methods": [
-                        {
-                          "type": "https",
-                          "access_url": {
-                            "url": "https://data.example.org/files/annotations.gff3"
-                          }
-                        }
-                      ]
-                    }
-                  ]
-                }
-              }
-            }
-          }
-        }
-      },
       "Passports": {
         "required": true,
         "content": {
@@ -3315,6 +3095,118 @@
                         }
                       ],
                       "description": "Public research dataset"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      },
+      "RegisterObjectsBody": {
+        "description": "Request body for registering DRS objects after upload",
+        "required": true,
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "required": [
+                "candidates"
+              ],
+              "properties": {
+                "candidates": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/DrsObjectCandidate"
+                  },
+                  "minItems": 1,
+                  "description": "Array of DRS object candidates to register (server will mint IDs and timestamps)"
+                },
+                "passports": {
+                  "type": "array",
+                  "items": {
+                    "type": "string"
+                  },
+                  "description": "Optional array of GA4GH Passport JWTs for authorization"
+                }
+              }
+            },
+            "examples": {
+              "single_object_registration": {
+                "summary": "Register a single object",
+                "description": "Register one DRS object after upload",
+                "value": {
+                  "candidates": [
+                    {
+                      "name": "sample_data.vcf",
+                      "size": 1048576,
+                      "mime_type": "text/plain",
+                      "checksums": [
+                        {
+                          "checksum": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+                          "type": "sha-256"
+                        }
+                      ],
+                      "description": "Variant call format file for sample analysis",
+                      "access_methods": [
+                        {
+                          "type": "s3",
+                          "access_url": {
+                            "url": "s3://my-bucket/uploads/sample_data.vcf"
+                          }
+                        }
+                      ]
+                    }
+                  ],
+                  "passports": [
+                    "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9..."
+                  ]
+                }
+              },
+              "bulk_object_registration": {
+                "summary": "Register multiple objects",
+                "description": "Register multiple DRS objects in a single request",
+                "value": {
+                  "candidates": [
+                    {
+                      "name": "genome_assembly.fasta",
+                      "size": 3221225472,
+                      "mime_type": "text/plain",
+                      "checksums": [
+                        {
+                          "checksum": "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3",
+                          "type": "sha-256"
+                        }
+                      ],
+                      "description": "Human genome reference assembly",
+                      "access_methods": [
+                        {
+                          "type": "s3",
+                          "access_url": {
+                            "url": "s3://genomics-bucket/assemblies/hg38.fasta"
+                          }
+                        }
+                      ]
+                    },
+                    {
+                      "name": "annotations.gff3",
+                      "size": 524288000,
+                      "mime_type": "text/plain",
+                      "checksums": [
+                        {
+                          "checksum": "b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9",
+                          "type": "sha-256"
+                        }
+                      ],
+                      "description": "Gene annotations in GFF3 format",
+                      "access_methods": [
+                        {
+                          "type": "https",
+                          "access_url": {
+                            "url": "https://data.example.org/files/annotations.gff3"
+                          }
+                        }
+                      ]
                     }
                   ]
                 }
