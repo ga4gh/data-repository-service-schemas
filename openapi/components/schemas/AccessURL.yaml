@@ -12,5 +12,4 @@ properties:
     description: >-
       An optional list of headers to include in the HTTP request to `url`.
       These headers can be used to provide auth tokens required to fetch the object bytes.
-    example:
-    - 'Authorization: Basic Z2E0Z2g6ZHJz'
+    example: 'Authorization: Basic Z2E0Z2g6ZHJz'

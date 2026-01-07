@@ -2973,12 +2973,6 @@ paths:
       tags:
         - Objects
       x-swagger-router-controller: ga4gh.drs.server
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/BulkObjectIdNoPassport'
     post:
       summary: Get info about multiple DrsObjects with an optional Passport(s).
       description: >-
@@ -4294,15 +4288,6 @@ components:
             type: array
             items:
               type: string
-    BulkObjectIdNoPassport:
-      type: object
-      description: The object that contains the DRS object IDs array
-      properties:
-        bulk_object_ids:
-          type: array
-          items:
-            type: string
-          description: An array of ObjectIDs.
     DrsObjectCandidate:
       type: object
       required:

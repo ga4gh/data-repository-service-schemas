@@ -4,6 +4,7 @@ required:
   - size
   - mime_type
   - checksums
+  - upload_methods
 properties:
   name:
     type: string
@@ -34,3 +35,12 @@ properties:
     items:
       $ref: './UploadMethod.yaml'
     description: Available methods for uploading this file
+    minItems: 1
+  access_id:
+    type: string
+    description: >-
+      A unique identifier for this upload that will be referenced in the access_methods
+      during object registration. This ties the upload response to the subsequent
+      registration request, allowing the server to track which uploads correspond
+      to which registered objects.
+    example: "upload_abc123xyz"

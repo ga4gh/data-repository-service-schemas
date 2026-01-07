@@ -6,15 +6,15 @@ The DRS upload and object registration endpoints allows clients to negotiate wit
 
 1. **Request Upload URLs**: POST `/upload-request` with file metadata to receive upload methods and credentials
 2. **Upload Files**: Use returned URLs and credentials to upload files to storage using existing upload mechanisms. DRS is not involved in this step at all, DRS simply enables clients and servers to agree on a mutually convenient storage service.
-3. **Register Objects**: POST `/register-objects` to register "candidate" DRS objects with the server
+3. **Register Objects**: POST `/objects/register` to register "candidate" DRS objects with the server
 
 This approach separates storage service and credential negotiation from file transfer and object registration, supporting a vendor-neutral means of sharing data in a DRS network.
 
-The `/register-objects` endpoint can be used independently to register existing data without using the `/upload-request` endpoint, and servers can choose to only support object registration and not file uploads by setting the `uploadRequestSupported` and `objectRegistrationSupported` flags appropriately in `/service-info`.
+The `/objects/register` endpoint can be used independently to register existing data without using the `/upload-request` endpoint, and servers can choose to only support object registration and not file uploads by setting the `uploadRequestSupported` and `objectRegistrationSupported` flags appropriately in `/service-info`.
 
-Upload requests and object registration endpoints only support bulk requests to simplify implementation and reflect real-world usage patterns. Bioinformatics workflows often involve uploading multiple related files together (e.g., BAM and VCF files with their indices, or analysis result sets), making bulk operations a natural fit. Single files/objects are handled as lists with one element. Implementations of the `/register-objects` endpoint SHOULD implement transaction semantics so that either all of the objects are successfully registered or none of them are, and clients should be robust to this behaviour. Transaction semantics for the `/upload-request` are encouraged but not required due to the variety and complexity of data transfer technologies.
+Upload requests and object registration endpoints only support bulk requests to simplify implementation and reflect real-world usage patterns. Bioinformatics workflows often involve uploading multiple related files together (e.g., BAM and VCF files with their indices, or analysis result sets), making bulk operations a natural fit. Single files/objects are handled as lists with one element. Implementations of the `/objects/register` endpoint SHOULD implement transaction semantics so that either all of the objects are successfully registered or none of them are, and clients should be robust to this behaviour. Transaction semantics for the `/upload-request` are encouraged but not required due to the variety and complexity of data transfer technologies.
 
-The `/upload-request` endpoint does not require any state to be maintained on the DRS server (intermediate DRS object IDs etc.) it is simply a means for a server to provide details of where a client can upload data, and it should ensure that it trusts the client before providing such details. This means that if uploads fail and there is no later call to `/register-objects` there is no DRS state to manage, simplifying server implementation.
+The `/upload-request` endpoint does not require any state to be maintained on the DRS server (intermediate DRS object IDs etc.) it is simply a means for a server to provide details of where a client can upload data, and it should ensure that it trusts the client before providing such details. This means that if uploads fail and there is no later call to `/objects/register` there is no DRS state to manage, simplifying server implementation.
 
 Servers SHOULD ensure that any data from unsuccessful uploads (e.g. incomplete multi-part uploads) are cleaned up, for example by using lifecycle configuration in the backend storage. There is _no_ means of requiring that a client ultimately registers a DRS object pointing at data uploaded, and so servers should consider implementing some form of storage "garbage" collection (or simply set a short lifecycle policy on the upload location and move uploaded data that is later registered as DRS objects to other locations, updating the `access_method`s accordingly). Servers should also implement some means of constraining upload size (quotas etc.) to protect against accidental or malicious unconstrained uploads.
 
@@ -43,7 +43,7 @@ Check `/service-info` for upload capabilities:
 Upload related fields:
 
 - `uploadRequestSupported`: Upload request operations available via `/upload-request`
-- `objectRegistrationSupported`: Object registration operations available via `/register-objects`
+- `objectRegistrationSupported`: Object registration operations available via `/objects/register`
 - `supportedUploadMethods`: Available storage backends  
 - `maxUploadSize`: File size limit (bytes)
 - `maxUploadRequestLength`: Files per request limit for upload requests
@@ -76,7 +76,7 @@ Check `relatedFileStorageSupported` in service-info or examine upload URLs for c
 
 ## Object Registration
 
-After upload, clients can register files in bulk as DRS objects using POST `/register-objects`. Registration is all-or-nothing. If any candidate object fails to be registered in the server, the entire request fails and no objects are registered.
+After upload, clients can register files in bulk as DRS objects using POST `/objects/register`. Registration is all-or-nothing. If any candidate object fails to be registered in the server, the entire request fails and no objects are registered.
 
 **Candidate DRS object equirements**:
 
@@ -85,9 +85,9 @@ After upload, clients can register files in bulk as DRS objects using POST `/reg
 - Valid authorization (if required)
 - Do not include server-generated fields (id, self_uri, timestamps)
 
-Upon receipt of candidate objects for registration the server will create unique object IDs and returns complete DRS objects. Note that the server is not obliged to retain the clients supplied `access_method`s and is free to move data to different locations/backends once the object is registered. This means that a server can choose to receive uploads in a dedicated "dropzone", with hard quotas and additional security, and then move them to more permanent storage once the DRS object is registered. Clients SHOULD NOT cache the response from `/register-objects` as the `access_method`s might change after registration.
+Upon receipt of candidate objects for registration the server will create unique object IDs and returns complete DRS objects. Note that the server is not obliged to retain the clients supplied `access_method`s and is free to move data to different locations/backends once the object is registered. This means that a server can choose to receive uploads in a dedicated "dropzone", with hard quotas and additional security, and then move them to more permanent storage once the DRS object is registered. Clients SHOULD NOT cache the response from `/objects/register` as the `access_method`s might change after registration.
 
-The `/register-objects` endpoint can also be used independently to register existing data that is already stored in accessible locations, without using the `/upload-request` workflow. This is useful for registering pre-existing datasets or files uploaded through other means. Servers may choose only to support registration and not uploads, and should advertise this in `/service-info`
+The `/objects/register` endpoint can also be used independently to register existing data that is already stored in accessible locations, without using the `/upload-request` workflow. This is useful for registering pre-existing datasets or files uploaded through other means. Servers may choose only to support registration and not uploads, and should advertise this in `/service-info`
 
 ## Authentication & Validation
 
@@ -194,7 +194,7 @@ curl -X PUT "https://uploads.example.org/presigned-upload?signature=FAKE_SIG" \
 Register DRS Object:
 
 ```http
-POST /register-objects
+POST /objects/register
 Content-Type: application/json
 
 {
@@ -367,7 +367,7 @@ aws s3 cp sample.bam.bai s3://genomics-uploads/x7k9m/sample.bam.bai
 Register Both DRS Objects:
 
 ```http
-POST /register-objects
+POST /objects/register
 Content-Type: application/json
 
 {

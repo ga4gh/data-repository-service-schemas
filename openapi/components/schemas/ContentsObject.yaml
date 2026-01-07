@@ -22,8 +22,7 @@ properties:
       A list of full DRS identifier URI paths
       that may be used to obtain the object.
       These URIs may be external to this DRS instance.
-    example:
-    - drs://drs.example.org/314159
+    example: drs://drs.example.org/314159
     items:
       type: string
   contents:
