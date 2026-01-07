@@ -3934,7 +3934,8 @@ components:
             An optional list of headers to include in the HTTP request to `url`.
             These headers can be used to provide auth tokens required to fetch
             the object bytes.
-          example: 'Authorization: Basic Z2E0Z2g6ZHJz'
+          example:
+            - 'Authorization: Basic Z2E0Z2g6ZHJz'
     Authorizations:
       type: object
       properties:
@@ -4063,7 +4064,8 @@ components:
           description: >-
             A list of full DRS identifier URI paths that may be used to obtain
             the object. These URIs may be external to this DRS instance.
-          example: drs://drs.example.org/314159
+          example:
+            - drs://drs.example.org/314159
           items:
             type: string
         contents:
