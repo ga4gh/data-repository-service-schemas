@@ -492,6 +492,7 @@ tags:
       | **HTTP POST** | tokens[] |
   - name: Objects
   - name: Upload Request
+  - name: Register Objects
   - name: Access Method Updates
     description: >-
       # Access Method Updates
@@ -2559,6 +2560,7 @@ x-tagGroups:
     tags:
       - Objects
       - Upload Request
+      - Register Objects
       - Service Info
   - name: Models
     tags:
@@ -3526,7 +3528,7 @@ paths:
         '500':
           $ref: '#/components/responses/500InternalServerError'
       tags:
-        - Objects
+        - Register Objects
       x-swagger-router-controller: ga4gh.drs.server
       x-codegen-request-body-name: body
 components:
