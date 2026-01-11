@@ -760,6 +760,17 @@
         "summary": "Add additional checksums for a DRS object",
         "description": "**Optional Endpoint**: Not all DRS servers support checksum addition.\nAdd additional checksums for a DRS object. This endpoint does not support altering  existing checksums, only adding additional checksum types that aren't already  present in the DRS object. If a client attempts to update an existing checksum type  the server MAY ignore the update or MAY return an error.\n**Authentication**: GA4GH Passports can be provided in the request body.",
         "operationId": "addChecksums",
+        "parameters": [
+          {
+            "name": "object_id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "description": "DRS object identifier"
+          }
+        ],
         "requestBody": {
           "$ref": "#/components/requestBodies/ChecksumAdditionBody"
         },
@@ -1974,6 +1985,29 @@
             },
             "minItems": 1,
             "description": "Array of access method updates to perform"
+          },
+          "passports": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "Optional GA4GH Passport JWTs for authorization"
+          }
+        }
+      },
+      "ChecksumAdditionRequest": {
+        "type": "object",
+        "required": [
+          "checksums"
+        ],
+        "properties": {
+          "access_methods": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Checksum"
+            },
+            "minItems": 1,
+            "description": "New checksums for the DRS object"
           },
           "passports": {
             "type": "array",
@@ -3218,7 +3252,7 @@
         "content": {
           "application/json": {
             "schema": {
-              "$ref": "../schemas/CheckSumAdditionRequest.yaml"
+              "$ref": "#/components/schemas/ChecksumAdditionRequest"
             }
           }
         }

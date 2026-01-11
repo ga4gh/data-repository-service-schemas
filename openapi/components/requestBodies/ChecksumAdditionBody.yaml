@@ -3,4 +3,4 @@ required: true
 content:
   application/json:
     schema:
-      $ref: '../schemas/CheckSumAdditionRequest.yaml'
+      $ref: '../schemas/ChecksumAdditionRequest.yaml'
