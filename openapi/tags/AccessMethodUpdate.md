@@ -30,14 +30,14 @@ Check `/service-info` for access method update capabilities:
   "drs": {
     "accessMethodUpdateSupported": true,
     "maxBulkAccessMethodUpdateLength": 100,
-    "validateAccessMethodUpdates": false
+    "validateAccessMethods": false
   }
 }
 ```
 
-- **`accessMethodUpdateSupported`**: Whether server supports access method updates
+- **`accessMethodUpdateSupported`**: Whether the server supports access method updates
 - **`maxBulkAccessMethodUpdateLength`**: Maximum objects per bulk update request
-- **`validateAccessMethodUpdates`**: Whether server validates new access methods
+- **`validateAccessMethods`**: Whether the server validates access methods
 
 ## Single Object Update
 
@@ -115,7 +115,7 @@ curl -H "Authorization: Bearer token" -d '{"access_methods": [...]}' ...
 
 ## Validation
 
-Servers MAY validate that new access methods point to the same data by checkingm file availability, checksums or file content. Validation behavior is advertised in `validateAccessMethodUpdates` service-info field.
+Servers MAY validate that new access methods point to the same data by checking file availability, checksums or file content. Validation behavior is advertised in `validateAccessMethods` service-info field.
 
 ## Error Responses
 
@@ -130,9 +130,6 @@ Servers MAY validate that new access methods point to the same data by checkingm
 **Storage Migration:**
 
 ```bash
-# Check server capabilities
-curl "https://drs.example.org/service-info"
-
 # Update single object after migration
 curl -X PUT "https://drs.example.org/objects/obj_123/access-methods" \
   -d '{"access_methods": [{"type": "s3", "access_url": {"url": "s3://new-bucket/file.bam"}}]}'

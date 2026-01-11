@@ -511,12 +511,12 @@ tags:
       receive upload methods and credentials
 
       2. **Upload Files**: Use returned URLs and credentials to upload files to
-      storage using existing upload mechanisms. DRS is not involved in this step
-      at all, DRS simply enables clients and servers to agree on a mutually
-      convenient storage service.
+      storage using storage provider specific upload mechanisms. DRS is not
+      involved in this step at all, DRS simply enables clients and servers to
+      agree on a mutually convenient storage service.
 
-      3. **Register Objects**: POST `/objects/register` to register "candidate"
-      DRS objects with the server
+      3. **Register Objects**: POST `/objects/register` to register DRS objects
+      with the server
 
 
       This approach separates storage service and credential negotiation from
@@ -526,9 +526,9 @@ tags:
 
       The `/objects/register` endpoint can be used independently to register
       existing data without using the `/upload-request` endpoint, and servers
-      can choose to only support object registration and not file uploads by
-      setting the `uploadRequestSupported` and `objectRegistrationSupported`
-      flags appropriately in `/service-info`.
+      can choose to only support object registration and not uploads by setting
+      the `uploadRequestSupported` and `objectRegistrationSupported` flags
+      appropriately in `/service-info`.
 
 
       Upload requests and object registration endpoints only support bulk
@@ -538,31 +538,37 @@ tags:
       sets), making bulk operations a natural fit. Single files/objects are
       handled as lists with one element. Implementations of the
       `/objects/register` endpoint SHOULD implement transaction semantics so
-      that either all of the objects are successfully registered or none of them
-      are, and clients should be robust to this behaviour. Transaction semantics
-      for the `/upload-request` are encouraged but not required due to the
-      variety and complexity of data transfer technologies.
+      that either all of the objects included in the request are successfully
+      registered or none of them are, and clients should be robust to this
+      behaviour. Transaction semantics for the `/upload-request` are encouraged
+      but not required due to the variety and complexity of data transfer
+      technologies.
 
 
-      The `/upload-request` endpoint does not require any state to be maintained
-      on the DRS server (intermediate DRS object IDs etc.) it is simply a means
-      for a server to provide details of where a client can upload data, and it
-      should ensure that it trusts the client before providing such details.
-      This means that if uploads fail and there is no later call to
-      `/objects/register` there is no DRS state to manage, simplifying server
-      implementation.
+      The `/upload-request` endpoint does not result in any state that needs to
+      be maintained on the DRS server (intermediate DRS object IDs etc.) it is
+      simply a means for a server to provide details of where a client can
+      upload data, and the server should ensure that it trusts the client before
+      providing such details (e.g. with appropriate authentication and
+      authorisation before processing the request). This means that if uploads
+      fail and there is no later call to `/objects/register` there is no DRS
+      state to manage, simplifying server implementation.
 
 
-      Servers SHOULD ensure that any data from unsuccessful uploads (e.g.
-      incomplete multi-part uploads) are cleaned up, for example by using
+      However, servers SHOULD ensure that any data from unsuccessful uploads
+      (e.g. incomplete multi-part uploads) are cleaned up, for example by using
       lifecycle configuration in the backend storage. There is _no_ means of
       requiring that a client ultimately registers a DRS object pointing at data
       uploaded, and so servers should consider implementing some form of storage
-      "garbage" collection (or simply set a short lifecycle policy on the upload
-      location and move uploaded data that is later registered as DRS objects to
-      other locations, updating object `access_methods` accordingly). Servers
-      should also implement some means of constraining upload size (quotas etc.)
-      to protect against accidental or malicious unconstrained uploads.
+      "garbage collection", a straightforward approach is to set a short
+      lifecycle policy on the upload location and move uploaded data that is
+      later registered as DRS objects to other locations, updating object
+      `access_methods` accordingly. Servers should also implement some means of
+      constraining upload size (quotas etc.) to protect against accidental or
+      malicious unconstrained uploads. Servers can choose to validate that the
+      uploads match the claimed object size when `/objects/register` is called,
+      and should sdvertise this behaviour with the `validateFileSizes` flag in
+      `/service-info`.
 
 
       The `/upload-request` endpoint can return one or more `upload_methods` of
@@ -573,11 +579,11 @@ tags:
       `upload_method` of type `https` which incorporates authentication into the
       URL, but because DRS is often used for large files such as BAMs and CRAMs
       this specification also supports more sophisticated upload approaches
-      implemented by storage backends such as multi-part uploads, automatic
-      retries etc. The `upload_details` field can also be used to include bucket
-      names, keys and temporary credentials that can be used in native clients
-      and SDKs. This offers a natural way to adapt this protocol to new storage
-      technologies. Refer to the examples below for some suggested
+      implemented by cloud storage backends such as multi-part uploads,
+      automatic retries etc. The `upload_details` field can be used to include
+      bucket names, keys and temporary credentials that can be used in native
+      clients and SDKs. This offers a natural way to adapt this protocol to new
+      storage technologies. Refer to the examples below for some suggested
       implementations.
 
 
@@ -593,7 +599,7 @@ tags:
         "drs": {
           "uploadRequestSupported": true,
           "objectRegistrationSupported": true,
-          "supportedUploadMethods": ["s3", "https", "gs"],
+          "supportedUploadMethods": ["s3", "https"],
           "maxUploadSize": 5368709120,
           "maxUploadRequestLength": 50,
           "maxRegisterRequestLength": 50,
@@ -626,17 +632,18 @@ tags:
 
       - `validateChecksums`/`validateFileSizes`: Server validation behavior
 
-      - `relatedFileStorageSupported`: Files from same upload request stored
-      under common prefixes
+      - `relatedFileStorageSupported`: Files from same upload request will be
+      stored under common prefixes
 
 
       ## Upload Methods
 
 
       Upon receipt of a request for an upload method for a specific file, the
-      server will respond with one or more `upload_method` with associated
-      `type` and corresponding `upload_details` with upload locations, temporary
-      credentials etc. These details are specific to backend implementations.
+      server will respond with an array of `upload_methods`, each with
+      associated `type` and corresponding `upload_details` with upload
+      locations, temporary credentials etc. These details are specific to
+      backend implementations.
 
 
       Example storage backends:
@@ -644,7 +651,8 @@ tags:
 
       - **https**: Presigned POST URLs for HTTP uploads
 
-      - **s3**: Direct S3 upload with temporary AWS credentials
+      - **s3**: Direct S3 upload with temporary AWS credentials for an IAM
+      session policy.
 
       - **gs**: Google Cloud Storage with OAuth2 tokens
 
@@ -654,7 +662,8 @@ tags:
 
       Servers may return a subset of advertised methods based on file
       characteristics, for example they may choose to store large objects such
-      as WGS BAM files in different backends to small csv files.
+      as WGS BAM files in different backends to small csv files. Clients can
+      request specific upload methods in the initial request.
 
 
       ## Related File Storage (Optional)
@@ -705,9 +714,9 @@ tags:
       to move data to different locations/backends once the object is
       registered. This means that a server can choose to receive uploads in an
       untrusted "dropzone", with hard quotas and additional security, and then
-      move them to more permanent storage once the DRS object is registered.
-      Clients SHOULD NOT cache the response from `/objects/register` as the
-      `access_methods` might change after registration.
+      move them to more permanent storage once the DRS object is registered and
+      any validation is successful. Clients SHOULD NOT cache the response from
+      `/objects/register` as the `access_methods` may change after registration.
 
 
       The `/objects/register` endpoint can also be used independently to
@@ -754,15 +763,16 @@ tags:
       ## Best Practices
 
 
-      **Clients**: Check service-info first, calculate checksums, be robust to
-      failed object registration
+      **Clients**: Check service-info first, calculate checksums, select
+      supported upload methods, be robust to failed object registration
 
       **Servers**: Use short-lived tightly scoped credentials, support multiple
       upload methods, implement rate limiting, ensure unique storage backend
       names to avoid inadvertent overwrites (e.g. using UUIDs), ensure that
       quotas are enforced and incomplete or unregistered uploads are deleted
 
-      **Security**: Time-limited credentials, single-use URLs, logging for audit
+      **Security**: Time and scope-limited credentials, single-use URLs, logging
+      for audit
 
 
       ## Security Considerations
@@ -812,7 +822,8 @@ tags:
                 "checksum": "5d41402abc4b2a76b9719d911017c592",
                 "type": "md5"
               }
-            ]
+            ],
+            "upload_methods": ["https"]
           }
         ]
       }
@@ -972,7 +983,8 @@ tags:
                 "checksum": "d41d8cd98f00b204e9800998ecf8427e",
                 "type": "md5"
               }
-            ]
+            ],
+            "upload_methods": ["s3"]
           },
           {
             "name": "sample.bam.bai",
@@ -983,7 +995,8 @@ tags:
                 "checksum": "098f6bcd4621d373cade4e832627b4f6",
                 "type": "md5"
               }
-            ]
+            ],
+            "upload_methods": ["s3"]
           }
         ]
       }
@@ -1065,6 +1078,8 @@ tags:
 
       # Upload BAM and index files using the supplied credentials (note common
       prefix)
+
+      export AWS_ACCESS_KEY_ID=...
 
       aws s3 cp sample.bam s3://genomics-uploads/x7k9m/sample.bam
 
@@ -1691,12 +1706,12 @@ tags:
       receive upload methods and credentials
 
       2. **Upload Files**: Use returned URLs and credentials to upload files to
-      storage using existing upload mechanisms. DRS is not involved in this step
-      at all, DRS simply enables clients and servers to agree on a mutually
-      convenient storage service.
+      storage using storage provider specific upload mechanisms. DRS is not
+      involved in this step at all, DRS simply enables clients and servers to
+      agree on a mutually convenient storage service.
 
-      3. **Register Objects**: POST `/objects/register` to register "candidate"
-      DRS objects with the server
+      3. **Register Objects**: POST `/objects/register` to register DRS objects
+      with the server
 
 
       This approach separates storage service and credential negotiation from
@@ -1706,9 +1721,9 @@ tags:
 
       The `/objects/register` endpoint can be used independently to register
       existing data without using the `/upload-request` endpoint, and servers
-      can choose to only support object registration and not file uploads by
-      setting the `uploadRequestSupported` and `objectRegistrationSupported`
-      flags appropriately in `/service-info`.
+      can choose to only support object registration and not uploads by setting
+      the `uploadRequestSupported` and `objectRegistrationSupported` flags
+      appropriately in `/service-info`.
 
 
       Upload requests and object registration endpoints only support bulk
@@ -1718,31 +1733,37 @@ tags:
       sets), making bulk operations a natural fit. Single files/objects are
       handled as lists with one element. Implementations of the
       `/objects/register` endpoint SHOULD implement transaction semantics so
-      that either all of the objects are successfully registered or none of them
-      are, and clients should be robust to this behaviour. Transaction semantics
-      for the `/upload-request` are encouraged but not required due to the
-      variety and complexity of data transfer technologies.
+      that either all of the objects included in the request are successfully
+      registered or none of them are, and clients should be robust to this
+      behaviour. Transaction semantics for the `/upload-request` are encouraged
+      but not required due to the variety and complexity of data transfer
+      technologies.
 
 
-      The `/upload-request` endpoint does not require any state to be maintained
-      on the DRS server (intermediate DRS object IDs etc.) it is simply a means
-      for a server to provide details of where a client can upload data, and it
-      should ensure that it trusts the client before providing such details.
-      This means that if uploads fail and there is no later call to
-      `/objects/register` there is no DRS state to manage, simplifying server
-      implementation.
+      The `/upload-request` endpoint does not result in any state that needs to
+      be maintained on the DRS server (intermediate DRS object IDs etc.) it is
+      simply a means for a server to provide details of where a client can
+      upload data, and the server should ensure that it trusts the client before
+      providing such details (e.g. with appropriate authentication and
+      authorisation before processing the request). This means that if uploads
+      fail and there is no later call to `/objects/register` there is no DRS
+      state to manage, simplifying server implementation.
 
 
-      Servers SHOULD ensure that any data from unsuccessful uploads (e.g.
-      incomplete multi-part uploads) are cleaned up, for example by using
+      However, servers SHOULD ensure that any data from unsuccessful uploads
+      (e.g. incomplete multi-part uploads) are cleaned up, for example by using
       lifecycle configuration in the backend storage. There is _no_ means of
       requiring that a client ultimately registers a DRS object pointing at data
       uploaded, and so servers should consider implementing some form of storage
-      "garbage" collection (or simply set a short lifecycle policy on the upload
-      location and move uploaded data that is later registered as DRS objects to
-      other locations, updating object `access_methods` accordingly). Servers
-      should also implement some means of constraining upload size (quotas etc.)
-      to protect against accidental or malicious unconstrained uploads.
+      "garbage collection", a straightforward approach is to set a short
+      lifecycle policy on the upload location and move uploaded data that is
+      later registered as DRS objects to other locations, updating object
+      `access_methods` accordingly. Servers should also implement some means of
+      constraining upload size (quotas etc.) to protect against accidental or
+      malicious unconstrained uploads. Servers can choose to validate that the
+      uploads match the claimed object size when `/objects/register` is called,
+      and should sdvertise this behaviour with the `validateFileSizes` flag in
+      `/service-info`.
 
 
       The `/upload-request` endpoint can return one or more `upload_methods` of
@@ -1753,11 +1774,11 @@ tags:
       `upload_method` of type `https` which incorporates authentication into the
       URL, but because DRS is often used for large files such as BAMs and CRAMs
       this specification also supports more sophisticated upload approaches
-      implemented by storage backends such as multi-part uploads, automatic
-      retries etc. The `upload_details` field can also be used to include bucket
-      names, keys and temporary credentials that can be used in native clients
-      and SDKs. This offers a natural way to adapt this protocol to new storage
-      technologies. Refer to the examples below for some suggested
+      implemented by cloud storage backends such as multi-part uploads,
+      automatic retries etc. The `upload_details` field can be used to include
+      bucket names, keys and temporary credentials that can be used in native
+      clients and SDKs. This offers a natural way to adapt this protocol to new
+      storage technologies. Refer to the examples below for some suggested
       implementations.
 
 
@@ -1773,7 +1794,7 @@ tags:
         "drs": {
           "uploadRequestSupported": true,
           "objectRegistrationSupported": true,
-          "supportedUploadMethods": ["s3", "https", "gs"],
+          "supportedUploadMethods": ["s3", "https"],
           "maxUploadSize": 5368709120,
           "maxUploadRequestLength": 50,
           "maxRegisterRequestLength": 50,
@@ -1806,17 +1827,18 @@ tags:
 
       - `validateChecksums`/`validateFileSizes`: Server validation behavior
 
-      - `relatedFileStorageSupported`: Files from same upload request stored
-      under common prefixes
+      - `relatedFileStorageSupported`: Files from same upload request will be
+      stored under common prefixes
 
 
       ## Upload Methods
 
 
       Upon receipt of a request for an upload method for a specific file, the
-      server will respond with one or more `upload_method` with associated
-      `type` and corresponding `upload_details` with upload locations, temporary
-      credentials etc. These details are specific to backend implementations.
+      server will respond with an array of `upload_methods`, each with
+      associated `type` and corresponding `upload_details` with upload
+      locations, temporary credentials etc. These details are specific to
+      backend implementations.
 
 
       Example storage backends:
@@ -1824,7 +1846,8 @@ tags:
 
       - **https**: Presigned POST URLs for HTTP uploads
 
-      - **s3**: Direct S3 upload with temporary AWS credentials
+      - **s3**: Direct S3 upload with temporary AWS credentials for an IAM
+      session policy.
 
       - **gs**: Google Cloud Storage with OAuth2 tokens
 
@@ -1834,7 +1857,8 @@ tags:
 
       Servers may return a subset of advertised methods based on file
       characteristics, for example they may choose to store large objects such
-      as WGS BAM files in different backends to small csv files.
+      as WGS BAM files in different backends to small csv files. Clients can
+      request specific upload methods in the initial request.
 
 
       ## Related File Storage (Optional)
@@ -1885,9 +1909,9 @@ tags:
       to move data to different locations/backends once the object is
       registered. This means that a server can choose to receive uploads in an
       untrusted "dropzone", with hard quotas and additional security, and then
-      move them to more permanent storage once the DRS object is registered.
-      Clients SHOULD NOT cache the response from `/objects/register` as the
-      `access_methods` might change after registration.
+      move them to more permanent storage once the DRS object is registered and
+      any validation is successful. Clients SHOULD NOT cache the response from
+      `/objects/register` as the `access_methods` may change after registration.
 
 
       The `/objects/register` endpoint can also be used independently to
@@ -1934,15 +1958,16 @@ tags:
       ## Best Practices
 
 
-      **Clients**: Check service-info first, calculate checksums, be robust to
-      failed object registration
+      **Clients**: Check service-info first, calculate checksums, select
+      supported upload methods, be robust to failed object registration
 
       **Servers**: Use short-lived tightly scoped credentials, support multiple
       upload methods, implement rate limiting, ensure unique storage backend
       names to avoid inadvertent overwrites (e.g. using UUIDs), ensure that
       quotas are enforced and incomplete or unregistered uploads are deleted
 
-      **Security**: Time-limited credentials, single-use URLs, logging for audit
+      **Security**: Time and scope-limited credentials, single-use URLs, logging
+      for audit
 
 
       ## Security Considerations
@@ -1992,7 +2017,8 @@ tags:
                 "checksum": "5d41402abc4b2a76b9719d911017c592",
                 "type": "md5"
               }
-            ]
+            ],
+            "upload_methods": ["https"]
           }
         ]
       }
@@ -2152,7 +2178,8 @@ tags:
                 "checksum": "d41d8cd98f00b204e9800998ecf8427e",
                 "type": "md5"
               }
-            ]
+            ],
+            "upload_methods": ["s3"]
           },
           {
             "name": "sample.bam.bai",
@@ -2163,7 +2190,8 @@ tags:
                 "checksum": "098f6bcd4621d373cade4e832627b4f6",
                 "type": "md5"
               }
-            ]
+            ],
+            "upload_methods": ["s3"]
           }
         ]
       }
@@ -2245,6 +2273,8 @@ tags:
 
       # Upload BAM and index files using the supplied credentials (note common
       prefix)
+
+      export AWS_ACCESS_KEY_ID=...
 
       aws s3 cp sample.bam s3://genomics-uploads/x7k9m/sample.bam
 
@@ -2412,14 +2442,15 @@ tags:
       advertise whether they support it at all with the
       `deleteStorageDataSupported` flag. Servers that choose to attempt to
       honour the request need not perform this operation synchronously and may,
-      for example, register the file for later deletion. Implementations may
-      also choose to ensure that no other DRS object registered in the server
-      refers to the underlying data before deleting. Servers may not have the
-      necessary permissions to delete the data from the backend even if they
-      would like to do so, or may encounter errors when they attempt deletion.
-      In the case that a DRS object refers to data stored in multiple backends
-      (e.g. has multiple `access_method`s) the server may attempt to delete the
-      data from all or only some of the backends.
+      for example, register the file for later deletion or implement soft
+      deletion with versioning etc. Implementations may also choose to ensure
+      that no other DRS object registered in the server refers to the underlying
+      data before deleting. Servers may not have the necessary permissions to
+      delete the data from the backend even if they would like to do so, or may
+      encounter errors when they attempt deletion. In the case that a DRS object
+      refers to data stored in multiple backends (e.g. has multiple
+      `access_methoda`) the server may attempt to delete the data from all or
+      only some of the backends.
 
 
       For these reasons clients MUST NOT depend on the server deleting the
@@ -2576,7 +2607,10 @@ tags:
       Rather than introducing additional operations and endpoints for updating
       DRS objects, servers can allow clients to use the metadata-only deletion
       and object registration endpoints to create a new DRS object with updated
-      metadata while leaving the underlying data in place.
+      metadata while leaving the underlying data in place. Note that DRS only
+      supports updating the `access_methods` and adding additional checksums to
+      existing objects while maintaining the same DRS object ID. Any other
+      changes to an object will require deletion and re-registration.
 
 
       **Metadata update steps:**
@@ -2672,7 +2706,7 @@ tags:
 
       **Servers:** Advertise capabilities, validate permissions, implement
       atomic transactions, implement limits, use versioning to avoid inadvertent
-      deletion.
+      deletion or critical data.
 
 
       ## Security Considerations
@@ -2772,21 +2806,20 @@ tags:
         "drs": {
           "accessMethodUpdateSupported": true,
           "maxBulkAccessMethodUpdateLength": 100,
-          "validateAccessMethodUpdates": false
+          "validateAccessMethods": false
         }
       }
 
       ```
 
 
-      - **`accessMethodUpdateSupported`**: Whether server supports access method
-      updates
+      - **`accessMethodUpdateSupported`**: Whether the server supports access
+      method updates
 
       - **`maxBulkAccessMethodUpdateLength`**: Maximum objects per bulk update
       request
 
-      - **`validateAccessMethodUpdates`**: Whether server validates new access
-      methods
+      - **`validateAccessMethods`**: Whether the server validates access methods
 
 
       ## Single Object Update
@@ -2884,9 +2917,8 @@ tags:
 
 
       Servers MAY validate that new access methods point to the same data by
-      checkingm file availability, checksums or file content. Validation
-      behavior is advertised in `validateAccessMethodUpdates` service-info
-      field.
+      checking file availability, checksums or file content. Validation behavior
+      is advertised in `validateAccessMethods` service-info field.
 
 
       ## Error Responses
@@ -2910,11 +2942,6 @@ tags:
 
 
       ```bash
-
-      # Check server capabilities
-
-      curl "https://drs.example.org/service-info"
-
 
       # Update single object after migration
 
@@ -2974,9 +3001,13 @@ tags:
 
 
       > **Optional Functionality**: Checksum additions are optional extensions
-      to the DRS API. Not all DRS servers are required to implement this
-      functionality. Clients should check `/service-info` for
-      `checksumAdditionSupported` before attempting to use these endpoints.
+      to the DRS API.
+
+      Not all DRS servers are required to implement this functionality. Clients
+      should check
+
+      `/service-info` for `checksumAdditionSupported` before attempting to use
+      these endpoints.
 
 
       Checksum addition endpoints allows authorized clients to add additional
@@ -2985,8 +3016,8 @@ tags:
       DRS objects. This is useful for servers that rely on objects using a
       specific checksum type,
 
-      e.g. SHA256, and where objects are guaranteed to have this checksum at
-      creation time, e.g.
+      e.g. SHA-256, and where objects are not guaranteed to have this checksum
+      at creation time, e.g.
 
       objects may be created with an MD5 checksum only. The server MAY choose to
       validate checksums
@@ -3003,11 +3034,22 @@ tags:
       attempt to update the value of an existing checksum or to remove a
       checksum. If a client
 
-      does attempt to update an existing checksum the server behaviour is
+      attempts to update an existing checksum the server behaviour is
       implementation
 
       dependent but servers MAY simply ignore the request, or MAY return a 4XX
       error to the client.
+
+      Servers MUST NOT change any existing checksums. If an incorrent checksum
+      has been registered
+
+      then clients should delete the existing DRS object (if supported by the
+      server) and register
+
+      a new DRS object with the correct metadata. This ensures that a single DRS
+      object ID _always_
+
+      points to the same object.
 
 
       ## Design Principles
@@ -3036,7 +3078,7 @@ tags:
         "drs": {
           "checksumAdditionSupported": true,
           "maxBulkChecksumAdditionLength": 100,
-          "verifyChecksums": true.
+          "verifyChecksums": true
         }
       }
 
@@ -4319,7 +4361,7 @@ components:
                 Indicates whether this DRS server validates file checksums
                 against the provided metadata. If true, the server will verify
                 that uploaded and registered files match their declared
-                checksums and may reject uploads with mismatches. If false or
+                checksums and may reject objects with mismatches. If false or
                 missing, the server does not perform checksum validation and
                 relies on client-provided metadata. Only present when at least
                 one of uploadRequestSupported or objectRegistrationSupported or
@@ -4335,6 +4377,19 @@ components:
                 perform file size validation and relies on client-provided
                 metadata. Only present when uploadRequestSupported or
                 objectRegistrationSupported is true.
+              default: false
+            validateAccessMethods:
+              type: boolean
+              description: >-
+                Indicates whether this DRS server validates access methods by
+                following the URLs to check that they resolve to the expected
+                objects  (e.g. by checking that the file sizes and checksums
+                match) If true, the server will attempt to verify
+                checksums/content before accepting access methods. If false or
+                missing, the server trusts client-provided access methods
+                without validation. Only present when at least one of
+                objectRegistrationSupported or accessMethodUpdateSupported are
+                true.
               default: false
             relatedFileStorageSupported:
               type: boolean
@@ -4401,16 +4456,6 @@ components:
                 access method update request. Only present when
                 accessMethodUpdateSupported is true. If not specified, defaults
                 to maxBulkRequestLength.
-            validateAccessMethodUpdates:
-              type: boolean
-              description: >-
-                Indicates whether this DRS server validates new access methods
-                by verifying they point to the same data. If true, the server
-                will attempt to verify checksums/content before updating access
-                methods. If false or missing, the server trusts client-provided
-                access methods without validation. Only present when
-                accessMethodUpdateSupported is true.
-              default: false
             checksumAdditionSupported:
               type: boolean
               description: >-

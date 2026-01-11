@@ -8,7 +8,7 @@ Servers should ensure that they trust clients from whom they receive delete requ
 
 In combination with the `/objects/register` endpoint, metadata only delete requests offer a means for clients to update DRS metadata without affecting the underlying data, and without introducing additional update operations which would complicate server implementation.
 
-Clients can express a preference that the underlying data referred to by the deleted DRS object(s) is deleted with the `delete_storage_data` parameter. Servers are free to interpret this as they choose, and can advertise whether they support it at all with the `deleteStorageDataSupported` flag. Servers that choose to attempt to honour the request need not perform this operation synchronously and may, for example, register the file for later deletion. Implementations may also choose to ensure that no other DRS object registered in the server refers to the underlying data before deleting. Servers may not have the necessary permissions to delete the data from the backend even if they would like to do so, or may encounter errors when they attempt deletion. In the case that a DRS object refers to data stored in multiple backends (e.g. has multiple `access_method`s) the server may attempt to delete the data from all or only some of the backends.
+Clients can express a preference that the underlying data referred to by the deleted DRS object(s) is deleted with the `delete_storage_data` parameter. Servers are free to interpret this as they choose, and can advertise whether they support it at all with the `deleteStorageDataSupported` flag. Servers that choose to attempt to honour the request need not perform this operation synchronously and may, for example, register the file for later deletion or implement soft deletion with versioning etc. Implementations may also choose to ensure that no other DRS object registered in the server refers to the underlying data before deleting. Servers may not have the necessary permissions to delete the data from the backend even if they would like to do so, or may encounter errors when they attempt deletion. In the case that a DRS object refers to data stored in multiple backends (e.g. has multiple `access_methoda`) the server may attempt to delete the data from all or only some of the backends.
 
 For these reasons clients MUST NOT depend on the server deleting the underlying storage data even if the server advertises that `deleteStorageDataSupported` and the client sets the `delete_storage_data` flag.
 
@@ -96,7 +96,7 @@ Clients can request that the server attempts to delete the underlying data refer
 
 ## Update Pattern
 
-Rather than introducing additional operations and endpoints for updating DRS objects, servers can allow clients to use the metadata-only deletion and object registration endpoints to create a new DRS object with updated metadata while leaving the underlying data in place.
+Rather than introducing additional operations and endpoints for updating DRS objects, servers can allow clients to use the metadata-only deletion and object registration endpoints to create a new DRS object with updated metadata while leaving the underlying data in place. Note that DRS only supports updating the `access_methods` and adding additional checksums to existing objects while maintaining the same DRS object ID. Any other changes to an object will require deletion and re-registration.
 
 **Metadata update steps:**
 
@@ -149,7 +149,7 @@ curl -X PUT ".../objects/delete" -d '{
 
 **Clients:** Check service-info, default to safe deletion, handle transactional failures, respect limits, confirm destructive operations, do not rely on underlying storage deletion
 
-**Servers:** Advertise capabilities, validate permissions, implement atomic transactions, implement limits, use versioning to avoid inadvertent deletion.
+**Servers:** Advertise capabilities, validate permissions, implement atomic transactions, implement limits, use versioning to avoid inadvertent deletion or critical data.
 
 ## Security Considerations
 
