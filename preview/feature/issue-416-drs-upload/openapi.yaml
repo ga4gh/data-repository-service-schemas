@@ -3444,304 +3444,6 @@ paths:
         - $ref: '#/components/parameters/ObjectId'
       requestBody:
         $ref: '#/components/requestBodies/PostObjectBody'
-  /objects/{object_id}/delete:
-    put:
-      summary: Delete a DRS object (optional endpoint)
-      description: >-
-        **Optional Endpoint**: This endpoint is not required for DRS server
-        implementations.  Not all DRS servers support delete functionality.
-
-        Deletes a DRS object by ID. This operation removes the DRS object
-        metadata and optionally  attempts to delete the underlying storage data
-        based on the delete_storage_data parameter and server capabilities.
-
-        By default, only DRS object metadata is deleted while preserving
-        underlying storage data. To attempt storage data deletion, clients must
-        explicitly set delete_storage_data to true and the  server must support
-        storage data deletion (advertised via `deleteStorageDataSupported` in
-        service-info). Servers will make a best effort attempt to delete storage
-        data, but success is not guaranteed.
-
-        This endpoint uses an HTTP PUT rather than DELETE to accommodate GA4GH
-        Passport authentication in the request body, ensuring compatibility
-        across all HTTP clients and proxies.
-
-        **Important**: HTTP responses (204 No Content) indicate metadata
-        deletion success only,  not storage deletion success (which are not
-        guaranteed to complete synchronously if they occur at all)
-      operationId: DeleteObject
-      security:
-        - {}
-        - BasicAuth: []
-        - BearerAuth: []
-        - PassportAuth: []
-      parameters:
-        - $ref: '#/components/parameters/ObjectId'
-      requestBody:
-        $ref: '#/components/requestBodies/DeleteBody'
-      responses:
-        '204':
-          $ref: '#/components/responses/204DeleteSuccess'
-        '400':
-          $ref: '#/components/responses/400BadRequestDelete'
-        '401':
-          $ref: '#/components/responses/401Unauthorized'
-        '403':
-          $ref: '#/components/responses/403ForbiddenDelete'
-        '404':
-          $ref: '#/components/responses/404NotFoundDelete'
-        '500':
-          $ref: '#/components/responses/500InternalServerError'
-      tags:
-        - Objects
-      x-swagger-router-controller: ga4gh.drs.server
-      x-codegen-request-body-name: body
-      examples:
-        successful_metadata_delete:
-          summary: Successful metadata-only deletion
-          description: >-
-            Complete example of successfully deleting DRS object metadata while
-            preserving storage data
-          value:
-            request:
-              method: PUT
-              url: /objects/drs_object_123456/delete
-              headers:
-                Content-Type: application/json
-              body:
-                passports:
-                  - >-
-                    eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJnYTRnaF9wYXNzcG9ydF92MSI6W119.JJ5rN0ktP0qwyZmIPpxmF_p7JsxAZH6L6brUxtad3CM
-                delete_storage_data: false
-            response:
-              status: 204
-              headers:
-                Content-Length: '0'
-        successful_full_delete:
-          summary: Successful full deletion
-          description: >-
-            Complete example of successfully deleting both metadata and storage
-            data
-          value:
-            request:
-              method: PUT
-              url: /objects/drs_object_123456/delete
-              headers:
-                Content-Type: application/json
-              body:
-                passports:
-                  - >-
-                    eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJnYTRnaF9wYXNzcG9ydF92MSI6W119.JJ5rN0ktP0qwyZmIPpxmF_p7JsxAZH6L6brUxtad3CM
-                delete_storage_data: true
-            response:
-              status: 204
-              headers:
-                Content-Length: '0'
-        object_not_found:
-          summary: Object not found error
-          description: Complete example when trying to delete a non-existent object
-          value:
-            request:
-              method: PUT
-              url: /objects/nonexistent_object/delete
-              headers:
-                Content-Type: application/json
-              body:
-                delete_storage_data: false
-            response:
-              status: 404
-              headers:
-                Content-Type: application/json
-              body:
-                msg: DRS object nonexistent_object does not exist
-                status_code: 404
-        insufficient_permissions:
-          summary: Insufficient permissions error
-          description: Complete example when client lacks delete permissions
-          value:
-            request:
-              method: PUT
-              url: /objects/drs_object_123456/delete
-              headers:
-                Content-Type: application/json
-              body:
-                passports:
-                  - >-
-                    eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpbnZhbGlkX3Bhc3Nwb3J0IjoidHJ1ZSJ9.invalid_signature
-                delete_storage_data: false
-            response:
-              status: 403
-              headers:
-                Content-Type: application/json
-              body:
-                msg: Client lacks delete permission for object drs_object_123456
-                status_code: 403
-  /objects/delete:
-    put:
-      summary: Delete multiple DRS objects
-      description: >-
-        **Optional Endpoint**: This endpoint is not required for DRS server
-        implementations.  Not all DRS servers support delete functionality.
-
-        Delete multiple DRS objects in a single atomic transaction. If ANY
-        object fails to be deleted,  the ENTIRE request fails and NO objects are
-        deleted. This ensures data consistency and prevents  partial deletion
-        scenarios.
-
-        **RECOMMENDED - Transactional Behavior**:  Deletion operations SHOULD be
-        atomic transactions. If ANY object fails validation or deletion,  the
-        ENTIRE request SHOULD fail and NO objects SHOULD be deleted. Servers
-        SHOULD implement this as an  all-or-nothing operation to ensure data
-        consistency, but MAY implement partial deletion with  appropriate error
-        reporting if transactional behavior is not feasible.
-
-        **Authentication**: GA4GH Passports can be provided in the request body
-        for authorization.
-
-        **Storage Data Deletion**: The `delete_storage_data` parameter controls
-        whether the server will attempt to delete underlying storage files along
-        with DRS metadata. This defaults to false for safety. Servers will make
-        a best effort attempt to delete storage data, but success is not
-        guaranteed.
-
-        **Server Responsibilities**: - SHOULD treat deletion as an atomic
-        transaction (all succeed or all fail) - SHOULD validate ALL object IDs
-        exist and are accessible before deleting ANY - SHOULD roll back any
-        partial changes if any object fails deletion - SHOULD return 400 if any
-        object ID is invalid or inaccessible when using transactional behavior
-
-        **Client Responsibilities**: - Provide valid object IDs for all objects
-        to be deleted - Handle potential failure of entire batch if any single
-        object cannot be deleted - Check service-info for `maxBulkDeleteLength`
-        limits before making requests
-      operationId: bulkDeleteObjects
-      tags:
-        - Objects
-      requestBody:
-        $ref: '#/components/requestBodies/BulkDeleteBody'
-      responses:
-        '204':
-          $ref: '#/components/responses/204DeleteSuccess'
-        '400':
-          $ref: '#/components/responses/400BadRequestDelete'
-        '401':
-          $ref: '#/components/responses/401Unauthorized'
-        '403':
-          $ref: '#/components/responses/403ForbiddenDelete'
-        '404':
-          $ref: '#/components/responses/404NotFoundDelete'
-        '413':
-          $ref: '#/components/responses/413RequestTooLarge'
-        '500':
-          $ref: '#/components/responses/500InternalServerError'
-      security:
-        - {}
-        - BasicAuth: []
-        - BearerAuth: []
-        - PassportAuth: []
-      x-codegen-request-body-name: body
-      examples:
-        successful_bulk_delete:
-          summary: Successful bulk deletion
-          description: Complete example of successfully deleting multiple objects
-          value:
-            request:
-              method: PUT
-              url: /objects/delete
-              headers:
-                Content-Type: application/json
-              body:
-                bulk_object_ids:
-                  - drs_object_123456
-                  - drs_object_789012
-                  - drs_object_345678
-                passports:
-                  - >-
-                    eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJnYTRnaF9wYXNzcG9ydF92MSI6W119.JJ5rN0ktP0qwyZmIPpxmF_p7JsxAZH6L6brUxtad3CM
-                delete_storage_data: false
-            response:
-              status: 204
-              headers:
-                Content-Length: '0'
-        failed_bulk_delete:
-          summary: Failed bulk deletion (transactional)
-          description: >-
-            Complete example of bulk deletion failing due to one invalid object
-            ID - no objects are deleted
-          value:
-            request:
-              method: PUT
-              url: /objects/delete
-              headers:
-                Content-Type: application/json
-              body:
-                bulk_object_ids:
-                  - drs_object_123456
-                  - nonexistent_object
-                  - drs_object_345678
-                passports:
-                  - >-
-                    eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJnYTRnaF9wYXNzcG9ydF92MSI6W119.JJ5rN0ktP0qwyZmIPpxmF_p7JsxAZH6L6brUxtad3CM
-                delete_storage_data: false
-            response:
-              status: 404
-              headers:
-                Content-Type: application/json
-              body:
-                msg: >-
-                  Object 'nonexistent_object' not found. No objects were deleted
-                  due to transactional behavior.
-                status_code: 404
-        bulk_limit_exceeded:
-          summary: Bulk limit exceeded error
-          description: Complete example when bulk request exceeds server limits
-          value:
-            request:
-              method: PUT
-              url: /objects/delete
-              headers:
-                Content-Type: application/json
-              body:
-                bulk_object_ids:
-                  - obj1
-                  - obj2
-                  - obj3
-                  - ...150 objects total
-                delete_storage_data: false
-            response:
-              status: 413
-              headers:
-                Content-Type: application/json
-              body:
-                msg: >-
-                  Bulk delete request contains 150 objects but server maximum is
-                  100. Check maxBulkDeleteLength in service-info.
-                status_code: 413
-        unsupported_storage_deletion:
-          summary: Unsupported storage deletion error
-          description: >-
-            Complete example when client requests storage deletion but server
-            doesn't support it
-          value:
-            request:
-              method: PUT
-              url: /objects/delete
-              headers:
-                Content-Type: application/json
-              body:
-                bulk_object_ids:
-                  - drs_object_123456
-                  - drs_object_789012
-                delete_storage_data: true
-            response:
-              status: 400
-              headers:
-                Content-Type: application/json
-              body:
-                msg: >-
-                  Server does not support storage data deletion. Set
-                  delete_storage_data to false or omit the parameter.
-                status_code: 400
   /objects:
     options:
       summary: Get Authorization info about multiple DrsObjects.
@@ -4091,7 +3793,7 @@ paths:
         **Authentication**: GA4GH Passports can be provided in the request body.
       operationId: addChecksums
       requestBody:
-        $ref: ../components/requestBodies/ChecksumAdditionBody.yaml
+        $ref: '#/components/requestBodies/ChecksumAdditionBody'
       responses:
         '200':
           $ref: '#/components/responses/200ChecksumAddition'
@@ -4131,7 +3833,7 @@ paths:
         **Authentication**: GA4GH Passports can be provided in the request body.
       operationId: bulkAddChecksums
       requestBody:
-        $ref: ../components/requestBodies/BulkChecksumAdditionBody.yaml
+        $ref: '#/components/requestBodies/BulkChecksumAdditionBody'
       responses:
         '200':
           $ref: '#/components/responses/200BulkChecksumAddition'
@@ -4154,6 +3856,304 @@ paths:
         - PassportAuth: []
       tags:
         - Objects
+  /objects/{object_id}/delete:
+    put:
+      summary: Delete a DRS object (optional endpoint)
+      description: >-
+        **Optional Endpoint**: This endpoint is not required for DRS server
+        implementations.  Not all DRS servers support delete functionality.
+
+        Deletes a DRS object by ID. This operation removes the DRS object
+        metadata and optionally  attempts to delete the underlying storage data
+        based on the delete_storage_data parameter and server capabilities.
+
+        By default, only DRS object metadata is deleted while preserving
+        underlying storage data. To attempt storage data deletion, clients must
+        explicitly set delete_storage_data to true and the  server must support
+        storage data deletion (advertised via `deleteStorageDataSupported` in
+        service-info). Servers will make a best effort attempt to delete storage
+        data, but success is not guaranteed.
+
+        This endpoint uses an HTTP PUT rather than DELETE to accommodate GA4GH
+        Passport authentication in the request body, ensuring compatibility
+        across all HTTP clients and proxies.
+
+        **Important**: HTTP responses (204 No Content) indicate metadata
+        deletion success only,  not storage deletion success (which are not
+        guaranteed to complete synchronously if they occur at all)
+      operationId: DeleteObject
+      security:
+        - {}
+        - BasicAuth: []
+        - BearerAuth: []
+        - PassportAuth: []
+      parameters:
+        - $ref: '#/components/parameters/ObjectId'
+      requestBody:
+        $ref: '#/components/requestBodies/DeleteBody'
+      responses:
+        '204':
+          $ref: '#/components/responses/204DeleteSuccess'
+        '400':
+          $ref: '#/components/responses/400BadRequestDelete'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+        '403':
+          $ref: '#/components/responses/403ForbiddenDelete'
+        '404':
+          $ref: '#/components/responses/404NotFoundDelete'
+        '500':
+          $ref: '#/components/responses/500InternalServerError'
+      tags:
+        - Objects
+      x-swagger-router-controller: ga4gh.drs.server
+      x-codegen-request-body-name: body
+      examples:
+        successful_metadata_delete:
+          summary: Successful metadata-only deletion
+          description: >-
+            Complete example of successfully deleting DRS object metadata while
+            preserving storage data
+          value:
+            request:
+              method: PUT
+              url: /objects/drs_object_123456/delete
+              headers:
+                Content-Type: application/json
+              body:
+                passports:
+                  - >-
+                    eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJnYTRnaF9wYXNzcG9ydF92MSI6W119.JJ5rN0ktP0qwyZmIPpxmF_p7JsxAZH6L6brUxtad3CM
+                delete_storage_data: false
+            response:
+              status: 204
+              headers:
+                Content-Length: '0'
+        successful_full_delete:
+          summary: Successful full deletion
+          description: >-
+            Complete example of successfully deleting both metadata and storage
+            data
+          value:
+            request:
+              method: PUT
+              url: /objects/drs_object_123456/delete
+              headers:
+                Content-Type: application/json
+              body:
+                passports:
+                  - >-
+                    eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJnYTRnaF9wYXNzcG9ydF92MSI6W119.JJ5rN0ktP0qwyZmIPpxmF_p7JsxAZH6L6brUxtad3CM
+                delete_storage_data: true
+            response:
+              status: 204
+              headers:
+                Content-Length: '0'
+        object_not_found:
+          summary: Object not found error
+          description: Complete example when trying to delete a non-existent object
+          value:
+            request:
+              method: PUT
+              url: /objects/nonexistent_object/delete
+              headers:
+                Content-Type: application/json
+              body:
+                delete_storage_data: false
+            response:
+              status: 404
+              headers:
+                Content-Type: application/json
+              body:
+                msg: DRS object nonexistent_object does not exist
+                status_code: 404
+        insufficient_permissions:
+          summary: Insufficient permissions error
+          description: Complete example when client lacks delete permissions
+          value:
+            request:
+              method: PUT
+              url: /objects/drs_object_123456/delete
+              headers:
+                Content-Type: application/json
+              body:
+                passports:
+                  - >-
+                    eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpbnZhbGlkX3Bhc3Nwb3J0IjoidHJ1ZSJ9.invalid_signature
+                delete_storage_data: false
+            response:
+              status: 403
+              headers:
+                Content-Type: application/json
+              body:
+                msg: Client lacks delete permission for object drs_object_123456
+                status_code: 403
+  /objects/delete:
+    put:
+      summary: Delete multiple DRS objects
+      description: >-
+        **Optional Endpoint**: This endpoint is not required for DRS server
+        implementations.  Not all DRS servers support delete functionality.
+
+        Delete multiple DRS objects in a single atomic transaction. If ANY
+        object fails to be deleted,  the ENTIRE request fails and NO objects are
+        deleted. This ensures data consistency and prevents  partial deletion
+        scenarios.
+
+        **RECOMMENDED - Transactional Behavior**:  Deletion operations SHOULD be
+        atomic transactions. If ANY object fails validation or deletion,  the
+        ENTIRE request SHOULD fail and NO objects SHOULD be deleted. Servers
+        SHOULD implement this as an  all-or-nothing operation to ensure data
+        consistency, but MAY implement partial deletion with  appropriate error
+        reporting if transactional behavior is not feasible.
+
+        **Authentication**: GA4GH Passports can be provided in the request body
+        for authorization.
+
+        **Storage Data Deletion**: The `delete_storage_data` parameter controls
+        whether the server will attempt to delete underlying storage files along
+        with DRS metadata. This defaults to false for safety. Servers will make
+        a best effort attempt to delete storage data, but success is not
+        guaranteed.
+
+        **Server Responsibilities**: - SHOULD treat deletion as an atomic
+        transaction (all succeed or all fail) - SHOULD validate ALL object IDs
+        exist and are accessible before deleting ANY - SHOULD roll back any
+        partial changes if any object fails deletion - SHOULD return 400 if any
+        object ID is invalid or inaccessible when using transactional behavior
+
+        **Client Responsibilities**: - Provide valid object IDs for all objects
+        to be deleted - Handle potential failure of entire batch if any single
+        object cannot be deleted - Check service-info for `maxBulkDeleteLength`
+        limits before making requests
+      operationId: bulkDeleteObjects
+      tags:
+        - Objects
+      requestBody:
+        $ref: '#/components/requestBodies/BulkDeleteBody'
+      responses:
+        '204':
+          $ref: '#/components/responses/204DeleteSuccess'
+        '400':
+          $ref: '#/components/responses/400BadRequestDelete'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+        '403':
+          $ref: '#/components/responses/403ForbiddenDelete'
+        '404':
+          $ref: '#/components/responses/404NotFoundDelete'
+        '413':
+          $ref: '#/components/responses/413RequestTooLarge'
+        '500':
+          $ref: '#/components/responses/500InternalServerError'
+      security:
+        - {}
+        - BasicAuth: []
+        - BearerAuth: []
+        - PassportAuth: []
+      x-codegen-request-body-name: body
+      examples:
+        successful_bulk_delete:
+          summary: Successful bulk deletion
+          description: Complete example of successfully deleting multiple objects
+          value:
+            request:
+              method: PUT
+              url: /objects/delete
+              headers:
+                Content-Type: application/json
+              body:
+                bulk_object_ids:
+                  - drs_object_123456
+                  - drs_object_789012
+                  - drs_object_345678
+                passports:
+                  - >-
+                    eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJnYTRnaF9wYXNzcG9ydF92MSI6W119.JJ5rN0ktP0qwyZmIPpxmF_p7JsxAZH6L6brUxtad3CM
+                delete_storage_data: false
+            response:
+              status: 204
+              headers:
+                Content-Length: '0'
+        failed_bulk_delete:
+          summary: Failed bulk deletion (transactional)
+          description: >-
+            Complete example of bulk deletion failing due to one invalid object
+            ID - no objects are deleted
+          value:
+            request:
+              method: PUT
+              url: /objects/delete
+              headers:
+                Content-Type: application/json
+              body:
+                bulk_object_ids:
+                  - drs_object_123456
+                  - nonexistent_object
+                  - drs_object_345678
+                passports:
+                  - >-
+                    eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJnYTRnaF9wYXNzcG9ydF92MSI6W119.JJ5rN0ktP0qwyZmIPpxmF_p7JsxAZH6L6brUxtad3CM
+                delete_storage_data: false
+            response:
+              status: 404
+              headers:
+                Content-Type: application/json
+              body:
+                msg: >-
+                  Object 'nonexistent_object' not found. No objects were deleted
+                  due to transactional behavior.
+                status_code: 404
+        bulk_limit_exceeded:
+          summary: Bulk limit exceeded error
+          description: Complete example when bulk request exceeds server limits
+          value:
+            request:
+              method: PUT
+              url: /objects/delete
+              headers:
+                Content-Type: application/json
+              body:
+                bulk_object_ids:
+                  - obj1
+                  - obj2
+                  - obj3
+                  - ...150 objects total
+                delete_storage_data: false
+            response:
+              status: 413
+              headers:
+                Content-Type: application/json
+              body:
+                msg: >-
+                  Bulk delete request contains 150 objects but server maximum is
+                  100. Check maxBulkDeleteLength in service-info.
+                status_code: 413
+        unsupported_storage_deletion:
+          summary: Unsupported storage deletion error
+          description: >-
+            Complete example when client requests storage deletion but server
+            doesn't support it
+          value:
+            request:
+              method: PUT
+              url: /objects/delete
+              headers:
+                Content-Type: application/json
+              body:
+                bulk_object_ids:
+                  - drs_object_123456
+                  - drs_object_789012
+                delete_storage_data: true
+            response:
+              status: 400
+              headers:
+                Content-Type: application/json
+              body:
+                msg: >-
+                  Server does not support storage data deletion. Set
+                  delete_storage_data to false or omit the parameter.
+                status_code: 400
   /upload-request:
     post:
       summary: Request upload methods for files
@@ -4933,63 +4933,6 @@ components:
             A list of strings that can be used to find other metadata about this
             `DrsObject` from external metadata sources. These aliases can be
             used to represent secondary accession numbers or external GUIDs.
-    DeleteRequest:
-      type: object
-      description: Request body for single object delete operations
-      properties:
-        passports:
-          type: array
-          items:
-            type: string
-            example: >-
-              eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJnYTRnaF9wYXNzcG9ydF92MSI6W119.JJ5rN0ktP0qwyZmIPpxmF_p7JsxAZH6L6brUxtad3CM
-          description: >-
-            the encoded JWT GA4GH Passport that contains embedded Visas.  The
-            overall JWT is signed as are the individual Passport Visas.
-        delete_storage_data:
-          type: boolean
-          default: false
-          description: >-
-            If true, delete both DRS object metadata and underlying storage data
-            (follows server's deleteStorageDataSupported capability). If false
-            (default), only delete DRS object metadata while preserving
-            underlying storage data. Clients must explicitly set this to true to
-            enable storage data deletion, ensuring intentional choice for this
-            potentially destructive operation.
-    BulkDeleteRequest:
-      type: object
-      description: Request body for bulk delete operations
-      required:
-        - bulk_object_ids
-      properties:
-        bulk_object_ids:
-          type: array
-          items:
-            type: string
-          description: Array of DRS object IDs to delete
-          example:
-            - drs_object_123456
-            - drs_object_789012
-            - drs_object_345678
-        passports:
-          type: array
-          items:
-            type: string
-            example: >-
-              eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJnYTRnaF9wYXNzcG9ydF92MSI6W119.JJ5rN0ktP0qwyZmIPpxmF_p7JsxAZH6L6brUxtad3CM
-          description: >-
-            the encoded JWT GA4GH Passport that contains embedded Visas.  The
-            overall JWT is signed as are the individual Passport Visas.
-        delete_storage_data:
-          type: boolean
-          default: false
-          description: >-
-            If true, delete both DRS object metadata and underlying storage data
-            (follows server's deleteStorageDataSupported capability). If false
-            (default), only delete DRS object metadata while preserving
-            underlying storage data. Clients must explicitly set this to true to
-            enable storage data deletion, ensuring intentional choice for this
-            potentially destructive operation.
     summary:
       type: object
       description: A summary of what was resolved.
@@ -5203,6 +5146,92 @@ components:
           items:
             type: string
           description: Optional GA4GH Passport JWTs for authorization
+    BulkChecksumAdditionRequest:
+      type: object
+      required:
+        - additions
+      properties:
+        updates:
+          type: array
+          items:
+            type: object
+            required:
+              - object_id
+              - checksums
+            properties:
+              object_id:
+                type: string
+                description: DRS object ID to add checksum for
+              checksums:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Checksum'
+                minItems: 1
+                description: New checksums for this object
+          minItems: 1
+          description: Array of checksum additions
+        passports:
+          type: array
+          items:
+            type: string
+          description: Optional GA4GH Passport JWTs for authorization
+    DeleteRequest:
+      type: object
+      description: Request body for single object delete operations
+      properties:
+        passports:
+          type: array
+          items:
+            type: string
+            example: >-
+              eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJnYTRnaF9wYXNzcG9ydF92MSI6W119.JJ5rN0ktP0qwyZmIPpxmF_p7JsxAZH6L6brUxtad3CM
+          description: >-
+            the encoded JWT GA4GH Passport that contains embedded Visas.  The
+            overall JWT is signed as are the individual Passport Visas.
+        delete_storage_data:
+          type: boolean
+          default: false
+          description: >-
+            If true, delete both DRS object metadata and underlying storage data
+            (follows server's deleteStorageDataSupported capability). If false
+            (default), only delete DRS object metadata while preserving
+            underlying storage data. Clients must explicitly set this to true to
+            enable storage data deletion, ensuring intentional choice for this
+            potentially destructive operation.
+    BulkDeleteRequest:
+      type: object
+      description: Request body for bulk delete operations
+      required:
+        - bulk_object_ids
+      properties:
+        bulk_object_ids:
+          type: array
+          items:
+            type: string
+          description: Array of DRS object IDs to delete
+          example:
+            - drs_object_123456
+            - drs_object_789012
+            - drs_object_345678
+        passports:
+          type: array
+          items:
+            type: string
+            example: >-
+              eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJnYTRnaF9wYXNzcG9ydF92MSI6W119.JJ5rN0ktP0qwyZmIPpxmF_p7JsxAZH6L6brUxtad3CM
+          description: >-
+            the encoded JWT GA4GH Passport that contains embedded Visas.  The
+            overall JWT is signed as are the individual Passport Visas.
+        delete_storage_data:
+          type: boolean
+          default: false
+          description: >-
+            If true, delete both DRS object metadata and underlying storage data
+            (follows server's deleteStorageDataSupported capability). If false
+            (default), only delete DRS object metadata while preserving
+            underlying storage data. Clients must explicitly set this to true to
+            enable storage data deletion, ensuring intentional choice for this
+            potentially destructive operation.
     UploadRequestObject:
       type: object
       required:
@@ -5443,102 +5472,21 @@ components:
             $ref: '#/components/schemas/Authorizations'
     AuthorizationsNotSupported:
       description: '`Authorizations` are not supported for this object. Default to `None`.'
-    204DeleteSuccess:
-      description: >-
-        All DRS objects were successfully deleted. For bulk operations, this
-        indicates that  the entire atomic transaction completed successfully -
-        all requested objects have been  deleted. Storage data deletion (if
-        requested) was attempted but success is not guaranteed.
-    400BadRequestDelete:
-      description: >-
-        The delete request is malformed or contains unsupported parameters
-        (e.g., delete_storage_data: true when server doesn't support storage
-        data deletion).
+    200OkDrsObjects:
+      description: The `DrsObjects` were found successfully
       content:
         application/json:
           schema:
-            $ref: '#/components/schemas/Error'
-          examples:
-            unsupported_storage_deletion:
-              summary: Storage data deletion not supported
-              description: >-
-                Client requested storage data deletion but server doesn't
-                support it
-              value:
-                msg: >-
-                  Server does not support storage data deletion. Set
-                  delete_storage_data to false or omit the parameter.
-                status_code: 400
-            invalid_request_format:
-              summary: Malformed request body
-              description: Request body contains invalid JSON or missing required fields
-              value:
-                msg: >-
-                  Invalid request body: bulk_object_ids is required for bulk
-                  delete operations
-                status_code: 400
-            empty_object_list:
-              summary: Empty object ID list
-              description: Bulk delete request with empty object ID array
-              value:
-                msg: bulk_object_ids cannot be empty
-                status_code: 400
-    403ForbiddenDelete:
-      description: The client is not authorized to delete the requested DRS object.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          examples:
-            insufficient_permissions:
-              summary: Insufficient delete permissions
-              description: Client lacks permission to delete the specified object
-              value:
-                msg: Client lacks delete permission for object drs_object_123456
-                status_code: 403
-            invalid_passport:
-              summary: Invalid GA4GH Passport
-              description: Provided GA4GH Passport is invalid or expired
-              value:
-                msg: Invalid or expired GA4GH Passport provided
-                status_code: 403
-            missing_visa:
-              summary: Missing required visa
-              description: GA4GH Passport lacks required visa for delete operation
-              value:
-                msg: >-
-                  GA4GH Passport does not contain required visa for delete
-                  operation on this object
-                status_code: 403
-    404NotFoundDelete:
-      description: >-
-        The requested DRS object for deletion wasn't found, or delete endpoints
-        are not supported by this server.
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/Error'
-          examples:
-            object_not_found:
-              summary: DRS object not found
-              description: The specified DRS object does not exist
-              value:
-                msg: DRS object drs_object_123456 does not exist
-                status_code: 404
-            delete_not_supported:
-              summary: Delete operations not supported
-              description: This server does not support delete operations
-              value:
-                msg: Delete operations are not supported by this server
-                status_code: 404
-            endpoint_not_found:
-              summary: Delete endpoint not available
-              description: Delete endpoints are not implemented on this server
-              value:
-                msg: >-
-                  The requested endpoint /objects/delete is not available on
-                  this server
-                status_code: 404
+            type: object
+            properties:
+              summary:
+                $ref: '#/components/schemas/summary'
+              unresolved_drs_objects:
+                $ref: '#/components/schemas/unresolved'
+              resolved_drs_object:
+                type: array
+                items:
+                  $ref: '#/components/schemas/DrsObject'
     413RequestTooLarge:
       description: The bulk request is too large.
       content:
@@ -5562,21 +5510,6 @@ components:
               value:
                 msg: Request payload size exceeds server limit of 1MB
                 status_code: 413
-    200OkDrsObjects:
-      description: The `DrsObjects` were found successfully
-      content:
-        application/json:
-          schema:
-            type: object
-            properties:
-              summary:
-                $ref: '#/components/schemas/summary'
-              unresolved_drs_objects:
-                $ref: '#/components/schemas/unresolved'
-              resolved_drs_object:
-                type: array
-                items:
-                  $ref: '#/components/schemas/DrsObject'
     200OkBulkAuthorizations:
       description: '`Authorizations` were found successfully'
       content:
@@ -5743,6 +5676,102 @@ components:
                 items:
                   $ref: '#/components/schemas/DrsObject'
                 description: Array of updated DRS objects
+    204DeleteSuccess:
+      description: >-
+        All DRS objects were successfully deleted. For bulk operations, this
+        indicates that  the entire atomic transaction completed successfully -
+        all requested objects have been  deleted. Storage data deletion (if
+        requested) was attempted but success is not guaranteed.
+    400BadRequestDelete:
+      description: >-
+        The delete request is malformed or contains unsupported parameters
+        (e.g., delete_storage_data: true when server doesn't support storage
+        data deletion).
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            unsupported_storage_deletion:
+              summary: Storage data deletion not supported
+              description: >-
+                Client requested storage data deletion but server doesn't
+                support it
+              value:
+                msg: >-
+                  Server does not support storage data deletion. Set
+                  delete_storage_data to false or omit the parameter.
+                status_code: 400
+            invalid_request_format:
+              summary: Malformed request body
+              description: Request body contains invalid JSON or missing required fields
+              value:
+                msg: >-
+                  Invalid request body: bulk_object_ids is required for bulk
+                  delete operations
+                status_code: 400
+            empty_object_list:
+              summary: Empty object ID list
+              description: Bulk delete request with empty object ID array
+              value:
+                msg: bulk_object_ids cannot be empty
+                status_code: 400
+    403ForbiddenDelete:
+      description: The client is not authorized to delete the requested DRS object.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            insufficient_permissions:
+              summary: Insufficient delete permissions
+              description: Client lacks permission to delete the specified object
+              value:
+                msg: Client lacks delete permission for object drs_object_123456
+                status_code: 403
+            invalid_passport:
+              summary: Invalid GA4GH Passport
+              description: Provided GA4GH Passport is invalid or expired
+              value:
+                msg: Invalid or expired GA4GH Passport provided
+                status_code: 403
+            missing_visa:
+              summary: Missing required visa
+              description: GA4GH Passport lacks required visa for delete operation
+              value:
+                msg: >-
+                  GA4GH Passport does not contain required visa for delete
+                  operation on this object
+                status_code: 403
+    404NotFoundDelete:
+      description: >-
+        The requested DRS object for deletion wasn't found, or delete endpoints
+        are not supported by this server.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Error'
+          examples:
+            object_not_found:
+              summary: DRS object not found
+              description: The specified DRS object does not exist
+              value:
+                msg: DRS object drs_object_123456 does not exist
+                status_code: 404
+            delete_not_supported:
+              summary: Delete operations not supported
+              description: This server does not support delete operations
+              value:
+                msg: Delete operations are not supported by this server
+                status_code: 404
+            endpoint_not_found:
+              summary: Delete endpoint not available
+              description: Delete endpoints are not implemented on this server
+              value:
+                msg: >-
+                  The requested endpoint /objects/delete is not available on
+                  this server
+                status_code: 404
     200UploadRequest:
       description: >-
         Upload request processed successfully. Returns upload methods and
@@ -5940,155 +5969,6 @@ components:
                     eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJnYTRnaF9wYXNzcG9ydF92MSI6W119.JJ5rN0ktP0qwyZmIPpxmF_p7JsxAZH6L6brUxtad3CM
                   - >-
                     eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJnYTRnaF9wYXNzcG9ydF92MSI6W119.additional_passport_signature
-    DeleteBody:
-      required: false
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/DeleteRequest'
-          examples:
-            metadata_only_delete:
-              summary: Delete metadata only (default)
-              description: >-
-                Delete DRS object metadata while preserving underlying storage
-                data. This is the default and safest option.
-              value:
-                passports:
-                  - >-
-                    eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJnYTRnaF9wYXNzcG9ydF92MSI6W119.JJ5rN0ktP0qwyZmIPpxmF_p7JsxAZH6L6brUxtad3CM
-                delete_storage_data: false
-            full_delete:
-              summary: Delete metadata and storage data
-              description: >-
-                Delete both DRS object metadata and underlying storage data
-                (requires server support via deleteStorageDataSupported)
-              value:
-                passports:
-                  - >-
-                    eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJnYTRnaF9wYXNzcG9ydF92MSI6W119.JJ5rN0ktP0qwyZmIPpxmF_p7JsxAZH6L6brUxtad3CM
-                delete_storage_data: true
-            no_auth_delete:
-              summary: Delete without authentication
-              description: >-
-                Delete operation without GA4GH Passport authentication (for
-                public objects or when using Bearer token in headers)
-              value:
-                delete_storage_data: false
-            minimal_request:
-              summary: Minimal delete request
-              description: >-
-                Simplest delete request with no authentication and default
-                behavior (metadata only)
-              value: {}
-            multiple_passports:
-              summary: Multiple GA4GH Passports
-              description: >-
-                Delete request with multiple GA4GH Passports for complex
-                authorization scenarios
-              value:
-                passports:
-                  - >-
-                    eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJnYTRnaF9wYXNzcG9ydF92MSI6W119.JJ5rN0ktP0qwyZmIPpxmF_p7JsxAZH6L6brUxtad3CM
-                  - >-
-                    eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJnYTRnaF9wYXNzcG9ydF92MSI6W119.AbCdEfGhIjKlMnOpQrStUvWxYz
-                delete_storage_data: false
-            update_workflow:
-              summary: Safe update workflow
-              description: >-
-                Delete metadata only to enable safe update pattern (delete
-                metadata, then re-register with new metadata)
-              value:
-                passports:
-                  - >-
-                    eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJnYTRnaF9wYXNzcG9ydF92MSI6W119.JJ5rN0ktP0qwyZmIPpxmF_p7JsxAZH6L6brUxtad3CM
-                delete_storage_data: false
-    BulkDeleteBody:
-      required: true
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/BulkDeleteRequest'
-          examples:
-            bulk_metadata_delete:
-              summary: Bulk delete metadata only
-              description: >-
-                Delete multiple DRS objects metadata while preserving underlying
-                storage data (default and safest option)
-              value:
-                bulk_object_ids:
-                  - drs_object_123456
-                  - drs_object_789012
-                  - drs_object_345678
-                passports:
-                  - >-
-                    eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJnYTRnaF9wYXNzcG9ydF92MSI6W119.JJ5rN0ktP0qwyZmIPpxmF_p7JsxAZH6L6brUxtad3CM
-                delete_storage_data: false
-            bulk_full_delete:
-              summary: Bulk delete metadata and storage data
-              description: >-
-                Delete both metadata and storage data for multiple objects
-                (requires server support via deleteStorageDataSupported)
-              value:
-                bulk_object_ids:
-                  - drs_object_123456
-                  - drs_object_789012
-                passports:
-                  - >-
-                    eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJnYTRnaF9wYXNzcG9ydF92MSI6W119.JJ5rN0ktP0qwyZmIPpxmF_p7JsxAZH6L6brUxtad3CM
-                delete_storage_data: true
-            bulk_no_auth_delete:
-              summary: Bulk delete without authentication
-              description: >-
-                Bulk delete operation without GA4GH Passport authentication (for
-                public objects or when using Bearer token in headers)
-              value:
-                bulk_object_ids:
-                  - drs_object_123456
-                  - drs_object_789012
-                delete_storage_data: false
-            large_bulk_delete:
-              summary: Large bulk delete operation
-              description: >-
-                Delete many objects in a single request (check
-                maxBulkDeleteLength in service-info for limits)
-              value:
-                bulk_object_ids:
-                  - drs_object_001
-                  - drs_object_002
-                  - drs_object_003
-                  - drs_object_004
-                  - drs_object_005
-                  - drs_object_006
-                  - drs_object_007
-                  - drs_object_008
-                  - drs_object_009
-                  - drs_object_010
-                passports:
-                  - >-
-                    eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJnYTRnaF9wYXNzcG9ydF92MSI6W119.JJ5rN0ktP0qwyZmIPpxmF_p7JsxAZH6L6brUxtad3CM
-                delete_storage_data: false
-            mixed_object_types:
-              summary: Mixed object types deletion
-              description: >-
-                Delete objects with different ID formats and types in a single
-                request
-              value:
-                bulk_object_ids:
-                  - drs://example.org/123456
-                  - local_object_789
-                  - uuid:550e8400-e29b-41d4-a716-446655440000
-                  - compact:prefix:identifier
-                passports:
-                  - >-
-                    eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJnYTRnaF9wYXNzcG9ydF92MSI6W119.JJ5rN0ktP0qwyZmIPpxmF_p7JsxAZH6L6brUxtad3CM
-                delete_storage_data: false
-            minimal_bulk_request:
-              summary: Minimal bulk delete request
-              description: Simplest bulk delete request with required fields only
-              value:
-                bulk_object_ids:
-                  - drs_object_123456
-                  - drs_object_789012
     BulkObjectBody:
       required: true
       content:
@@ -6238,6 +6118,169 @@ components:
         application/json:
           schema:
             $ref: '#/components/schemas/BulkAccessMethodUpdateRequest'
+    ChecksumAdditionBody:
+      description: Request body for adding checksums to a DRS object
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: ../schemas/CheckSumAdditionRequest.yaml
+    BulkChecksumAdditionBody:
+      description: Request body for bulk adding checksums to multiple DRS objects
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/BulkChecksumAdditionRequest'
+    DeleteBody:
+      required: false
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/DeleteRequest'
+          examples:
+            metadata_only_delete:
+              summary: Delete metadata only (default)
+              description: >-
+                Delete DRS object metadata while preserving underlying storage
+                data. This is the default and safest option.
+              value:
+                passports:
+                  - >-
+                    eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJnYTRnaF9wYXNzcG9ydF92MSI6W119.JJ5rN0ktP0qwyZmIPpxmF_p7JsxAZH6L6brUxtad3CM
+                delete_storage_data: false
+            full_delete:
+              summary: Delete metadata and storage data
+              description: >-
+                Delete both DRS object metadata and underlying storage data
+                (requires server support via deleteStorageDataSupported)
+              value:
+                passports:
+                  - >-
+                    eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJnYTRnaF9wYXNzcG9ydF92MSI6W119.JJ5rN0ktP0qwyZmIPpxmF_p7JsxAZH6L6brUxtad3CM
+                delete_storage_data: true
+            no_auth_delete:
+              summary: Delete without authentication
+              description: >-
+                Delete operation without GA4GH Passport authentication (for
+                public objects or when using Bearer token in headers)
+              value:
+                delete_storage_data: false
+            minimal_request:
+              summary: Minimal delete request
+              description: >-
+                Simplest delete request with no authentication and default
+                behavior (metadata only)
+              value: {}
+            multiple_passports:
+              summary: Multiple GA4GH Passports
+              description: >-
+                Delete request with multiple GA4GH Passports for complex
+                authorization scenarios
+              value:
+                passports:
+                  - >-
+                    eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJnYTRnaF9wYXNzcG9ydF92MSI6W119.JJ5rN0ktP0qwyZmIPpxmF_p7JsxAZH6L6brUxtad3CM
+                  - >-
+                    eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJnYTRnaF9wYXNzcG9ydF92MSI6W119.AbCdEfGhIjKlMnOpQrStUvWxYz
+                delete_storage_data: false
+            update_workflow:
+              summary: Safe update workflow
+              description: >-
+                Delete metadata only to enable safe update pattern (delete
+                metadata, then re-register with new metadata)
+              value:
+                passports:
+                  - >-
+                    eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJnYTRnaF9wYXNzcG9ydF92MSI6W119.JJ5rN0ktP0qwyZmIPpxmF_p7JsxAZH6L6brUxtad3CM
+                delete_storage_data: false
+    BulkDeleteBody:
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/BulkDeleteRequest'
+          examples:
+            bulk_metadata_delete:
+              summary: Bulk delete metadata only
+              description: >-
+                Delete multiple DRS objects metadata while preserving underlying
+                storage data (default and safest option)
+              value:
+                bulk_object_ids:
+                  - drs_object_123456
+                  - drs_object_789012
+                  - drs_object_345678
+                passports:
+                  - >-
+                    eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJnYTRnaF9wYXNzcG9ydF92MSI6W119.JJ5rN0ktP0qwyZmIPpxmF_p7JsxAZH6L6brUxtad3CM
+                delete_storage_data: false
+            bulk_full_delete:
+              summary: Bulk delete metadata and storage data
+              description: >-
+                Delete both metadata and storage data for multiple objects
+                (requires server support via deleteStorageDataSupported)
+              value:
+                bulk_object_ids:
+                  - drs_object_123456
+                  - drs_object_789012
+                passports:
+                  - >-
+                    eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJnYTRnaF9wYXNzcG9ydF92MSI6W119.JJ5rN0ktP0qwyZmIPpxmF_p7JsxAZH6L6brUxtad3CM
+                delete_storage_data: true
+            bulk_no_auth_delete:
+              summary: Bulk delete without authentication
+              description: >-
+                Bulk delete operation without GA4GH Passport authentication (for
+                public objects or when using Bearer token in headers)
+              value:
+                bulk_object_ids:
+                  - drs_object_123456
+                  - drs_object_789012
+                delete_storage_data: false
+            large_bulk_delete:
+              summary: Large bulk delete operation
+              description: >-
+                Delete many objects in a single request (check
+                maxBulkDeleteLength in service-info for limits)
+              value:
+                bulk_object_ids:
+                  - drs_object_001
+                  - drs_object_002
+                  - drs_object_003
+                  - drs_object_004
+                  - drs_object_005
+                  - drs_object_006
+                  - drs_object_007
+                  - drs_object_008
+                  - drs_object_009
+                  - drs_object_010
+                passports:
+                  - >-
+                    eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJnYTRnaF9wYXNzcG9ydF92MSI6W119.JJ5rN0ktP0qwyZmIPpxmF_p7JsxAZH6L6brUxtad3CM
+                delete_storage_data: false
+            mixed_object_types:
+              summary: Mixed object types deletion
+              description: >-
+                Delete objects with different ID formats and types in a single
+                request
+              value:
+                bulk_object_ids:
+                  - drs://example.org/123456
+                  - local_object_789
+                  - uuid:550e8400-e29b-41d4-a716-446655440000
+                  - compact:prefix:identifier
+                passports:
+                  - >-
+                    eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJnYTRnaF9wYXNzcG9ydF92MSI6W119.JJ5rN0ktP0qwyZmIPpxmF_p7JsxAZH6L6brUxtad3CM
+                delete_storage_data: false
+            minimal_bulk_request:
+              summary: Minimal bulk delete request
+              description: Simplest bulk delete request with required fields only
+              value:
+                bulk_object_ids:
+                  - drs_object_123456
+                  - drs_object_789012
     UploadRequestBody:
       required: true
       content:
