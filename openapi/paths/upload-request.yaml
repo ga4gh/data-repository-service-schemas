@@ -24,7 +24,7 @@ post:
     
     5. Once uploaded, the client registers the files as DRS objects including access methods that correspond to the upload methods used with a POST request to `/objects/register`, the server will return fully formed DRS objects with server minted unique IDs.
     
-    6. The registered DRS object becomes accessible through standard DRS API endpoints
+    6. The registered DRS object is accessible through DRS API read endpoints
     
     
     **Authentication:**

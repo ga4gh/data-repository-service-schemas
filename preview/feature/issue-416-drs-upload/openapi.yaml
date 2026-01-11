@@ -4060,7 +4060,7 @@ paths:
         a POST request to `/objects/register`, the server will return fully
         formed DRS objects with server minted unique IDs.
 
-        6. The registered DRS object becomes accessible through standard DRS API
+        6. The registered DRS object is accessible through DRS API read
         endpoints
 
 
