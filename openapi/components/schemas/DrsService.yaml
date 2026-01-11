@@ -84,7 +84,7 @@ properties:
         type: boolean
         description: >-
           Indicates whether this DRS server validates file checksums against the provided metadata.
-          If true, the server will verify that uploaded and registered files match their declared checksums and may reject uploads with mismatches.
+          If true, the server will verify that uploaded and registered files match their declared checksums and may reject objects with mismatches.
           If false or missing, the server does not perform checksum validation and relies on client-provided metadata.
           Only present when at least one of uploadRequestSupported or objectRegistrationSupported or checksumAdditionSupported are true.
         default: false
@@ -95,6 +95,15 @@ properties:
           If true, the server will verify that uploaded files match their declared sizes and may reject uploads with mismatches.
           If false or missing, the server does not perform file size validation and relies on client-provided metadata.
           Only present when uploadRequestSupported or objectRegistrationSupported is true.
+        default: false
+      validateAccessMethods:
+        type: boolean
+        description: >-
+          Indicates whether this DRS server validates access methods by following the URLs to check that they resolve to the expected objects 
+          (e.g. by checking that the file sizes and checksums match)
+          If true, the server will attempt to verify checksums/content before accepting access methods.
+          If false or missing, the server trusts client-provided access methods without validation.
+          Only present when at least one of objectRegistrationSupported or accessMethodUpdateSupported are true.
         default: false
       relatedFileStorageSupported:
         type: boolean
@@ -139,14 +148,6 @@ properties:
         description: >-
           Maximum number of objects that can be updated in a single bulk access method update request.
           Only present when accessMethodUpdateSupported is true. If not specified, defaults to maxBulkRequestLength.
-      validateAccessMethodUpdates:
-        type: boolean
-        description: >-
-          Indicates whether this DRS server validates new access methods by verifying they point to the same data.
-          If true, the server will attempt to verify checksums/content before updating access methods.
-          If false or missing, the server trusts client-provided access methods without validation.
-          Only present when accessMethodUpdateSupported is true.
-        default: false
       checksumAdditionSupported:
         type: boolean
         description: >-

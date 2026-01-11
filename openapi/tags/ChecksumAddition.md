@@ -1,18 +1,24 @@
 # Add additional checksum
 
-> **Optional Functionality**: Checksum additions are optional extensions to the DRS API. Not all DRS servers are required to implement this functionality. Clients should check `/service-info` for `checksumAdditionSupported` before attempting to use these endpoints.
+> **Optional Functionality**: Checksum additions are optional extensions to the DRS API.
+Not all DRS servers are required to implement this functionality. Clients should check
+`/service-info` for `checksumAdditionSupported` before attempting to use these endpoints.
 
 Checksum addition endpoints allows authorized clients to add additional checksums to existing
 DRS objects. This is useful for servers that rely on objects using a specific checksum type,
-e.g. SHA256, and where objects are guaranteed to have this checksum at creation time, e.g.
+e.g. SHA-256, and where objects are not guaranteed to have this checksum at creation time, e.g.
 objects may be created with an MD5 checksum only. The server MAY choose to validate checksums
 and return errors for mismatches, this behaviour is advertised in the `validateChecksums`
 field in `/service-info`.
 
 These endpoints only support the addition of additional checksums, a client SHOULD NOT
 attempt to update the value of an existing checksum or to remove a checksum. If a client
-does attempt to update an existing checksum the server behaviour is implementation
+attempts to update an existing checksum the server behaviour is implementation
 dependent but servers MAY simply ignore the request, or MAY return a 4XX error to the client.
+Servers MUST NOT change any existing checksums. If an incorrent checksum has been registered
+then clients should delete the existing DRS object (if supported by the server) and register
+a new DRS object with the correct metadata. This ensures that a single DRS object ID _always_
+points to the same object.
 
 ## Design Principles
 
@@ -30,7 +36,7 @@ Check `/service-info` for checksum addition capabilities:
   "drs": {
     "checksumAdditionSupported": true,
     "maxBulkChecksumAdditionLength": 100,
-    "verifyChecksums": true.
+    "verifyChecksums": true
   }
 }
 ```
