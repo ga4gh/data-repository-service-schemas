@@ -3872,7 +3872,7 @@ paths:
 
         Deletes a DRS object by ID. This operation removes the DRS object
         metadata and optionally  attempts to delete the underlying storage data
-        based on the delete_storage_data parameter and server capabilities.
+        based on the `delete_storage_data` parameter  and server capabilities.
 
         By default, only DRS object metadata is deleted while preserving
         underlying storage data. To attempt storage data deletion, clients must
