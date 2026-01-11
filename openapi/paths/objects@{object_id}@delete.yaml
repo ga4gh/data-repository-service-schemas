@@ -1,4 +1,4 @@
-post:
+put:
   summary: Delete a DRS object (optional endpoint)
   description: >-
     **Optional Endpoint**: This endpoint is not required for DRS server implementations. 
@@ -8,15 +8,11 @@ post:
     attempts to delete the underlying storage data based on the delete_storage_data parameter and server capabilities.
     
     By default, only DRS object metadata is deleted while preserving underlying storage data.
-    To attempt storage data deletion, clients must explicitly set delete_storage_data to true and the
+    To attempt storage data deletion, clients must explicitly set delete_storage_data to true and the 
     server must support storage data deletion (advertised via `deleteStorageDataSupported` in service-info).
     Servers will make a best effort attempt to delete storage data, but success is not guaranteed.
-
-    **Orphaned Files**: When `delete_storage_data` is false (default), only DRS metadata is deleted while underlying
-    storage files are preserved. This may result in orphaned files that are no longer referenced by any DRS objects.
-    Servers MAY implement garbage collection policies to clean up orphaned files, but this is implementation-specific.
     
-    This endpoint uses POST method to accommodate GA4GH Passport authentication in the request body,
+    This endpoint uses an HTTP PUT rather than DELETE to accommodate GA4GH Passport authentication in the request body,
     ensuring compatibility across all HTTP clients and proxies.
     
     **Important**: HTTP responses (204 No Content) indicate metadata deletion success only, 
@@ -48,3 +44,76 @@ post:
     - Objects
   x-swagger-router-controller: ga4gh.drs.server
   x-codegen-request-body-name: body
+  examples:
+    successful_metadata_delete:
+      summary: Successful metadata-only deletion
+      description: Complete example of successfully deleting DRS object metadata while preserving storage data
+      value:
+        request:
+          method: PUT
+          url: "/objects/drs_object_123456/delete"
+          headers:
+            Content-Type: "application/json"
+          body:
+            passports:
+              - "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJnYTRnaF9wYXNzcG9ydF92MSI6W119.JJ5rN0ktP0qwyZmIPpxmF_p7JsxAZH6L6brUxtad3CM"
+            delete_storage_data: false
+        response:
+          status: 204
+          headers:
+            Content-Length: "0"
+    successful_full_delete:
+      summary: Successful full deletion
+      description: Complete example of successfully deleting both metadata and storage data
+      value:
+        request:
+          method: PUT
+          url: "/objects/drs_object_123456/delete"
+          headers:
+            Content-Type: "application/json"
+          body:
+            passports:
+              - "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJnYTRnaF9wYXNzcG9ydF92MSI6W119.JJ5rN0ktP0qwyZmIPpxmF_p7JsxAZH6L6brUxtad3CM"
+            delete_storage_data: true
+        response:
+          status: 204
+          headers:
+            Content-Length: "0"
+    object_not_found:
+      summary: Object not found error
+      description: Complete example when trying to delete a non-existent object
+      value:
+        request:
+          method: PUT
+          url: "/objects/nonexistent_object/delete"
+          headers:
+            Content-Type: "application/json"
+          body:
+            delete_storage_data: false
+        response:
+          status: 404
+          headers:
+            Content-Type: "application/json"
+          body:
+            msg: "DRS object nonexistent_object does not exist"
+            status_code: 404
+    insufficient_permissions:
+      summary: Insufficient permissions error
+      description: Complete example when client lacks delete permissions
+      value:
+        request:
+          method: PUT
+          url: "/objects/drs_object_123456/delete"
+          headers:
+            Content-Type: "application/json"
+          body:
+            passports:
+              - "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpbnZhbGlkX3Bhc3Nwb3J0IjoidHJ1ZSJ9.invalid_signature"
+            delete_storage_data: false
+        response:
+          status: 403
+          headers:
+            Content-Type: "application/json"
+          body:
+            msg: "Client lacks delete permission for object drs_object_123456"
+            status_code: 403

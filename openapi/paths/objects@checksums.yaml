@@ -1,23 +1,22 @@
 put:
-  summary: Bulk update access methods for multiple DRS objects
+  summary: Add additional checksums for multiple DRS objects
   description: >-
-    **Optional Endpoint**: Not all DRS servers support access method updates.
+    **Optional Endpoint**: Not all DRS servers support checksum addition.
     
-    Update access methods for multiple DRS objects in a single atomic transaction. 
+    Add additional checksums for multiple DRS objects in a single atomic transaction. 
     If ANY object fails to update, the ENTIRE request fails and NO objects are updated.
-    Only access methods are modified - core object metadata remains unchanged.
-
-    Note that existing access methods are overwritten, if clients want to add additional 
-    access methods they should first retrieve the current methods and include them along
-    with the new methods in this request.
+    This endpoint does not support altering existing checksums, only adding additional
+    checksum types that aren't already present in the DRS object. If a client attempts to 
+    update an existing checksum type the server MAY ignore the update or MAY return an 
+    error.
     
     **Authentication**: GA4GH Passports can be provided in the request body.
-  operationId: bulkUpdateAccessMethods
+  operationId: bulkAddChecksums
   requestBody:
-    $ref: '../components/requestBodies/BulkAccessMethodUpdateBody.yaml'
+    $ref: '../components/requestBodies/BulkChecksumAdditionBody.yaml'
   responses:
     '200':
-      $ref: '../components/responses/200BulkAccessMethodUpdate.yaml'
+      $ref: '../components/responses/200BulkChecksumAddition.yaml'
     '400':
       $ref: '../components/responses/400BadRequest.yaml'
     '401':

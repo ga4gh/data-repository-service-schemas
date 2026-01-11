@@ -16,7 +16,7 @@ post:
     
     1. **Discovery**: Client checks `/service-info` endpoint to confirm upload support (`drs.uploadRequestSupported: true`) and available methods (`drs.supportedUploadMethods`)
     
-    2. Client sends an upload request with file metadata (name, size, checksums, MIME type)
+    2. Client sends an upload request with file metadata (name, size, checksums, MIME type) and preferred upload method
     
     3. Server responds with available upload methods (S3, HTTPS, Google Cloud Storage, etc.) and temporary credentials
     

@@ -16,9 +16,9 @@ Upload requests and object registration endpoints only support bulk requests to 
 
 The `/upload-request` endpoint does not require any state to be maintained on the DRS server (intermediate DRS object IDs etc.) it is simply a means for a server to provide details of where a client can upload data, and it should ensure that it trusts the client before providing such details. This means that if uploads fail and there is no later call to `/objects/register` there is no DRS state to manage, simplifying server implementation.
 
-Servers SHOULD ensure that any data from unsuccessful uploads (e.g. incomplete multi-part uploads) are cleaned up, for example by using lifecycle configuration in the backend storage. There is _no_ means of requiring that a client ultimately registers a DRS object pointing at data uploaded, and so servers should consider implementing some form of storage "garbage" collection (or simply set a short lifecycle policy on the upload location and move uploaded data that is later registered as DRS objects to other locations, updating the `access_method`s accordingly). Servers should also implement some means of constraining upload size (quotas etc.) to protect against accidental or malicious unconstrained uploads.
+Servers SHOULD ensure that any data from unsuccessful uploads (e.g. incomplete multi-part uploads) are cleaned up, for example by using lifecycle configuration in the backend storage. There is _no_ means of requiring that a client ultimately registers a DRS object pointing at data uploaded, and so servers should consider implementing some form of storage "garbage" collection (or simply set a short lifecycle policy on the upload location and move uploaded data that is later registered as DRS objects to other locations, updating object `access_methods` accordingly). Servers should also implement some means of constraining upload size (quotas etc.) to protect against accidental or malicious unconstrained uploads.
 
-The `/upload-request` endpoint can return one or more `upload_method`s of different types for each requested file, and backend specific details such as bucket names, object keys and credentials are supplied in a generic `upload_details` field. A straightforward implementation might return an single time-limited pre-signed POST URL as the `post_url` for an `upload_method` of type `https` which incorporates authentication into the URL, but because DRS is often used for large files such as BAMs and CRAMs we also want to support more sophisticated upload approaches implemented by storage backends such as multi-part uploads, automatic retries etc. The `upload_details` field can also be used to include bucket names, keys and temporary credentials that can be used in native clients and SDKs. This offers a natural way to adapt this protocol to new storage technologies. Refer to the examples below for some suggested implementations.
+The `/upload-request` endpoint can return one or more `upload_methods` of different types for each requested file, and backend specific details such as bucket names, object keys and credentials are supplied in a generic `upload_details` field. A straightforward implementation might return an single time-limited pre-signed POST URL as the `post_url` for an `upload_method` of type `https` which incorporates authentication into the URL, but because DRS is often used for large files such as BAMs and CRAMs this specification also supports more sophisticated upload approaches implemented by storage backends such as multi-part uploads, automatic retries etc. The `upload_details` field can also be used to include bucket names, keys and temporary credentials that can be used in native clients and SDKs. This offers a natural way to adapt this protocol to new storage technologies. Refer to the examples below for some suggested implementations.
 
 ## Service Discovery
 
@@ -33,8 +33,8 @@ Check `/service-info` for upload capabilities:
     "maxUploadSize": 5368709120,
     "maxUploadRequestLength": 50,
     "maxRegisterRequestLength": 50,
-    "validateUploadChecksums": true,
-    "validateUploadFileSizes": false,
+    "validateChecksums": true,
+    "validateFileSizes": false,
     "relatedFileStorageSupported": true
   }
 }
@@ -48,7 +48,7 @@ Upload related fields:
 - `maxUploadSize`: File size limit (bytes)
 - `maxUploadRequestLength`: Files per request limit for upload requests
 - `maxRegisterRequestLength`: Candidate objects per request limit for registration
-- `validateUploadChecksums`/`validateUploadFileSizes`: Server validation behavior
+- `validateChecksums`/`validateFileSizes`: Server validation behavior
 - `relatedFileStorageSupported`: Files from same upload request stored under common prefixes
 
 ## Upload Methods
@@ -83,9 +83,9 @@ After upload, clients can register files in bulk as DRS objects using POST `/obj
 - Complete metadata (name, size, checksums, MIME type)
 - Access methods pointing to file locations  
 - Valid authorization (if required)
-- Do not include server-generated fields (id, self_uri, timestamps)
+- Do not include fields managed by the DRS server (id, self_uri, timestamps)
 
-Upon receipt of candidate objects for registration the server will create unique object IDs and returns complete DRS objects. Note that the server is not obliged to retain the clients supplied `access_method`s and is free to move data to different locations/backends once the object is registered. This means that a server can choose to receive uploads in a dedicated "dropzone", with hard quotas and additional security, and then move them to more permanent storage once the DRS object is registered. Clients SHOULD NOT cache the response from `/objects/register` as the `access_method`s might change after registration.
+Upon receipt of candidate objects for registration the server will create unique object IDs and returns complete DRS objects. Note that the server is not obliged to retain the clients supplied `access_methods` and is free to move data to different locations/backends once the object is registered. This means that a server can choose to receive uploads in an untrusted "dropzone", with hard quotas and additional security, and then move them to more permanent storage once the DRS object is registered. Clients SHOULD NOT cache the response from `/objects/register` as the `access_methods` might change after registration.
 
 The `/objects/register` endpoint can also be used independently to register existing data that is already stored in accessible locations, without using the `/upload-request` workflow. This is useful for registering pre-existing datasets or files uploaded through other means. Servers may choose only to support registration and not uploads, and should advertise this in `/service-info`
 
@@ -174,7 +174,10 @@ Response:
             "url": "https://uploads.example.org/variants.vcf"
           },
           "upload_details": {
-            "post_url": "https://uploads.example.org/presigned-upload?signature=FAKE_SIG"
+            "post_url": {
+              "url": "https://uploads.example.org/presigned-upload?signature=FAKE_SIG",
+              "headers": ["Header1", "Header2"]
+            }
           }
         }
       ]
@@ -186,8 +189,8 @@ Response:
 Upload via HTTPS:
 
 ```bash
-# Simple PUT upload to presigned URL
-curl -X PUT "https://uploads.example.org/presigned-upload?signature=FAKE_SIG" \
+# Simple PUT upload to presigned POST URL
+curl -X PUT "https://uploads.example.org/presigned-upload?signature=FAKE_SIG" -H "Header1" -H "Header2" \
   --data-binary @variants.vcf
 ```
 

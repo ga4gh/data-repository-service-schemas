@@ -32,7 +32,9 @@ properties:
       - description: >-
           An `AccessURL` that specifies where the file will be accessible after upload.
           This URL will be used as the access_url in the eventual DRS object, ensuring
-          consistency between upload and retrieval operations.
+          consistency between upload and retrieval operations. Note that this `upload_details`
+          may contain additional URLs, such as pre-signed POST URLs to support uploading
+          files, these may not be the same as the `access_url`.
   region:
     type: string
     description: >-
@@ -42,5 +44,5 @@ properties:
     type: object
     additionalProperties: true
     description: >-
-      A dictionary of upload-specific configuration details that vary by upload method type.
+      A dictionary of storage provider specific configuration details that vary by upload method type.
       The contents and structure depend on the specific upload method being used.

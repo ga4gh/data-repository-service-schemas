@@ -56,58 +56,14 @@ properties:
         description: >-
           List of upload methods supported by this DRS server. Only present when uploadRequestSupported is true.
           Clients can use this information to determine which upload methods are available before making upload requests.
-
+          
           - **s3**: Direct S3 upload with temporary AWS credentials
-          - **gs**: Google Cloud Storage upload with access tokens
+          - **gs**: Google Cloud Storage upload with access tokens  
           - **https**: Presigned POST URL for HTTP uploads
           - **ftp**: File Transfer Protocol uploads
           - **sftp**: Secure File Transfer Protocol uploads
           - **gsiftp**: GridFTP secure file transfer
           - **globus**: Globus transfer service for high-performance data movement
-      availableUploadLocations:
-        type: array
-        items:
-          type: object
-          required:
-            - type
-          properties:
-            type:
-              type: string
-              enum:
-                - s3
-                - gs
-                - https
-                - ftp
-                - sftp
-              description: The upload method type
-            cloud_provider:
-              type: string
-              description: Cloud provider name (e.g., "aws", "gcp", "azure")
-              example: "aws"
-            regions:
-              type: array
-              items:
-                type: string
-              description: Available cloud regions for this upload method
-              example: ["us-east-1", "us-west-2", "eu-west-1"]
-            description:
-              type: string
-              description: Human-readable description of this upload location
-              example: "AWS S3 in US East Coast region"
-        description: >-
-          List of available upload locations with cloud provider and region information.
-          Only present when uploadRequestSupported is true. This allows clients to understand
-          which clouds and regions are available for uploads without credentials. Similar to
-          the upload_methods response but focused on discovery rather than actual upload execution.
-      uploadRetentionPeriod:
-        type: integer
-        description: >-
-          Time in seconds that uploaded files will be retained before being garbage collected
-          if they are not registered as DRS objects via `/objects/register`. This prevents orphaned
-          file uploads from consuming storage indefinitely. Clients should register uploaded files
-          within this time window. Only present when uploadRequestSupported is true.
-          If not specified, uploaded files may be retained indefinitely or server policy applies.
-        example: 86400
       maxUploadSize:
         type: integer
         format: int64
@@ -124,18 +80,18 @@ properties:
         description: >-
           Maximum number of candidate objects that can be included in a single registration request.
           Only present when objectRegistrationSupported is true. If not specified, defaults to the same value as maxBulkRequestLength.
-      validateUploadChecksums:
+      validateChecksums:
         type: boolean
         description: >-
-          Indicates whether this DRS server validates uploaded file checksums against the provided metadata.
-          If true, the server will verify that uploaded files match their declared checksums and may reject uploads with mismatches.
+          Indicates whether this DRS server validates file checksums against the provided metadata.
+          If true, the server will verify that uploaded and registered files match their declared checksums and may reject uploads with mismatches.
           If false or missing, the server does not perform checksum validation and relies on client-provided metadata.
-          Only present when uploadRequestSupported or objectRegistrationSupported is true.
+          Only present when at least one of uploadRequestSupported or objectRegistrationSupported or checksumAdditionSupported are true.
         default: false
-      validateUploadFileSizes:
+      validateFileSizes:
         type: boolean
         description: >-
-          Indicates whether this DRS server validates uploaded file sizes against the provided metadata.
+          Indicates whether this DRS server validates file sizes against the provided metadata.
           If true, the server will verify that uploaded files match their declared sizes and may reject uploads with mismatches.
           If false or missing, the server does not perform file size validation and relies on client-provided metadata.
           Only present when uploadRequestSupported or objectRegistrationSupported is true.
@@ -152,7 +108,7 @@ properties:
         type: boolean
         description: >-
           Indicates whether this DRS server supports delete operations via the delete endpoints.
-          If true, clients can delete DRS objects using POST requests to `/objects/{object_id}/delete` and `/objects/delete`.
+          If true, clients can delete DRS objects using PUT requests to `/objects/{object_id}/delete` and `/objects/delete`.
           If false or missing, the server does not support delete operations and will return 404 for delete endpoint requests.
           Like upload functionality, delete support is entirely optional and servers remain DRS compliant without it.
         default: false
@@ -191,6 +147,18 @@ properties:
           If false or missing, the server trusts client-provided access methods without validation.
           Only present when accessMethodUpdateSupported is true.
         default: false
+      checksumAdditionSupported:
+        type: boolean
+        description: >-
+          Indicates whether this DRS server supports adding new checksums for for existing objects.
+          If true, clients can update access methods using `/objects/{object_id}/checksums` and `/objects/checksums` endpoints.
+          If false or missing, the server does not support checksum addition.
+        default: false
+      maxBulkChecksumAdditionLength:
+        type: integer
+        description: >-
+          Maximum number of objects that can be updated in a single bulk checksum addition request.
+          Only present when checksumAdditionSupported is true. If not specified, defaults to maxBulkRequestLength.
 
 
     

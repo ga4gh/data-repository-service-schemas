@@ -1,6 +1,6 @@
 # Access Method Updates
 
-> **Optional Functionality**: Access method updates are optional extensions to the DRS API. Not all DRS servers are required to implement this functionality. Clients should check `/service-info` for `accessMethodUpdateSupported` before attempting to use these endpoints.
+> **Optional Functionality**: Access method updates are optional extensions to the DRS API. Not all DRS servers implement this functionality. Clients should check `/service-info` for `accessMethodUpdateSupported` before attempting to use these endpoints.
 
 Access method update endpoints allows authorized clients to modify how existing DRS objects can be accessed without changing the core object metadata (size, checksums, name). This is useful for storage migrations, adding mirrors, or updating URLs.
 
@@ -9,7 +9,7 @@ These endpoints will overwrite existing access methods for an object, if clients
 ## Use Cases
 
 - **Storage Migration**: Move data between storage providers while keeping same DRS object
-- **Mirror Addition**: Add CDN or regional access points for better performance  
+- **Mirror Addition**: Add additional regional access points, or alternative protocols
 - **URL Refresh**: Update changed domain names
 - **Access Optimization**: Add or remove access methods based on performance or cost
 
@@ -44,14 +44,14 @@ Check `/service-info` for access method update capabilities:
 Update access methods for a single DRS object:
 
 ```bash
-curl -X POST "https://drs.example.org/objects/obj_123/access-methods" \
+curl -X PUT "https://drs.example.org/objects/obj_123/access-methods" \
   -H "Content-Type: application/json" \
   -d '{
     "access_methods": [
       {
         "type": "https",
         "access_url": {
-          "url": "https://new-cdn.example.org/data/file.bam"
+          "url": "https://new-location.com/data/file.bam"
         }
       },
       {
@@ -70,7 +70,7 @@ curl -X POST "https://drs.example.org/objects/obj_123/access-methods" \
 Update access methods for multiple objects atomically:
 
 ```bash
-curl -X POST "https://drs.example.org/objects/access-methods" \
+curl -X PUT "https://drs.example.org/objects/access-methods" \
   -H "Content-Type: application/json" \
   -d '{
     "updates": [
@@ -99,6 +99,7 @@ curl -X POST "https://drs.example.org/objects/access-methods" \
 ## Authentication
 
 **GA4GH Passports** (in request body):
+
 ```json
 {
   "access_methods": [...],
@@ -107,6 +108,7 @@ curl -X POST "https://drs.example.org/objects/access-methods" \
 ```
 
 **Bearer Tokens** (in headers):
+
 ```bash
 curl -H "Authorization: Bearer token" -d '{"access_methods": [...]}' ...
 ```
@@ -114,7 +116,6 @@ curl -H "Authorization: Bearer token" -d '{"access_methods": [...]}' ...
 ## Validation
 
 Servers MAY validate that new access methods point to the same data by checkingm file availability, checksums or file content. Validation behavior is advertised in `validateAccessMethodUpdates` service-info field.
-
 
 ## Error Responses
 
@@ -127,31 +128,21 @@ Servers MAY validate that new access methods point to the same data by checkingm
 ## Examples
 
 **Storage Migration:**
+
 ```bash
 # Check server capabilities
 curl "https://drs.example.org/service-info"
 
 # Update single object after migration
-curl -X POST "https://drs.example.org/objects/obj_123/access-methods" \
+curl -X PUT "https://drs.example.org/objects/obj_123/access-methods" \
   -d '{"access_methods": [{"type": "s3", "access_url": {"url": "s3://new-bucket/file.bam"}}]}'
 ```
 
-**Add CDN Mirror:**
-```bash
-# Add additional access method without removing existing ones
-curl -X POST "https://drs.example.org/objects/obj_456/access-methods" \
-  -d '{
-    "access_methods": [
-      {"type": "https", "access_url": {"url": "https://origin.example.org/file.vcf"}},
-      {"type": "https", "access_url": {"url": "https://cdn.example.org/file.vcf"}}
-    ]
-  }'
-```
-
 **Bulk Migration:**
+
 ```bash
 # Migrate multiple objects atomically
-curl -X POST "https://drs.example.org/objects/access-methods" \
+curl -X PUT "https://drs.example.org/objects/access-methods" \
   -d '{
     "updates": [
       {"object_id": "obj_1", "access_methods": [...]},

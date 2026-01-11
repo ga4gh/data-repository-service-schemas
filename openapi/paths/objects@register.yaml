@@ -8,7 +8,7 @@ post:
     unique object IDs for each registered object and return them in fully-formed DRS objects in response.
     
     This endpoint can be used after uploading files using methods negotiated with the `/upload-request` endpoint 
-    to register the uploaded files as DRS objects, or to register existinf data. The request body should contain candidate 
+    to register the uploaded files as DRS objects, or to register existing data. The request body should contain candidate 
     DRS objects with all required metadata including access methods that correspond 
     to the upload methods used during file upload.
     
@@ -23,22 +23,15 @@ post:
     **Server Responsibilities**:
     - SHOULD treat registration as an atomic transaction (all succeed or all fail)
     - SHOULD validate ALL candidate objects before registering ANY
-    - Create unique object IDs for each registered object (clients do not provide IDs)
-    - Set server-generated fields: created_time, updated_time
-    - Optionally validate checksums if drs.validateUploadChecksums is enabled
+    - Create unique object IDs for each registered object
+    - Add timestamps (created_time, updated_time)
     - SHOULD roll back any partial changes if any candidate fails validation
-
+    
     **Client Responsibilities**:
-    - Provide required DRS object metadata for all candidates (size, checksums, access_methods)
-    - Include access methods corresponding to uploaded file locations (can reference access_id from upload-request)
+    - Provide required DRS object metadata for all candidates
+    - Include access methods corresponding to uploaded file locations
     - Ensure checksums match uploaded file content
-    - DO NOT provide server-set fields (id, created_time, updated_time) - server will generate these
     - Handle potential failure of entire batch if any single object is invalid
-
-    **Simplified Registration**:
-    Clients only need to provide essential object metadata. Server-managed fields like timestamps
-    and object IDs are automatically generated, reducing the complexity of the registration request.
-    This keeps the endpoint focused on registering uploaded data rather than full object management.
   operationId: RegisterObjects
   security:
     - {}
@@ -61,6 +54,6 @@ post:
     500:
       $ref: '../components/responses/500InternalServerError.yaml'
   tags:
-    - Objects
+    - Register Objects
   x-swagger-router-controller: ga4gh.drs.server
   x-codegen-request-body-name: body

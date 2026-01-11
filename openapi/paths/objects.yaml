@@ -23,13 +23,12 @@ options:
   tags:
     - Objects
   x-swagger-router-controller: ga4gh.drs.server
-  # temp removal to see if it fixes swagger validation issue
-  #requestBody:
-  #  required: true
-  #  content:
-  #    application/json:
-  #      schema:
-  #        $ref: '../components/parameters/BulkObjectIdNoPassport.yaml'
+#  requestBody:
+#    required: true
+#    content:
+#      application/json:
+#        schema:
+#          $ref: '../components/parameters/BulkObjectIdNoPassport.yaml'
 
 post:
   summary: Get info about multiple DrsObjects with an optional Passport(s).
@@ -67,62 +66,3 @@ post:
   x-swagger-router-controller: ga4gh.drs.server
   requestBody:
     $ref: '../components/requestBodies/BulkObjectBody.yaml'
-
-put:
-  summary: Update DRS objects by adding or removing access method mirrors
-  description: >-
-    **Optional Endpoint**: This endpoint is not required for DRS server implementations.
-    Not all DRS servers support object updates.
-
-    Updates one or more existing DRS objects by adding or removing access methods (mirrors).
-    This endpoint is primarily used to add additional cloud/region file upload locations or
-    remove existing mirrors. The underlying file content (checksums) MUST remain unchanged.
-
-    **Important Constraints**:
-    - Files CANNOT change their checksums or point to files with different checksums
-    - Only access methods (mirrors) can be added or removed
-    - All mirrors must point to the same file content verified by matching checksums
-    - Metadata updates (name, description, aliases) are allowed
-
-    **Use Cases**:
-    - Add mirrors in different cloud providers or regions for better geographic distribution
-    - Remove access methods that are no longer available or needed
-    - Update metadata like description or aliases without changing file content
-
-    **Transactional Behavior**:
-    Like registration, updates SHOULD be atomic. If ANY object update fails validation,
-    the ENTIRE request SHOULD fail and NO objects SHOULD be updated.
-
-    **Authentication**: GA4GH Passports can be provided in the request body for authorization.
-  operationId: UpdateObjects
-  security:
-    - {}
-    - BasicAuth: []
-    - BearerAuth: []
-    - PassportAuth: []
-  requestBody:
-    $ref: '../components/requestBodies/UpdateObjectsBody.yaml'
-  responses:
-    200:
-      $ref: '../components/responses/200ObjectsUpdated.yaml'
-    400:
-      $ref: '../components/responses/400BadRequest.yaml'
-    401:
-      $ref: '../components/responses/401Unauthorized.yaml'
-    403:
-      $ref: '../components/responses/403Forbidden.yaml'
-    404:
-      $ref: '../components/responses/404NotFoundDrsObject.yaml'
-    409:
-      description: Conflict - checksum mismatch detected
-      content:
-        application/json:
-          schema:
-            $ref: '../components/schemas/Error.yaml'
-    413:
-      $ref: '../components/responses/413RequestTooLarge.yaml'
-    500:
-      $ref: '../components/responses/500InternalServerError.yaml'
-  tags:
-    - Objects
-  x-swagger-router-controller: ga4gh.drs.server
