@@ -4976,7 +4976,7 @@ components:
       required:
         - checksums
       properties:
-        access_methods:
+        checksums:
           type: array
           items:
             $ref: '#/components/schemas/Checksum'
