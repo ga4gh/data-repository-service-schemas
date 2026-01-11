@@ -2,7 +2,7 @@ type: object
 required:
   - checksums
 properties:
-  access_methods:
+  checksums:
     type: array
     items:
       $ref: './Checksum.yaml'
