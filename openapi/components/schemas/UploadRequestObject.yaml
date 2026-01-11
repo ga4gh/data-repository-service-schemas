@@ -38,5 +38,5 @@ properties:
       the server in the `supportedUploadMethods` field in  the `/service-info` response. 
       Servers SHALL try to honour requests, but the server may not be able to offer the 
       requested upload type for specific file types/sizes etc. The server MAY return a 
-      4** error code if it cannot honour the request, or MAY return an alternative 
+      400 error if it cannot honour the request, or MAY return an alternative 
       supported upload method.

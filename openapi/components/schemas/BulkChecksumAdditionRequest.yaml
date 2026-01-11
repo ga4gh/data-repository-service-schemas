@@ -1,0 +1,28 @@
+type: object
+required:
+  - additions 
+properties:
+  updates:
+    type: array
+    items:
+      type: object
+      required:
+        - object_id
+        - checksums
+      properties:
+        object_id:
+          type: string
+          description: DRS object ID to add checksum for
+        checksums:
+          type: array
+          items:
+            $ref: './Checksum.yaml'
+          minItems: 1
+          description: New checksums for this object
+    minItems: 1
+    description: Array of checksum additions
+  passports:
+    type: array
+    items:
+      type: string
+    description: Optional GA4GH Passport JWTs for authorization

@@ -1,4 +1,4 @@
-post:
+put:
   summary: Delete multiple DRS objects
   description: >-
     **Optional Endpoint**: This endpoint is not required for DRS server implementations. 
@@ -62,7 +62,7 @@ post:
       description: Complete example of successfully deleting multiple objects
       value:
         request:
-          method: POST
+          method: PUT
           url: "/objects/delete"
           headers:
             Content-Type: "application/json"
@@ -83,7 +83,7 @@ post:
       description: Complete example of bulk deletion failing due to one invalid object ID - no objects are deleted
       value:
         request:
-          method: POST
+          method: PUT
           url: "/objects/delete"
           headers:
             Content-Type: "application/json"
@@ -107,7 +107,7 @@ post:
       description: Complete example when bulk request exceeds server limits
       value:
         request:
-          method: POST
+          method: PUT
           url: "/objects/delete"
           headers:
             Content-Type: "application/json"
@@ -126,7 +126,7 @@ post:
       description: Complete example when client requests storage deletion but server doesn't support it
       value:
         request:
-          method: POST
+          method: PUT
           url: "/objects/delete"
           headers:
             Content-Type: "application/json"

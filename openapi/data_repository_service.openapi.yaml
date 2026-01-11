@@ -38,10 +38,8 @@ tags:
   # Operations
   - name: Objects
   - name: Upload Request
-  - name: Register Objects
-  - name: Access Method Updates
     description:
-      $ref: ./tags/AccessMethodUpdate.md
+      $ref: ./tags/UploadRequest.md
   - name: Service Info
 
   # Models
@@ -138,6 +136,9 @@ tags:
   - name: Access Method Update
     description:
       $ref: ./tags/AccessMethodUpdate.md
+  - name: Checksum Additions
+    description:
+      $ref: ./tags/ChecksumAddition.md
 x-tagGroups:
   - name: Overview
     tags:
@@ -148,14 +149,13 @@ x-tagGroups:
     tags:
       - Objects
       - Upload Request
-      - Register Objects
       - Service Info
   - name: Models
     tags:
       - AccessMethodModel
       - AccessURLModel
       - ChecksumModel
-      - ContentsObjectModel
+      - ContentsObjectModels
       - DrsObjectModel
       - DrsObjectCandidateModel
       - ErrorModel
@@ -179,6 +179,7 @@ x-tagGroups:
       - Upload Requests and Object Registration
       - Object Deletion
       - Access Method Update
+      - Checksum Addition
 paths:
   /service-info:
     $ref: ./paths/service-info.yaml
@@ -194,14 +195,19 @@ paths:
     $ref: ./paths/objects@{object_id}@access@{access_id}.yaml
   /objects/access:
     $ref: ./paths/objects@access.yaml
+  /objects/register:
+    $ref: ./paths/objects@register.yaml
   /objects/{object_id}/access-methods:
     $ref: ./paths/objects@{object_id}@access-methods.yaml
   /objects/access-methods:
     $ref: ./paths/objects@access-methods.yaml
+  /objects/{object_id}/checksums:
+    $ref: ./paths/objects@{object_id}@checksums.yaml
+  /objects/checksums:
+    $ref: ./paths/objects@checksums.yaml
   /upload-request:
     $ref: ./paths/upload-request.yaml
-  /register-objects:
-    $ref: ./paths/register-objects.yaml
+  
 components:
   securitySchemes:
     BasicAuth:

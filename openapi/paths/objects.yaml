@@ -23,12 +23,12 @@ options:
   tags:
     - Objects
   x-swagger-router-controller: ga4gh.drs.server
-  requestBody:
-    required: true
-    content:
-      application/json:
-        schema:
-          $ref: '../components/parameters/BulkObjectIdNoPassport.yaml'
+#  requestBody:
+#    required: true
+#    content:
+#      application/json:
+#        schema:
+#          $ref: '../components/parameters/BulkObjectIdNoPassport.yaml'
 
 post:
   summary: Get info about multiple DrsObjects with an optional Passport(s).
@@ -38,7 +38,7 @@ post:
     The request is limited to use passports (one or more) or a single bearer token, 
     so make sure your bulk request is for objects that all use the same passports/token.
     
-    **Note**: To register new DRS objects, use the dedicated `/register-objects` endpoint.
+    **Note**: To register new DRS objects, use the dedicated `/objects/register` endpoint.
   operationId: GetBulkObjects
   security:
     - PassportAuth: []

@@ -1,4 +1,4 @@
-post:
+put:
   summary: Update access methods for a DRS object
   description: >-
     **Optional Endpoint**: Not all DRS servers support access method updates.

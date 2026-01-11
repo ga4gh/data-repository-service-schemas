@@ -8,7 +8,7 @@ post:
     unique object IDs for each registered object and return them in fully-formed DRS objects in response.
     
     This endpoint can be used after uploading files using methods negotiated with the `/upload-request` endpoint 
-    to register the uploaded files as DRS objects, or to register existinf data. The request body should contain candidate 
+    to register the uploaded files as DRS objects, or to register existing data. The request body should contain candidate 
     DRS objects with all required metadata including access methods that correspond 
     to the upload methods used during file upload.
     
