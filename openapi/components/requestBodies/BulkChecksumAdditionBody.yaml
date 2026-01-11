@@ -1,0 +1,6 @@
+description: Request body for bulk adding checksums to multiple DRS objects
+required: true
+content:
+  application/json:
+    schema:
+      $ref: '../schemas/BulkChecksumAdditionRequest.yaml'
