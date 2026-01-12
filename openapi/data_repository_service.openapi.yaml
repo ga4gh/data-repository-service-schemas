@@ -195,6 +195,8 @@ paths:
     $ref: ./paths/objects@register.yaml
   /objects/{object_id}/access-methods:
     $ref: ./paths/objects@{object_id}@access-methods.yaml
+  /objects/checksum/{checksum}:
+    $ref: ./paths/objects@checksum@{checksum}.yaml
   /objects/access-methods:
     $ref: ./paths/objects@access-methods.yaml
   /objects/{object_id}/checksums:
