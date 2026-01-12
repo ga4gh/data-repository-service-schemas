@@ -33,7 +33,7 @@ Check `/service-info` for delete capabilities:
   "drs": {
     "uploadRequestSupported": true,
     "objectRegistrationSupported": true,
-    "supportedUploadMethods": ["s3", "https"],
+    "supportedUploadMethodTypes": ["s3", "https"],
     "relatedFileStorageSupported": true,
     "deleteSupported": true,
     "maxBulkDeleteLength": 100,

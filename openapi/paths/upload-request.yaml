@@ -9,7 +9,7 @@ post:
     
     **Discovery**: Before using this endpoint, clients should check the `/service-info` endpoint 
     to determine if upload operations are supported. Look for `drs.uploadRequestSupported: true` and 
-    `drs.supportedUploadMethods` to understand which upload methods are available. Also check 
+    `drs.supportedUploadMethodTypes` to understand which upload methods are available. Also check 
     `drs.maxUploadSize` and `drs.maxUploadRequestLength` for server limits.
     
     **Usage Flow:**
@@ -32,7 +32,7 @@ post:
     The endpoint supports multiple authentication methods including GA4GH Passport tokens sent in the request body.
     Passport tokens enable fine-grained authorization based on data access policies.
     
-    **Upload Methods**: Response may include multiple options (s3, https, gs, ftp/sftp) for flexibility. Note that servers may return a subset of their advertised `supportedUploadMethods` based on file-specific factors such as file type, size, or server policies.
+    **Upload Methods**: Response may include multiple options (s3, https, gs, ftp/sftp) for flexibility. Note that servers may return a subset of their advertised `supportedUploadMethodTypes` based on file-specific factors such as file type, size, or server policies.
     
     **File Integrity**: All requests must include at least one checksum per file (SHA-256, MD5, or other IANA-registered algorithms).
     
