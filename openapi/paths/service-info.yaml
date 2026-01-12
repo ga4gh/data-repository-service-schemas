@@ -33,7 +33,7 @@ get:
           "totalObjectSize": 4018437188907752,
           "uploadRequestSupported": true,
           "objectRegistrationSupported": true,
-          "supportedUploadMethods": ["s3", "https", "gs"],
+          "supportedUploadMethodTypes": ["s3", "https", "gs"],
           "maxUploadSize": 5368709120,
           "maxUploadRequestLength": 50,
           "validateChecksums": true,

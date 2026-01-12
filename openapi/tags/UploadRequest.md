@@ -29,7 +29,7 @@ Check `/service-info` for upload capabilities:
   "drs": {
     "uploadRequestSupported": true,
     "objectRegistrationSupported": true,
-    "supportedUploadMethods": ["s3", "https"],
+    "supportedUploadMethodTypes": ["s3", "https"],
     "maxUploadSize": 5368709120,
     "maxUploadRequestLength": 50,
     "maxRegisterRequestLength": 50,
@@ -44,7 +44,7 @@ Upload related fields:
 
 - `uploadRequestSupported`: Upload request operations available via `/upload-request`
 - `objectRegistrationSupported`: Object registration operations available via `/objects/register`
-- `supportedUploadMethods`: Available storage backends  
+- `supportedUploadMethodTypes`: Available storage backends  
 - `maxUploadSize`: File size limit (bytes)
 - `maxUploadRequestLength`: Files per request limit for upload requests
 - `maxRegisterRequestLength`: Candidate objects per request limit for registration
@@ -147,7 +147,7 @@ Content-Type: application/json
           "type": "md5"
         }
       ],
-      "upload_methods": ["https"]
+      "upload_method_types": ["https"]
     }
   ]
 }
@@ -281,7 +281,7 @@ Content-Type: application/json
           "type": "md5"
         }
       ],
-      "upload_methods": ["s3"]
+      "upload_method_types": ["s3"]
     },
     {
       "name": "sample.bam.bai",
@@ -293,7 +293,7 @@ Content-Type: application/json
           "type": "md5"
         }
       ],
-      "upload_methods": ["s3"]
+      "upload_method_types": ["s3"]
     }
   ]
 }

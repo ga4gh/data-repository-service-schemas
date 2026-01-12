@@ -43,7 +43,7 @@ properties:
           If true, clients can register uploaded files or existing data as DRS objects.
           If false or missing, the server does not support object registration.
         default: false
-      supportedUploadMethods:
+      supportedUploadMethodTypes:
         type: array
         items:
           type: string
