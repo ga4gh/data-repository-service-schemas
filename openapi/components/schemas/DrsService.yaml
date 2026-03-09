@@ -160,6 +160,14 @@ properties:
         description: >-
           Maximum number of objects that can be updated in a single bulk checksum addition request.
           Only present when checksumAdditionSupported is true. If not specified, defaults to maxBulkRequestLength.
+      fetchByChecksumSupported:
+        type: boolean
+        description: >-
+          Indicates whether this DRS server supports fetching objects by checksum.
+          If true, clients can fetch DRS objects using `/objects/checksum/{checksum}`, noting that it is possible for 
+          multiple objects to have the same checksum.
+          If false or missing, the server does not support fetching by cejcsum.
+        default: false
 
 
     
