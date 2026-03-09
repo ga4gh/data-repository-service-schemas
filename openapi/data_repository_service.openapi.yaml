@@ -199,6 +199,8 @@ paths:
     $ref: ./paths/objects@access-methods.yaml
   /objects/{object_id}/checksums:
     $ref: ./paths/objects@{object_id}@checksums.yaml
+  /objects/checksum/{checksum}:
+    $ref: ./paths/objects@checksum@{checksum}.yaml
   /objects/checksums:
     $ref: ./paths/objects@checksums.yaml
   /objects/{object_id}/delete:

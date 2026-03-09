@@ -814,6 +814,50 @@
         ]
       }
     },
+    "/objects/checksum/{checksum}": {
+      "get": {
+        "summary": "Get DRS objects that are a match for the checksum.",
+        "description": "Returns an array of `DRSObjects` that match a given checksum.\nThe checksum type is not provide, the checksum check is done against all checksum types.",
+        "operationId": "GetObjectsByChecksum",
+        "security": [
+          {
+            "PassportAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/Checksum"
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/200OkDrsObjects"
+          },
+          "202": {
+            "$ref": "#/components/responses/202Accepted"
+          },
+          "400": {
+            "$ref": "#/components/responses/400BadRequest"
+          },
+          "401": {
+            "$ref": "#/components/responses/401Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/403Forbidden"
+          },
+          "404": {
+            "$ref": "#/components/responses/404NotFoundDrsObject"
+          },
+          "500": {
+            "$ref": "#/components/responses/500InternalServerError"
+          }
+        },
+        "tags": [
+          "Objects"
+        ],
+        "x-swagger-router-controller": "ga4gh.drs.server"
+      }
+    },
     "/objects/checksums": {
       "put": {
         "summary": "Add additional checksums for multiple DRS objects",
@@ -1271,6 +1315,11 @@
               "maxBulkChecksumAdditionLength": {
                 "type": "integer",
                 "description": "Maximum number of objects that can be updated in a single bulk checksum addition request. Only present when checksumAdditionSupported is true. If not specified, defaults to maxBulkRequestLength."
+              },
+              "fetchByChecksumSupported": {
+                "type": "boolean",
+                "description": "Indicates whether this DRS server supports fetching objects by checksum. If true, clients can fetch DRS objects using `/objects/checksum/{checksum}`, noting that it is possible for  multiple objects to have the same checksum. If false or missing, the server does not support fetching by cejcsum.",
+                "default": false
               }
             }
           }
@@ -2742,6 +2791,15 @@
         "description": "If false and the object_id refers to a bundle, then the ContentsObject array contains only those objects directly contained in the bundle. That is, if the bundle contains other bundles, those other bundles are not recursively included in the result.\nIf true and the object_id refers to a bundle, then the entire set of objects in the bundle is expanded. That is, if the bundle contains other bundles, then those other bundles are recursively expanded and included in the result. Recursion continues through the entire sub-tree of the bundle.\nIf the object_id refers to a blob, then the query parameter is ignored."
       },
       "AccessId": {
+        "in": "path",
+        "name": "access_id",
+        "required": true,
+        "description": "An `access_id` from the `access_methods` list of a `DrsObject`",
+        "schema": {
+          "type": "string"
+        }
+      },
+      "Checksum": {
         "in": "path",
         "name": "access_id",
         "required": true,
