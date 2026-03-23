@@ -136,6 +136,15 @@ properties:
           Only present when deleteSupported is true. This is a capability flag indicating what the server can attempt, not a default behavior setting.
           Note: Storage deletion attempts may fail due to permissions, network issues, or storage service errors.
         default: false
+      metadataRetentionSupported:
+        type: boolean
+        description: >-
+          Indicates whether this DRS server supports preserving object metadata after deletion.
+          If true, the server honours `delete_object_metadata: false` in delete requests by marking
+          the object as deleted rather than permanently removing it. Read and access endpoints
+          return 410 Gone for objects in this state.
+          Only present when deleteSupported is true.
+        default: false
       accessMethodUpdateSupported:
         type: boolean
         description: >-

@@ -15,7 +15,7 @@ These endpoints only support the addition of additional checksums, a client SHOU
 attempt to update the value of an existing checksum or to remove a checksum. If a client
 attempts to update an existing checksum the server behaviour is implementation
 dependent but servers MAY simply ignore the request, or MAY return a 4XX error to the client.
-Servers MUST NOT change any existing checksums. If an incorrent checksum has been registered
+Servers MUST NOT change any existing checksums. If an incorrect checksum has been registered
 then clients should delete the existing DRS object (if supported by the server) and register
 a new DRS object with the correct metadata. This ensures that a single DRS object ID _always_
 points to the same object.
@@ -23,7 +23,7 @@ points to the same object.
 ## Design Principles
 
 - **Optional**: Checksum addition support is completely optional
-- **Object Immutability**: Existing checksums cannote be changed
+- **Object Immutability**: Existing checksums cannot be changed
 - **Atomic Bulk Operations**: All additions succeed or all fail (transactional)
 - **Flexible Authentication**: Supports GA4GH Passports, Bearer tokens, API keys
 
@@ -36,14 +36,14 @@ Check `/service-info` for checksum addition capabilities:
   "drs": {
     "checksumAdditionSupported": true,
     "maxBulkChecksumAdditionLength": 100,
-    "verifyChecksums": true
+    "validateChecksums": true
   }
 }
 ```
 
 - **`checksumAdditionSupported`**: Whether server supports checksum addition
 - **`maxBulkChecksumAdditionLength`**: Maximum objects per bulk addition request
-- **`verifyChecksums`**: Whether server validates new checksums
+- **`validateChecksums`**: Whether server validates new checksums
 
 ## Single Object Checksum Addition
 
@@ -55,7 +55,7 @@ curl -X PUT "https://drs.example.org/objects/obj_123/checksums" \
   -d '{
     "checksums": [
       {
-        "checksum": "2320831154385267afee81d0d837473280117763f4acd426b3735c37a0500482"
+        "checksum": "2320831154385267afee81d0d837473280117763f4acd426b3735c37a0500482",
         "type": "sha256"
       }
     ]
@@ -84,7 +84,7 @@ curl -X PUT "https://drs.example.org/objects/checksums" \
         "object_id": "obj_456", 
         "checksums": [
           {
-            "checksum": "23d50c6804a8b198f7fe4ff11d4518fb46d8d8d1337c6b9aa0fbad7bb90b3d32"
+            "checksum": "23d50c6804a8b198f7fe4ff11d4518fb46d8d8d1337c6b9aa0fbad7bb90b3d32",
             "type": "sha256"
           }
         ]
@@ -113,7 +113,7 @@ curl -H "Authorization: Bearer token" -d '{"additions": [...]}' ...
 ## Validation
 
 Servers MAY validate that new checksums match the underlying objects, this behaviour is
-adevrtised in the `validateChecksums` service-info field.
+advertised in the `validateChecksums` service-info field.
 
 ## Error Responses
 
@@ -122,6 +122,42 @@ adevrtised in the `validateChecksums` service-info field.
 - **403**: Insufficient permissions for object(s)
 - **404**: Object not found or checksum additions not supported
 - **413**: Bulk request exceeds `maxBulkChecksumAdditionLength` limit
+
+## Examples
+
+**Add SHA-256 checksum to an object that only has MD5:**
+
+```bash
+curl -X PUT "https://drs.example.org/objects/obj_123/checksums" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "checksums": [
+      {
+        "checksum": "2320831154385267afee81d0d837473280117763f4acd426b3735c37a0500482",
+        "type": "sha256"
+      }
+    ]
+  }'
+```
+
+**Bulk add checksums for multiple objects:**
+
+```bash
+curl -X PUT "https://drs.example.org/objects/checksums" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "additions": [
+      {
+        "object_id": "obj_123",
+        "checksums": [{"checksum": "abc123...", "type": "sha256"}]
+      },
+      {
+        "object_id": "obj_456",
+        "checksums": [{"checksum": "def456...", "type": "sha256"}]
+      }
+    ]
+  }'
+```
 
 ## Best Practices
 

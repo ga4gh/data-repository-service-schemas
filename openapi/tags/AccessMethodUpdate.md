@@ -56,7 +56,7 @@ curl -X PUT "https://drs.example.org/objects/obj_123/access-methods" \
       },
       {
         "type": "s3",
-        "access_id": "s3,
+        "access_id": "s3",
         "access_url": {
           "url": "s3://new-bucket/migrated/file.bam"
         }
