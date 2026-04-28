@@ -98,3 +98,6 @@ get:
       $ref: '../components/responses/500InternalServerError.yaml'
   tags:
     - Service Info
+
+
+A service that supports object-level controlled-access claims SHOULD set `drs.controlledAccessSupported` to `true`, SHOULD set `drs.controlledAccessClaimFormat` to `ga4gh-passport-url-claim`, and SHOULD set `drs.controlledAccessDefault` to `open-access-read`.
