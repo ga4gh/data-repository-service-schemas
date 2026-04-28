@@ -111,3 +111,23 @@ properties:
       about this `DrsObject` from external metadata sources. These
       aliases can be used to represent secondary
       accession numbers or external GUIDs.
+
+  controlled_access:
+    type: array
+    items:
+      type: string
+    description: |-
+      A list of authorization claims representing controlled-access
+      requirements for this `DrsObject`.
+
+      Claims SHOULD be represented as strings using URL claim semantics
+      compatible with GA4GH Passport visa claim values:
+      https://github.com/ga4gh-duri/ga4gh-duri.github.io/blob/master/researcher_ids/ga4gh_passport_v1.md#url-claims
+
+      If this field is missing or empty, the `DrsObject` MUST be treated as
+      open access for read operations.
+
+      This field is required for write operations.
+    example:
+      - https://auth.example.org/datasets/phs000123
+      - https://auth.example.org/projects/lung-study
