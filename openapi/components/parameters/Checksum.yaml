@@ -1,0 +1,6 @@
+in: path
+name: checksum
+required: true
+description: A checksum value to match against registered `DrsObject`s
+schema:
+  type: string

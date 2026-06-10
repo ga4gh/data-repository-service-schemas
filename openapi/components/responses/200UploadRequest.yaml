@@ -1,0 +1,93 @@
+description: Upload request processed successfully. Returns upload methods and temporary credentials for the requested files.
+content:
+  application/json:
+    schema:
+      $ref: '../schemas/UploadResponse.yaml'
+    examples:
+      s3_upload:
+        summary: S3 upload method response
+        description: Response with S3 upload method and temporary credentials
+        value:
+          responses:
+            - name: "sample_data.vcf"
+              size: 1048576
+              mime_type: "text/plain"
+              checksums:
+                - checksum: "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855"
+                  type: "sha-256"
+              description: "Variant call format file for sample analysis"
+              aliases:
+                - "sample_001_variants"
+                - "vcf_batch_2024"
+              upload_methods:
+                - type: "s3"
+                  access_url:
+                    url: "https://my-bucket.s3.amazonaws.com/uploads/drs_object_123456"
+                  region: "us-east-1"
+                  upload_details:
+                    bucket: "my-bucket"
+                    key: "uploads/drs_object_123456"
+                    access_key_id: "REPLACE_WITH_TEMP_ACCESS_KEY"
+                    secret_access_key: "REPLACE_WITH_TEMP_SECRET_KEY"
+                    session_token: "REPLACE_WITH_SESSION_TOKEN"
+                    expires_at: "2024-01-01T12:00:00Z"
+      https_upload:
+        summary: HTTPS upload method response
+        description: Response with HTTPS presigned POST URL for direct upload
+        value:
+          responses:
+            - name: "genome_assembly.fasta"
+              size: 3221225472
+              mime_type: "text/plain"
+              checksums:
+                - checksum: "a665a45920422f9d417e4867efdc4fb8a04a1f3fff1fa07e998e86f7f7a27ae3"
+                  type: "sha-256"
+                - checksum: "098f6bcd4621d373cade4e832627b4f6"
+                  type: "md5"
+              description: "Human genome reference assembly"
+              aliases:
+                - "hg38_reference"
+              upload_methods:
+                - type: "https"
+                  access_url:
+                    url: "https://upload.example.org/v1/files/drs_object_789012"
+                  upload_details:
+                    post_url: "https://upload.example.org/v1/files/drs_object_789012?signature=abc123"
+      multiple_methods:
+        summary: Multiple upload methods response
+        description: Response offering multiple upload method options for flexibility
+        value:
+          responses:
+            - name: "annotations.gff3"
+              size: 524288000
+              mime_type: "text/plain"
+              checksums:
+                - checksum: "b94d27b9934d3e08a52e52d7da7dabfac484efe37a5380ee9088f7ace2efcde9"
+                  type: "sha-256"
+              description: "Gene annotations in GFF3 format"
+              upload_methods:
+                - type: "s3"
+                  access_url:
+                    url: "https://genomics-bucket.s3.us-west-2.amazonaws.com/uploads/drs_object_345678"
+                  region: "us-west-2"
+                  upload_details:
+                    bucket: "genomics-bucket"
+                    key: "uploads/drs_object_345678"
+                    access_key_id: "REPLACE_WITH_TEMP_ACCESS_KEY"
+                    secret_access_key: "REPLACE_WITH_TEMP_SECRET_KEY"
+                    session_token: "REPLACE_WITH_SESSION_TOKEN"
+                    expires_at: "2024-01-01T12:00:00Z"
+                - type: "https"
+                  access_url:
+                    url: "https://upload-api.example.org/files/drs_object_345678"
+                  upload_details:
+                    post_url: "https://upload-api.example.org/files/drs_object_345678?token=upload_token_12345"
+                - type: "gs"
+                  access_url:
+                    url: "https://storage.googleapis.com/genomics-uploads/drs_object_345678"
+                  region: "us-central1"
+                  upload_details:
+                    bucket: "genomics-uploads"
+                    key: "drs_object_345678"
+                    access_token: "REPLACE_WITH_TEMP_ACCESS_TOKEN"
+                    expires_at: "2024-01-01T12:00:00Z"

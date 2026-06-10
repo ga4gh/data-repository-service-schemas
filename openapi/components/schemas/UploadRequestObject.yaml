@@ -1,0 +1,43 @@
+type: object
+required:
+  - name
+  - size
+  - mime_type
+  - checksums
+properties:
+  name:
+    type: string
+    description: The name of the file to upload
+  size:
+    type: integer
+    format: int64
+    description: Size of the file in bytes
+  mime_type:
+    type: string
+    description: MIME type of the file
+  checksums:
+    type: array
+    items:
+      $ref: './Checksum.yaml'
+    minItems: 1
+    description: Array of checksums for file integrity verification
+  description:
+    type: string
+    description: Optional description of the file
+  aliases:
+    type: array
+    items:
+      type: string
+    description: Optional array of alternative names for the file
+  upload_methods:
+    type: array
+    items:
+      $ref: './UploadMethodRequest.yaml'
+    description: >-
+      Optional array of requested upload methods. Each entry names a requested upload
+      method `type` (which should match one published by the server in the
+      `supportedUploadMethodTypes` field of the `/service-info` response) and MAY carry
+      method-specific `upload_details` supplied by the client. Servers SHALL try to
+      honour requests, but may not be able to offer the requested upload method for
+      specific file types/sizes etc. The server MAY return a 400 error if it cannot
+      honour the request, or MAY return an alternative supported upload method.

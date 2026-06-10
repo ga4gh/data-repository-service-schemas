@@ -1,0 +1,6 @@
+description: Request body for bulk updating access methods of multiple DRS objects
+required: true
+content:
+  application/json:
+    schema:
+      $ref: '../schemas/BulkAccessMethodUpdateRequest.yaml'

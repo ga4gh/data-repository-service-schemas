@@ -1,0 +1,6 @@
+description: Request body for adding checksums to a DRS object
+required: true
+content:
+  application/json:
+    schema:
+      $ref: '../schemas/ChecksumAdditionRequest.yaml'

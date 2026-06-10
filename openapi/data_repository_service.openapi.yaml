@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
   title: Data Repository Service
-  version: 1.5.0
+  version: 1.6.0
   x-logo:
     url: 'https://www.ga4gh.org/wp-content/themes/ga4gh/dist/assets/svg/logos/logo-full-color.svg'
   termsOfService: 'https://www.ga4gh.org/terms-and-conditions/'
@@ -37,6 +37,10 @@ tags:
 
   # Operations
   - name: Objects
+    description: Operations for retrieving, registering, updating, and deleting DRS objects.
+  - name: Upload Request
+    description:
+      $ref: ./tags/UploadRequest.md
   - name: Service Info
 
   # Models
@@ -60,10 +64,46 @@ tags:
     x-displayName: DrsObject
     description: |
       <SchemaDefinition schemaRef="#/components/schemas/DrsObject" />
+  - name: DrsObjectCandidateModel
+    x-displayName: DrsObjectCandidate
+    description: |
+      <SchemaDefinition schemaRef="#/components/schemas/DrsObjectCandidate" />
   - name: ErrorModel
     x-displayName: Error
     description: |
       <SchemaDefinition schemaRef="#/components/schemas/Error" />
+  - name: UploadRequestModel
+    x-displayName: UploadRequest
+    description: |
+      <SchemaDefinition schemaRef="#/components/schemas/UploadRequest" />
+  - name: UploadResponseModel
+    x-displayName: UploadResponse
+    description: |
+      <SchemaDefinition schemaRef="#/components/schemas/UploadResponse" />
+  - name: UploadRequestObjectModel
+    x-displayName: UploadRequestObject
+    description: |
+      <SchemaDefinition schemaRef="#/components/schemas/UploadRequestObject" />
+  - name: UploadResponseObjectModel
+    x-displayName: UploadResponseObject
+    description: |
+      <SchemaDefinition schemaRef="#/components/schemas/UploadResponseObject" />
+  - name: UploadMethodModel
+    x-displayName: UploadMethod
+    description: |
+      <SchemaDefinition schemaRef="#/components/schemas/UploadMethod" />
+  - name: UploadMethodRequestModel
+    x-displayName: UploadMethodRequest
+    description: |
+      <SchemaDefinition schemaRef="#/components/schemas/UploadMethodRequest" />
+  - name: DeleteRequestModel
+    x-displayName: DeleteRequest
+    description: |
+      <SchemaDefinition schemaRef="#/components/schemas/DeleteRequest" />
+  - name: BulkDeleteRequestModel
+    x-displayName: BulkDeleteRequest
+    description: |
+      <SchemaDefinition schemaRef="#/components/schemas/BulkDeleteRequest" />
 
   # Appendices
   - name: Motivation
@@ -84,6 +124,18 @@ tags:
   - name: GA4GH Service Registry
     description:
       $ref: './tags/ServiceRegistry.md'
+  - name: Upload Requests and Object Registration
+    description:
+      $ref: ./tags/UploadRequest.md
+  - name: Object Deletion
+    description:
+      $ref: ./tags/ObjectDeletion.md
+  - name: Access Method Update
+    description:
+      $ref: ./tags/AccessMethodUpdate.md
+  - name: Checksum Additions
+    description:
+      $ref: ./tags/ChecksumAddition.md
 x-tagGroups:
   - name: Overview
     tags:
@@ -93,6 +145,7 @@ x-tagGroups:
   - name: Operations
     tags:
       - Objects
+      - Upload Request
       - Service Info
   - name: Models
     tags:
@@ -101,7 +154,16 @@ x-tagGroups:
       - ChecksumModel
       - ContentsObjectModel
       - DrsObjectModel
+      - DrsObjectCandidateModel
       - ErrorModel
+      - UploadRequestModel
+      - UploadResponseModel
+      - UploadRequestObjectModel
+      - UploadResponseObjectModel
+      - UploadMethodModel
+      - UploadMethodRequestModel
+      - DeleteRequestModel
+      - BulkDeleteRequestModel
   - name: Appendices
     tags:
       - Motivation
@@ -110,17 +172,40 @@ x-tagGroups:
       - Compact Identifier-Based URIs
       - Hostname-Based URIs
       - GA4GH Service Registry
+      - Upload Requests and Object Registration
+      - Object Deletion
+      - Access Method Update
+      - Checksum Additions
 paths:
   /service-info:
     $ref: ./paths/service-info.yaml
   /objects/{object_id}:
     $ref: ./paths/objects@{object_id}.yaml
   /objects:
-    $ref: ./paths/bulkobjects@{object_id}.yaml
+    $ref: ./paths/objects.yaml
   /objects/{object_id}/access/{access_id}:
     $ref: ./paths/objects@{object_id}@access@{access_id}.yaml
   /objects/access:
-    $ref: ./paths/bulkobjects@access@{access_id}.yaml
+    $ref: ./paths/objects@access.yaml
+  /objects/register:
+    $ref: ./paths/objects@register.yaml
+  /objects/{object_id}/access-methods:
+    $ref: ./paths/objects@{object_id}@access-methods.yaml
+  /objects/access-methods:
+    $ref: ./paths/objects@access-methods.yaml
+  /objects/{object_id}/checksums:
+    $ref: ./paths/objects@{object_id}@checksums.yaml
+  /objects/checksum/{checksum}:
+    $ref: ./paths/objects@checksum@{checksum}.yaml
+  /objects/checksums:
+    $ref: ./paths/objects@checksums.yaml
+  /objects/{object_id}/delete:
+    $ref: ./paths/objects@{object_id}@delete.yaml
+  /objects/delete:
+    $ref: ./paths/objects@delete.yaml
+  /upload-request:
+    $ref: ./paths/upload-request.yaml
+  
 components:
   securitySchemes:
     BasicAuth:

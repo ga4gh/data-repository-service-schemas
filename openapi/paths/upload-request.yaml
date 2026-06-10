@@ -1,0 +1,24 @@
+post:
+  summary: Request upload methods for files
+  description: Request upload methods and temporary credentials for one or more files, before registering them as DRS objects. This is an optional endpoint that not all DRS servers implement.
+  operationId: PostUploadRequest
+  security:
+    - {}
+    - BasicAuth: []
+    - BearerAuth: []
+    - PassportAuth: []
+  requestBody:
+    $ref: '../components/requestBodies/UploadRequestBody.yaml'
+  responses:
+    '200':
+      $ref: '../components/responses/200UploadRequest.yaml'
+    '400':
+      $ref: '../components/responses/400BadRequest.yaml'
+    '401':
+      $ref: '../components/responses/401Unauthorized.yaml'
+    '403':
+      $ref: '../components/responses/403Forbidden.yaml'
+    '500':
+      $ref: '../components/responses/500InternalServerError.yaml'
+  tags:
+    - Upload Request

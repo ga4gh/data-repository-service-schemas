@@ -1,0 +1,15 @@
+description: >-
+  Access methods successfully updated for all objects. Returns updated DRS objects with 
+  new access methods and updated timestamps.
+content:
+  application/json:
+    schema:
+      type: object
+      required:
+        - objects
+      properties:
+        objects:
+          type: array
+          items:
+            $ref: '../schemas/DrsObject.yaml'
+          description: Array of updated DRS objects

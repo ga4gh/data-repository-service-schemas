@@ -1,0 +1,44 @@
+required: false
+content:
+  application/json:
+    schema:
+      $ref: '../schemas/DeleteRequest.yaml'
+    examples:
+      metadata_only_delete:
+        summary: Delete metadata only (default)
+        description: Delete DRS object metadata while preserving underlying storage data. This is the default and safest option.
+        value:
+          passports:
+            - "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJnYTRnaF9wYXNzcG9ydF92MSI6W119.JJ5rN0ktP0qwyZmIPpxmF_p7JsxAZH6L6brUxtad3CM"
+          delete_storage_data: false
+      full_delete:
+        summary: Delete metadata and storage data
+        description: Delete both DRS object metadata and underlying storage data (requires server support via deleteStorageDataSupported)
+        value:
+          passports:
+            - "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJnYTRnaF9wYXNzcG9ydF92MSI6W119.JJ5rN0ktP0qwyZmIPpxmF_p7JsxAZH6L6brUxtad3CM"
+          delete_storage_data: true
+      no_auth_delete:
+        summary: Delete without authentication
+        description: Delete operation without GA4GH Passport authentication (for public objects or when using Bearer token in headers)
+        value:
+          delete_storage_data: false
+      minimal_request:
+        summary: Minimal delete request
+        description: Simplest delete request with no authentication and default behavior (metadata only)
+        value: {}
+      multiple_passports:
+        summary: Multiple GA4GH Passports
+        description: Delete request with multiple GA4GH Passports for complex authorization scenarios
+        value:
+          passports:
+            - "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJnYTRnaF9wYXNzcG9ydF92MSI6W119.JJ5rN0ktP0qwyZmIPpxmF_p7JsxAZH6L6brUxtad3CM"
+            - "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJnYTRnaF9wYXNzcG9ydF92MSI6W119.AbCdEfGhIjKlMnOpQrStUvWxYz"
+          delete_storage_data: false
+      update_workflow:
+        summary: Safe update workflow
+        description: Delete metadata only to enable safe update pattern (delete metadata, then re-register with new metadata)
+        value:
+          passports:
+            - "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJnYTRnaF9wYXNzcG9ydF92MSI6W119.JJ5rN0ktP0qwyZmIPpxmF_p7JsxAZH6L6brUxtad3CM"
+          delete_storage_data: false

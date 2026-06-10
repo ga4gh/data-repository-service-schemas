@@ -1,0 +1,45 @@
+type: object
+required:
+  - type
+  - access_url
+properties:
+  type:
+    type: string
+    description: >-
+      Type of upload method, which should match one of the types published by the server
+      in the `supportedUploadMethodTypes` field of the `/service-info` response. This is
+      intentionally an open string rather than an enumeration so that servers and clients
+      can negotiate new or vendor-specific upload methods without a change to this
+      specification. Common values include `s3`, `gs`, `https`, `ftp`, `sftp`, `gsiftp`
+      and `globus`. Implementations MAY support any subset of upload methods.
+
+      The 'https' type can be used to return a presigned POST URL and is expected to be
+      the most common implementation for typical file uploads. This method provides a
+      simple HTTP POST interface that works with standard web clients.
+      
+      The 's3' type is primarily intended to support uploads of large files that want
+      to take advantage of multipart uploads and automatic retries implemented in AWS
+      libraries. This method provides direct access to S3-specific upload capabilities.
+      
+      Other common implementations include 'gs' for Google Cloud Storage and 'sftp'
+      for secure FTP uploads.
+  access_url:
+    allOf:
+      - $ref: './AccessURL.yaml'
+      - description: >-
+          An `AccessURL` that specifies where the file will be accessible after upload.
+          This URL will be used as the access_url in the eventual DRS object, ensuring
+          consistency between upload and retrieval operations. Note that the `upload_details`
+          field may contain additional URLs, such as pre-signed POST URLs used to upload
+          the file, which may not be the same as this `access_url`.
+  region:
+    type: string
+    description: >-
+      Cloud region for the upload location. Optional for non-cloud storage types.
+    example: us-east-1
+  upload_details:
+    type: object
+    additionalProperties: true
+    description: >-
+      A dictionary of storage provider specific configuration details that vary by upload method type.
+      The contents and structure depend on the specific upload method being used.

@@ -1,0 +1,24 @@
+description: The client is not authorized to delete the requested DRS object.
+content:
+  application/json:
+    schema:
+      $ref: '../schemas/Error.yaml'
+    examples:
+      insufficient_permissions:
+        summary: Insufficient delete permissions
+        description: Client lacks permission to delete the specified object
+        value:
+          msg: "Client lacks delete permission for object drs_object_123456"
+          status_code: 403
+      invalid_passport:
+        summary: Invalid GA4GH Passport
+        description: Provided GA4GH Passport is invalid or expired
+        value:
+          msg: "Invalid or expired GA4GH Passport provided"
+          status_code: 403
+      missing_visa:
+        summary: Missing required visa
+        description: GA4GH Passport lacks required visa for delete operation
+        value:
+          msg: "GA4GH Passport does not contain required visa for delete operation on this object"
+          status_code: 403

@@ -1,0 +1,15 @@
+type: object
+required:
+  - requests
+properties:
+  requests:
+    type: array
+    items:
+      $ref: './UploadRequestObject.yaml'
+    minItems: 1
+    description: Array of upload requests for files
+  passports:
+    type: array
+    items:
+      type: string
+    description: Optional array of GA4GH Passport JWTs for authorization

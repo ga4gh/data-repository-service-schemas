@@ -1,0 +1,29 @@
+put:
+  summary: Delete multiple DRS objects
+  description: Delete several DRS objects in a single atomic request. This is an optional endpoint that not all DRS servers implement.
+  operationId: BulkDeleteObjects
+  tags:
+    - Objects
+  requestBody:
+    $ref: '../components/requestBodies/BulkDeleteBody.yaml'
+  responses:
+    '204':
+      $ref: '../components/responses/204DeleteSuccess.yaml'
+    '400':
+      $ref: '../components/responses/400BadRequestDelete.yaml'
+    '401':
+      $ref: '../components/responses/401Unauthorized.yaml'
+    '403':
+      $ref: '../components/responses/403ForbiddenDelete.yaml'
+    '404':
+      $ref: '../components/responses/404NotFoundDelete.yaml'
+    '413':
+      $ref: '../components/responses/413RequestTooLarge.yaml'
+    '500':
+      $ref: '../components/responses/500InternalServerError.yaml'
+  security:
+    - {}
+    - BasicAuth: []
+    - BearerAuth: []
+    - PassportAuth: []
+  x-codegen-request-body-name: body

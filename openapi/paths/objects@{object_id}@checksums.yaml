@@ -1,0 +1,30 @@
+put:
+  summary: Add additional checksums for a DRS object
+  description: Add checksums to a single DRS object. This is an optional endpoint that not all DRS servers implement.
+  operationId: AddChecksums
+  parameters:
+    - $ref: '../components/parameters/ObjectId.yaml'
+  requestBody:
+    $ref: '../components/requestBodies/ChecksumAdditionBody.yaml'
+  responses:
+    '200':
+      $ref: '../components/responses/200ChecksumAddition.yaml'
+    '400':
+      $ref: '../components/responses/400BadRequest.yaml'
+    '401':
+      $ref: '../components/responses/401Unauthorized.yaml'
+    '403':
+      $ref: '../components/responses/403Forbidden.yaml'
+    '404':
+      $ref: '../components/responses/404NotFoundDrsObject.yaml'
+    '413':
+      $ref: '../components/responses/413RequestTooLarge.yaml'
+    '500':
+      $ref: '../components/responses/500InternalServerError.yaml'
+  security:
+    - {}
+    - BasicAuth: []
+    - BearerAuth: []
+    - PassportAuth: []
+  tags:
+    - Objects

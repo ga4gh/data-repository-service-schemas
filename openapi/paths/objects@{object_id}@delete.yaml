@@ -1,0 +1,30 @@
+put:
+  summary: Delete a DRS object (optional endpoint)
+  description: Delete a single DRS object by ID. This is an optional endpoint that not all DRS servers implement.
+  operationId: DeleteObject
+  security:
+    - {}
+    - BasicAuth: []
+    - BearerAuth: []
+    - PassportAuth: []
+  parameters:
+    - $ref: '../components/parameters/ObjectId.yaml'
+  requestBody:
+    $ref: '../components/requestBodies/DeleteBody.yaml'
+  responses:
+    204:
+      $ref: '../components/responses/204DeleteSuccess.yaml'
+    400:
+      $ref: '../components/responses/400BadRequestDelete.yaml'
+    401:
+      $ref: '../components/responses/401Unauthorized.yaml'
+    403:
+      $ref: '../components/responses/403ForbiddenDelete.yaml'
+    404:
+      $ref: '../components/responses/404NotFoundDelete.yaml'
+    500:
+      $ref: '../components/responses/500InternalServerError.yaml'
+  tags:
+    - Objects
+  x-swagger-router-controller: ga4gh.drs.server
+  x-codegen-request-body-name: body

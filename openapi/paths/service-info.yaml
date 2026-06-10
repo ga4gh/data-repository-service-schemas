@@ -1,7 +1,8 @@
 get:
   summary: Retrieve information about this service
   description: |-
-    Returns information about the DRS service along with stats pertaning to total object count and cumulative size in bytes.
+    Returns information about the DRS service along with stats pertaining to total object count and cumulative size in bytes.
+    Also indicates whether the server supports optional upload and delete operations and which methods are available.
 
     Extends the
     [v1.0.0 GA4GH Service Info specification](https://github.com/ga4gh-discovery/ga4gh-service-info)
@@ -14,7 +15,7 @@ get:
       * a `type.group` value of `org.ga4gh`
       * a `type.artifact` value of `drs`
     
-    e.g.
+    Example 1, a server with upload and delete capabilities:
     ```
     {
         "id": "com.example.drs",
@@ -28,10 +29,62 @@ get:
         ...
         "drs":{
           "maxBulkRequestLength": 200,
-          "stats": {
-            "objectCount": 774560,
-            "totalObjectSize": 4018437188907752
-          }
+          "objectCount": 774560,
+          "totalObjectSize": 4018437188907752,
+          "uploadRequestSupported": true,
+          "objectRegistrationSupported": true,
+          "supportedUploadMethodTypes": ["s3", "https", "gs"],
+          "maxUploadSize": 5368709120,
+          "maxUploadRequestLength": 50,
+          "validateChecksums": true,
+          "validateFileSizes": false,
+          "relatedFileStorageSupported": true,
+          "deleteSupported": true,
+          "maxBulkDeleteLength": 100,
+          "deleteStorageDataSupported": true
+        }
+    }
+    ```
+
+    Example 2, a read-only server with no upload or delete:
+    ```
+    {
+        "id": "com.example.readonly-drs",
+        "description": "Read-only DRS service",
+        ...
+        "type": {
+            "group": "org.ga4gh",
+            "artifact": "drs",
+            "version": "1.5"
+        }
+        ...
+        "drs":{
+          "maxBulkRequestLength": 500,
+          "objectCount": 1250000,
+          "totalObjectSize": 8500000000000000
+        }
+    }
+    ```
+
+    Example 3, a server with metadata-only delete:
+    ```
+    {
+        "id": "com.example.metadata-drs",
+        "description": "DRS service with metadata-only delete",
+        ...
+        "type": {
+            "group": "org.ga4gh",
+            "artifact": "drs",
+            "version": "1.5"
+        }
+        ...
+        "drs":{
+          "maxBulkRequestLength": 200,
+          "objectCount": 500000,
+          "totalObjectSize": 2500000000000000,
+          "deleteSupported": true,
+          "maxBulkDeleteLength": 50,
+          "deleteStorageDataSupported": false
         }
     }
     ```

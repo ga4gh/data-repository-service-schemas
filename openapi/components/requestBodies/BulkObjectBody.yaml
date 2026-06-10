@@ -1,0 +1,38 @@
+required: true
+content:
+  application/json:
+    schema:
+      type: object
+      required:
+        - bulk_object_ids
+      properties:
+        passports:
+          type: array
+          items:
+            type: string
+            example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJnYTRnaF9wYXNzcG9ydF92MSI6W119.JJ5rN0ktP0qwyZmIPpxmF_p7JsxAZH6L6brUxtad3CM
+          description: the encoded JWT GA4GH Passport that contains embedded Visas.  The overall JWT is signed as are the individual Passport Visas.
+        bulk_object_ids:
+          type: array
+          items:
+            type: string
+          minItems: 1
+          description: An array of ObjectIDs to retrieve metadata for
+    examples:
+      bulk_retrieve:
+        summary: Bulk retrieve objects
+        description: Retrieve metadata for multiple existing DRS objects using their IDs
+        value:
+          passports:
+            - "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJnYTRnaF9wYXNzcG9ydF92MSI6W119.JJ5rN0ktP0qwyZmIPpxmF_p7JsxAZH6L6brUxtad3CM"
+          bulk_object_ids:
+            - "drs_object_123456"
+            - "drs_object_789012"
+            - "drs_object_345678"
+      bulk_retrieve_no_auth:
+        summary: Bulk retrieve without authentication
+        description: Retrieve metadata for public DRS objects
+        value:
+          bulk_object_ids:
+            - "drs_object_public_123"
+            - "drs_object_public_456"

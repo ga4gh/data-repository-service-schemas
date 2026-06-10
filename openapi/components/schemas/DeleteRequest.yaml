@@ -1,0 +1,35 @@
+type: object
+description: Request body for single object delete operations
+properties:
+  passports:
+    type: array
+    items:
+      type: string
+      example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJnYTRnaF9wYXNzcG9ydF92MSI6W119.JJ5rN0ktP0qwyZmIPpxmF_p7JsxAZH6L6brUxtad3CM
+    description: the encoded JWT GA4GH Passport that contains embedded Visas.  The overall JWT is signed as are the individual Passport Visas.
+  delete_storage_data:
+    type: boolean
+    default: false
+    description: >-
+      If true, the server attempts to delete the underlying storage data
+      (follows server's deleteStorageDataSupported capability).
+      If false (default), underlying storage data is preserved.
+      This parameter is independent of delete_object_metadata and controls
+      only the storage layer.
+      Clients must explicitly set this to true to enable storage data deletion, ensuring
+      intentional choice for this potentially destructive operation.
+      Only applicable when the server advertises deleteSupported in service-info.
+  delete_object_metadata:
+    type: boolean
+    default: false
+    description: >-
+      If true, permanently remove the DRS object metadata record. The object ID
+      will no longer resolve and cannot be recovered.
+      If false (default), the server marks the object as deleted but preserves the
+      metadata record, enabling potential recovery. Read and access endpoints return
+      410 Gone for objects in this state. Servers that support this mode advertise
+      metadataRetentionSupported in service-info.
+      Only applicable when the server advertises deleteSupported in service-info.
+      Servers that do not support metadata retention SHOULD silently ignore
+      this parameter and permanently delete metadata regardless of the value
+      provided.
