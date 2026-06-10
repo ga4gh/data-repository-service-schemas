@@ -3,7 +3,7 @@ get:
   description: >-
     Returns an array of `DRSObjects` that match a given checksum.
 
-    The checksum type is not provide, the checksum check is done against all checksum types.
+    If the checksum type is not provided, the checksum check is done against all checksum types.
   operationId: GetObjectsByChecksum
   security:
     - PassportAuth: []

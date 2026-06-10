@@ -176,6 +176,59 @@
       "description": "> Checksum addition is an optional extension to the DRS API. Not all DRS servers implement it, and clients should check `/service-info` for `checksumAdditionSupported` before attempting to use these endpoints.\n\nThe checksum addition endpoints allow authorized clients to add further checksums to an existing DRS object. This is useful for a server that relies on a particular checksum type, such as SHA-256, where objects are not guaranteed to carry that checksum when they are created, for example where they are registered with an MD5 checksum only.\n\nThese endpoints only add checksums. A client SHOULD NOT attempt to change the value of an existing checksum or to remove one, and a server MUST NOT change any existing checksum. If a client attempts to update an existing checksum the server's behaviour is implementation dependent: it MAY ignore the request, or MAY return a `4XX` error. If an incorrect checksum has been registered, the client should delete the existing DRS object, where the server supports deletion, and register a new object with the correct metadata. This ensures that a single DRS object ID always points to the same object.\n\nA single object is updated through `PUT /objects/{object_id}/checksums`. Several objects can be updated together through `PUT /objects/checksums`, which takes an `additions` array, each entry pairing an `object_id` with the `checksums` to add. Bulk additions are atomic: if any object fails, the whole request fails and none are updated. A server MAY validate that the new checksums match the underlying object, a behaviour advertised in the `validateChecksums` field in `/service-info`.\n\n## Service discovery\n\nA server advertises its checksum addition capabilities in `/service-info`:\n\n```json\n{\n  \"drs\": {\n    \"checksumAdditionSupported\": true,\n    \"maxBulkChecksumAdditionLength\": 100,\n    \"validateChecksums\": true\n  }\n}\n```\n\n- `checksumAdditionSupported`: whether the server supports checksum addition.\n- `maxBulkChecksumAdditionLength`: the maximum number of objects in a single bulk addition request.\n- `validateChecksums`: whether the server validates new checksums.\n\n## Examples\n\nAdding a SHA-256 checksum to an object that was registered with an MD5 checksum only:\n\n```bash\ncurl -X PUT \"https://drs.example.org/objects/obj_123/checksums\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\n    \"checksums\": [\n      {\"checksum\": \"2320831154385267afee81d0d837473280117763f4acd426b3735c37a0500482\", \"type\": \"sha256\"}\n    ]\n  }'\n```\n\nAdding checksums to several objects atomically:\n\n```bash\ncurl -X PUT \"https://drs.example.org/objects/checksums\" \\\n  -H \"Content-Type: application/json\" \\\n  -d '{\n    \"additions\": [\n      {\"object_id\": \"obj_123\", \"checksums\": [{\"checksum\": \"2320831154385267afee81d0d837473280117763f4acd426b3735c37a0500482\", \"type\": \"sha256\"}]},\n      {\"object_id\": \"obj_456\", \"checksums\": [{\"checksum\": \"23d50c6804a8b198f7fe4ff11d4518fb46d8d8d1337c6b9aa0fbad7bb90b3d32\", \"type\": \"sha256\"}]}\n    ]\n  }'\n```\n\nGA4GH Passports may be supplied in the request body, and Bearer tokens in the `Authorization` header.\n\n## Error responses\n\n- `400`: the checksums are invalid, or validation failed.\n- `401`: authentication is required.\n- `403`: the client lacks permission for one or more objects in the request.\n- `404`: an object was not found, or checksum additions are not supported.\n- `413`: a bulk request exceeds `maxBulkChecksumAdditionLength`.\n"
     }
   ],
+  "x-tagGroups": [
+    {
+      "name": "Overview",
+      "tags": [
+        "Introduction",
+        "DRS API Principles",
+        "Authorization & Authentication"
+      ]
+    },
+    {
+      "name": "Operations",
+      "tags": [
+        "Objects",
+        "Upload Request",
+        "Service Info"
+      ]
+    },
+    {
+      "name": "Models",
+      "tags": [
+        "AccessMethodModel",
+        "AccessURLModel",
+        "ChecksumModel",
+        "ContentsObjectModel",
+        "DrsObjectModel",
+        "DrsObjectCandidateModel",
+        "ErrorModel",
+        "UploadRequestModel",
+        "UploadResponseModel",
+        "UploadRequestObjectModel",
+        "UploadResponseObjectModel",
+        "UploadMethodModel",
+        "UploadMethodRequestModel",
+        "DeleteRequestModel",
+        "BulkDeleteRequestModel"
+      ]
+    },
+    {
+      "name": "Appendices",
+      "tags": [
+        "Motivation",
+        "Working With Compound Objects",
+        "Background Notes on DRS URIs",
+        "Compact Identifier-Based URIs",
+        "Hostname-Based URIs",
+        "GA4GH Service Registry",
+        "Upload Requests and Object Registration",
+        "Object Deletion",
+        "Access Method Update",
+        "Checksum Additions"
+      ]
+    }
+  ],
   "paths": {
     "/service-info": {
       "get": {
@@ -3321,58 +3374,5 @@
         }
       }
     }
-  },
-  "x-tagGroups": [
-    {
-      "name": "Overview",
-      "tags": [
-        "Introduction",
-        "DRS API Principles",
-        "Authorization & Authentication"
-      ]
-    },
-    {
-      "name": "Operations",
-      "tags": [
-        "Objects",
-        "Upload Request",
-        "Service Info"
-      ]
-    },
-    {
-      "name": "Models",
-      "tags": [
-        "AccessMethodModel",
-        "AccessURLModel",
-        "ChecksumModel",
-        "ContentsObjectModel",
-        "DrsObjectModel",
-        "DrsObjectCandidateModel",
-        "ErrorModel",
-        "UploadRequestModel",
-        "UploadResponseModel",
-        "UploadRequestObjectModel",
-        "UploadResponseObjectModel",
-        "UploadMethodModel",
-        "UploadMethodRequestModel",
-        "DeleteRequestModel",
-        "BulkDeleteRequestModel"
-      ]
-    },
-    {
-      "name": "Appendices",
-      "tags": [
-        "Motivation",
-        "Working With Compound Objects",
-        "Background Notes on DRS URIs",
-        "Compact Identifier-Based URIs",
-        "Hostname-Based URIs",
-        "GA4GH Service Registry",
-        "Upload Requests and Object Registration",
-        "Object Deletion",
-        "Access Method Update",
-        "Checksum Additions"
-      ]
-    }
-  ]
+  }
 }

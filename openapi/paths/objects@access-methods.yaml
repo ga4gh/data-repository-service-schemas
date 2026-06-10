@@ -1,18 +1,7 @@
 put:
   summary: Bulk update access methods for multiple DRS objects
-  description: >-
-    **Optional Endpoint**: Not all DRS servers support access method updates.
-    
-    Update access methods for multiple DRS objects in a single atomic transaction. 
-    If ANY object fails to update, the ENTIRE request fails and NO objects are updated.
-    Only access methods are modified - core object metadata remains unchanged.
-
-    Note that existing access methods are overwritten, if clients want to add additional 
-    access methods they should first retrieve the current methods and include them along
-    with the new methods in this request.
-    
-    **Authentication**: GA4GH Passports can be provided in the request body.
-  operationId: bulkUpdateAccessMethods
+  description: Update the access methods of several DRS objects in a single atomic request. This is an optional endpoint that not all DRS servers implement.
+  operationId: BulkUpdateAccessMethods
   requestBody:
     $ref: '../components/requestBodies/BulkAccessMethodUpdateBody.yaml'
   responses:

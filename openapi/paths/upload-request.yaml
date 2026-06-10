@@ -1,42 +1,6 @@
 post:
   summary: Request upload methods for files
-  description: >-
-    **Optional Endpoint**: This endpoint is not required for DRS server implementations. 
-    Not all DRS servers support upload functionality. 
-    
-    Request upload method details and temporary credentials for uploading one or more files to an underlying storage service.
-    This endpoint allows clients to obtain the necessary information to upload files before they are registered as DRS objects.
-    
-    **Discovery**: Before using this endpoint, clients should check the `/service-info` endpoint 
-    to determine if upload operations are supported. Look for `drs.uploadRequestSupported: true` and 
-    `drs.supportedUploadMethodTypes` to understand which upload methods are available. Also check 
-    `drs.maxUploadSize` and `drs.maxUploadRequestLength` for server limits.
-    
-    **Usage Flow:**
-    
-    1. **Discovery**: Client checks `/service-info` endpoint to confirm upload support (`drs.uploadRequestSupported: true`) and available methods (`drs.supportedUploadMethods`)
-    
-    2. Client sends an upload request with file metadata (name, size, checksums, MIME type) and preferred upload method
-    
-    3. Server responds with available upload methods (S3, HTTPS, Google Cloud Storage, etc.) and temporary credentials
-    
-    4. Client selects one or more upload methods from the response and uses the corresponding credentials to upload the file to the storage service
-    
-    5. Once uploaded, the client registers the files as DRS objects including access methods that correspond to the upload methods used with a POST request to `/objects/register`, the server will return fully formed DRS objects with server minted unique IDs.
-    
-    6. The registered DRS object is accessible through DRS API read endpoints
-    
-    
-    **Authentication:**
-    
-    The endpoint supports multiple authentication methods including GA4GH Passport tokens sent in the request body.
-    Passport tokens enable fine-grained authorization based on data access policies.
-    
-    **Upload Methods**: Response may include multiple options (s3, https, gs, ftp/sftp) for flexibility. Note that servers may return a subset of their advertised `supportedUploadMethodTypes` based on file-specific factors such as file type, size, or server policies.
-    
-    **File Integrity**: All requests must include at least one checksum per file (SHA-256, MD5, or other IANA-registered algorithms).
-    
-    **Server Validation**: Servers MAY validate checksums/sizes but are not required to. Check service-info for validation behavior. Servers do not validate MIME types against actual file content - clients are responsible for providing accurate MIME type information.
+  description: Request upload methods and temporary credentials for one or more files, before registering them as DRS objects. This is an optional endpoint that not all DRS servers implement.
   operationId: PostUploadRequest
   security:
     - {}
