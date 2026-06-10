@@ -27,9 +27,9 @@ content:
                   upload_details:
                     bucket: "my-bucket"
                     key: "uploads/drs_object_123456"
-                    access_key_id: "AKIAIOSFODNN7EXAMPLE"
-                    secret_access_key: "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY"
-                    session_token: "AQoEXAMPLEH4aoAH0gNCAPyJxz4BlCFFxWNE1OPTgk5TthT+FvwqnKwRcOIfrRh3c/LTo6UDdyJwOOvEVPvLXCrrrUtdnniCEXAMPLE/IvU1dYUg2RVAJBanLiHb4IgRmpRV3zrkuWJOgQs8IZZaIv2BXIa2R4OlgkBN9bkUDNCJiBeb/AXlzBBko7b15fjrBs2+cTQtpZ3CYWFXG8C5zqx37wnOE49mRl/+OtkIKGO7fAE"
+                    access_key_id: "REPLACE_WITH_TEMP_ACCESS_KEY"
+                    secret_access_key: "REPLACE_WITH_TEMP_SECRET_KEY"
+                    session_token: "REPLACE_WITH_SESSION_TOKEN"
                     expires_at: "2024-01-01T12:00:00Z"
       https_upload:
         summary: HTTPS upload method response
@@ -73,9 +73,9 @@ content:
                   upload_details:
                     bucket: "genomics-bucket"
                     key: "uploads/drs_object_345678"
-                    access_key_id: "AKIAI44QH8DHBEXAMPLE"
-                    secret_access_key: "je7MtGbClwBF/2Zp9Utk/h3yCo8nvbEXAMPLEKEY"
-                    session_token: "temporary_session_token_here"
+                    access_key_id: "REPLACE_WITH_TEMP_ACCESS_KEY"
+                    secret_access_key: "REPLACE_WITH_TEMP_SECRET_KEY"
+                    session_token: "REPLACE_WITH_SESSION_TOKEN"
                     expires_at: "2024-01-01T12:00:00Z"
                 - type: "https"
                   access_url:
@@ -89,5 +89,5 @@ content:
                   upload_details:
                     bucket: "genomics-uploads"
                     key: "drs_object_345678"
-                    access_token: "ya29.AHES6ZRVmB7fkLtd1XTmq6mo0S1wqZZi3-Lh_s-6Uw7p8vtgSwg"
+                    access_token: "REPLACE_WITH_TEMP_ACCESS_TOKEN"
                     expires_at: "2024-01-01T12:00:00Z"

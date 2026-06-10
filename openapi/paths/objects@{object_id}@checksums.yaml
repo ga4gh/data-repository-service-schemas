@@ -11,12 +11,7 @@ put:
     **Authentication**: GA4GH Passports can be provided in the request body.
   operationId: addChecksums
   parameters:
-    - name: object_id
-      in: path
-      required: true
-      schema:
-        type: string
-      description: DRS object identifier
+    - $ref: '../components/parameters/ObjectId.yaml'
   requestBody:
     $ref: '../components/requestBodies/ChecksumAdditionBody.yaml'
   responses:

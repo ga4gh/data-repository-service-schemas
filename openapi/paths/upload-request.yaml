@@ -14,7 +14,7 @@ post:
     
     **Usage Flow:**
     
-    1. **Discovery**: Client checks `/service-info` endpoint to confirm upload support (`drs.uploadRequestSupported: true`) and available methods (`drs.supportedUploadMethods`)
+    1. **Discovery**: Client checks `/service-info` endpoint to confirm upload support (`drs.uploadRequestSupported: true`) and available methods (`drs.supportedUploadMethodTypes`)
     
     2. Client sends an upload request with file metadata (name, size, checksums, MIME type) and preferred upload method
     

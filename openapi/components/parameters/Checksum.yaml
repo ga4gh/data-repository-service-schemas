@@ -1,6 +1,6 @@
 in: path
-name: access_id
+name: checksum
 required: true
-description: An `access_id` from the `access_methods` list of a `DrsObject`
+description: A checksum value to match against registered `DrsObject`s
 schema:
   type: string

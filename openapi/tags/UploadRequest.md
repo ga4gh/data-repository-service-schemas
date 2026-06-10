@@ -14,7 +14,7 @@ The `/objects/register` endpoint can be used independently to register existing 
 
 Upload requests and object registration endpoints only support bulk requests to simplify implementation and reflect real-world usage patterns. Bioinformatics workflows often involve uploading multiple related files together (e.g., BAM and VCF files with their indices, or analysis result sets), making bulk operations a natural fit. Single files/objects are handled as lists with one element. Implementations of the `/objects/register` endpoint SHOULD implement transaction semantics so that either all of the objects included in the request are successfully registered or none of them are, and clients should be robust to this behaviour. Transaction semantics for the `/upload-request` are encouraged but not required due to the variety and complexity of data transfer technologies.
 
-The `/upload-request` endpoint does not result in any state that needs to be maintained on the DRS server (intermediate DRS object IDs etc.) it is simply a means for a server to provide details of where a client can upload data, and the server should ensure that it trusts the client before providing such details (e.g. with appropriate authentication and authorisation before processing the request). This means that if uploads fail and there is no later call to `/objects/register` there is no DRS state to manage, simplifying server implementation.
+The `/upload-request` endpoint need not result in any state being maintained on the DRS server (intermediate DRS object IDs etc.); in its simplest form it is just a means for a server to provide details of where a client can upload data, and the server should ensure that it trusts the client before providing such details (e.g. with appropriate authentication and authorisation before processing the request). This means that for such stateless implementations, if uploads fail and there is no later call to `/objects/register` there is no DRS state to manage, simplifying server implementation. Some upload methods MAY require the server to maintain transfer state (for example a server-performed copy from a client-supplied location); this specification does not preclude that.
 
 However, servers SHOULD ensure that any data from unsuccessful uploads (e.g. incomplete multi-part uploads) are cleaned up, for example by using lifecycle configuration in the backend storage. There is _no_ means of requiring that a client ultimately registers a DRS object pointing at data uploaded, and so servers should consider implementing some form of storage "garbage collection", a straightforward approach is to set a short lifecycle policy on the upload location and move uploaded data that is later registered as DRS objects to other locations, updating object `access_methods` accordingly. Servers should also implement some means of constraining upload size (quotas etc.) to protect against accidental or malicious unconstrained uploads. Servers can choose to validate that the uploads match the claimed object size when `/objects/register` is called, and should advertise this behaviour with the `validateFileSizes` flag in `/service-info`.
 
@@ -147,7 +147,7 @@ Content-Type: application/json
           "type": "md5"
         }
       ],
-      "upload_method_types": ["https"]
+      "upload_methods": [{ "type": "https" }]
     }
   ]
 }
@@ -190,9 +190,9 @@ Response:
 Upload via HTTPS:
 
 ```bash
-# Simple PUT upload to presigned POST URL
-curl -X PUT "https://uploads.example.org/presigned-upload?signature=FAKE_SIG" -H "Header1" -H "Header2" \
-  --data-binary @variants.vcf
+# POST the file to the presigned POST URL as multipart form data
+curl -X POST "https://uploads.example.org/presigned-upload?signature=FAKE_SIG" -H "Header1" -H "Header2" \
+  -F "file=@variants.vcf"
 ```
 
 Register DRS Object:
@@ -281,7 +281,7 @@ Content-Type: application/json
           "type": "md5"
         }
       ],
-      "upload_method_types": ["s3"]
+      "upload_methods": [{ "type": "s3" }]
     },
     {
       "name": "sample.bam.bai",
@@ -293,7 +293,7 @@ Content-Type: application/json
           "type": "md5"
         }
       ],
-      "upload_method_types": ["s3"]
+      "upload_methods": [{ "type": "s3" }]
     }
   ]
 }

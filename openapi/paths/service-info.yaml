@@ -1,7 +1,7 @@
 get:
   summary: Retrieve information about this service
   description: |-
-    Returns information about the DRS service along with stats pertaning to total object count and cumulative size in bytes.
+    Returns information about the DRS service along with stats pertaining to total object count and cumulative size in bytes.
     Also indicates whether the server supports optional upload and delete operations and which methods are available.
 
     Extends the

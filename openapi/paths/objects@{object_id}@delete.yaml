@@ -18,7 +18,7 @@ put:
     
     **Important**: HTTP responses (204 No Content) indicate metadata deletion success only, 
     not storage deletion success (which are not guaranteed to complete synchronously if they occur at all)
-  operationId: DeleteObject
+  operationId: deleteObject
   security:
     - {}
     - BasicAuth: []

@@ -75,7 +75,7 @@ curl -X PUT "https://drs.example.org/objects/checksums" \
         "object_id": "obj_123",
         "checksums": [
           {
-            "checksum": "2320831154385267afee81d0d837473280117763f4acd426b3735c37a0500482"
+            "checksum": "2320831154385267afee81d0d837473280117763f4acd426b3735c37a0500482",
             "type": "sha256"
           }
         ]

@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
   title: Data Repository Service
-  version: 1.5.0
+  version: 1.6.0
   x-logo:
     url: 'https://www.ga4gh.org/wp-content/themes/ga4gh/dist/assets/svg/logos/logo-full-color.svg'
   termsOfService: 'https://www.ga4gh.org/terms-and-conditions/'
@@ -91,6 +91,10 @@ tags:
     x-displayName: UploadMethod
     description: |
       <SchemaDefinition schemaRef="#/components/schemas/UploadMethod" />
+  - name: UploadMethodRequestModel
+    x-displayName: UploadMethodRequest
+    description: |
+      <SchemaDefinition schemaRef="#/components/schemas/UploadMethodRequest" />
   - name: DeleteRequestModel
     x-displayName: DeleteRequest
     description: |
@@ -99,14 +103,6 @@ tags:
     x-displayName: BulkDeleteRequest
     description: |
       <SchemaDefinition schemaRef="#/components/schemas/BulkDeleteRequest" />
-  - name: DeleteResultModel
-    x-displayName: DeleteResult
-    description: |
-      <SchemaDefinition schemaRef="#/components/schemas/DeleteResult" />
-  - name: BulkDeleteResponseModel
-    x-displayName: BulkDeleteResponse
-    description: |
-      <SchemaDefinition schemaRef="#/components/schemas/BulkDeleteResponse" />
 
   # Appendices
   - name: Motivation
@@ -155,7 +151,7 @@ x-tagGroups:
       - AccessMethodModel
       - AccessURLModel
       - ChecksumModel
-      - ContentsObjectModels
+      - ContentsObjectModel
       - DrsObjectModel
       - DrsObjectCandidateModel
       - ErrorModel
@@ -164,10 +160,9 @@ x-tagGroups:
       - UploadRequestObjectModel
       - UploadResponseObjectModel
       - UploadMethodModel
+      - UploadMethodRequestModel
       - DeleteRequestModel
       - BulkDeleteRequestModel
-      - DeleteResultModel
-      - BulkDeleteResponseModel
   - name: Appendices
     tags:
       - Motivation
@@ -179,7 +174,7 @@ x-tagGroups:
       - Upload Requests and Object Registration
       - Object Deletion
       - Access Method Update
-      - Checksum Addition
+      - Checksum Additions
 paths:
   /service-info:
     $ref: ./paths/service-info.yaml
