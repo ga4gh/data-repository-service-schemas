@@ -47,23 +47,15 @@ properties:
         type: array
         items:
           type: string
-          enum:
-            - s3
-            - gs
-            - https
-            - ftp
-            - sftp
         description: >-
           List of upload methods supported by this DRS server. Only present when uploadRequestSupported is true.
           Clients can use this information to determine which upload methods are available before making upload requests.
           
-          - **s3**: Direct S3 upload with temporary AWS credentials
-          - **gs**: Google Cloud Storage upload with access tokens  
-          - **https**: Presigned POST URL for HTTP uploads
-          - **ftp**: File Transfer Protocol uploads
-          - **sftp**: Secure File Transfer Protocol uploads
-          - **gsiftp**: GridFTP secure file transfer
-          - **globus**: Globus transfer service for high-performance data movement
+          This is an open list of strings rather than a fixed enumeration, so servers can
+          advertise new or vendor-specific methods. Common values are `s3` for direct S3
+          upload with temporary AWS credentials, `gs` for Google Cloud Storage with access
+          tokens, `https` for a presigned POST URL, `ftp` and `sftp` for file transfer
+          protocols, `gsiftp` for GridFTP, and `globus` for the Globus transfer service.
       maxUploadSize:
         type: integer
         format: int64

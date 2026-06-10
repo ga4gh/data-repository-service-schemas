@@ -1,29 +1,16 @@
-# Access Method Updates
+> Access method updates are an optional extension to the DRS API. Not all DRS servers implement them, and clients should check `/service-info` for `accessMethodUpdateSupported` before attempting to use these endpoints.
 
-> **Optional Functionality**: Access method updates are optional extensions to the DRS API. Not all DRS servers implement this functionality. Clients should check `/service-info` for `accessMethodUpdateSupported` before attempting to use these endpoints.
+The access method update endpoints allow authorized clients to change how an existing DRS object can be accessed, without changing the object's core metadata such as its size, checksums, or name. This is useful when data is migrated between storage providers, when a mirror or an alternative protocol is added, or when a URL changes, in each case keeping the same DRS object ID.
 
-Access method update endpoints allows authorized clients to modify how existing DRS objects can be accessed without changing the core object metadata (size, checksums, name). This is useful for storage migrations, adding mirrors, or updating URLs.
+An update overwrites the existing access methods for an object. A client that wants to add an access method while keeping the existing ones should first retrieve the object's current access methods and include them in the update request alongside the new method.
 
-These endpoints will overwrite existing access methods for an object, if clients want to add access methods in addition to existing ones for objects they should first retrieve the current access methods and include them in the update request along with the new methods.
+A single object is updated through `PUT /objects/{object_id}/access-methods`. Several objects can be updated together through `PUT /objects/access-methods`, which takes an `updates` array, each entry pairing an `object_id` with its new `access_methods`. Bulk updates are atomic: if any object fails, the whole request fails and none are updated.
 
-## Use Cases
+A server MAY validate that the new access methods point to the same data, for example by checking file availability, checksums, or content. This behaviour is advertised in the `validateAccessMethods` field in `/service-info`.
 
-- **Storage Migration**: Move data between storage providers while keeping same DRS object
-- **Mirror Addition**: Add additional regional access points, or alternative protocols
-- **URL Refresh**: Update changed domain names
-- **Access Optimization**: Add or remove access methods based on performance or cost
+## Service discovery
 
-## Design Principles
-
-- **Optional**: Access method update support is completely optional
-- **Immutable Core**: Only access methods can be updated - size, checksums, name remain unchanged
-- **Atomic Bulk Operations**: All updates succeed or all fail (transactional)
-- **Optional Validation**: Servers MAY validate new access methods point to same data
-- **Flexible Authentication**: Supports GA4GH Passports, Bearer tokens, API keys
-
-## Service Discovery
-
-Check `/service-info` for access method update capabilities:
+A server advertises its access method update capabilities in `/service-info`:
 
 ```json
 {
@@ -35,130 +22,43 @@ Check `/service-info` for access method update capabilities:
 }
 ```
 
-- **`accessMethodUpdateSupported`**: Whether the server supports access method updates
-- **`maxBulkAccessMethodUpdateLength`**: Maximum objects per bulk update request
-- **`validateAccessMethods`**: Whether the server validates access methods
+- `accessMethodUpdateSupported`: whether the server supports access method updates.
+- `maxBulkAccessMethodUpdateLength`: the maximum number of objects in a single bulk update request.
+- `validateAccessMethods`: whether the server validates new access methods.
 
-## Single Object Update
+## Examples
 
-Update access methods for a single DRS object:
+Updating the access methods of a single object, for example after migrating its data to a new bucket:
 
 ```bash
 curl -X PUT "https://drs.example.org/objects/obj_123/access-methods" \
   -H "Content-Type: application/json" \
   -d '{
     "access_methods": [
-      {
-        "type": "https",
-        "access_url": {
-          "url": "https://new-location.com/data/file.bam"
-        }
-      },
-      {
-        "type": "s3",
-        "access_id": "s3",
-        "access_url": {
-          "url": "s3://new-bucket/migrated/file.bam"
-        }
-      }
+      {"type": "s3", "access_url": {"url": "s3://new-bucket/migrated/file.bam"}}
     ]
   }'
 ```
 
-## Bulk Object Update
-
-Update access methods for multiple objects atomically:
+Updating several objects atomically:
 
 ```bash
 curl -X PUT "https://drs.example.org/objects/access-methods" \
   -H "Content-Type: application/json" \
   -d '{
     "updates": [
-      {
-        "object_id": "obj_123",
-        "access_methods": [
-          {
-            "type": "https",
-            "access_url": {"url": "https://new-location.com/file1.bam"}
-          }
-        ]
-      },
-      {
-        "object_id": "obj_456", 
-        "access_methods": [
-          {
-            "type": "s3",
-            "access_url": {"url": "s3://new-bucket/file2.vcf"}
-          }
-        ]
-      }
+      {"object_id": "obj_1", "access_methods": [{"type": "https", "access_url": {"url": "https://new-location.com/file1.bam"}}]},
+      {"object_id": "obj_2", "access_methods": [{"type": "s3", "access_url": {"url": "s3://new-bucket/file2.vcf"}}]}
     ]
   }'
 ```
 
-## Authentication
+GA4GH Passports may be supplied in the request body, and Bearer tokens in the `Authorization` header.
 
-**GA4GH Passports** (in request body):
+## Error responses
 
-```json
-{
-  "access_methods": [...],
-  "passports": ["eyJhbGci..."]
-}
-```
-
-**Bearer Tokens** (in headers):
-
-```bash
-curl -H "Authorization: Bearer token" -d '{"access_methods": [...]}' ...
-```
-
-## Validation
-
-Servers MAY validate that new access methods point to the same data by checking file availability, checksums or file content. Validation behavior is advertised in `validateAccessMethods` service-info field.
-
-## Error Responses
-
-- **400**: Invalid access methods or validation failure
-- **401**: Authentication required
-- **403**: Insufficient permissions for object(s)
-- **404**: Object not found or access method updates not supported
-- **413**: Bulk request exceeds `maxBulkAccessMethodUpdateLength` limit
-
-## Examples
-
-**Storage Migration:**
-
-```bash
-# Update single object after migration
-curl -X PUT "https://drs.example.org/objects/obj_123/access-methods" \
-  -d '{"access_methods": [{"type": "s3", "access_url": {"url": "s3://new-bucket/file.bam"}}]}'
-```
-
-**Bulk Migration:**
-
-```bash
-# Migrate multiple objects atomically
-curl -X PUT "https://drs.example.org/objects/access-methods" \
-  -d '{
-    "updates": [
-      {"object_id": "obj_1", "access_methods": [...]},
-      {"object_id": "obj_2", "access_methods": [...]}
-    ]
-  }'
-```
-
-## Best Practices
-
-**Clients**: Check service-info first, handle atomic transaction failures, respect bulk limits, verify permissions
-
-**Servers**: Advertise capabilities clearly, implement atomic transactions for bulk operations, validate permissions, consider optional validation for data integrity
-
-## Backward Compatibility
-
-Access method update functionality is designed to be backward compatible:
-
-- **No Impact on Existing Endpoints**: All existing DRS endpoints remain unchanged
-- **Optional Implementation**: Servers can ignore this functionality entirely  
-- **Graceful Degradation**: Clients receive 404 responses when not supported
-- **Safe Defaults**: New service-info fields have safe default values
+- `400`: the access methods are invalid, or validation failed.
+- `401`: authentication is required.
+- `403`: the client lacks permission for one or more objects in the request.
+- `404`: an object was not found, or access method updates are not supported.
+- `413`: a bulk request exceeds `maxBulkAccessMethodUpdateLength`.

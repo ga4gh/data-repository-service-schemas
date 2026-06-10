@@ -1,24 +1,7 @@
 put:
   summary: Delete a DRS object (optional endpoint)
-  description: >-
-    **Optional Endpoint**: This endpoint is not required for DRS server implementations. 
-    Not all DRS servers support delete functionality.
-
-    Deletes a DRS object by ID. This operation removes the DRS object metadata and optionally 
-    attempts to delete the underlying storage data based on the `delete_storage_data` parameter 
-    and server capabilities.
-    
-    By default, only DRS object metadata is deleted while preserving underlying storage data.
-    To attempt storage data deletion, clients must explicitly set delete_storage_data to true and the 
-    server must support storage data deletion (advertised via `deleteStorageDataSupported` in service-info).
-    Servers will make a best effort attempt to delete storage data, but success is not guaranteed.
-    
-    This endpoint uses an HTTP PUT rather than DELETE to accommodate GA4GH Passport authentication in the request body,
-    ensuring compatibility across all HTTP clients and proxies.
-    
-    **Important**: HTTP responses (204 No Content) indicate metadata deletion success only, 
-    not storage deletion success (which are not guaranteed to complete synchronously if they occur at all)
-  operationId: deleteObject
+  description: Delete a single DRS object by ID. This is an optional endpoint that not all DRS servers implement.
+  operationId: DeleteObject
   security:
     - {}
     - BasicAuth: []
@@ -45,4 +28,3 @@ put:
     - Objects
   x-swagger-router-controller: ga4gh.drs.server
   x-codegen-request-body-name: body
-  

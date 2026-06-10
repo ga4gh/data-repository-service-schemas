@@ -4,7 +4,7 @@ get:
     Returns an array of `DRSObjects` that match a given checksum.
 
     If the checksum type is not provided, the checksum check is done against all checksum types.
-  operationId: getObjectsByChecksum
+  operationId: GetObjectsByChecksum
   security:
     - PassportAuth: []
   parameters:

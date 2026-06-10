@@ -15,7 +15,7 @@ get:
       * a `type.group` value of `org.ga4gh`
       * a `type.artifact` value of `drs`
     
-    **Example 1: Server with upload and delete capabilities**
+    Example 1, a server with upload and delete capabilities:
     ```
     {
         "id": "com.example.drs",
@@ -46,7 +46,7 @@ get:
     }
     ```
 
-    **Example 2: Read-only server (no upload or delete)**
+    Example 2, a read-only server with no upload or delete:
     ```
     {
         "id": "com.example.readonly-drs",
@@ -66,7 +66,7 @@ get:
     }
     ```
 
-    **Example 3: Server with metadata-only delete capability**
+    Example 3, a server with metadata-only delete:
     ```
     {
         "id": "com.example.metadata-drs",

@@ -37,6 +37,7 @@ tags:
 
   # Operations
   - name: Objects
+    description: Operations for retrieving, registering, updating, and deleting DRS objects.
   - name: Upload Request
     description:
       $ref: ./tags/UploadRequest.md

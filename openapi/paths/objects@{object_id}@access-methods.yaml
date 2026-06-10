@@ -1,18 +1,7 @@
 put:
   summary: Update access methods for a DRS object
-  description: >-
-    **Optional Endpoint**: Not all DRS servers support access method updates.
-    
-    Update the access methods for an existing DRS object. Only access methods are modified - 
-    core object metadata (size, checksums, name) remains unchanged. Servers MAY validate 
-    that new access methods point to the same data.
-
-    Note that existing access methods are overwritten, if clients want to add additional 
-    access methods they should first retrieve the current methods and include them along
-    with the new methods in this request.
-    
-    **Authentication**: GA4GH Passports can be provided in the request body.
-  operationId: updateObjectAccessMethods
+  description: Update the access methods of a single DRS object. This is an optional endpoint that not all DRS servers implement.
+  operationId: UpdateObjectAccessMethods
   parameters:
     - name: object_id
       in: path
