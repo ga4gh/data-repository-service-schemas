@@ -105,6 +105,36 @@ properties:
           If false or missing, the server may distribute files across different storage locations or prefixes.
           Only present when uploadRequestSupported is true. This feature is particularly valuable for genomics tools like samtools that expect index files to be co-located with data files.
         default: false
+      controlledAccessSupported:
+        type: boolean
+        description: >-
+          Indicates whether this DRS server supports the `controlled_access`
+          field on `DrsObject` and `DrsObjectCandidate`. If true, clients may
+          include controlled-access claims when registering objects and may
+          expect returned `DrsObject` resources to include controlled-access
+          claims when applicable. If false or missing, the server does not
+          advertise support for controlled-access claims.
+        default: false
+      controlledAccessClaimFormat:
+        type: string
+        description: >-
+          Describes the expected format for entries in the `controlled_access`
+          array. The value `ga4gh-passport-url-claim` indicates that claims are
+          represented as strings using URL claim semantics compatible with
+          GA4GH Passport visa claim values.
+        enum:
+          - ga4gh-passport-url-claim
+        example: ga4gh-passport-url-claim
+      controlledAccessDefault:
+        type: string
+        description: >-
+          Describes how the service interprets a missing or empty
+          `controlled_access` array. The value `open-access-read` means that
+          if `controlled_access` is missing or empty, the `DrsObject` is treated
+          as open access for read operations.
+        enum:
+          - open-access-read
+        example: open-access-read
       deleteSupported:
         type: boolean
         description: >-
