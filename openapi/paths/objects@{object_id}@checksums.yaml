@@ -1,22 +1,9 @@
 put:
   summary: Add additional checksums for a DRS object
-  description: >-
-    **Optional Endpoint**: Not all DRS servers support checksum addition.
-    
-    Add additional checksums for a DRS object. This endpoint does not support altering 
-    existing checksums, only adding additional checksum types that aren't already 
-    present in the DRS object. If a client attempts to update an existing checksum type 
-    the server MAY ignore the update or MAY return an error.
-    
-    **Authentication**: GA4GH Passports can be provided in the request body.
-  operationId: addChecksums
+  description: Add checksums to a single DRS object. This is an optional endpoint that not all DRS servers implement.
+  operationId: AddChecksums
   parameters:
-    - name: object_id
-      in: path
-      required: true
-      schema:
-        type: string
-      description: DRS object identifier
+    - $ref: '../components/parameters/ObjectId.yaml'
   requestBody:
     $ref: '../components/requestBodies/ChecksumAdditionBody.yaml'
   responses:

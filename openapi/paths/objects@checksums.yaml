@@ -1,17 +1,7 @@
 put:
   summary: Add additional checksums for multiple DRS objects
-  description: >-
-    **Optional Endpoint**: Not all DRS servers support checksum addition.
-    
-    Add additional checksums for multiple DRS objects in a single atomic transaction. 
-    If ANY object fails to update, the ENTIRE request fails and NO objects are updated.
-    This endpoint does not support altering existing checksums, only adding additional
-    checksum types that aren't already present in the DRS object. If a client attempts to 
-    update an existing checksum type the server MAY ignore the update or MAY return an 
-    error.
-    
-    **Authentication**: GA4GH Passports can be provided in the request body.
-  operationId: bulkAddChecksums
+  description: Add checksums to several DRS objects in a single atomic request. This is an optional endpoint that not all DRS servers implement.
+  operationId: BulkAddChecksums
   requestBody:
     $ref: '../components/requestBodies/BulkChecksumAdditionBody.yaml'
   responses:

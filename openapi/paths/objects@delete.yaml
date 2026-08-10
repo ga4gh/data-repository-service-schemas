@@ -1,36 +1,7 @@
 put:
   summary: Delete multiple DRS objects
-  description: >-
-    **Optional Endpoint**: This endpoint is not required for DRS server implementations. 
-    Not all DRS servers support delete functionality.
-
-    Delete multiple DRS objects in a single atomic transaction. If ANY object fails to be deleted, 
-    the ENTIRE request fails and NO objects are deleted. This ensures data consistency and prevents 
-    partial deletion scenarios.
-    
-    **RECOMMENDED - Transactional Behavior**: 
-    Deletion operations SHOULD be atomic transactions. If ANY object fails validation or deletion, 
-    the ENTIRE request SHOULD fail and NO objects SHOULD be deleted. Servers SHOULD implement this as an 
-    all-or-nothing operation to ensure data consistency, but MAY implement partial deletion with 
-    appropriate error reporting if transactional behavior is not feasible.
-    
-    **Authentication**: GA4GH Passports can be provided in the request body for authorization.
-    
-    **Storage Data Deletion**: The `delete_storage_data` parameter controls whether the server will attempt to delete underlying
-    storage files along with DRS metadata. This defaults to false for safety.
-    Servers will make a best effort attempt to delete storage data, but success is not guaranteed.
-    
-    **Server Responsibilities**:
-    - SHOULD treat deletion as an atomic transaction (all succeed or all fail)
-    - SHOULD validate ALL object IDs exist and are accessible before deleting ANY
-    - SHOULD roll back any partial changes if any object fails deletion
-    - SHOULD return 400 if any object ID is invalid or inaccessible when using transactional behavior
-    
-    **Client Responsibilities**:
-    - Provide valid object IDs for all objects to be deleted
-    - Handle potential failure of entire batch if any single object cannot be deleted
-    - Check service-info for `maxBulkDeleteLength` limits before making requests
-  operationId: bulkDeleteObjects
+  description: Delete several DRS objects in a single atomic request. This is an optional endpoint that not all DRS servers implement.
+  operationId: BulkDeleteObjects
   tags:
     - Objects
   requestBody:

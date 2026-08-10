@@ -38,7 +38,7 @@ post:
     The request is limited to use passports (one or more) or a single bearer token, 
     so make sure your bulk request is for objects that all use the same passports/token.
     
-    **Note**: To register new DRS objects, use the dedicated `/objects/register` endpoint.
+    To register new DRS objects, use the dedicated `/objects/register` endpoint.
   operationId: GetBulkObjects
   security:
     - PassportAuth: []
