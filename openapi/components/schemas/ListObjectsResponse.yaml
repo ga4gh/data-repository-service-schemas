@@ -1,0 +1,18 @@
+type: object
+required:
+  - resolved_drs_object
+properties:
+  resolved_drs_object:
+    type: array
+    description: |-
+      List of resolved DRS objects. These objects are based on the registered
+      DRS object, but with other fields, such as the `updated_time` timestamp,
+      added/changed by the server.
+    items:
+      $ref: './DrsObject.yaml'
+  next_page_token:
+    type: string
+    description: |-
+      Token used to return the next page of results. This value can be used
+      in the `page_token` field of the next ListObjects request.
+description: ListObjectsResponse describes a response from the ListObjects endpoint.

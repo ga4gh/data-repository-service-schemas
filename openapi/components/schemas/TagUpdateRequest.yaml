@@ -1,0 +1,21 @@
+type: object
+required:
+  - tags
+properties:
+  tags:
+    type: object
+    additionalProperties:
+      type: string
+    example:
+      "WORKFLOW_ID": "cwl-01234"
+      "PROJECT_GROUP": "alice-lab"
+    description: |-
+      The new set of tags for the DRS object. This replaces the entire
+      existing tag map. To add or modify individual tags, first retrieve
+      the object, merge the desired changes into its `tags`, and submit the
+      full updated map.
+  passports:
+    type: array
+    items:
+      type: string
+    description: Optional GA4GH Passport JWTs for authorization

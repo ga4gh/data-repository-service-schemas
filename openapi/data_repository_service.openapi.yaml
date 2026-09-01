@@ -68,6 +68,14 @@ tags:
     x-displayName: DrsObjectCandidate
     description: |
       <SchemaDefinition schemaRef="#/components/schemas/DrsObjectCandidate" />
+  - name: ListObjectsResponseModel
+    x-displayName: ListObjectsResponse
+    description: |
+      <SchemaDefinition schemaRef="#/components/schemas/ListObjectsResponse" />
+  - name: TagUpdateRequestModel
+    x-displayName: TagUpdateRequest
+    description: |
+      <SchemaDefinition schemaRef="#/components/schemas/TagUpdateRequest" />
   - name: ErrorModel
     x-displayName: Error
     description: |
@@ -156,6 +164,8 @@ x-tagGroups:
       - ContentsObjectModel
       - DrsObjectModel
       - DrsObjectCandidateModel
+      - ListObjectsResponseModel
+      - TagUpdateRequestModel
       - ErrorModel
       - UploadRequestModel
       - UploadResponseModel
@@ -198,6 +208,8 @@ paths:
     $ref: ./paths/objects@{object_id}@access-methods.yaml
   /objects/access-methods:
     $ref: ./paths/objects@access-methods.yaml
+  /objects/{object_id}/tags:
+    $ref: ./paths/objects@{object_id}@tags.yaml
   /upload-request:
     $ref: ./paths/upload-request.yaml
 components:

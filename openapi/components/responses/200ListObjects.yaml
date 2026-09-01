@@ -1,0 +1,7 @@
+description: >-
+  A list of DRS objects matching the request filters, with an optional
+  `next_page_token` to retrieve additional pages.
+content:
+  application/json:
+    schema:
+      $ref: '../schemas/ListObjectsResponse.yaml'

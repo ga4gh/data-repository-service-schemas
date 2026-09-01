@@ -1,0 +1,9 @@
+in: query
+name: page_size
+required: false
+schema:
+  type: integer
+  format: int32
+description: |-
+  Optional number of objects to return in one page.
+  Must be less than 2048. Defaults to 256.

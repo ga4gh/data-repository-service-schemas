@@ -85,3 +85,21 @@ properties:
       about this `DrsObject` from external metadata sources. These
       aliases can be used to represent secondary
       accession numbers or external GUIDs.
+  tags:
+    type: object
+    additionalProperties:
+      type: string
+    example:
+      "WORKFLOW_ID": "cwl-01234"
+      "PROJECT_GROUP": "alice-lab"
+    description: |-
+      A key-value map of arbitrary tags. These can be used to store
+      meta-data and annotations about a `DrsObject`. Example:
+      ```
+      {
+        "tags" : {
+            "WORKFLOW_ID" : "cwl-01234",
+            "PROJECT_GROUP" : "alice-lab"
+        }
+      }
+      ```

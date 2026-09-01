@@ -1,0 +1,7 @@
+description: >-
+  Tags successfully updated. Returns the updated DRS object with the new tags
+  and updated timestamp.
+content:
+  application/json:
+    schema:
+      $ref: '../schemas/DrsObject.yaml'

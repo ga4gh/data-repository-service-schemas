@@ -1,0 +1,47 @@
+post:
+  summary: Update tags for a DRS object
+  description: >-
+    **Optional Endpoint**: Not all DRS servers support tag updates.
+
+    Update the tags for an existing DRS object. Only the `tags` map is
+    modified - core object metadata (size, checksums, name, access methods)
+    remains unchanged.
+
+    The `tags` field in the request **replaces** the object's entire existing
+    tag map. If clients want to add or modify only individual tags, they
+    should first retrieve the current object, merge the desired changes into
+    the existing `tags`, and include the full updated map in this request.
+
+    **Authentication**: GA4GH Passports can be provided in the request body.
+  operationId: updateObjectTags
+  parameters:
+    - name: object_id
+      in: path
+      required: true
+      schema:
+        type: string
+      description: DRS object identifier
+  requestBody:
+    $ref: '../components/requestBodies/TagUpdateBody.yaml'
+  responses:
+    '200':
+      $ref: '../components/responses/200TagUpdate.yaml'
+    '400':
+      $ref: '../components/responses/400BadRequest.yaml'
+    '401':
+      $ref: '../components/responses/401Unauthorized.yaml'
+    '403':
+      $ref: '../components/responses/403Forbidden.yaml'
+    '404':
+      $ref: '../components/responses/404NotFoundDrsObject.yaml'
+    '500':
+      $ref: '../components/responses/500InternalServerError.yaml'
+  security:
+    - {}
+    - BasicAuth: []
+    - BearerAuth: []
+    - PassportAuth: []
+  tags:
+    - Objects
+  x-swagger-router-controller: ga4gh.drs.server
+  x-codegen-request-body-name: body

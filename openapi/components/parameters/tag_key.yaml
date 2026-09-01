@@ -1,0 +1,34 @@
+in: query
+name: tag_key
+required: false
+schema:
+  type: array
+  items:
+    type: string
+description: |-
+  OPTIONAL. Provide key tag to filter. The field tag_key is an array
+  of key values, and will be zipped with an optional tag_value array.
+  So the query:
+  ```
+    ?tag_key=foo1&tag_value=bar1&tag_key=foo2&tag_value=bar2
+  ```
+  Should be constructed into the structure { "foo1" : "bar1", "foo2" : "bar2"}
+
+  ```
+    ?tag_key=foo1
+  ```
+  Should be constructed into the structure {"foo1" : ""}
+
+  If the tag_value is empty, it will be treated as matching any possible value.
+  If a tag value is provided, both the tag's key and value must be exact
+  matches for an object to be returned.
+  Filter                            Tags                          Match?
+  ----------------------------------------------------------------------
+  {"foo": "bar"}                    {"foo": "bar"}                Yes
+  {"foo": "bar"}                    {"foo": "bat"}                No
+  {"foo": ""}                       {"foo": ""}                   Yes
+  {"foo": "bar", "baz": "bat"}      {"foo": "bar", "baz": "bat"}  Yes
+  {"foo": "bar"}                    {"foo": "bar", "baz": "bat"}  Yes
+  {"foo": "bar", "baz": "bat"}      {"foo": "bar"}                No
+  {"foo": ""}                       {"foo": "bar"}                Yes
+  {"foo": ""}                       {}                            No

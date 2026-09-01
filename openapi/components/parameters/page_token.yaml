@@ -1,0 +1,9 @@
+in: query
+name: page_token
+required: false
+schema:
+  type: string
+description: |-
+  OPTIONAL. Page token is used to retrieve the next page of results.
+  If unspecified, returns the first page of results. The value can be found
+  in the `next_page_token` field of the last returned result of ListObjects

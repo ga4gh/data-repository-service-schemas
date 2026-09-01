@@ -1,3 +1,52 @@
+get:
+  summary: List DRS objects
+  description: >-
+    **Optional Endpoint**: Not all DRS servers support object listing.
+
+    List and filter DRS objects known to the server. This is a server-side
+    discovery capability that complements the bulk `POST /objects` operation
+    (which requires known object IDs).
+
+    Results can be filtered by tag using the `tag_key` and `tag_value` query
+    parameters. Provide one or more `tag_key` values (optionally zipped with
+    `tag_value` values) to match objects whose tags contain all of the
+    specified key/value pairs. A provided `tag_key` with an empty `tag_value`
+    matches any value for that key.
+
+    Results are paginated. If more results are available, the response
+    contains a `next_page_token` that can be passed in the `page_token`
+    query parameter of a subsequent request.
+
+    **Authentication**: A valid GA4GH Passport may be provided, or a bearer
+    token in the header.
+  operationId: ListObjects
+  security:
+    - {}
+    - BasicAuth: []
+    - BearerAuth: []
+    - PassportAuth: []
+  parameters:
+    - $ref: '../components/parameters/tag_key.yaml'
+    - $ref: '../components/parameters/tag_value.yaml'
+    - $ref: '../components/parameters/page_size.yaml'
+    - $ref: '../components/parameters/page_token.yaml'
+  responses:
+    200:
+      $ref: '../components/responses/200ListObjects.yaml'
+    400:
+      $ref: '../components/responses/400BadRequest.yaml'
+    401:
+      $ref: '../components/responses/401Unauthorized.yaml'
+    403:
+      $ref: '../components/responses/403Forbidden.yaml'
+    413:
+      $ref: '../components/responses/413RequestTooLarge.yaml'
+    500:
+      $ref: '../components/responses/500InternalServerError.yaml'
+  tags:
+    - Objects
+  x-swagger-router-controller: ga4gh.drs.server
+
 options:
   summary: Get Authorization info about multiple DrsObjects.
   security:

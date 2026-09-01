@@ -1,0 +1,9 @@
+in: query
+name: tag_value
+required: false
+schema:
+  type: array
+  items:
+    type: string
+description: |-
+  OPTIONAL. The companion value field for tag_key
