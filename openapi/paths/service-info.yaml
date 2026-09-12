@@ -4,7 +4,7 @@ get:
     Returns information about the DRS service along with stats pertaning to total object count and cumulative size in bytes.
 
     Extends the
-    [v1.0.0 GA4GH Service Info specification](https://github.com/ga4gh-discovery/ga4gh-service-info)
+    [v1.0.0 GA4GH Service Info specification](https://github.com/ga4gh/ga4gh-service-info)
     as the standardized format for GA4GH web services to self-describe.
 
     According to the 
