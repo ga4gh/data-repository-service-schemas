@@ -18,7 +18,7 @@ The `/upload-request` endpoint need not result in any state being maintained on 
 
 However, servers SHOULD ensure that any data from unsuccessful uploads (e.g. incomplete multi-part uploads) are cleaned up, for example by using lifecycle configuration in the backend storage. There is _no_ means of requiring that a client ultimately registers a DRS object pointing at data uploaded, and so servers should consider implementing some form of storage "garbage collection", a straightforward approach is to set a short lifecycle policy on the upload location and move uploaded data that is later registered as DRS objects to other locations, updating object `access_methods` accordingly. Servers should also implement some means of constraining upload size (quotas etc.) to protect against accidental or malicious unconstrained uploads. Servers can choose to validate that the uploads match the claimed object size when `/objects/register` is called, and should advertise this behaviour with the `validateFileSizes` flag in `/service-info`.
 
-The `/upload-request` endpoint can return one or more `upload_methods` of different types for each requested file, and backend specific details such as bucket names, object keys and credentials are supplied in a generic `upload_details` field. A straightforward implementation might return a single time-limited pre-signed POST URL as the `post_url` for an `upload_method` of type `https` which incorporates authentication into the URL, but because DRS is often used for large files such as BAMs and CRAMs this specification also supports more sophisticated upload approaches implemented by cloud storage backends such as multi-part uploads, automatic retries etc. The `upload_details` field can be used to include bucket names, keys and temporary credentials that can be used in native clients and SDKs. This offers a natural way to adapt this protocol to new storage technologies. Refer to the examples below for some suggested implementations.
+The `/upload-request` endpoint can return one or more `upload_methods` of different types for each requested file, and backend specific details such as bucket names, object keys and credentials are supplied in a generic `upload_details` field. A straightforward implementation might return a single time-limited presigned URL as the `put_url` for an `upload_method` of type `https`, which incorporates authentication into the URL. The `put_url` is an `AccessURL`, and the client PUTs the file to its `url` with any `headers` it lists. Because DRS is often used for large files such as BAMs and CRAMs, this specification also supports more sophisticated upload approaches implemented by cloud storage backends such as multi-part uploads, automatic retries etc. The `upload_details` field can be used to include bucket names, keys and temporary credentials that can be used in native clients and SDKs. This offers a natural way to adapt this protocol to new storage technologies. Refer to the examples below for some suggested implementations.
 
 ## Service discovery
 
@@ -30,10 +30,12 @@ Check `/service-info` for upload capabilities:
     "uploadRequestSupported": true,
     "objectRegistrationSupported": true,
     "supportedUploadMethodTypes": ["s3", "https"],
-    "maxUploadSize": 5368709120,
+    "maxUploadSize": 5497558138880,
+    "maxUploadSizeByMethod": {"https": 5368709120, "s3": 5497558138880},
     "maxUploadRequestLength": 50,
     "maxRegisterRequestLength": 50,
     "validateChecksums": true,
+    "validatedChecksumTypes": ["crc64nvme"],
     "validateFileSizes": false,
     "relatedFileStorageSupported": true
   }
@@ -46,16 +48,18 @@ Upload related fields:
 - `objectRegistrationSupported`: Object registration operations available via `/objects/register`
 - `supportedUploadMethodTypes`: Available storage backends  
 - `maxUploadSize`: File size limit (bytes)
+- `maxUploadSizeByMethod`: File size limit (bytes) for each upload method type
 - `maxUploadRequestLength`: Files per request limit for upload requests
 - `maxRegisterRequestLength`: Candidate objects per request limit for registration
 - `validateChecksums`/`validateFileSizes`: Server validation behavior
+- `validatedChecksumTypes`: Checksum types the server validates
 - `relatedFileStorageSupported`: Files from same upload request will be stored under common prefixes
 
 ## Upload methods
 
 Upon receipt of a request for an upload method for a specific file, the server will respond with an array of `upload_methods`, each with associated `type` and corresponding `upload_details` with upload locations, temporary credentials etc. These details are specific to backend implementations.
 
-Example storage backends include `https`, which returns presigned POST URLs for HTTP uploads; `s3`, which provides direct S3 upload with temporary AWS credentials scoped by an IAM session policy; `gs`, which uses Google Cloud Storage with OAuth2 tokens; and `ftp` or `sftp`, which use traditional file transfer protocols with negotiated credentials.
+Example storage backends include `https`, which returns presigned URLs to PUT files to; `s3`, which provides direct S3 upload with temporary AWS credentials scoped by an IAM session policy; `gs`, which uses Google Cloud Storage with OAuth2 tokens; and `ftp` or `sftp`, which use traditional file transfer protocols with negotiated credentials.
 
 Servers may return a subset of advertised methods based on file characteristics, for example they may choose to store large objects such as WGS BAM files in different backends to small csv files. Clients can request specific upload methods in the initial request.
 
@@ -82,6 +86,8 @@ A client's request uses the same `upload_methods` structure, and the field is op
 }
 ```
 
+A server that copies data from a client-supplied location MUST check that the client is entitled to read that location, and MUST NOT use its own credentials or network access to read data the client could not read itself.
+
 ## Related file storage
 
 Servers MAY support storing files from the same upload request under common prefixes, which helps bioinformatics workflows that expect co-located files such as a CRAM with its CRAI index, a VCF with its tabix index, or a compressed FASTQ with its associated reference data. A server advertises this with the `relatedFileStorageSupported` flag, and clients can also examine the upload URLs for common prefixes.
@@ -98,19 +104,20 @@ The `/objects/register` endpoint can also be used independently to register exis
 
 ## Authentication and validation
 
-The upload and registration endpoints support GA4GH Passports, Basic auth, and Bearer tokens. Checksums are required for all files, using SHA-256, MD5, or any IANA-registered algorithm, and servers MAY validate checksums and file sizes as advertised in the service-info flags. A server does not validate MIME types against file content, so clients are responsible for supplying accurate MIME types.
+The upload and registration endpoints support GA4GH Passports, Basic auth, and Bearer tokens. Checksums are required for all files, using SHA-256, MD5, or any IANA-registered algorithm, and servers MAY validate checksums and file sizes as advertised in the service-info flags. Checksums that storage services compute natively, such as `crc64nvme` for Amazon S3 and `crc32c` for Google Cloud Storage, may also be used, and suit large files well. For a multipart upload, S3 combines the CRC64NVME of each part into the checksum of the whole object, whatever the part size, and checks it against the value the client declares, so a checksum the client computes over the whole file before uploading is verified end to end. Digests such as MD5 and SHA-256 cannot be combined like this, so for multipart uploads storage services report a checksum of the part checksums, which depends on how the file was split. A server MAY require a particular checksum type, returning `400` if it is missing, and advertises the types it validates in `validatedChecksumTypes`. A server does not validate MIME types against file content, so clients are responsible for supplying accurate MIME types.
 
 ## Error responses
 
-- `400`: invalid metadata.
+- `400`: invalid metadata. On registration, also when a candidate's data is missing, or does not match its declared size or a checksum the server validates.
 - `401`: authentication is required.
 - `403`: insufficient permissions.
+- `413`: a file is larger than the server allows, or a request has too many files.
 - `500`: storage is unavailable.
 - `503`: the server is at capacity.
 
 ## Credential scoping
 
-Implementers SHOULD scope upload credentials to the minimum permissions and duration necessary. Credentials should allow write access only to the specific upload URL or path provided, have the shortest practical expiration time, typically fifteen minutes to one hour, and where possible be restricted to the expected file size and content type. They should not grant broader storage access beyond the intended upload location. This principle of least privilege limits the exposure if credentials are compromised or misused.
+Implementers SHOULD scope upload credentials to the minimum permissions and duration necessary. Credentials should allow write access only to the specific upload URL or path provided, have the shortest practical expiration time, typically fifteen minutes to one hour, and where possible be restricted to the expected file size and content type. They should not grant broader storage access beyond the intended upload location. This principle of least privilege limits the exposure if credentials are compromised or misused. Servers SHOULD also make each upload location write-once, so that data cannot be replaced after it has been uploaded and verified.
 
 ## Example workflows
 
@@ -162,9 +169,9 @@ Response:
             "url": "https://uploads.example.org/variants.vcf"
           },
           "upload_details": {
-            "post_url": {
+            "put_url": {
               "url": "https://uploads.example.org/presigned-upload?signature=FAKE_SIG",
-              "headers": ["Header1", "Header2"]
+              "headers": ["Content-Type: text/plain"]
             }
           }
         }
@@ -177,9 +184,9 @@ Response:
 Upload via HTTPS:
 
 ```bash
-# POST the file to the presigned POST URL as multipart form data
-curl -X POST "https://uploads.example.org/presigned-upload?signature=FAKE_SIG" -H "Header1" -H "Header2" \
-  -F "file=@variants.vcf"
+# PUT the file to the presigned URL, with the listed headers
+curl -X PUT "https://uploads.example.org/presigned-upload?signature=FAKE_SIG" \
+  -H "Content-Type: text/plain" --upload-file variants.vcf
 ```
 
 Register DRS Object:
@@ -307,13 +314,13 @@ Response:
           "access_url": {
             "url": "s3://genomics-uploads/x7k9m/sample.bam"
           },
+          "expires_at": "2024-01-15T12:00:00Z",
           "upload_details": {
             "bucket": "genomics-uploads",
             "key": "x7k9m/sample.bam",
             "access_key_id": "FAKE_ACCESS_KEY_123",
             "secret_access_key": "FAKE_SECRET_KEY_456",
-            "session_token": "FAKE_SESSION_TOKEN_789",
-            "expires_at": "2024-01-15T12:00:00Z"
+            "session_token": "FAKE_SESSION_TOKEN_789"
           }
         }
       ]
@@ -334,13 +341,13 @@ Response:
           "access_url": {
             "url": "s3://genomics-uploads/x7k9m/sample.bam.bai"
           },
+          "expires_at": "2024-01-15T12:00:00Z",
           "upload_details": {
             "bucket": "genomics-uploads",
             "key": "x7k9m/sample.bam.bai",
             "access_key_id": "FAKE_ACCESS_KEY_123",
             "secret_access_key": "FAKE_SECRET_KEY_456",
-            "session_token": "FAKE_SESSION_TOKEN_789",
-            "expires_at": "2024-01-15T12:00:00Z"
+            "session_token": "FAKE_SESSION_TOKEN_789"
           }
         }
       ]

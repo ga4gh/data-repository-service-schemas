@@ -7,7 +7,9 @@ required:
 properties:
   name:
     type: string
-    description: The name of the file
+    description: >-
+      The name of the file, which MUST match the `name` of the request this response
+      answers.
   size:
     type: integer
     format: int64

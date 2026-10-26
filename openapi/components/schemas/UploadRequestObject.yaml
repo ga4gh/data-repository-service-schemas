@@ -7,7 +7,9 @@ required:
 properties:
   name:
     type: string
-    description: The name of the file to upload
+    description: >-
+      The name of the file to upload. Names MUST be unique within a request, so that
+      each response can be matched to its request by name.
   size:
     type: integer
     format: int64

@@ -4,11 +4,45 @@ get:
     Returns an array of `DRSObjects` that match a given checksum.
 
     If the checksum type is not provided, the checksum check is done against all checksum types.
+
+    Servers MUST return only the objects the caller is authorized to see.
   operationId: GetObjectsByChecksum
+  parameters:
+    - $ref: '../components/parameters/Checksum.yaml'
+  responses:
+    200:
+      $ref: '../components/responses/200OkDrsObjects.yaml'
+    202:
+      $ref: '../components/responses/202Accepted.yaml'
+    400:
+      $ref: '../components/responses/400BadRequest.yaml'
+    401:
+      $ref: '../components/responses/401Unauthorized.yaml'
+    403:
+      $ref: '../components/responses/403Forbidden.yaml'
+    404:
+      $ref: '../components/responses/404NotFoundDrsObject.yaml'
+    500:
+      $ref: '../components/responses/500InternalServerError.yaml'
+  tags:
+    - Objects
+  x-swagger-router-controller: ga4gh.drs.server
+post:
+  summary: Get DRS objects that are a match for the checksum, through POST'ing a Passport.
+  description: >-
+    Returns an array of `DRSObjects` that match a given checksum.
+    Method is a POST to accommodate a JWT GA4GH Passport sent in the request body in order to authorize access.
+
+    If the checksum type is not provided, the checksum check is done against all checksum types.
+
+    Servers MUST return only the objects the caller is authorized to see.
+  operationId: PostObjectsByChecksum
   security:
     - PassportAuth: []
   parameters:
     - $ref: '../components/parameters/Checksum.yaml'
+  requestBody:
+    $ref: '../components/requestBodies/PostObjectBody.yaml'
   responses:
     200:
       $ref: '../components/responses/200OkDrsObjects.yaml'
