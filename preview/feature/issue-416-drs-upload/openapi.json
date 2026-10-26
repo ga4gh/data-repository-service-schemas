@@ -165,7 +165,7 @@
     },
     {
       "name": "Object Deletion",
-      "description": "> Delete support is an optional extension to the DRS API. Not all DRS servers implement it, and clients should check `/service-info` for the relevant capability flags before attempting to use the delete endpoints.\n\nDRS delete functionality allows suitably authenticated clients to request that DRS objects are removed from the server and, optionally, that the server attempt to delete the underlying data. Because delete support is optional, servers operating in untrusted environments may choose not to support it at all, and servers should ensure that they trust the clients from whom they accept delete requests.\n\nDelete uses an HTTP `PUT` rather than `DELETE`, because GA4GH Passports are passed in a request body and `DELETE` does not reliably support request bodies across all HTTP infrastructure.\n\nThe delete endpoints accept two independent parameters, `delete_object_metadata` and `delete_storage_data`, which control what is removed. Both default to the safest option, leaving data in place.\n\n## Deleting object metadata\n\nThe `delete_object_metadata` parameter controls whether the DRS object metadata record is permanently removed or preserved. It defaults to `false`.\n\nWhen `delete_object_metadata` is `false`, the server marks the object as deleted but preserves the metadata record, a mode known as soft deletion. Read and access requests for a soft-deleted object return `410 Gone` with a standard `Error` response body. This mode requires `metadataRetentionSupported` to be `true` in `/service-info`; a server that does not support metadata retention silently ignores the parameter and permanently deletes the metadata.\n\nWhen `delete_object_metadata` is `true`, the server permanently removes the metadata record. The object ID no longer resolves and cannot be recovered.\n\n## Deleting underlying data\n\nThe `delete_storage_data` parameter lets a client express a preference that the underlying data referred to by the deleted object is also removed. It defaults to `false`, leaving the underlying data in place. A server advertises whether it supports the parameter at all with the `deleteStorageDataSupported` flag.\n\nServers are free to interpret the request as they choose. A server that attempts to honour it need not do so synchronously, and may, for example, register the file for later deletion or implement soft deletion with versioning. A server may also choose to confirm that no other DRS object refers to the same underlying data before deleting it. Where an object refers to data held in more than one backend, for example where it has multiple `access_methods`, the server may delete the data from all or only some of those backends. A server may also lack the permissions needed to delete the data, or encounter errors when it tries.\n\nFor these reasons clients MUST NOT depend on the underlying data being deleted, even where the server advertises `deleteStorageDataSupported` and the client sets `delete_storage_data`. HTTP responses indicate metadata deletion status only, and storage deletion is always a best-effort attempt.\n\n## Bulk deletion\n\nThe `/objects/delete` endpoint deletes several objects in one request. Servers SHOULD treat this as an atomic transaction: if any object fails validation or deletion, the whole request fails, no objects are deleted, and no attempt is made to delete underlying storage for any object. A server MAY instead perform partial deletion with appropriate error reporting where atomic behaviour is not feasible. A successful bulk delete returns `204 No Content`, and the failure of an atomic request returns a `4xx` error and leaves all objects in place.\n\n## Updating objects through delete and re-registration\n\nRather than introducing separate update operations, which would complicate server implementation, a metadata-only delete combined with the `/objects/register` endpoint gives clients a way to update DRS metadata without affecting the underlying data. A client deletes the existing metadata and registers a new object with the corrected metadata. An object's `access_methods` and additional checksums can be changed while keeping the same DRS object ID, as described in the access method update and checksum addition sections, but any other change requires deletion and re-registration under a new ID. Where the DRS server controls the storage backend, this offers a convenient, vendor-neutral way for clients to update and delete both objects and their data.\n\n## Service discovery\n\nA server advertises its delete capabilities in `/service-info`:\n\n```json\n{\n  \"drs\": {\n    \"deleteSupported\": true,\n    \"maxBulkDeleteLength\": 100,\n    \"deleteStorageDataSupported\": true,\n    \"metadataRetentionSupported\": true\n  }\n}\n```\n\n- `deleteSupported`: whether the server supports deletion.\n- `maxBulkDeleteLength`: the maximum number of objects in a single bulk delete request.\n- `deleteStorageDataSupported`: whether the server can attempt to delete underlying storage data.\n- `metadataRetentionSupported`: whether the server can preserve metadata after deletion, that is soft delete via `delete_object_metadata: false`.\n\n## Examples\n\nA soft delete, preserving both the metadata record and the underlying storage, since both parameters default to `false`:\n\n```bash\ncurl -X PUT \".../objects/obj_123/delete\" -H \"Authorization: Bearer token\" -d '{}'\n# Object returns 410 Gone on subsequent read and access requests\n```\n\nA permanent delete of the metadata together with an attempt to delete the storage:\n\n```bash\ncurl -X PUT \".../objects/obj_456/delete\" -H \"Authorization: Bearer token\" \\\n  -d '{\"delete_object_metadata\": true, \"delete_storage_data\": true}'\n```\n\nA bulk delete, which is atomic:\n\n```bash\ncurl -X PUT \".../objects/delete\" -d '{\n  \"bulk_object_ids\": [\"obj_1\", \"obj_2\"],\n  \"passports\": [\"...\"],\n  \"delete_object_metadata\": true,\n  \"delete_storage_data\": true\n}'\n# All objects are deleted, or none are\n```\n\nGA4GH Passports may be supplied in the request body, and Bearer tokens in the `Authorization` header.\n\n## Error responses\n\n- `400`: storage deletion is not supported, or the request parameters are invalid.\n- `403`: the client lacks permission for one or more objects in the request.\n- `404`: an object was not found, or the delete endpoints are not supported.\n- `413`: a bulk request exceeds `maxBulkDeleteLength`.\n"
+      "description": "> Delete support is an optional extension to the DRS API. Not all DRS servers implement it, and clients should check `/service-info` for the relevant capability flags before attempting to use the delete endpoints.\n\nDRS delete functionality allows suitably authenticated clients to request that DRS objects are removed from the server and, optionally, that the server attempt to delete the underlying data. Because delete support is optional, servers operating in untrusted environments may choose not to support it at all, and servers should ensure that they trust the clients from whom they accept delete requests.\n\nThere are three ways to delete:\n\n- `DELETE /objects/{object_id}` deletes a single object, authorized by Basic or Bearer credentials in the `Authorization` header, with the delete options as query parameters. This is the usual way to delete.\n- `PUT /objects/{object_id}/delete` deletes a single object, authorized by a GA4GH Passport in the request body, with the delete options in the body. Passports are sent in a body, and `DELETE` does not reliably support request bodies across all HTTP infrastructure, so a `PUT` is used. The body MUST include at least one Passport. A client that does not use Passports uses `DELETE` instead.\n- `PUT /objects/delete` deletes several objects in one request, with their IDs and the delete options in the body. It accepts Passports in the body, or Basic or Bearer credentials in the `Authorization` header.\n\nThe delete endpoints accept two independent parameters, `delete_object_metadata` and `delete_storage_data`, which control what is removed. Both default to the safest option, leaving data in place.\n\n## Deleting object metadata\n\nThe `delete_object_metadata` parameter controls whether the DRS object metadata record is permanently removed or preserved. It defaults to `false`.\n\nWhen `delete_object_metadata` is `false`, the server marks the object as deleted but preserves the metadata record, a mode known as soft deletion. Read and access requests for a soft-deleted object return `410 Gone` with a standard `Error` response body. This mode requires `metadataRetentionSupported` to be `true` in `/service-info`; a server that does not support metadata retention silently ignores the parameter and permanently deletes the metadata.\n\nWhen `delete_object_metadata` is `true`, the server permanently removes the metadata record. The object ID no longer resolves and cannot be recovered.\n\n## Deleting underlying data\n\nThe `delete_storage_data` parameter lets a client express a preference that the underlying data referred to by the deleted object is also removed. It defaults to `false`, leaving the underlying data in place. A server advertises whether it supports the parameter at all with the `deleteStorageDataSupported` flag.\n\nServers are free to interpret the request as they choose. A server that attempts to honour it need not do so synchronously, and may, for example, register the file for later deletion or implement soft deletion with versioning. A server may also choose to confirm that no other DRS object refers to the same underlying data before deleting it. Where an object refers to data held in more than one backend, for example where it has multiple `access_methods`, the server may delete the data from all or only some of those backends. A server may also lack the permissions needed to delete the data, or encounter errors when it tries.\n\nFor these reasons clients MUST NOT depend on the underlying data being deleted, even where the server advertises `deleteStorageDataSupported` and the client sets `delete_storage_data`. HTTP responses indicate metadata deletion status only, and storage deletion is always a best-effort attempt.\n\n## Bulk deletion\n\nThe `/objects/delete` endpoint deletes several objects in one request. Servers SHOULD treat this as an atomic transaction: if any object fails validation or deletion, the whole request fails, no objects are deleted, and no attempt is made to delete underlying storage for any object. A server MAY instead perform partial deletion with appropriate error reporting where atomic behaviour is not feasible. A successful bulk delete returns `204 No Content`, and the failure of an atomic request returns a `4xx` error and leaves all objects in place.\n\n## Updating objects through delete and re-registration\n\nRather than introducing separate update operations, which would complicate server implementation, a metadata-only delete combined with the `/objects/register` endpoint gives clients a way to update DRS metadata without affecting the underlying data. A client deletes the existing metadata and registers a new object with the corrected metadata. An object's `access_methods` and additional checksums can be changed while keeping the same DRS object ID, as described in the access method update and checksum addition sections, but any other change requires deletion and re-registration under a new ID. Where the DRS server controls the storage backend, this offers a convenient, vendor-neutral way for clients to update and delete both objects and their data.\n\n## Service discovery\n\nA server advertises its delete capabilities in `/service-info`:\n\n```json\n{\n  \"drs\": {\n    \"deleteSupported\": true,\n    \"maxBulkDeleteLength\": 100,\n    \"deleteStorageDataSupported\": true,\n    \"metadataRetentionSupported\": true\n  }\n}\n```\n\n- `deleteSupported`: whether the server supports deletion.\n- `maxBulkDeleteLength`: the maximum number of objects in a single bulk delete request.\n- `deleteStorageDataSupported`: whether the server can attempt to delete underlying storage data.\n- `metadataRetentionSupported`: whether the server can preserve metadata after deletion, that is soft delete via `delete_object_metadata: false`.\n\n## Examples\n\nA soft delete, preserving both the metadata record and the underlying storage, since both options default to `false`:\n\n```bash\ncurl -X DELETE \".../objects/obj_123\" -H \"Authorization: Bearer token\"\n# Object returns 410 Gone on subsequent read and access requests\n```\n\nA permanent delete of the metadata together with an attempt to delete the storage:\n\n```bash\ncurl -X DELETE \".../objects/obj_456?delete_object_metadata=true&delete_storage_data=true\" \\\n  -H \"Authorization: Bearer token\"\n```\n\nThe same delete, authorized by a GA4GH Passport:\n\n```bash\ncurl -X PUT \".../objects/obj_456/delete\" -d '{\n  \"passports\": [\"...\"],\n  \"delete_object_metadata\": true,\n  \"delete_storage_data\": true\n}'\n```\n\nA bulk delete, which is atomic:\n\n```bash\ncurl -X PUT \".../objects/delete\" -d '{\n  \"bulk_object_ids\": [\"obj_1\", \"obj_2\"],\n  \"passports\": [\"...\"],\n  \"delete_object_metadata\": true,\n  \"delete_storage_data\": true\n}'\n# All objects are deleted, or none are\n```\n\n## Error responses\n\n- `400`: storage deletion is not supported, the request parameters are invalid, or a `PUT` to `/objects/{object_id}/delete` has no Passport.\n- `403`: the client lacks permission for one or more objects in the request.\n- `404`: an object was not found, or the delete endpoints are not supported.\n- `413`: a bulk request exceeds `maxBulkDeleteLength`.\n"
     },
     {
       "name": "Access Method Update",
@@ -233,7 +233,7 @@
     "/service-info": {
       "get": {
         "summary": "Retrieve information about this service",
-        "description": "Returns information about the DRS service along with stats pertaining to total object count and cumulative size in bytes.\nAlso indicates whether the server supports optional upload and delete operations and which methods are available.\n\nExtends the\n[v1.0.0 GA4GH Service Info specification](https://github.com/ga4gh-discovery/ga4gh-service-info)\nas the standardized format for GA4GH web services to self-describe.\n\nAccording to the \n[service-info type registry](https://github.com/ga4gh/TASC/blob/master/service-info/ga4gh-service-info.json)\nmaintained by the [Technical Alignment Sub Committee (TASC)](https://github.com/ga4gh/TASC),\na DRS service MUST have:\n  * a `type.group` value of `org.ga4gh`\n  * a `type.artifact` value of `drs`\n\nExample 1, a server with upload and delete capabilities:\n```\n{\n    \"id\": \"com.example.drs\",\n    \"description\": \"Serves data according to DRS specification\",\n    ...\n    \"type\": {\n        \"group\": \"org.ga4gh\",\n        \"artifact\": \"drs\",\n        \"version\": \"1.5\"\n    }\n    ...\n    \"drs\":{\n      \"maxBulkRequestLength\": 200,\n      \"objectCount\": 774560,\n      \"totalObjectSize\": 4018437188907752,\n      \"uploadRequestSupported\": true,\n      \"objectRegistrationSupported\": true,\n      \"supportedUploadMethodTypes\": [\"s3\", \"https\", \"gs\"],\n      \"maxUploadSize\": 5368709120,\n      \"maxUploadRequestLength\": 50,\n      \"validateChecksums\": true,\n      \"validateFileSizes\": false,\n      \"relatedFileStorageSupported\": true,\n      \"deleteSupported\": true,\n      \"maxBulkDeleteLength\": 100,\n      \"deleteStorageDataSupported\": true\n    }\n}\n```\n\nExample 2, a read-only server with no upload or delete:\n```\n{\n    \"id\": \"com.example.readonly-drs\",\n    \"description\": \"Read-only DRS service\",\n    ...\n    \"type\": {\n        \"group\": \"org.ga4gh\",\n        \"artifact\": \"drs\",\n        \"version\": \"1.5\"\n    }\n    ...\n    \"drs\":{\n      \"maxBulkRequestLength\": 500,\n      \"objectCount\": 1250000,\n      \"totalObjectSize\": 8500000000000000\n    }\n}\n```\n\nExample 3, a server with metadata-only delete:\n```\n{\n    \"id\": \"com.example.metadata-drs\",\n    \"description\": \"DRS service with metadata-only delete\",\n    ...\n    \"type\": {\n        \"group\": \"org.ga4gh\",\n        \"artifact\": \"drs\",\n        \"version\": \"1.5\"\n    }\n    ...\n    \"drs\":{\n      \"maxBulkRequestLength\": 200,\n      \"objectCount\": 500000,\n      \"totalObjectSize\": 2500000000000000,\n      \"deleteSupported\": true,\n      \"maxBulkDeleteLength\": 50,\n      \"deleteStorageDataSupported\": false\n    }\n}\n```\n\nSee the [Service Registry Appendix](#tag/GA4GH-Service-Registry) for more information on how to register a DRS service with a service registry.",
+        "description": "Returns information about the DRS service along with stats pertaining to total object count and cumulative size in bytes.\nAlso indicates whether the server supports optional upload and delete operations and which methods are available.\n\nExtends the\n[v1.0.0 GA4GH Service Info specification](https://github.com/ga4gh-discovery/ga4gh-service-info)\nas the standardized format for GA4GH web services to self-describe.\n\nAccording to the \n[service-info type registry](https://github.com/ga4gh/TASC/blob/master/service-info/ga4gh-service-info.json)\nmaintained by the [Technical Alignment Sub Committee (TASC)](https://github.com/ga4gh/TASC),\na DRS service MUST have:\n  * a `type.group` value of `org.ga4gh`\n  * a `type.artifact` value of `drs`\n\nExample 1, a server with all of the optional upload, delete, update and lookup capabilities:\n```\n{\n    \"id\": \"com.example.drs\",\n    \"description\": \"Serves data according to DRS specification\",\n    ...\n    \"type\": {\n        \"group\": \"org.ga4gh\",\n        \"artifact\": \"drs\",\n        \"version\": \"1.6\"\n    }\n    ...\n    \"drs\":{\n      \"maxBulkRequestLength\": 200,\n      \"objectCount\": 774560,\n      \"totalObjectSize\": 4018437188907752,\n      \"uploadRequestSupported\": true,\n      \"objectRegistrationSupported\": true,\n      \"supportedUploadMethodTypes\": [\"s3\", \"https\", \"gs\"],\n      \"maxUploadSize\": 5497558138880,\n      \"maxUploadSizeByMethod\": {\"https\": 5368709120, \"s3\": 5497558138880, \"gs\": 5497558138880},\n      \"maxUploadRequestLength\": 50,\n      \"maxRegisterRequestLength\": 50,\n      \"validateChecksums\": true,\n      \"validatedChecksumTypes\": [\"crc64nvme\"],\n      \"validateFileSizes\": true,\n      \"relatedFileStorageSupported\": true,\n      \"deleteSupported\": true,\n      \"maxBulkDeleteLength\": 100,\n      \"deleteStorageDataSupported\": true,\n      \"metadataRetentionSupported\": true,\n      \"accessMethodUpdateSupported\": true,\n      \"maxBulkAccessMethodUpdateLength\": 100,\n      \"validateAccessMethods\": false,\n      \"checksumAdditionSupported\": true,\n      \"maxBulkChecksumAdditionLength\": 100,\n      \"fetchByChecksumSupported\": true\n    }\n}\n```\n\nExample 2, a read-only server with no upload or delete:\n```\n{\n    \"id\": \"com.example.readonly-drs\",\n    \"description\": \"Read-only DRS service\",\n    ...\n    \"type\": {\n        \"group\": \"org.ga4gh\",\n        \"artifact\": \"drs\",\n        \"version\": \"1.6\"\n    }\n    ...\n    \"drs\":{\n      \"maxBulkRequestLength\": 500,\n      \"objectCount\": 1250000,\n      \"totalObjectSize\": 8500000000000000\n    }\n}\n```\n\nExample 3, a server with metadata-only delete:\n```\n{\n    \"id\": \"com.example.metadata-drs\",\n    \"description\": \"DRS service with metadata-only delete\",\n    ...\n    \"type\": {\n        \"group\": \"org.ga4gh\",\n        \"artifact\": \"drs\",\n        \"version\": \"1.6\"\n    }\n    ...\n    \"drs\":{\n      \"maxBulkRequestLength\": 200,\n      \"objectCount\": 500000,\n      \"totalObjectSize\": 2500000000000000,\n      \"deleteSupported\": true,\n      \"maxBulkDeleteLength\": 50,\n      \"deleteStorageDataSupported\": false\n    }\n}\n```\n\nSee the [Service Registry Appendix](#tag/GA4GH-Service-Registry) for more information on how to register a DRS service with a service registry.",
         "operationId": "GetServiceInfo",
         "responses": {
           "200": {
@@ -370,6 +370,54 @@
         "requestBody": {
           "$ref": "#/components/requestBodies/PostObjectBody"
         }
+      },
+      "delete": {
+        "summary": "Delete a DRS object without a Passport (optional endpoint)",
+        "description": "Delete a single DRS object by ID, using Basic or Bearer authentication, with the delete options as query parameters. This is an optional endpoint that not all DRS servers implement. To delete with a GA4GH Passport, which is sent in a request body, use PUT `/objects/{object_id}/delete` instead.",
+        "operationId": "DeleteObject",
+        "security": [
+          {
+            "BasicAuth": []
+          },
+          {
+            "BearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "$ref": "#/components/parameters/ObjectId"
+          },
+          {
+            "$ref": "#/components/parameters/DeleteStorageData"
+          },
+          {
+            "$ref": "#/components/parameters/DeleteObjectMetadata"
+          }
+        ],
+        "responses": {
+          "204": {
+            "$ref": "#/components/responses/204DeleteSuccess"
+          },
+          "400": {
+            "$ref": "#/components/responses/400BadRequestDelete"
+          },
+          "401": {
+            "$ref": "#/components/responses/401Unauthorized"
+          },
+          "403": {
+            "$ref": "#/components/responses/403ForbiddenDelete"
+          },
+          "404": {
+            "$ref": "#/components/responses/404NotFoundDelete"
+          },
+          "500": {
+            "$ref": "#/components/responses/500InternalServerError"
+          }
+        },
+        "tags": [
+          "Objects"
+        ],
+        "x-swagger-router-controller": "ga4gh.drs.server"
       }
     },
     "/objects": {
@@ -938,16 +986,9 @@
     "/objects/{object_id}/delete": {
       "put": {
         "summary": "Delete a DRS object (optional endpoint)",
-        "description": "Delete a single DRS object by ID. This is an optional endpoint that not all DRS servers implement.",
-        "operationId": "DeleteObject",
+        "description": "Delete a single DRS object by ID, authorized by a GA4GH Passport in the request body. This is an optional endpoint that not all DRS servers implement. A client that does not use Passports deletes with DELETE `/objects/{object_id}` instead.",
+        "operationId": "DeleteObjectWithPassport",
         "security": [
-          {},
-          {
-            "BasicAuth": []
-          },
-          {
-            "BearerAuth": []
-          },
           {
             "PassportAuth": []
           }
@@ -1022,7 +1063,6 @@
           }
         },
         "security": [
-          {},
           {
             "BasicAuth": []
           },
@@ -1326,7 +1366,7 @@
               },
               "deleteSupported": {
                 "type": "boolean",
-                "description": "Indicates whether this DRS server supports delete operations via the delete endpoints. If true, clients can delete DRS objects using PUT requests to `/objects/{object_id}/delete` and `/objects/delete`. If false or missing, the server does not support delete operations and will return 404 for delete endpoint requests. Like upload functionality, delete support is entirely optional and servers remain DRS compliant without it.",
+                "description": "Indicates whether this DRS server supports delete operations via the delete endpoints. If true, clients can delete DRS objects using DELETE requests to `/objects/{object_id}`, or PUT requests to `/objects/{object_id}/delete` and `/objects/delete`. If false or missing, the server does not support delete operations and will return 404 for delete endpoint requests. Like upload functionality, delete support is entirely optional and servers remain DRS compliant without it.",
                 "default": false
               },
               "maxBulkDeleteLength": {
@@ -1923,14 +1963,18 @@
       "DeleteRequest": {
         "type": "object",
         "description": "Request body for single object delete operations",
+        "required": [
+          "passports"
+        ],
         "properties": {
           "passports": {
             "type": "array",
+            "minItems": 1,
             "items": {
               "type": "string",
               "example": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJnYTRnaF9wYXNzcG9ydF92MSI6W119.JJ5rN0ktP0qwyZmIPpxmF_p7JsxAZH6L6brUxtad3CM"
             },
-            "description": "the encoded JWT GA4GH Passport that contains embedded Visas.  The overall JWT is signed as are the individual Passport Visas."
+            "description": "the encoded JWT GA4GH Passport that contains embedded Visas.  The overall JWT is signed as are the individual Passport Visas. Required: a client that does not use Passports deletes with DELETE `/objects/{object_id}` instead."
           },
           "delete_storage_data": {
             "type": "boolean",
@@ -2277,6 +2321,117 @@
           }
         }
       },
+      "204DeleteSuccess": {
+        "description": "All DRS objects were successfully deleted. For bulk operations, this indicates that  the entire atomic transaction completed successfully - all requested objects have been  deleted. Storage data deletion (if requested) was attempted but success is not guaranteed."
+      },
+      "400BadRequestDelete": {
+        "description": "The delete request is malformed or contains unsupported parameters (e.g., delete_storage_data: true when server doesn't support storage data deletion).",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            },
+            "examples": {
+              "unsupported_storage_deletion": {
+                "summary": "Storage data deletion not supported",
+                "description": "Client requested storage data deletion but server doesn't support it",
+                "value": {
+                  "msg": "Server does not support storage data deletion. Set delete_storage_data to false or omit the parameter.",
+                  "status_code": 400
+                }
+              },
+              "invalid_request_format": {
+                "summary": "Malformed request body",
+                "description": "Request body contains invalid JSON or missing required fields",
+                "value": {
+                  "msg": "Invalid request body: bulk_object_ids is required for bulk delete operations",
+                  "status_code": 400
+                }
+              },
+              "empty_object_list": {
+                "summary": "Empty object ID list",
+                "description": "Bulk delete request with empty object ID array",
+                "value": {
+                  "msg": "bulk_object_ids cannot be empty",
+                  "status_code": 400
+                }
+              }
+            }
+          }
+        }
+      },
+      "403ForbiddenDelete": {
+        "description": "The client is not authorized to delete the requested DRS object.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            },
+            "examples": {
+              "insufficient_permissions": {
+                "summary": "Insufficient delete permissions",
+                "description": "Client lacks permission to delete the specified object",
+                "value": {
+                  "msg": "Client lacks delete permission for object drs_object_123456",
+                  "status_code": 403
+                }
+              },
+              "invalid_passport": {
+                "summary": "Invalid GA4GH Passport",
+                "description": "Provided GA4GH Passport is invalid or expired",
+                "value": {
+                  "msg": "Invalid or expired GA4GH Passport provided",
+                  "status_code": 403
+                }
+              },
+              "missing_visa": {
+                "summary": "Missing required visa",
+                "description": "GA4GH Passport lacks required visa for delete operation",
+                "value": {
+                  "msg": "GA4GH Passport does not contain required visa for delete operation on this object",
+                  "status_code": 403
+                }
+              }
+            }
+          }
+        }
+      },
+      "404NotFoundDelete": {
+        "description": "The requested DRS object for deletion wasn't found, or delete endpoints are not supported by this server.",
+        "content": {
+          "application/json": {
+            "schema": {
+              "$ref": "#/components/schemas/Error"
+            },
+            "examples": {
+              "object_not_found": {
+                "summary": "DRS object not found",
+                "description": "The specified DRS object does not exist",
+                "value": {
+                  "msg": "DRS object drs_object_123456 does not exist",
+                  "status_code": 404
+                }
+              },
+              "delete_not_supported": {
+                "summary": "Delete operations not supported",
+                "description": "This server does not support delete operations",
+                "value": {
+                  "msg": "Delete operations are not supported by this server",
+                  "status_code": 404
+                }
+              },
+              "endpoint_not_found": {
+                "summary": "Delete endpoint not available",
+                "description": "Delete endpoints are not implemented on this server",
+                "value": {
+                  "msg": "The requested endpoint /objects/delete is not available on this server",
+                  "status_code": 404
+                }
+              }
+            }
+          }
+        }
+      },
       "200OkAuthorizations": {
         "description": "`Authorizations` were found successfully",
         "content": {
@@ -2579,117 +2734,6 @@
           }
         }
       },
-      "204DeleteSuccess": {
-        "description": "All DRS objects were successfully deleted. For bulk operations, this indicates that  the entire atomic transaction completed successfully - all requested objects have been  deleted. Storage data deletion (if requested) was attempted but success is not guaranteed."
-      },
-      "400BadRequestDelete": {
-        "description": "The delete request is malformed or contains unsupported parameters (e.g., delete_storage_data: true when server doesn't support storage data deletion).",
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/Error"
-            },
-            "examples": {
-              "unsupported_storage_deletion": {
-                "summary": "Storage data deletion not supported",
-                "description": "Client requested storage data deletion but server doesn't support it",
-                "value": {
-                  "msg": "Server does not support storage data deletion. Set delete_storage_data to false or omit the parameter.",
-                  "status_code": 400
-                }
-              },
-              "invalid_request_format": {
-                "summary": "Malformed request body",
-                "description": "Request body contains invalid JSON or missing required fields",
-                "value": {
-                  "msg": "Invalid request body: bulk_object_ids is required for bulk delete operations",
-                  "status_code": 400
-                }
-              },
-              "empty_object_list": {
-                "summary": "Empty object ID list",
-                "description": "Bulk delete request with empty object ID array",
-                "value": {
-                  "msg": "bulk_object_ids cannot be empty",
-                  "status_code": 400
-                }
-              }
-            }
-          }
-        }
-      },
-      "403ForbiddenDelete": {
-        "description": "The client is not authorized to delete the requested DRS object.",
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/Error"
-            },
-            "examples": {
-              "insufficient_permissions": {
-                "summary": "Insufficient delete permissions",
-                "description": "Client lacks permission to delete the specified object",
-                "value": {
-                  "msg": "Client lacks delete permission for object drs_object_123456",
-                  "status_code": 403
-                }
-              },
-              "invalid_passport": {
-                "summary": "Invalid GA4GH Passport",
-                "description": "Provided GA4GH Passport is invalid or expired",
-                "value": {
-                  "msg": "Invalid or expired GA4GH Passport provided",
-                  "status_code": 403
-                }
-              },
-              "missing_visa": {
-                "summary": "Missing required visa",
-                "description": "GA4GH Passport lacks required visa for delete operation",
-                "value": {
-                  "msg": "GA4GH Passport does not contain required visa for delete operation on this object",
-                  "status_code": 403
-                }
-              }
-            }
-          }
-        }
-      },
-      "404NotFoundDelete": {
-        "description": "The requested DRS object for deletion wasn't found, or delete endpoints are not supported by this server.",
-        "content": {
-          "application/json": {
-            "schema": {
-              "$ref": "#/components/schemas/Error"
-            },
-            "examples": {
-              "object_not_found": {
-                "summary": "DRS object not found",
-                "description": "The specified DRS object does not exist",
-                "value": {
-                  "msg": "DRS object drs_object_123456 does not exist",
-                  "status_code": 404
-                }
-              },
-              "delete_not_supported": {
-                "summary": "Delete operations not supported",
-                "description": "This server does not support delete operations",
-                "value": {
-                  "msg": "Delete operations are not supported by this server",
-                  "status_code": 404
-                }
-              },
-              "endpoint_not_found": {
-                "summary": "Delete endpoint not available",
-                "description": "Delete endpoints are not implemented on this server",
-                "value": {
-                  "msg": "The requested endpoint /objects/delete is not available on this server",
-                  "status_code": 404
-                }
-              }
-            }
-          }
-        }
-      },
       "200UploadRequest": {
         "description": "Upload request processed successfully. Returns upload methods and temporary credentials for the requested files.",
         "content": {
@@ -2869,6 +2913,26 @@
         },
         "example": false,
         "description": "If false and the object_id refers to a bundle, then the ContentsObject array contains only those objects directly contained in the bundle. That is, if the bundle contains other bundles, those other bundles are not recursively included in the result.\nIf true and the object_id refers to a bundle, then the entire set of objects in the bundle is expanded. That is, if the bundle contains other bundles, then those other bundles are recursively expanded and included in the result. Recursion continues through the entire sub-tree of the bundle.\nIf the object_id refers to a blob, then the query parameter is ignored."
+      },
+      "DeleteStorageData": {
+        "in": "query",
+        "name": "delete_storage_data",
+        "required": false,
+        "description": "If true, the server attempts to delete the underlying storage data, as for `delete_storage_data` in a delete request body. Defaults to false.",
+        "schema": {
+          "type": "boolean",
+          "default": false
+        }
+      },
+      "DeleteObjectMetadata": {
+        "in": "query",
+        "name": "delete_object_metadata",
+        "required": false,
+        "description": "If true, the server permanently removes the DRS object metadata record, as for `delete_object_metadata` in a delete request body. Defaults to false.",
+        "schema": {
+          "type": "boolean",
+          "default": false
+        }
       },
       "AccessId": {
         "in": "path",
@@ -3172,7 +3236,7 @@
         }
       },
       "DeleteBody": {
-        "required": false,
+        "required": true,
         "content": {
           "application/json": {
             "schema": {
@@ -3198,18 +3262,6 @@
                   ],
                   "delete_storage_data": true
                 }
-              },
-              "no_auth_delete": {
-                "summary": "Delete without authentication",
-                "description": "Delete operation without GA4GH Passport authentication (for public objects or when using Bearer token in headers)",
-                "value": {
-                  "delete_storage_data": false
-                }
-              },
-              "minimal_request": {
-                "summary": "Minimal delete request",
-                "description": "Simplest delete request with no authentication and default behavior (metadata only)",
-                "value": {}
               },
               "multiple_passports": {
                 "summary": "Multiple GA4GH Passports",
@@ -3273,9 +3325,9 @@
                   "delete_storage_data": true
                 }
               },
-              "bulk_no_auth_delete": {
-                "summary": "Bulk delete without authentication",
-                "description": "Bulk delete operation without GA4GH Passport authentication (for public objects or when using Bearer token in headers)",
+              "bulk_bearer_delete": {
+                "summary": "Bulk delete with a Bearer token",
+                "description": "Bulk delete operation without a GA4GH Passport, authorized by Bearer or Basic credentials in the Authorization header",
                 "value": {
                   "bulk_object_ids": [
                     "drs_object_123456",

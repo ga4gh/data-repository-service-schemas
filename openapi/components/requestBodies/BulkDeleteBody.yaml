@@ -25,9 +25,9 @@ content:
           passports:
             - "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJnYTRnaF9wYXNzcG9ydF92MSI6W119.JJ5rN0ktP0qwyZmIPpxmF_p7JsxAZH6L6brUxtad3CM"
           delete_storage_data: true
-      bulk_no_auth_delete:
-        summary: Bulk delete without authentication
-        description: Bulk delete operation without GA4GH Passport authentication (for public objects or when using Bearer token in headers)
+      bulk_bearer_delete:
+        summary: Bulk delete with a Bearer token
+        description: Bulk delete operation without a GA4GH Passport, authorized by Bearer or Basic credentials in the Authorization header
         value:
           bulk_object_ids:
             - "drs_object_123456"

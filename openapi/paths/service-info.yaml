@@ -15,7 +15,7 @@ get:
       * a `type.group` value of `org.ga4gh`
       * a `type.artifact` value of `drs`
     
-    Example 1, a server with upload and delete capabilities:
+    Example 1, a server with all of the optional upload, delete, update and lookup capabilities:
     ```
     {
         "id": "com.example.drs",
@@ -24,7 +24,7 @@ get:
         "type": {
             "group": "org.ga4gh",
             "artifact": "drs",
-            "version": "1.5"
+            "version": "1.6"
         }
         ...
         "drs":{
@@ -34,14 +34,24 @@ get:
           "uploadRequestSupported": true,
           "objectRegistrationSupported": true,
           "supportedUploadMethodTypes": ["s3", "https", "gs"],
-          "maxUploadSize": 5368709120,
+          "maxUploadSize": 5497558138880,
+          "maxUploadSizeByMethod": {"https": 5368709120, "s3": 5497558138880, "gs": 5497558138880},
           "maxUploadRequestLength": 50,
+          "maxRegisterRequestLength": 50,
           "validateChecksums": true,
-          "validateFileSizes": false,
+          "validatedChecksumTypes": ["crc64nvme"],
+          "validateFileSizes": true,
           "relatedFileStorageSupported": true,
           "deleteSupported": true,
           "maxBulkDeleteLength": 100,
-          "deleteStorageDataSupported": true
+          "deleteStorageDataSupported": true,
+          "metadataRetentionSupported": true,
+          "accessMethodUpdateSupported": true,
+          "maxBulkAccessMethodUpdateLength": 100,
+          "validateAccessMethods": false,
+          "checksumAdditionSupported": true,
+          "maxBulkChecksumAdditionLength": 100,
+          "fetchByChecksumSupported": true
         }
     }
     ```
@@ -55,7 +65,7 @@ get:
         "type": {
             "group": "org.ga4gh",
             "artifact": "drs",
-            "version": "1.5"
+            "version": "1.6"
         }
         ...
         "drs":{
@@ -75,7 +85,7 @@ get:
         "type": {
             "group": "org.ga4gh",
             "artifact": "drs",
-            "version": "1.5"
+            "version": "1.6"
         }
         ...
         "drs":{

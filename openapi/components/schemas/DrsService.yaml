@@ -130,7 +130,7 @@ properties:
         type: boolean
         description: >-
           Indicates whether this DRS server supports delete operations via the delete endpoints.
-          If true, clients can delete DRS objects using PUT requests to `/objects/{object_id}/delete` and `/objects/delete`.
+          If true, clients can delete DRS objects using DELETE requests to `/objects/{object_id}`, or PUT requests to `/objects/{object_id}/delete` and `/objects/delete`.
           If false or missing, the server does not support delete operations and will return 404 for delete endpoint requests.
           Like upload functionality, delete support is entirely optional and servers remain DRS compliant without it.
         default: false
