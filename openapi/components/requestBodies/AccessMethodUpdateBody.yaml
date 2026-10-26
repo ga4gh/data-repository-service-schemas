@@ -1,0 +1,6 @@
+description: Request body for updating access methods of a DRS object
+required: true
+content:
+  application/json:
+    schema:
+      $ref: '../schemas/AccessMethodUpdateRequest.yaml'

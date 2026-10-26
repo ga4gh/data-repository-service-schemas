@@ -1,0 +1,24 @@
+description: The requested DRS object for deletion wasn't found, or delete endpoints are not supported by this server.
+content:
+  application/json:
+    schema:
+      $ref: '../schemas/Error.yaml'
+    examples:
+      object_not_found:
+        summary: DRS object not found
+        description: The specified DRS object does not exist
+        value:
+          msg: "DRS object drs_object_123456 does not exist"
+          status_code: 404
+      delete_not_supported:
+        summary: Delete operations not supported
+        description: This server does not support delete operations
+        value:
+          msg: "Delete operations are not supported by this server"
+          status_code: 404
+      endpoint_not_found:
+        summary: Delete endpoint not available
+        description: Delete endpoints are not implemented on this server
+        value:
+          msg: "The requested endpoint /objects/delete is not available on this server"
+          status_code: 404

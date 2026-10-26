@@ -1,0 +1,33 @@
+put:
+  summary: Update access methods for a DRS object
+  description: Update the access methods of a single DRS object. This is an optional endpoint that not all DRS servers implement.
+  operationId: UpdateObjectAccessMethods
+  parameters:
+    - name: object_id
+      in: path
+      required: true
+      schema:
+        type: string
+      description: DRS object identifier
+  requestBody:
+    $ref: '../components/requestBodies/AccessMethodUpdateBody.yaml'
+  responses:
+    '200':
+      $ref: '../components/responses/200AccessMethodUpdate.yaml'
+    '400':
+      $ref: '../components/responses/400BadRequest.yaml'
+    '401':
+      $ref: '../components/responses/401Unauthorized.yaml'
+    '403':
+      $ref: '../components/responses/403Forbidden.yaml'
+    '404':
+      $ref: '../components/responses/404NotFoundDrsObject.yaml'
+    '500':
+      $ref: '../components/responses/500InternalServerError.yaml'
+  security:
+    - {}
+    - BasicAuth: []
+    - BearerAuth: []
+    - PassportAuth: []
+  tags:
+    - Objects

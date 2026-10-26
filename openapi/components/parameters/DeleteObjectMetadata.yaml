@@ -1,0 +1,9 @@
+in: query
+name: delete_object_metadata
+required: false
+description: >-
+  If true, the server permanently removes the DRS object metadata record, as for
+  `delete_object_metadata` in a delete request body. Defaults to false.
+schema:
+  type: boolean
+  default: false

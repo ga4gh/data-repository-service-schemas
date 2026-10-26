@@ -1,0 +1,9 @@
+in: query
+name: delete_storage_data
+required: false
+description: >-
+  If true, the server attempts to delete the underlying storage data, as for
+  `delete_storage_data` in a delete request body. Defaults to false.
+schema:
+  type: boolean
+  default: false

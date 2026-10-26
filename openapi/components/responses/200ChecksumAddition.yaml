@@ -1,0 +1,7 @@
+description: >-
+  Checksums successfully added. Returns the updated DRS object with new checksums
+  and updated timestamp.
+content:
+  application/json:
+    schema:
+      $ref: '../schemas/DrsObject.yaml'

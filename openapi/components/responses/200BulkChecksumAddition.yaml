@@ -1,0 +1,15 @@
+description: >-
+  Checksums added for all objects. Returns updated DRS objects with 
+  new checksums and updated timestamps.
+content:
+  application/json:
+    schema:
+      type: object
+      required:
+        - objects
+      properties:
+        objects:
+          type: array
+          items:
+            $ref: '../schemas/DrsObject.yaml'
+          description: Array of updated DRS objects

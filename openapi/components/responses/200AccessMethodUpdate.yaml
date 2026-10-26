@@ -1,0 +1,7 @@
+description: >-
+  Access methods successfully updated. Returns the updated DRS object with new access methods
+  and updated timestamp.
+content:
+  application/json:
+    schema:
+      $ref: '../schemas/DrsObject.yaml'

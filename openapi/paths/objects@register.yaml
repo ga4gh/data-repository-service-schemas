@@ -1,0 +1,28 @@
+post:
+  summary: Register DRS objects
+  description: Register one or more candidate DRS objects, returning the DRS objects the server creates for them. This is an optional endpoint that not all DRS servers implement.
+  operationId: RegisterObjects
+  security:
+    - {}
+    - BasicAuth: []
+    - BearerAuth: []
+    - PassportAuth: []
+  requestBody:
+    $ref: '../components/requestBodies/RegisterObjectsBody.yaml'
+  responses:
+    201:
+      $ref: '../components/responses/201ObjectsCreated.yaml'
+    400:
+      $ref: '../components/responses/400BadRequest.yaml'
+    401:
+      $ref: '../components/responses/401Unauthorized.yaml'
+    403:
+      $ref: '../components/responses/403Forbidden.yaml'
+    413:
+      $ref: '../components/responses/413RequestTooLarge.yaml'
+    500:
+      $ref: '../components/responses/500InternalServerError.yaml'
+  tags:
+    - Objects
+  x-swagger-router-controller: ga4gh.drs.server
+  x-codegen-request-body-name: body

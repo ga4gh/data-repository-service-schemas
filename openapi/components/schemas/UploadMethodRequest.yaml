@@ -1,0 +1,24 @@
+type: object
+required:
+  - type
+properties:
+  type:
+    type: string
+    description: >-
+      A requested upload method type, which should match one of the types published
+      by the server in the `supportedUploadMethodTypes` field of the `/service-info`
+      response (for example `s3`, `https`, `gs`). This is intentionally an open string
+      rather than an enumeration so that servers and clients can negotiate new or
+      vendor-specific upload methods without a change to this specification.
+  upload_details:
+    type: object
+    additionalProperties: true
+    description: >-
+      Optional, method-specific details supplied by the client for this upload method.
+      This mirrors the server-supplied `upload_details` field of an `UploadMethod` in
+      the response, but carries information flowing from the client to the server. The
+      contents and structure depend on the upload method `type` and are deliberately
+      unconstrained at the protocol level, so that a client can provide a backend with
+      whatever it needs to complete a transfer (for example, a reference to a
+      client-controlled source location, or temporary scoped credentials for a
+      server-performed copy) without this specification having to enumerate them.

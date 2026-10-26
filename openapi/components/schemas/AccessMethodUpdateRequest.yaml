@@ -1,0 +1,15 @@
+type: object
+required:
+  - access_methods
+properties:
+  access_methods:
+    type: array
+    items:
+      $ref: './AccessMethod.yaml'
+    minItems: 1
+    description: New access methods for the DRS object
+  passports:
+    type: array
+    items:
+      type: string
+    description: Optional GA4GH Passport JWTs for authorization
