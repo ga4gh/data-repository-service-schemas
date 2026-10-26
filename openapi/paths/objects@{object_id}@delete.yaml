@@ -1,11 +1,11 @@
 put:
   summary: Delete a DRS object (optional endpoint)
-  description: Delete a single DRS object by ID. This is an optional endpoint that not all DRS servers implement.
-  operationId: DeleteObject
+  description: >-
+    Delete a single DRS object by ID, authorized by a GA4GH Passport in the request body.
+    This is an optional endpoint that not all DRS servers implement. A client that does
+    not use Passports deletes with DELETE `/objects/{object_id}` instead.
+  operationId: DeleteObjectWithPassport
   security:
-    - {}
-    - BasicAuth: []
-    - BearerAuth: []
     - PassportAuth: []
   parameters:
     - $ref: '../components/parameters/ObjectId.yaml'

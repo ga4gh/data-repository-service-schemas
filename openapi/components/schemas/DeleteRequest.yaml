@@ -1,12 +1,17 @@
 type: object
 description: Request body for single object delete operations
+required:
+  - passports
 properties:
   passports:
     type: array
+    minItems: 1
     items:
       type: string
       example: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJnYTRnaF9wYXNzcG9ydF92MSI6W119.JJ5rN0ktP0qwyZmIPpxmF_p7JsxAZH6L6brUxtad3CM
-    description: the encoded JWT GA4GH Passport that contains embedded Visas.  The overall JWT is signed as are the individual Passport Visas.
+    description: >-
+      the encoded JWT GA4GH Passport that contains embedded Visas.  The overall JWT is signed as are the individual Passport Visas.
+      Required: a client that does not use Passports deletes with DELETE `/objects/{object_id}` instead.
   delete_storage_data:
     type: boolean
     default: false

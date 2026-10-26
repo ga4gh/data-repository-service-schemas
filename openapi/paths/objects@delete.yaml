@@ -22,7 +22,6 @@ put:
     '500':
       $ref: '../components/responses/500InternalServerError.yaml'
   security:
-    - {}
     - BasicAuth: []
     - BearerAuth: []
     - PassportAuth: []

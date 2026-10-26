@@ -2,7 +2,11 @@
 
 DRS delete functionality allows suitably authenticated clients to request that DRS objects are removed from the server and, optionally, that the server attempt to delete the underlying data. Because delete support is optional, servers operating in untrusted environments may choose not to support it at all, and servers should ensure that they trust the clients from whom they accept delete requests.
 
-Delete uses an HTTP `PUT` rather than `DELETE`, because GA4GH Passports are passed in a request body and `DELETE` does not reliably support request bodies across all HTTP infrastructure.
+There are three ways to delete:
+
+- `DELETE /objects/{object_id}` deletes a single object, authorized by Basic or Bearer credentials in the `Authorization` header, with the delete options as query parameters. This is the usual way to delete.
+- `PUT /objects/{object_id}/delete` deletes a single object, authorized by a GA4GH Passport in the request body, with the delete options in the body. Passports are sent in a body, and `DELETE` does not reliably support request bodies across all HTTP infrastructure, so a `PUT` is used. The body MUST include at least one Passport. A client that does not use Passports uses `DELETE` instead.
+- `PUT /objects/delete` deletes several objects in one request, with their IDs and the delete options in the body. It accepts Passports in the body, or Basic or Bearer credentials in the `Authorization` header.
 
 The delete endpoints accept two independent parameters, `delete_object_metadata` and `delete_storage_data`, which control what is removed. Both default to the safest option, leaving data in place.
 
@@ -52,18 +56,28 @@ A server advertises its delete capabilities in `/service-info`:
 
 ## Examples
 
-A soft delete, preserving both the metadata record and the underlying storage, since both parameters default to `false`:
+A soft delete, preserving both the metadata record and the underlying storage, since both options default to `false`:
 
 ```bash
-curl -X PUT ".../objects/obj_123/delete" -H "Authorization: Bearer token" -d '{}'
+curl -X DELETE ".../objects/obj_123" -H "Authorization: Bearer token"
 # Object returns 410 Gone on subsequent read and access requests
 ```
 
 A permanent delete of the metadata together with an attempt to delete the storage:
 
 ```bash
-curl -X PUT ".../objects/obj_456/delete" -H "Authorization: Bearer token" \
-  -d '{"delete_object_metadata": true, "delete_storage_data": true}'
+curl -X DELETE ".../objects/obj_456?delete_object_metadata=true&delete_storage_data=true" \
+  -H "Authorization: Bearer token"
+```
+
+The same delete, authorized by a GA4GH Passport:
+
+```bash
+curl -X PUT ".../objects/obj_456/delete" -d '{
+  "passports": ["..."],
+  "delete_object_metadata": true,
+  "delete_storage_data": true
+}'
 ```
 
 A bulk delete, which is atomic:
@@ -78,11 +92,9 @@ curl -X PUT ".../objects/delete" -d '{
 # All objects are deleted, or none are
 ```
 
-GA4GH Passports may be supplied in the request body, and Bearer tokens in the `Authorization` header.
-
 ## Error responses
 
-- `400`: storage deletion is not supported, or the request parameters are invalid.
+- `400`: storage deletion is not supported, the request parameters are invalid, or a `PUT` to `/objects/{object_id}/delete` has no Passport.
 - `403`: the client lacks permission for one or more objects in the request.
 - `404`: an object was not found, or the delete endpoints are not supported.
 - `413`: a bulk request exceeds `maxBulkDeleteLength`.

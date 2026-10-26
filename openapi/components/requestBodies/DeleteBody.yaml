@@ -1,4 +1,4 @@
-required: false
+required: true
 content:
   application/json:
     schema:
@@ -18,15 +18,6 @@ content:
           passports:
             - "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJnYTRnaF9wYXNzcG9ydF92MSI6W119.JJ5rN0ktP0qwyZmIPpxmF_p7JsxAZH6L6brUxtad3CM"
           delete_storage_data: true
-      no_auth_delete:
-        summary: Delete without authentication
-        description: Delete operation without GA4GH Passport authentication (for public objects or when using Bearer token in headers)
-        value:
-          delete_storage_data: false
-      minimal_request:
-        summary: Minimal delete request
-        description: Simplest delete request with no authentication and default behavior (metadata only)
-        value: {}
       multiple_passports:
         summary: Multiple GA4GH Passports
         description: Delete request with multiple GA4GH Passports for complex authorization scenarios
