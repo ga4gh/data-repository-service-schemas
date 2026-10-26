@@ -54,14 +54,26 @@ properties:
           This is an open list of strings rather than a fixed enumeration, so servers can
           advertise new or vendor-specific methods. Common values are `s3` for direct S3
           upload with temporary AWS credentials, `gs` for Google Cloud Storage with access
-          tokens, `https` for a presigned POST URL, `ftp` and `sftp` for file transfer
-          protocols, `gsiftp` for GridFTP, and `globus` for the Globus transfer service.
+          tokens, `https` for a presigned URL to PUT the file to, `ftp` and `sftp` for file
+          transfer protocols, `gsiftp` for GridFTP, and `globus` for the Globus transfer
+          service.
       maxUploadSize:
         type: integer
         format: int64
         description: >-
           Maximum file size in bytes that can be uploaded via the upload endpoints.
           Only present when uploadRequestSupported is true. If not specified, there is no explicit size limit.
+      maxUploadSizeByMethod:
+        type: object
+        additionalProperties:
+          type: integer
+          format: int64
+        description: >-
+          Optional maximum file size in bytes for each upload method type, keyed by type, for example
+          `{"https": 5368709120, "s3": 5497558138880}`. Upload methods often have different limits,
+          such as a single PUT compared with a multipart upload. Clients SHOULD request a method
+          whose limit fits the file. `maxUploadSize` remains the overall limit.
+          Only present when uploadRequestSupported is true.
       maxUploadRequestLength:
         type: integer
         description: >-
@@ -80,6 +92,15 @@ properties:
           If false or missing, the server does not perform checksum validation and relies on client-provided metadata.
           Only present when at least one of uploadRequestSupported or objectRegistrationSupported or checksumAdditionSupported are true.
         default: false
+      validatedChecksumTypes:
+        type: array
+        items:
+          type: string
+        description: >-
+          Optional list of the checksum types this server validates when `validateChecksums` is true,
+          for example `["crc64nvme"]`. Checksums of other types are stored as declared. If not
+          specified, clients cannot assume which types are validated.
+          Only present when validateChecksums is true.
       validateFileSizes:
         type: boolean
         description: >-

@@ -13,9 +13,10 @@ properties:
       specification. Common values include `s3`, `gs`, `https`, `ftp`, `sftp`, `gsiftp`
       and `globus`. Implementations MAY support any subset of upload methods.
 
-      The 'https' type can be used to return a presigned POST URL and is expected to be
-      the most common implementation for typical file uploads. This method provides a
-      simple HTTP POST interface that works with standard web clients.
+      The 'https' type can be used to return a presigned URL, to which the client PUTs
+      the file, and is expected to be the most common implementation for typical file
+      uploads. This method provides a simple HTTP PUT interface that works with standard
+      web clients.
       
       The 's3' type is primarily intended to support uploads of large files that want
       to take advantage of multipart uploads and automatic retries implemented in AWS
@@ -30,13 +31,20 @@ properties:
           An `AccessURL` that specifies where the file will be accessible after upload.
           This URL will be used as the access_url in the eventual DRS object, ensuring
           consistency between upload and retrieval operations. Note that the `upload_details`
-          field may contain additional URLs, such as pre-signed POST URLs used to upload
+          field may contain additional URLs, such as presigned URLs used to upload
           the file, which may not be the same as this `access_url`.
   region:
     type: string
     description: >-
       Cloud region for the upload location. Optional for non-cloud storage types.
     example: us-east-1
+  expires_at:
+    type: string
+    format: date-time
+    description: >-
+      Optional time after which the `upload_details` no longer work, for example because
+      temporary credentials or a presigned URL have expired. A client that has not finished
+      by then SHOULD make a new upload request.
   upload_details:
     type: object
     additionalProperties: true

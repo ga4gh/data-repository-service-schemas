@@ -617,16 +617,17 @@ tags:
       different types for each requested file, and backend specific details such
       as bucket names, object keys and credentials are supplied in a generic
       `upload_details` field. A straightforward implementation might return a
-      single time-limited pre-signed POST URL as the `post_url` for an
-      `upload_method` of type `https` which incorporates authentication into the
-      URL, but because DRS is often used for large files such as BAMs and CRAMs
-      this specification also supports more sophisticated upload approaches
-      implemented by cloud storage backends such as multi-part uploads,
-      automatic retries etc. The `upload_details` field can be used to include
-      bucket names, keys and temporary credentials that can be used in native
-      clients and SDKs. This offers a natural way to adapt this protocol to new
-      storage technologies. Refer to the examples below for some suggested
-      implementations.
+      single time-limited presigned URL as the `put_url` for an `upload_method`
+      of type `https`, which incorporates authentication into the URL. The
+      `put_url` is an `AccessURL`, and the client PUTs the file to its `url`
+      with any `headers` it lists. Because DRS is often used for large files
+      such as BAMs and CRAMs, this specification also supports more
+      sophisticated upload approaches implemented by cloud storage backends such
+      as multi-part uploads, automatic retries etc. The `upload_details` field
+      can be used to include bucket names, keys and temporary credentials that
+      can be used in native clients and SDKs. This offers a natural way to adapt
+      this protocol to new storage technologies. Refer to the examples below for
+      some suggested implementations.
 
 
       ## Service discovery
@@ -642,10 +643,12 @@ tags:
           "uploadRequestSupported": true,
           "objectRegistrationSupported": true,
           "supportedUploadMethodTypes": ["s3", "https"],
-          "maxUploadSize": 5368709120,
+          "maxUploadSize": 5497558138880,
+          "maxUploadSizeByMethod": {"https": 5368709120, "s3": 5497558138880},
           "maxUploadRequestLength": 50,
           "maxRegisterRequestLength": 50,
           "validateChecksums": true,
+          "validatedChecksumTypes": ["crc64nvme"],
           "validateFileSizes": false,
           "relatedFileStorageSupported": true
         }
@@ -667,12 +670,17 @@ tags:
 
       - `maxUploadSize`: File size limit (bytes)
 
+      - `maxUploadSizeByMethod`: File size limit (bytes) for each upload method
+      type
+
       - `maxUploadRequestLength`: Files per request limit for upload requests
 
       - `maxRegisterRequestLength`: Candidate objects per request limit for
       registration
 
       - `validateChecksums`/`validateFileSizes`: Server validation behavior
+
+      - `validatedChecksumTypes`: Checksum types the server validates
 
       - `relatedFileStorageSupported`: Files from same upload request will be
       stored under common prefixes
@@ -688,11 +696,11 @@ tags:
       backend implementations.
 
 
-      Example storage backends include `https`, which returns presigned POST
-      URLs for HTTP uploads; `s3`, which provides direct S3 upload with
-      temporary AWS credentials scoped by an IAM session policy; `gs`, which
-      uses Google Cloud Storage with OAuth2 tokens; and `ftp` or `sftp`, which
-      use traditional file transfer protocols with negotiated credentials.
+      Example storage backends include `https`, which returns presigned URLs to
+      PUT files to; `s3`, which provides direct S3 upload with temporary AWS
+      credentials scoped by an IAM session policy; `gs`, which uses Google Cloud
+      Storage with OAuth2 tokens; and `ftp` or `sftp`, which use traditional
+      file transfer protocols with negotiated credentials.
 
 
       Servers may return a subset of advertised methods based on file
@@ -741,6 +749,12 @@ tags:
       }
 
       ```
+
+
+      A server that copies data from a client-supplied location MUST check that
+      the client is entitled to read that location, and MUST NOT use its own
+      credentials or network access to read data the client could not read
+      itself.
 
 
       ## Related file storage
@@ -796,19 +810,35 @@ tags:
       The upload and registration endpoints support GA4GH Passports, Basic auth,
       and Bearer tokens. Checksums are required for all files, using SHA-256,
       MD5, or any IANA-registered algorithm, and servers MAY validate checksums
-      and file sizes as advertised in the service-info flags. A server does not
-      validate MIME types against file content, so clients are responsible for
-      supplying accurate MIME types.
+      and file sizes as advertised in the service-info flags. Checksums that
+      storage services compute natively, such as `crc64nvme` for Amazon S3 and
+      `crc32c` for Google Cloud Storage, may also be used, and suit large files
+      well. For a multipart upload, S3 combines the CRC64NVME of each part into
+      the checksum of the whole object, whatever the part size, and checks it
+      against the value the client declares, so a checksum the client computes
+      over the whole file before uploading is verified end to end. Digests such
+      as MD5 and SHA-256 cannot be combined like this, so for multipart uploads
+      storage services report a checksum of the part checksums, which depends on
+      how the file was split. A server MAY require a particular checksum type,
+      returning `400` if it is missing, and advertises the types it validates in
+      `validatedChecksumTypes`. A server does not validate MIME types against
+      file content, so clients are responsible for supplying accurate MIME
+      types.
 
 
       ## Error responses
 
 
-      - `400`: invalid metadata.
+      - `400`: invalid metadata. On registration, also when a candidate's data
+      is missing, or does not match its declared size or a checksum the server
+      validates.
 
       - `401`: authentication is required.
 
       - `403`: insufficient permissions.
+
+      - `413`: a file is larger than the server allows, or a request has too
+      many files.
 
       - `500`: storage is unavailable.
 
@@ -825,7 +855,9 @@ tags:
       be restricted to the expected file size and content type. They should not
       grant broader storage access beyond the intended upload location. This
       principle of least privilege limits the exposure if credentials are
-      compromised or misused.
+      compromised or misused. Servers SHOULD also make each upload location
+      write-once, so that data cannot be replaced after it has been uploaded and
+      verified.
 
 
       ## Example workflows
@@ -888,9 +920,9 @@ tags:
                   "url": "https://uploads.example.org/variants.vcf"
                 },
                 "upload_details": {
-                  "post_url": {
+                  "put_url": {
                     "url": "https://uploads.example.org/presigned-upload?signature=FAKE_SIG",
-                    "headers": ["Header1", "Header2"]
+                    "headers": ["Content-Type: text/plain"]
                   }
                 }
               }
@@ -907,12 +939,11 @@ tags:
 
       ```bash
 
-      # POST the file to the presigned POST URL as multipart form data
+      # PUT the file to the presigned URL, with the listed headers
 
-      curl -X POST
-      "https://uploads.example.org/presigned-upload?signature=FAKE_SIG" -H
-      "Header1" -H "Header2" \
-        -F "file=@variants.vcf"
+      curl -X PUT
+      "https://uploads.example.org/presigned-upload?signature=FAKE_SIG" \
+        -H "Content-Type: text/plain" --upload-file variants.vcf
       ```
 
 
@@ -1060,13 +1091,13 @@ tags:
                 "access_url": {
                   "url": "s3://genomics-uploads/x7k9m/sample.bam"
                 },
+                "expires_at": "2024-01-15T12:00:00Z",
                 "upload_details": {
                   "bucket": "genomics-uploads",
                   "key": "x7k9m/sample.bam",
                   "access_key_id": "FAKE_ACCESS_KEY_123",
                   "secret_access_key": "FAKE_SECRET_KEY_456",
-                  "session_token": "FAKE_SESSION_TOKEN_789",
-                  "expires_at": "2024-01-15T12:00:00Z"
+                  "session_token": "FAKE_SESSION_TOKEN_789"
                 }
               }
             ]
@@ -1087,13 +1118,13 @@ tags:
                 "access_url": {
                   "url": "s3://genomics-uploads/x7k9m/sample.bam.bai"
                 },
+                "expires_at": "2024-01-15T12:00:00Z",
                 "upload_details": {
                   "bucket": "genomics-uploads",
                   "key": "x7k9m/sample.bam.bai",
                   "access_key_id": "FAKE_ACCESS_KEY_123",
                   "secret_access_key": "FAKE_SECRET_KEY_456",
-                  "session_token": "FAKE_SESSION_TOKEN_789",
-                  "expires_at": "2024-01-15T12:00:00Z"
+                  "session_token": "FAKE_SESSION_TOKEN_789"
                 }
               }
             ]
@@ -1809,16 +1840,17 @@ tags:
       different types for each requested file, and backend specific details such
       as bucket names, object keys and credentials are supplied in a generic
       `upload_details` field. A straightforward implementation might return a
-      single time-limited pre-signed POST URL as the `post_url` for an
-      `upload_method` of type `https` which incorporates authentication into the
-      URL, but because DRS is often used for large files such as BAMs and CRAMs
-      this specification also supports more sophisticated upload approaches
-      implemented by cloud storage backends such as multi-part uploads,
-      automatic retries etc. The `upload_details` field can be used to include
-      bucket names, keys and temporary credentials that can be used in native
-      clients and SDKs. This offers a natural way to adapt this protocol to new
-      storage technologies. Refer to the examples below for some suggested
-      implementations.
+      single time-limited presigned URL as the `put_url` for an `upload_method`
+      of type `https`, which incorporates authentication into the URL. The
+      `put_url` is an `AccessURL`, and the client PUTs the file to its `url`
+      with any `headers` it lists. Because DRS is often used for large files
+      such as BAMs and CRAMs, this specification also supports more
+      sophisticated upload approaches implemented by cloud storage backends such
+      as multi-part uploads, automatic retries etc. The `upload_details` field
+      can be used to include bucket names, keys and temporary credentials that
+      can be used in native clients and SDKs. This offers a natural way to adapt
+      this protocol to new storage technologies. Refer to the examples below for
+      some suggested implementations.
 
 
       ## Service discovery
@@ -1834,10 +1866,12 @@ tags:
           "uploadRequestSupported": true,
           "objectRegistrationSupported": true,
           "supportedUploadMethodTypes": ["s3", "https"],
-          "maxUploadSize": 5368709120,
+          "maxUploadSize": 5497558138880,
+          "maxUploadSizeByMethod": {"https": 5368709120, "s3": 5497558138880},
           "maxUploadRequestLength": 50,
           "maxRegisterRequestLength": 50,
           "validateChecksums": true,
+          "validatedChecksumTypes": ["crc64nvme"],
           "validateFileSizes": false,
           "relatedFileStorageSupported": true
         }
@@ -1859,12 +1893,17 @@ tags:
 
       - `maxUploadSize`: File size limit (bytes)
 
+      - `maxUploadSizeByMethod`: File size limit (bytes) for each upload method
+      type
+
       - `maxUploadRequestLength`: Files per request limit for upload requests
 
       - `maxRegisterRequestLength`: Candidate objects per request limit for
       registration
 
       - `validateChecksums`/`validateFileSizes`: Server validation behavior
+
+      - `validatedChecksumTypes`: Checksum types the server validates
 
       - `relatedFileStorageSupported`: Files from same upload request will be
       stored under common prefixes
@@ -1880,11 +1919,11 @@ tags:
       backend implementations.
 
 
-      Example storage backends include `https`, which returns presigned POST
-      URLs for HTTP uploads; `s3`, which provides direct S3 upload with
-      temporary AWS credentials scoped by an IAM session policy; `gs`, which
-      uses Google Cloud Storage with OAuth2 tokens; and `ftp` or `sftp`, which
-      use traditional file transfer protocols with negotiated credentials.
+      Example storage backends include `https`, which returns presigned URLs to
+      PUT files to; `s3`, which provides direct S3 upload with temporary AWS
+      credentials scoped by an IAM session policy; `gs`, which uses Google Cloud
+      Storage with OAuth2 tokens; and `ftp` or `sftp`, which use traditional
+      file transfer protocols with negotiated credentials.
 
 
       Servers may return a subset of advertised methods based on file
@@ -1933,6 +1972,12 @@ tags:
       }
 
       ```
+
+
+      A server that copies data from a client-supplied location MUST check that
+      the client is entitled to read that location, and MUST NOT use its own
+      credentials or network access to read data the client could not read
+      itself.
 
 
       ## Related file storage
@@ -1988,19 +2033,35 @@ tags:
       The upload and registration endpoints support GA4GH Passports, Basic auth,
       and Bearer tokens. Checksums are required for all files, using SHA-256,
       MD5, or any IANA-registered algorithm, and servers MAY validate checksums
-      and file sizes as advertised in the service-info flags. A server does not
-      validate MIME types against file content, so clients are responsible for
-      supplying accurate MIME types.
+      and file sizes as advertised in the service-info flags. Checksums that
+      storage services compute natively, such as `crc64nvme` for Amazon S3 and
+      `crc32c` for Google Cloud Storage, may also be used, and suit large files
+      well. For a multipart upload, S3 combines the CRC64NVME of each part into
+      the checksum of the whole object, whatever the part size, and checks it
+      against the value the client declares, so a checksum the client computes
+      over the whole file before uploading is verified end to end. Digests such
+      as MD5 and SHA-256 cannot be combined like this, so for multipart uploads
+      storage services report a checksum of the part checksums, which depends on
+      how the file was split. A server MAY require a particular checksum type,
+      returning `400` if it is missing, and advertises the types it validates in
+      `validatedChecksumTypes`. A server does not validate MIME types against
+      file content, so clients are responsible for supplying accurate MIME
+      types.
 
 
       ## Error responses
 
 
-      - `400`: invalid metadata.
+      - `400`: invalid metadata. On registration, also when a candidate's data
+      is missing, or does not match its declared size or a checksum the server
+      validates.
 
       - `401`: authentication is required.
 
       - `403`: insufficient permissions.
+
+      - `413`: a file is larger than the server allows, or a request has too
+      many files.
 
       - `500`: storage is unavailable.
 
@@ -2017,7 +2078,9 @@ tags:
       be restricted to the expected file size and content type. They should not
       grant broader storage access beyond the intended upload location. This
       principle of least privilege limits the exposure if credentials are
-      compromised or misused.
+      compromised or misused. Servers SHOULD also make each upload location
+      write-once, so that data cannot be replaced after it has been uploaded and
+      verified.
 
 
       ## Example workflows
@@ -2080,9 +2143,9 @@ tags:
                   "url": "https://uploads.example.org/variants.vcf"
                 },
                 "upload_details": {
-                  "post_url": {
+                  "put_url": {
                     "url": "https://uploads.example.org/presigned-upload?signature=FAKE_SIG",
-                    "headers": ["Header1", "Header2"]
+                    "headers": ["Content-Type: text/plain"]
                   }
                 }
               }
@@ -2099,12 +2162,11 @@ tags:
 
       ```bash
 
-      # POST the file to the presigned POST URL as multipart form data
+      # PUT the file to the presigned URL, with the listed headers
 
-      curl -X POST
-      "https://uploads.example.org/presigned-upload?signature=FAKE_SIG" -H
-      "Header1" -H "Header2" \
-        -F "file=@variants.vcf"
+      curl -X PUT
+      "https://uploads.example.org/presigned-upload?signature=FAKE_SIG" \
+        -H "Content-Type: text/plain" --upload-file variants.vcf
       ```
 
 
@@ -2252,13 +2314,13 @@ tags:
                 "access_url": {
                   "url": "s3://genomics-uploads/x7k9m/sample.bam"
                 },
+                "expires_at": "2024-01-15T12:00:00Z",
                 "upload_details": {
                   "bucket": "genomics-uploads",
                   "key": "x7k9m/sample.bam",
                   "access_key_id": "FAKE_ACCESS_KEY_123",
                   "secret_access_key": "FAKE_SECRET_KEY_456",
-                  "session_token": "FAKE_SESSION_TOKEN_789",
-                  "expires_at": "2024-01-15T12:00:00Z"
+                  "session_token": "FAKE_SESSION_TOKEN_789"
                 }
               }
             ]
@@ -2279,13 +2341,13 @@ tags:
                 "access_url": {
                   "url": "s3://genomics-uploads/x7k9m/sample.bam.bai"
                 },
+                "expires_at": "2024-01-15T12:00:00Z",
                 "upload_details": {
                   "bucket": "genomics-uploads",
                   "key": "x7k9m/sample.bam.bai",
                   "access_key_id": "FAKE_ACCESS_KEY_123",
                   "secret_access_key": "FAKE_SECRET_KEY_456",
-                  "session_token": "FAKE_SESSION_TOKEN_789",
-                  "expires_at": "2024-01-15T12:00:00Z"
+                  "session_token": "FAKE_SESSION_TOKEN_789"
                 }
               }
             ]
@@ -3448,11 +3510,49 @@ paths:
 
         If the checksum type is not provided, the checksum check is done against
         all checksum types.
+
+        Servers MUST return only the objects the caller is authorized to see.
       operationId: GetObjectsByChecksum
+      parameters:
+        - $ref: '#/components/parameters/Checksum'
+      responses:
+        '200':
+          $ref: '#/components/responses/200OkDrsObjects'
+        '202':
+          $ref: '#/components/responses/202Accepted'
+        '400':
+          $ref: '#/components/responses/400BadRequest'
+        '401':
+          $ref: '#/components/responses/401Unauthorized'
+        '403':
+          $ref: '#/components/responses/403Forbidden'
+        '404':
+          $ref: '#/components/responses/404NotFoundDrsObject'
+        '500':
+          $ref: '#/components/responses/500InternalServerError'
+      tags:
+        - Objects
+      x-swagger-router-controller: ga4gh.drs.server
+    post:
+      summary: >-
+        Get DRS objects that are a match for the checksum, through POST'ing a
+        Passport.
+      description: >-
+        Returns an array of `DRSObjects` that match a given checksum. Method is
+        a POST to accommodate a JWT GA4GH Passport sent in the request body in
+        order to authorize access.
+
+        If the checksum type is not provided, the checksum check is done against
+        all checksum types.
+
+        Servers MUST return only the objects the caller is authorized to see.
+      operationId: PostObjectsByChecksum
       security:
         - PassportAuth: []
       parameters:
         - $ref: '#/components/parameters/Checksum'
+      requestBody:
+        $ref: '#/components/requestBodies/PostObjectBody'
       responses:
         '200':
           $ref: '#/components/responses/200OkDrsObjects'
@@ -3591,6 +3691,8 @@ paths:
           $ref: '#/components/responses/401Unauthorized'
         '403':
           $ref: '#/components/responses/403Forbidden'
+        '413':
+          $ref: '#/components/responses/413RequestTooLarge'
         '500':
           $ref: '#/components/responses/500InternalServerError'
       tags:
@@ -3817,9 +3919,9 @@ components:
                 so servers can advertise new or vendor-specific methods. Common
                 values are `s3` for direct S3 upload with temporary AWS
                 credentials, `gs` for Google Cloud Storage with access tokens,
-                `https` for a presigned POST URL, `ftp` and `sftp` for file
-                transfer protocols, `gsiftp` for GridFTP, and `globus` for the
-                Globus transfer service.
+                `https` for a presigned URL to PUT the file to, `ftp` and `sftp`
+                for file transfer protocols, `gsiftp` for GridFTP, and `globus`
+                for the Globus transfer service.
             maxUploadSize:
               type: integer
               format: int64
@@ -3827,6 +3929,19 @@ components:
                 Maximum file size in bytes that can be uploaded via the upload
                 endpoints. Only present when uploadRequestSupported is true. If
                 not specified, there is no explicit size limit.
+            maxUploadSizeByMethod:
+              type: object
+              additionalProperties:
+                type: integer
+                format: int64
+              description: >-
+                Optional maximum file size in bytes for each upload method type,
+                keyed by type, for example `{"https": 5368709120, "s3":
+                5497558138880}`. Upload methods often have different limits,
+                such as a single PUT compared with a multipart upload. Clients
+                SHOULD request a method whose limit fits the file.
+                `maxUploadSize` remains the overall limit. Only present when
+                uploadRequestSupported is true.
             maxUploadRequestLength:
               type: integer
               description: >-
@@ -3853,6 +3968,16 @@ components:
                 one of uploadRequestSupported or objectRegistrationSupported or
                 checksumAdditionSupported are true.
               default: false
+            validatedChecksumTypes:
+              type: array
+              items:
+                type: string
+              description: >-
+                Optional list of the checksum types this server validates when
+                `validateChecksums` is true, for example `["crc64nvme"]`.
+                Checksums of other types are stored as declared. If not
+                specified, clients cannot assume which types are validated. Only
+                present when validateChecksums is true.
             validateFileSizes:
               type: boolean
               description: >-
@@ -4012,8 +4137,8 @@ components:
             non-IANA-registered algorithms in the future. Until then, if
             implementers do choose such an algorithm (e.g. because it's
             implemented by their storage provider), they SHOULD use an existing
-            standard `type` value such as `md5`, `etag`, `crc32c`, `trunc512`,
-            or `sha1`.
+            standard `type` value such as `md5`, `etag`, `crc32c`, `crc64nvme`,
+            `trunc512`, or `sha1`.
           example: sha-256
     AccessURL:
       type: object
@@ -4694,7 +4819,10 @@ components:
       properties:
         name:
           type: string
-          description: The name of the file to upload
+          description: >-
+            The name of the file to upload. Names MUST be unique within a
+            request, so that each response can be matched to its request by
+            name.
         size:
           type: integer
           format: int64
@@ -4764,10 +4892,10 @@ components:
             `sftp`, `gsiftp` and `globus`. Implementations MAY support any
             subset of upload methods.
 
-            The 'https' type can be used to return a presigned POST URL and is
-            expected to be the most common implementation for typical file
-            uploads. This method provides a simple HTTP POST interface that
-            works with standard web clients.
+            The 'https' type can be used to return a presigned URL, to which the
+            client PUTs the file, and is expected to be the most common
+            implementation for typical file uploads. This method provides a
+            simple HTTP PUT interface that works with standard web clients.
 
             The 's3' type is primarily intended to support uploads of large
             files that want to take advantage of multipart uploads and automatic
@@ -4784,14 +4912,22 @@ components:
                 after upload. This URL will be used as the access_url in the
                 eventual DRS object, ensuring consistency between upload and
                 retrieval operations. Note that the `upload_details` field may
-                contain additional URLs, such as pre-signed POST URLs used to
-                upload the file, which may not be the same as this `access_url`.
+                contain additional URLs, such as presigned URLs used to upload
+                the file, which may not be the same as this `access_url`.
         region:
           type: string
           description: >-
             Cloud region for the upload location. Optional for non-cloud storage
             types.
           example: us-east-1
+        expires_at:
+          type: string
+          format: date-time
+          description: >-
+            Optional time after which the `upload_details` no longer work, for
+            example because temporary credentials or a presigned URL have
+            expired. A client that has not finished by then SHOULD make a new
+            upload request.
         upload_details:
           type: object
           additionalProperties: true
@@ -4809,7 +4945,9 @@ components:
       properties:
         name:
           type: string
-          description: The name of the file
+          description: >-
+            The name of the file, which MUST match the `name` of the request
+            this response answers.
         size:
           type: integer
           format: int64
@@ -4940,7 +5078,9 @@ components:
                 items:
                   $ref: '#/components/schemas/DrsObject'
     413RequestTooLarge:
-      description: The bulk request is too large.
+      description: >-
+        The request is too large, because it has too many items or a file in it
+        is larger than the server allows.
       content:
         application/json:
           schema:
@@ -5255,16 +5395,16 @@ components:
                           url: >-
                             https://my-bucket.s3.amazonaws.com/uploads/drs_object_123456
                         region: us-east-1
+                        expires_at: '2024-01-01T12:00:00Z'
                         upload_details:
                           bucket: my-bucket
                           key: uploads/drs_object_123456
                           access_key_id: REPLACE_WITH_TEMP_ACCESS_KEY
                           secret_access_key: REPLACE_WITH_TEMP_SECRET_KEY
                           session_token: REPLACE_WITH_SESSION_TOKEN
-                          expires_at: '2024-01-01T12:00:00Z'
             https_upload:
               summary: HTTPS upload method response
-              description: Response with HTTPS presigned POST URL for direct upload
+              description: Response with an HTTPS presigned URL to PUT the file to
               value:
                 responses:
                   - name: genome_assembly.fasta
@@ -5285,8 +5425,11 @@ components:
                           url: >-
                             https://upload.example.org/v1/files/drs_object_789012
                         upload_details:
-                          post_url: >-
-                            https://upload.example.org/v1/files/drs_object_789012?signature=abc123
+                          put_url:
+                            url: >-
+                              https://upload.example.org/v1/files/drs_object_789012?signature=abc123
+                            headers:
+                              - 'Content-Type: text/plain'
             multiple_methods:
               summary: Multiple upload methods response
               description: Response offering multiple upload method options for flexibility
@@ -5306,30 +5449,33 @@ components:
                           url: >-
                             https://genomics-bucket.s3.us-west-2.amazonaws.com/uploads/drs_object_345678
                         region: us-west-2
+                        expires_at: '2024-01-01T12:00:00Z'
                         upload_details:
                           bucket: genomics-bucket
                           key: uploads/drs_object_345678
                           access_key_id: REPLACE_WITH_TEMP_ACCESS_KEY
                           secret_access_key: REPLACE_WITH_TEMP_SECRET_KEY
                           session_token: REPLACE_WITH_SESSION_TOKEN
-                          expires_at: '2024-01-01T12:00:00Z'
                       - type: https
                         access_url:
                           url: >-
                             https://upload-api.example.org/files/drs_object_345678
                         upload_details:
-                          post_url: >-
-                            https://upload-api.example.org/files/drs_object_345678?token=upload_token_12345
+                          put_url:
+                            url: >-
+                              https://upload-api.example.org/files/drs_object_345678?token=upload_token_12345
+                            headers:
+                              - 'Content-Type: text/plain'
                       - type: gs
                         access_url:
                           url: >-
                             https://storage.googleapis.com/genomics-uploads/drs_object_345678
                         region: us-central1
+                        expires_at: '2024-01-01T12:00:00Z'
                         upload_details:
                           bucket: genomics-uploads
                           key: drs_object_345678
                           access_token: REPLACE_WITH_TEMP_ACCESS_TOKEN
-                          expires_at: '2024-01-01T12:00:00Z'
   parameters:
     ObjectId:
       in: path

@@ -16,5 +16,5 @@ properties:
 
       GA4GH may provide more explicit guidance for use of non-IANA-registered algorithms in the future.
       Until then, if implementers do choose such an algorithm (e.g. because it's implemented by their storage provider), they SHOULD use an existing
-      standard `type` value such as `md5`, `etag`, `crc32c`, `trunc512`, or `sha1`.
+      standard `type` value such as `md5`, `etag`, `crc32c`, `crc64nvme`, `trunc512`, or `sha1`.
     example: sha-256

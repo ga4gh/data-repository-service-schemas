@@ -24,16 +24,16 @@ content:
                   access_url:
                     url: "https://my-bucket.s3.amazonaws.com/uploads/drs_object_123456"
                   region: "us-east-1"
+                  expires_at: "2024-01-01T12:00:00Z"
                   upload_details:
                     bucket: "my-bucket"
                     key: "uploads/drs_object_123456"
                     access_key_id: "REPLACE_WITH_TEMP_ACCESS_KEY"
                     secret_access_key: "REPLACE_WITH_TEMP_SECRET_KEY"
                     session_token: "REPLACE_WITH_SESSION_TOKEN"
-                    expires_at: "2024-01-01T12:00:00Z"
       https_upload:
         summary: HTTPS upload method response
-        description: Response with HTTPS presigned POST URL for direct upload
+        description: Response with an HTTPS presigned URL to PUT the file to
         value:
           responses:
             - name: "genome_assembly.fasta"
@@ -52,7 +52,10 @@ content:
                   access_url:
                     url: "https://upload.example.org/v1/files/drs_object_789012"
                   upload_details:
-                    post_url: "https://upload.example.org/v1/files/drs_object_789012?signature=abc123"
+                    put_url:
+                      url: "https://upload.example.org/v1/files/drs_object_789012?signature=abc123"
+                      headers:
+                        - "Content-Type: text/plain"
       multiple_methods:
         summary: Multiple upload methods response
         description: Response offering multiple upload method options for flexibility
@@ -70,24 +73,27 @@ content:
                   access_url:
                     url: "https://genomics-bucket.s3.us-west-2.amazonaws.com/uploads/drs_object_345678"
                   region: "us-west-2"
+                  expires_at: "2024-01-01T12:00:00Z"
                   upload_details:
                     bucket: "genomics-bucket"
                     key: "uploads/drs_object_345678"
                     access_key_id: "REPLACE_WITH_TEMP_ACCESS_KEY"
                     secret_access_key: "REPLACE_WITH_TEMP_SECRET_KEY"
                     session_token: "REPLACE_WITH_SESSION_TOKEN"
-                    expires_at: "2024-01-01T12:00:00Z"
                 - type: "https"
                   access_url:
                     url: "https://upload-api.example.org/files/drs_object_345678"
                   upload_details:
-                    post_url: "https://upload-api.example.org/files/drs_object_345678?token=upload_token_12345"
+                    put_url:
+                      url: "https://upload-api.example.org/files/drs_object_345678?token=upload_token_12345"
+                      headers:
+                        - "Content-Type: text/plain"
                 - type: "gs"
                   access_url:
                     url: "https://storage.googleapis.com/genomics-uploads/drs_object_345678"
                   region: "us-central1"
+                  expires_at: "2024-01-01T12:00:00Z"
                   upload_details:
                     bucket: "genomics-uploads"
                     key: "drs_object_345678"
                     access_token: "REPLACE_WITH_TEMP_ACCESS_TOKEN"
-                    expires_at: "2024-01-01T12:00:00Z"

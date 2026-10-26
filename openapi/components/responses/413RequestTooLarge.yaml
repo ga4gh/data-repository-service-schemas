@@ -1,4 +1,4 @@
-description: The bulk request is too large.
+description: The request is too large, because it has too many items or a file in it is larger than the server allows.
 content:
   application/json:
     schema:
