@@ -64,3 +64,48 @@ content:
                 - type: "https"
                   access_url:
                     url: "https://data.example.org/files/annotations.gff3"
+
+        controlled_access_registration:
+          summary: Register a controlled-access object
+          description: >-
+            Register one DRS object and explicitly assign controlled-access
+            claims. The server validates the supplied Passport and verifies
+            that the caller is authorized to assign the requested claims.
+          value:
+            candidates:
+              - name: "tumor-normal.cram"
+                size: 4294967296
+                mime_type: "application/octet-stream"
+                checksums:
+                  - checksum: "9f86d081884c7d659a2feaa0c55ad015a3bf4f1b2b0b822cd15d6c15b0f00a08"
+                    type: "sha-256"
+                description: "Controlled-access tumor-normal CRAM"
+                controlled_access:
+                  - "https://auth.example.org/datasets/phs000123"
+                  - "https://auth.example.org/projects/lung-study"
+                access_methods:
+                  - type: "s3"
+                    access_url:
+                      url: "s3://controlled-bucket/phs000123/tumor-normal.cram"
+            passports:
+              - "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9..."
+
+        open_access_registration:
+          summary: Register an open-access object
+          description: >-
+            Register one DRS object without controlled-access claims. Because
+            `controlled_access` is missing, the object is treated as open access
+            for read operations.
+          value:
+            candidates:
+              - name: "public-reference.fa"
+                size: 1024
+                mime_type: "text/plain"
+                checksums:
+                  - checksum: "2c26b46b68ffc68ff99b453c1d30413413422d706483bfa0f98a5e886266e7ae"
+                    type: "sha-256"
+                description: "Open-access public reference file"
+                access_methods:
+                  - type: "https"
+                    access_url:
+                      url: "https://data.example.org/public/public-reference.fa"
