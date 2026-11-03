@@ -98,6 +98,123 @@ get:
         }
     }
     ```
+    ### Object-level read authorization
+
+    A service supporting `controlled_access` SHOULD advertise
+    `drs.controlledAccessSupported: true`, its read-authorization profile in
+    `drs.controlledAccessClaimFormat`, and its missing/empty-field behavior in
+    `drs.controlledAccessDefault`. These fields describe service behavior;
+    they do not establish that the current requester is authorized.
+
+    | Claim format | Evaluating a non-empty object requirement |
+    | --- | --- |
+    | `ga4gh-passport-url-claim` | Validate the Passport and relevant visas, including trust, expiry, identity binding, and conditions; match the requirement against an accepted `ControlledAccessGrants` visa value using case-sensitive full-string comparison, without fetching the URL. |
+    | `oauth2-read-dataset-scope` | Validate the bearer access token, including signature, issuer, audience, and expiry; split `scope` on spaces and require the exact scope `read:<identifier>`. |
+    | `authorization-domain-backend` | Map the requirement to a backend resource and read action; obtain a positive authorization decision for the requester before issuing data access. A backend error does not authorize the read. |
+
+    For an object with
+    `controlled_access: ["https://auth.example.org/datasets/phs000123"]`,
+    the first profile checks for a matching visa value; the second checks for
+    `read:https://auth.example.org/datasets/phs000123` in the token's `scope`;
+    the third uses a configured backend mapping (for example, to an Arborist
+    resource and action). The client submits credentials to DRS, not directly
+    to an internal policy service. The dataset scope vocabulary is defined by
+    this profile; the OAuth `scope` claim is standardized by
+    [RFC 9068](https://www.rfc-editor.org/rfc/rfc9068.html#section-2.2.3).
+
+    ### Multiple requirements: any-of
+
+    A non-empty `controlled_access` array contains alternatives. A server
+    MUST permit the read when at least one entry's complete authorization
+    check succeeds under the advertised profile. All credential validation
+    and conditions of the successful entry still apply. If no entry succeeds,
+    the server MUST NOT grant the read; backend errors are not successes.
+
+    For example, this object fragment permits either dataset's grant:
+
+    ```json
+    {
+      "controlled_access": [
+        "https://auth.example.org/datasets/phs000123",
+        "https://auth.example.org/datasets/phs000567"
+      ]
+    }
+    ```
+
+    | Successfully authorized entries | Read outcome |
+    | --- | --- |
+    | Only `phs000123` | Allow |
+    | Only `phs000567` | Allow |
+    | Both | Allow |
+    | Neither | Do not grant |
+
+    For Passport reads, a valid, accepted visa for either dataset suffices.
+    For OAuth reads, either exact `read:<identifier>` scope suffices in a
+    validated token. For backend reads, one positive decision suffices;
+    when using Arborist, do not batch alternatives into its `requests`
+    array, which requires all requests to succeed. An empty object array
+    uses `controlledAccessDefault` rather than the any-of rule. Policies
+    requiring several independent grants need a separately defined policy;
+    adding entries to this array broadens the permitted read alternatives.
+
+    | Default | `controlled_access` absent | `controlled_access: []` |
+    | --- | --- | --- |
+    | `open-access-read` | Public read | Public read |
+    | `server-policy` | Existing object/server policy | Existing object/server policy |
+    | `deny-read` | Deny read until a policy is assigned | Deny read until a policy is assigned |
+    | `explicit-public-read` | Existing object/server policy | Public read after authorized publication |
+
+    Under `server-policy` and `explicit-public-read`, if the applicable
+    existing policy cannot be established, reads MUST be denied until one is
+    established. `explicit-public-read` requires preserving absence versus an
+    empty array and verifying permission to publish. Non-empty requirements
+    always use the claim profile; failed authorization MUST NOT fall back to
+    public read. An absent or unknown capability value gives clients no
+    assurance of public access.
+
+    The following partial service-info responses link the three profiles to
+    their read-authorization behavior. Each uses `explicit-public-read`, but
+    any of the four defaults can be combined with any profile.
+
+    Passport-based reads:
+    ```json
+    {
+      "drs": {
+        "controlledAccessSupported": true,
+        "controlledAccessClaimFormat": "ga4gh-passport-url-claim",
+        "controlledAccessDefault": "explicit-public-read"
+      }
+    }
+    ```
+
+    Reads using embedded OAuth dataset scopes:
+    ```json
+    {
+      "drs": {
+        "controlledAccessSupported": true,
+        "controlledAccessClaimFormat": "oauth2-read-dataset-scope",
+        "controlledAccessDefault": "explicit-public-read"
+      }
+    }
+    ```
+
+    Reads using backend policy evaluation:
+    ```json
+    {
+      "drs": {
+        "controlledAccessSupported": true,
+        "controlledAccessClaimFormat": "authorization-domain-backend",
+        "controlledAccessDefault": "explicit-public-read"
+      }
+    }
+    ```
+
+    Servers MUST document credential acquisition and submission flows,
+    accepted issuers, and backend mappings where applicable. The single
+    claim-format string does not describe combinations of mechanisms.
+    These capabilities govern reads, not permission to register, write, or
+    publish objects. Authorization-domain-to-bucket mapping and multi-cloud
+    writeback are implementation-specific and out of scope for this change.
 
     See the [Service Registry Appendix](#tag/GA4GH-Service-Registry) for more information on how to register a DRS service with a service registry.
   operationId: GetServiceInfo

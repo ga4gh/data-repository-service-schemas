@@ -85,3 +85,37 @@ properties:
       about this `DrsObject` from external metadata sources. These
       aliases can be used to represent secondary
       accession numbers or external GUIDs.
+
+  controlled_access:
+    type: array
+    items:
+      type: string
+    description: |-
+      An optional list of dataset or authorization domain identifiers
+      representing read requirements to assign to the registered `DrsObject`.
+      This metadata contains neither tokens nor storage credentials.
+
+      Non-empty requirements are evaluated using the profile advertised in
+      `/service-info` as `drs.controlledAccessClaimFormat`: Passport URL
+      claims, OAuth dataset read scopes, or backend policy evaluation.
+      Under the OAuth profile, this array stores the identifier, not the
+      `read:` prefix used in the access token's scope.
+
+      A non-empty array assigns alternative read requirements (any-of),
+      not jointly required grants. The registered object MUST permit reads
+      when at least one entry's complete authorization check succeeds,
+      including credential validation and applicable conditions. If no
+      entry is successfully authorized, the read MUST NOT be granted.
+      An empty array is governed by controlledAccessDefault, not any-of.
+
+      During `/objects/register`, the server MUST verify that the caller
+      is authorized to assign the requested read policy. Read permission
+      alone does not grant permission to register, write, or publish data.
+
+      Missing and empty values MUST be interpreted according to the
+      advertised `drs.controlledAccessDefault`; absence alone does not imply
+      public read. Under `explicit-public-read`, the server MUST verify
+      permission to publish before accepting an empty array and preserve
+      the absent-versus-empty distinction in the registered object.
+    example:
+      - https://auth.example.org/datasets/phs000123
