@@ -117,17 +117,22 @@ properties:
     items:
       type: string
     description: |-
-      A list of authorization claims representing controlled-access
-      requirements for this `DrsObject`.
+      An optional list of dataset or authorization domain identifiers
+      representing read requirements for this `DrsObject`. This metadata
+      contains neither tokens nor storage credentials and does not itself
+      prove that the requester is authorized.
 
-      Claims SHOULD be represented as strings using URL claim semantics
-      compatible with GA4GH Passport visa claim values:
-      https://github.com/ga4gh-duri/ga4gh-duri.github.io/blob/master/researcher_ids/ga4gh_passport_v1.md#url-claims
+      Non-empty requirements are evaluated using the profile advertised in
+      `/service-info` as `drs.controlledAccessClaimFormat`: Passport URL
+      claims, OAuth dataset read scopes, or backend policy evaluation.
+      Under the OAuth profile, this array stores the identifier, not the
+      `read:` prefix used in the access token's scope.
 
-      If this field is missing or empty, the `DrsObject` MUST be treated as
-      open access for read operations.
-
-      This field is required for write operations.
+      Missing and empty values MUST be interpreted according to the
+      advertised `drs.controlledAccessDefault`; absence alone does not imply
+      public read. Under `explicit-public-read`, servers MUST preserve the
+      distinction between an absent field and an explicit empty array.
+      This field does not grant registration, write, or storage permissions.
     example:
       - https://auth.example.org/datasets/phs000123
       - https://auth.example.org/projects/lung-study

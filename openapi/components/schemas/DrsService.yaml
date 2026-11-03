@@ -117,24 +117,68 @@ properties:
         default: false
       controlledAccessClaimFormat:
         type: string
-        description: >-
-          Describes the expected format for entries in the `controlled_access`
-          array. The value `ga4gh-passport-url-claim` indicates that claims are
-          represented as strings using URL claim semantics compatible with
-          GA4GH Passport visa claim values.
+        description: |-
+          Describes how the server evaluates non-empty `controlled_access`
+          requirements for reads. Entries remain dataset or authorization
+          domain identifiers; this profile determines how they are evaluated.
+
+          * `ga4gh-passport-url-claim`: match identifiers against the `value`
+            of accepted `ControlledAccessGrants` visas, using GA4GH Passport
+            URL claim semantics, validation, and applicable visa conditions.
+          * `oauth2-read-dataset-scope`: require the exact scope
+            `read:<identifier>` in a validated OAuth access token's `scope`
+            claim. Split the claim on spaces and compare case-sensitive whole
+            scope strings without URL normalization, prefix matching, or URL
+            fetching. `scope` is standardized; this dataset scope vocabulary
+            is defined by this profile.
+          * `authorization-domain-backend`: map identifiers to backend
+            resources and read actions, then obtain a positive authorization
+            decision for the requester from the server's policy service.
+            A backend error MUST NOT be treated as permission to read.
+
+          Servers MUST document accepted issuers, credential acquisition and
+          submission flows, and any backend resource mapping. This single
+          string advertises one profile, not combinations of mechanisms.
+          An absent or unrecognized value does not establish public access.
         enum:
           - ga4gh-passport-url-claim
+          - oauth2-read-dataset-scope
+          - authorization-domain-backend
         example: ga4gh-passport-url-claim
       controlledAccessDefault:
         type: string
-        description: >-
-          Describes how the service interprets a missing or empty
-          `controlled_access` array. The value `open-access-read` means that
-          if `controlled_access` is missing or empty, the `DrsObject` is treated
-          as open access for read operations.
+        description: |-
+          Describes read behavior when `controlled_access` is absent or an
+          empty array. Independent of `controlledAccessClaimFormat`.
+
+          * `open-access-read`: absent and empty both mean public read,
+            without an authorization grant.
+          * `server-policy`: absent and empty both use the existing object
+            or server read policy, including backend ACLs where applicable.
+            An empty array does not publish the object.
+          * `deny-read`: absent and empty both deny reads until an explicit
+            read policy is assigned.
+          * `explicit-public-read`: absence uses the existing object or
+            server read policy; an explicit empty array means public read.
+            Servers MUST verify permission to publish before accepting an
+            empty array and preserve the absent-versus-empty distinction
+            in persistence and responses. Omission on a policy update
+            preserves the existing policy.
+
+          Under `server-policy` and `explicit-public-read`, if no existing
+          policy can be established for an absent field (or an empty field
+          under `server-policy`), reads MUST be denied until one is established.
+          A non-empty array MUST be evaluated under the advertised claim
+          profile; failed authorization MUST NOT fall back to public read.
+          An absent or unrecognized default gives clients no assurance of
+          public access. This field does not grant write permission or select
+          storage destinations.
         enum:
           - open-access-read
-        example: open-access-read
+          - server-policy
+          - deny-read
+          - explicit-public-read
+        example: explicit-public-read
       deleteSupported:
         type: boolean
         description: >-
