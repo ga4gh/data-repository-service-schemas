@@ -128,6 +128,14 @@ properties:
       Under the OAuth profile, this array stores the identifier, not the
       `read:` prefix used in the access token's scope.
 
+      A non-empty array has any-of semantics: the server MUST permit the
+      read when at least one entry's complete authorization check succeeds.
+      The requester need not satisfy every entry. All validation and
+      conditions of the successful entry MUST still be satisfied; a string
+      match alone is insufficient. If no entry is successfully authorized,
+      the server MUST NOT grant the read. Backend errors are not successes.
+      An empty array is governed by controlledAccessDefault, not any-of.
+
       Missing and empty values MUST be interpreted according to the
       advertised `drs.controlledAccessDefault`; absence alone does not imply
       public read. Under `explicit-public-read`, servers MUST preserve the

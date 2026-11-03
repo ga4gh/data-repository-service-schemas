@@ -121,6 +121,12 @@ properties:
           Describes how the server evaluates non-empty `controlled_access`
           requirements for reads. Entries remain dataset or authorization
           domain identifiers; this profile determines how they are evaluated.
+          All profiles use any-of matching for a non-empty array: at least
+          one entry's complete authorization check MUST succeed to permit
+          the read. Other entries need not succeed. Credential validation
+          and conditions of the successful entry still apply. If no entry
+          succeeds, the read MUST NOT be granted. An empty array instead
+          uses controlledAccessDefault.
 
           * `ga4gh-passport-url-claim`: match identifiers against the `value`
             of accepted `ControlledAccessGrants` visas, using GA4GH Passport

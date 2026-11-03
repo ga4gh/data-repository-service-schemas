@@ -101,6 +101,13 @@ properties:
       Under the OAuth profile, this array stores the identifier, not the
       `read:` prefix used in the access token's scope.
 
+      A non-empty array assigns alternative read requirements (any-of),
+      not jointly required grants. The registered object MUST permit reads
+      when at least one entry's complete authorization check succeeds,
+      including credential validation and applicable conditions. If no
+      entry is successfully authorized, the read MUST NOT be granted.
+      An empty array is governed by controlledAccessDefault, not any-of.
+
       During `/objects/register`, the server MUST verify that the caller
       is authorized to assign the requested read policy. Read permission
       alone does not grant permission to register, write, or publish data.

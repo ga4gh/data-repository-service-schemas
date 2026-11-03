@@ -112,6 +112,41 @@ get:
     this profile; the OAuth `scope` claim is standardized by
     [RFC 9068](https://www.rfc-editor.org/rfc/rfc9068.html#section-2.2.3).
 
+    ### Multiple requirements: any-of
+
+    A non-empty `controlled_access` array contains alternatives. A server
+    MUST permit the read when at least one entry's complete authorization
+    check succeeds under the advertised profile. All credential validation
+    and conditions of the successful entry still apply. If no entry succeeds,
+    the server MUST NOT grant the read; backend errors are not successes.
+
+    For example, this object fragment permits either dataset's grant:
+
+    ```json
+    {
+      "controlled_access": [
+        "https://auth.example.org/datasets/phs000123",
+        "https://auth.example.org/datasets/phs000567"
+      ]
+    }
+    ```
+
+    | Successfully authorized entries | Read outcome |
+    | --- | --- |
+    | Only `phs000123` | Allow |
+    | Only `phs000567` | Allow |
+    | Both | Allow |
+    | Neither | Do not grant |
+
+    For Passport reads, a valid, accepted visa for either dataset suffices.
+    For OAuth reads, either exact `read:<identifier>` scope suffices in a
+    validated token. For backend reads, one positive decision suffices;
+    when using Arborist, do not batch alternatives into its `requests`
+    array, which requires all requests to succeed. An empty object array
+    uses `controlledAccessDefault` rather than the any-of rule. Policies
+    requiring several independent grants need a separately defined policy;
+    adding entries to this array broadens the permitted read alternatives.
+
     | Default | `controlled_access` absent | `controlled_access: []` |
     | --- | --- | --- |
     | `open-access-read` | Public read | Public read |
